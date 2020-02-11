@@ -5,6 +5,8 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Security;
+using DeneirsGate.Services;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
@@ -17,15 +19,18 @@ namespace MVC_PWx.Controllers
     {
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
+        private AuthService authSvc;
 
         public AccountController()
         {
+            authSvc = new AuthService();
         }
 
         public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager )
         {
             UserManager = userManager;
             SignInManager = signInManager;
+            authSvc = new AuthService();
         }
 
         public ApplicationSignInManager SignInManager
@@ -73,35 +78,43 @@ namespace MVC_PWx.Controllers
                 return View(model);
             }
 
-            // Require the user to have a confirmed email before they can log on.
-            var user = await UserManager.FindByNameAsync(model.Email);
-            if (user != null)
+            if (authSvc.Authenticate(model.Email, model.Password))
             {
-                if (!await UserManager.IsEmailConfirmedAsync(user.Id))
-                {
-                    string callbackUrl = await SendEmailConfirmationTokenAsync(user.Id, "Confirm your account-Resend");
-
-                    ViewBag.errorMessage = "You must have a confirmed email to log on.";
-                    return View("Error");
-                }
+                FormsAuthentication.SetAuthCookie(model.Email, model.RememberMe);
+                return RedirectToLocal(returnUrl);
             }
 
-            // This doesn't count login failures towards account lockout
-            // To enable password failures to trigger account lockout, change to shouldLockout: true
-            var result = await SignInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, shouldLockout: false);
-            switch (result)
-            {
-                case SignInStatus.Success:
-                    return RedirectToLocal(returnUrl);
-                case SignInStatus.LockedOut:
-                    return View("Lockout");
-                case SignInStatus.RequiresVerification:
-                    return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });
-                case SignInStatus.Failure:
-                default:
-                    ModelState.AddModelError("", "Invalid login attempt.");
-                    return View(model);
-            }
+            return View("Error");
+
+            //// Require the user to have a confirmed email before they can log on.
+            //var user = await UserManager.FindByNameAsync(model.Email);
+            //if (user != null)
+            //{
+            //    if (!await UserManager.IsEmailConfirmedAsync(user.Id))
+            //    {
+            //        string callbackUrl = await SendEmailConfirmationTokenAsync(user.Id, "Confirm your account-Resend");
+
+            //        ViewBag.errorMessage = "You must have a confirmed email to log on.";
+            //        return View("Error");
+            //    }
+            //}
+
+            //// This doesn't count login failures towards account lockout
+            //// To enable password failures to trigger account lockout, change to shouldLockout: true
+            //var result = await SignInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, shouldLockout: false);
+            //switch (result)
+            //{
+            //    case SignInStatus.Success:
+            //        return RedirectToLocal(returnUrl);
+            //    case SignInStatus.LockedOut:
+            //        return View("Lockout");
+            //    case SignInStatus.RequiresVerification:
+            //        return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });
+            //    case SignInStatus.Failure:
+            //    default:
+            //        ModelState.AddModelError("", "Invalid login attempt.");
+            //        return View(model);
+            //}
         }
 
         //
@@ -414,12 +427,12 @@ namespace MVC_PWx.Controllers
 
         //
         // POST: /Account/LogOff
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
         public ActionResult LogOff()
         {
-            AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
-            return RedirectToAction("Index", "Home");
+            FormsAuthentication.SignOut();
+            return RedirectToAction("Login");
         }
 
         //
