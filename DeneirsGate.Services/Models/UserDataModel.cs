@@ -13,6 +13,7 @@ namespace DeneirsGate.Services
         public string DisplayName { get; set; }
         public Guid Role { get; set; }
         public int Priviledge { get; set; }
+        public string Picture { get; set; }
     }
 
     public class RoleDataModel

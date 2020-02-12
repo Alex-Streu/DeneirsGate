@@ -24,5 +24,8 @@ namespace DeneirsGate.Data
         [Required]
         [StringLength(100)]
         public string Email { get; set; }
+
+        [StringLength(100)]
+        public string Picture { get; set; }
     }
 }

@@ -22,3 +22,34 @@ select,
 textarea {
     max-width: 280px;
 }
+
+.img-xs {
+    max-height: 100px;
+}
+
+.img-sm {
+    max-height: 250px;
+}
+
+.profile-picture-modal {
+    max-height: 500px;
+    overflow-y: scroll;
+}
+
+.profile-picture-selector {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+}
+
+.profile-picture-item {
+    margin: 10px;
+    padding: 10px;
+    border: 3px solid transparent;
+}
+
+    .profile-picture-item:hover {
+        cursor: pointer;
+        border: 3px solid #ce0606;
+        border-radius: 10px;
+    }

@@ -24,6 +24,14 @@
         </div>
     </div>
     <div class="form-group">
+        @Html.LabelFor(m => m.Picture, new { @class = "col-md-2 control-label" })
+        <div class="col-md-10">
+            @Html.TextBoxFor(m => m.Picture, new { style = "display:none", @class = "form-control" })
+            <img id="picturePreview" class="img-sm img-responsive" src="~/Content/img/avatars/boy-combover.jpg" />
+            <a class="btn btn-primary" onclick="showModal('pictureModal')">Change Profile Picture</a>
+        </div>
+    </div>
+    <div class="form-group">
         @Html.LabelFor(m => m.Email, new { @class = "col-md-2 control-label" })
         <div class="col-md-10">
             @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
@@ -46,8 +54,53 @@
             <input type="submit" class="btn btn-default" value="Register" />
         </div>
     </div>
+
+    <!-- Picture Modal -->
+    <div id="pictureModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" onclick="hideModal('pictureModal')">&times;</button>
+                    <h4 class="modal-title">Profile Picture</h4>
+                </div>
+                <div class="modal-body profile-picture-modal">
+                    <div class="profile-picture-selector">
+                        <a class="profile-picture-item"><img class="img-xs img-responsive" src="~/Content/img/avatars/boy-combover.jpg" /></a>
+                        <a class="profile-picture-item"><img class="img-xs img-responsive" src="~/Content/img/avatars/boy-geek.jpg" /></a>
+                        <a class="profile-picture-item"><img class="img-xs img-responsive" src="~/Content/img/avatars/girl-bangs.jpg" /></a>
+                        <a class="profile-picture-item"><img class="img-xs img-responsive" src="~/Content/img/avatars/girl-bun.jpg" /></a>
+                        <a class="profile-picture-item"><img class="img-xs img-responsive" src="~/Content/img/avatars/girl-goth.jpg" /></a>
+                        <a class="profile-picture-item"><img class="img-xs img-responsive" src="~/Content/img/avatars/girl-nerd.jpg" /></a>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" onclick="hideModal('pictureModal')">Close</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
 }
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
+    <script type="text/javascript">
+        $('.profile-picture-item').click(function () {
+            hideModal('pictureModal');
+
+            var src = $(this).find('img').attr('src');
+            $('#picturePreview').attr('src', src);
+            $('#Picture').val(src);
+        })
+
+        function hideModal(id) {
+            $('#' + id).modal('hide');
+        }
+
+        function showModal(id) {
+            $('#' + id).modal('show');
+        }
+    </script>
 }

@@ -66,6 +66,7 @@ namespace MVC_PWx.Controllers
         //
         // GET: /Account/Login
         [AllowAnonymous]
+        [AnonymousOnly]
         public ActionResult Login(string returnUrl)
         {
             ViewBag.ReturnUrl = returnUrl;
@@ -76,6 +77,7 @@ namespace MVC_PWx.Controllers
         // POST: /Account/Login
         [HttpPost]
         [AllowAnonymous]
+        [AnonymousOnly]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Login(LoginViewModel model, string returnUrl)
         {
@@ -84,7 +86,7 @@ namespace MVC_PWx.Controllers
                 return View(model);
             }
             
-            var user = authSvc.Authenticate(model.Email.ToLower(), AppLogic.EncryptPassword(model.Password));
+            var user = authSvc.Authenticate(model.Username.ToLower(), AppLogic.EncryptPassword(model.Password));
             if (user != null)
             {
                 FormsAuthentication.SetAuthCookie(user.UserId.ToString(), model.RememberMe);
@@ -142,6 +144,7 @@ namespace MVC_PWx.Controllers
         // POST: /Account/VerifyCode
         [HttpPost]
         [AllowAnonymous]
+        [AnonymousOnly]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> VerifyCode(VerifyCodeViewModel model)
         {
@@ -171,6 +174,7 @@ namespace MVC_PWx.Controllers
         //
         // GET: /Account/Register
         [AllowAnonymous]
+        [AnonymousOnly]
         public ActionResult Register()
         {
             ViewBag.Role = authSvc.GetRoles();
@@ -181,6 +185,7 @@ namespace MVC_PWx.Controllers
         // POST: /Account/Register
         [HttpPost]
         [AllowAnonymous]
+        [AnonymousOnly]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Register(RegisterViewModel model)
         {

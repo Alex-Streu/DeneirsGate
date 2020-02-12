@@ -18,26 +18,7 @@ namespace DeneirsGate.Services
                     var _user = db.Users.FirstOrDefault(x => x.Username == username);
                     if (_user != null && Regex.Unescape(_user.Password) == password)
                     {
-                        var userRole = db.UserRoles.FirstOrDefault(y => y.UserFK == _user.Id);
-                        if (userRole == null)
-                        {
-                            userRole = new UserRole
-                            {
-                                RoleFK = db.Roles.FirstOrDefault(x => x.Name == "Player").Id,
-                                UserFK = _user.Id
-                            };
-                            db.UserRoles.Add(userRole);
-                        }
-
-                        var role = db.Roles.FirstOrDefault(x => x.Id == userRole.RoleFK);
-                        user = new UserDataModel
-                        {
-                            Username = _user.Username,
-                            DisplayName = _user.DisplayName,
-                            Priviledge = role.Priviledge,
-                            Role = role.Id,
-                            UserId = _user.Id
-                        };
+                        user = GetUserData(_user.Id);
                     }
                 }
             }
@@ -48,18 +29,6 @@ namespace DeneirsGate.Services
 
             return user;
         }
-
-        //public UserDataModel GetUser(Guid id)
-        //{
-        //    var user = new UserDataModel();
-        //    using (var db = new DataEntities())
-        //    {
-        //        user = db.Users.Where(x => x.Id == id).Select(x => new UserDataModel
-        //        {
-        //            Priviledge = x.P
-        //        })
-        //    }
-        //}
 
         public List<RoleDataModel> GetDataRoles()
         {
@@ -104,7 +73,8 @@ namespace DeneirsGate.Services
                     DisplayName = model.Username,
                     Email = model.Email,
                     Password = model.Password,
-                    Username = model.Username.ToLower()
+                    Username = model.Username.ToLower(),
+                    Picture = model.Picture
                 };
 
                 db.Users.Add(user);
@@ -115,6 +85,45 @@ namespace DeneirsGate.Services
                 });
                 db.SaveChanges();
             }
+        }
+
+        public UserDataModel GetUserData(string id)
+        {
+            var _id = Guid.Parse(id);
+            return GetUserData(_id);
+        }
+
+        public UserDataModel GetUserData(Guid id)
+        {
+            var user = new UserDataModel();
+            using (var db = new DataEntities())
+            {
+                user = db.Users.Where(x => x.Id == id).Select(x => new UserDataModel
+                {
+                    DisplayName = x.DisplayName,
+                    UserId = id,
+                    Username = x.Username,
+                    Picture = x.Picture
+                }).FirstOrDefault();
+
+                var userRole = db.UserRoles.FirstOrDefault(y => y.UserFK == id);
+                if (userRole == null)
+                {
+                    userRole = new UserRole
+                    {
+                        RoleFK = db.Roles.FirstOrDefault(x => x.Name == "Player").Id,
+                        UserFK = id
+                    };
+                    db.UserRoles.Add(userRole);
+                    db.SaveChangesAsync();
+                }
+
+                var role = db.Roles.FirstOrDefault(x => x.Id == userRole.RoleFK);
+                user.Priviledge = role.Priviledge;
+                user.Role = role.Id;
+            }
+
+            return user;
         }
     }
 }

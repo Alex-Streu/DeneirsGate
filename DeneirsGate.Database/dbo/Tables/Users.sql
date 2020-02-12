@@ -4,6 +4,7 @@
 	[DisplayName] NVARCHAR(50)  NULL,
 	[Password] NVARCHAR (500)   NOT NULL,
 	[Email]    NVARCHAR (100)   NOT NULL,
+	[Picture]  NVARCHAR (100)	NULL
 	PRIMARY KEY CLUSTERED ([Id] ASC)
 );
 

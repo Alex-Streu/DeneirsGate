@@ -11,6 +11,7 @@ namespace MVC_PWx.Controllers
             return View();
         }
 
+        [HasAccess(Priviledge = AppLogic.Priviledge.Admin)]
         public ActionResult About()
         {
             ViewBag.Message = "Your application description page.";

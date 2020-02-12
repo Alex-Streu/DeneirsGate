@@ -42,6 +42,8 @@
         @RenderSection("scripts", required: false)
     </body>
     </html>*@
+@using MVC_PWx.Helpers
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -51,7 +53,7 @@
     <meta name="description" content="">
     <meta name="author" content="Dashboard">
     <meta name="keyword" content="Dashboard, Bootstrap, Admin, Template, Theme, Responsive, Fluid, Retina">
-    <title>Dashio - Bootstrap Admin Template</title>
+    <title>Deneir's Gate</title>
 
     <!-- Favicons -->
     <link href="~/Content/img/favicon.png" rel="icon">
@@ -84,7 +86,7 @@
                     <div class="fa fa-bars tooltips" data-placement="right" data-original-title="Toggle Navigation"></div>
                 </div>
                 <!--logo start-->
-                <a href="index.html" class="logo"><b>DASH<span>IO</span></b></a>
+                <a href="index.html" class="logo"><b>DENEIR'S <span>GATE</span></b></a>
                 <!--logo end-->
                 <div class="nav notify-row" id="top_menu">
                     <!--  notification start -->
@@ -286,8 +288,8 @@
                 <div id="sidebar" class="nav-collapse ">
                     <!-- sidebar menu start-->
                     <ul class="sidebar-menu" id="nav-accordion">
-                        <p class="centered"><a href="profile.html"><img src="~/Content/img/ui-sam.jpg" class="img-circle" width="80"></a></p>
-                        <h5 class="centered">Sam Soffes</h5>
+                        <p class="centered"><a href="profile.html"><img src="@AppLogic.GetUser().Picture" class="img-circle" width="80"></a></p>
+                        <h5 class="centered">@AppLogic.GetUser().DisplayName</h5>
                         <li class="mt">
                             <a class="active" href="index.html">
                                 <i class="fa fa-dashboard"></i>

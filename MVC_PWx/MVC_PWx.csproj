@@ -181,6 +181,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Helpers\AppLogic.cs" />
+    <Compile Include="Helpers\Attributes.cs" />
     <Compile Include="Helpers\StringCipher.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\IdentityModels.cs" />
@@ -202,6 +203,12 @@
     <Content Include="Content\img\404.png" />
     <Content Include="Content\img\500.png" />
     <Content Include="Content\img\apple-touch-icon.png" />
+    <Content Include="Content\img\avatars\girl-nerd.jpg" />
+    <Content Include="Content\img\avatars\boy-geek.jpg" />
+    <Content Include="Content\img\avatars\girl-bun.jpg" />
+    <Content Include="Content\img\avatars\girl-goth.jpg" />
+    <Content Include="Content\img\avatars\boy-combover.jpg" />
+    <Content Include="Content\img\avatars\girl-bangs.jpg" />
     <Content Include="Content\img\blog-bg.jpg" />
     <Content Include="Content\img\checkbox-gray.png" />
     <Content Include="Content\img\favicon.png" />
