@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeneirsGate.Data", "Deneirs
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeneirsGate.Services", "DeneirsGate.Services\DeneirsGate.Services.csproj", "{AB815EBB-98F6-4F31-97DD-111D805558F8}"
 EndProject
+Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "DeneirsGate.Database", "DeneirsGate.Database\DeneirsGate.Database.sqlproj", "{6A1D0529-5C36-4F98-9A63-75A9F2FB4111}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,12 @@ Global
 		{AB815EBB-98F6-4F31-97DD-111D805558F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AB815EBB-98F6-4F31-97DD-111D805558F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AB815EBB-98F6-4F31-97DD-111D805558F8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6A1D0529-5C36-4F98-9A63-75A9F2FB4111}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6A1D0529-5C36-4F98-9A63-75A9F2FB4111}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6A1D0529-5C36-4F98-9A63-75A9F2FB4111}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{6A1D0529-5C36-4F98-9A63-75A9F2FB4111}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6A1D0529-5C36-4F98-9A63-75A9F2FB4111}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6A1D0529-5C36-4F98-9A63-75A9F2FB4111}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

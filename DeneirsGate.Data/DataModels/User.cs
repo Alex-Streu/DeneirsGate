@@ -13,6 +13,9 @@ namespace DeneirsGate.Data
         [Required]
         [StringLength(50)]
         public string Username { get; set; }
+        
+        [StringLength(50)]
+        public string DisplayName { get; set; }
 
         [Required]
         [StringLength(500)]

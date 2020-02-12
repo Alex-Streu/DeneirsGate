@@ -10,6 +10,7 @@ using DeneirsGate.Services;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
+using MVC_PWx.Helpers;
 using MVC_PWx.Models;
 
 namespace MVC_PWx.Controllers
@@ -77,10 +78,12 @@ namespace MVC_PWx.Controllers
             {
                 return View(model);
             }
-
-            if (authSvc.Authenticate(model.Email, model.Password))
+            
+            var user = authSvc.Authenticate(model.Email.ToLower(), AppLogic.EncryptPassword(model.Password));
+            if (user != null)
             {
-                FormsAuthentication.SetAuthCookie(model.Email, model.RememberMe);
+                FormsAuthentication.SetAuthCookie(user.UserId.ToString(), model.RememberMe);
+                AppLogic.SetUser(user);
                 return RedirectToLocal(returnUrl);
             }
 
