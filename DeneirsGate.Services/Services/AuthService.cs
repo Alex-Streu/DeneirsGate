@@ -39,7 +39,6 @@ namespace DeneirsGate.Services
                             UserId = _user.Id
                         };
                     }
-                    else { }
                 }
             }
             catch (Exception ex)
@@ -62,7 +61,7 @@ namespace DeneirsGate.Services
         //    }
         //}
 
-        public List<RoleDataModel> GetRoles()
+        public List<RoleDataModel> GetDataRoles()
         {
             var roles = new List<RoleDataModel>();
 
@@ -77,6 +76,45 @@ namespace DeneirsGate.Services
             }
 
             return roles;
+        }
+
+        public List<RoleViewModel> GetRoles()
+        {
+            var roles = new List<RoleViewModel>();
+            using (var db = new DataEntities())
+            {
+                roles = db.Roles.Where(x => x.Name != "Admin").Select(x => new RoleViewModel
+                {
+                    Id = x.Id,
+                    Name = x.Name,
+                    Priviledge = x.Priviledge
+                }).OrderBy(x => x.Priviledge).ToList();
+            }
+
+            return roles;
+        }
+
+        public void AddUser(RegisterViewModel model)
+        {
+            using (var db = new DataEntities())
+            {
+                var user = new User
+                {
+                    Id = Guid.NewGuid(),
+                    DisplayName = model.Username,
+                    Email = model.Email,
+                    Password = model.Password,
+                    Username = model.Username.ToLower()
+                };
+
+                db.Users.Add(user);
+                db.UserRoles.Add(new UserRole
+                {
+                    RoleFK = model.Role,
+                    UserFK = user.Id
+                });
+                db.SaveChanges();
+            }
         }
     }
 }

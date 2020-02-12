@@ -22,16 +22,21 @@ namespace MVC_PWx.Controllers
         private ApplicationUserManager _userManager;
         private AuthService authSvc;
 
-        public AccountController()
+        private void Initialize()
         {
             authSvc = new AuthService();
+        }
+
+        public AccountController()
+        {
+            Initialize();
         }
 
         public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager )
         {
             UserManager = userManager;
             SignInManager = signInManager;
-            authSvc = new AuthService();
+            Initialize();
         }
 
         public ApplicationSignInManager SignInManager
@@ -168,6 +173,7 @@ namespace MVC_PWx.Controllers
         [AllowAnonymous]
         public ActionResult Register()
         {
+            ViewBag.Role = authSvc.GetRoles();
             return View();
         }
 
@@ -178,37 +184,49 @@ namespace MVC_PWx.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Register(RegisterViewModel model)
         {
-            if (ModelState.IsValid)
+            try
             {
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
-                var result = await UserManager.CreateAsync(user, model.Password);
-                if (result.Succeeded)
+                if (ModelState.IsValid)
                 {
-                    //  Comment the following line to prevent log in until the user is confirmed.
-                    // await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
+                    //var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
+                    //var result = await UserManager.CreateAsync(user, model.Password);
+                    //if (result.Succeeded)
+                    //{
+                    //    //  Comment the following line to prevent log in until the user is confirmed.
+                    //    // await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
 
-                    string callbackUrl = await SendEmailConfirmationTokenAsync(user.Id, "Confirm your account");
+                    //    string callbackUrl = await SendEmailConfirmationTokenAsync(user.Id, "Confirm your account");
 
-                    // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=320771
-                    // Send an email with this link
-                    // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
-                    // var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-                    // await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
+                    //    // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=320771
+                    //    // Send an email with this link
+                    //    // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
+                    //    // var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
+                    //    // await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
 
-                    //string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
-                    //var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-                    //await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
+                    //    //string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
+                    //    //var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
+                    //    //await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
 
-                    // Uncomment to debug locally 
-                    // TempData["ViewBagLink"] = callbackUrl;
+                    //    // Uncomment to debug locally 
+                    //    // TempData["ViewBagLink"] = callbackUrl;
 
-                    ViewBag.Message = "Check your email and confirm your account, you must be confirmed "
-                                    + "before you can log in.";
+                    //    ViewBag.Message = "Check your email and confirm your account, you must be confirmed "
+                    //                    + "before you can log in.";
 
-                    return View("Info");
-                    //return RedirectToAction("Index", "Home");
+                    //    return View("Info");
+                    //    //return RedirectToAction("Index", "Home");
+                    //}
+                    //AddErrors(result);
+
+                    model.Password = AppLogic.EncryptPassword(model.Password);
+                    authSvc.AddUser(model);
+
+                    return RedirectToAction("Login");
                 }
-                AddErrors(result);
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", ex);
             }
 
             // If we got this far, something failed, redisplay form
