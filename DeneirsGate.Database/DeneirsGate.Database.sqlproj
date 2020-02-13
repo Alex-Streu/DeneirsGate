@@ -84,4 +84,7 @@
   <ItemGroup>
     <None Include="DeneirsGate.Database.LOCAL.publish.xml" />
   </ItemGroup>
+  <ItemGroup>
+    <RefactorLog Include="DeneirsGate.Database.refactorlog" />
+  </ItemGroup>
 </Project>

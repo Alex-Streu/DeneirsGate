@@ -1,10 +1,8 @@
 namespace DeneirsGate.Data
 {
     using System;
-    using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
-    using System.Data.Entity.Spatial;
 
     [Table("CharacterInfos")]
     public partial class CharacterInfo
@@ -18,16 +16,21 @@ namespace DeneirsGate.Data
         [StringLength(50)]
         public string LastName { get; set; }
 
+        [StringLength(250)]
         public string PortraitUrl { get; set; }
 
         public Guid RaceKey { get; set; }
 
         public Guid ClassKey { get; set; }
 
-        public int Level { get; set; }
-
         public Guid BackgroundKey { get; set; }
 
-        public string Bio { get; set; }
+        [StringLength(250)]
+        public string Fears { get; set; }
+
+        [StringLength(250)]
+        public string Ideals { get; set; }
+
+        public string Backstory { get; set; }
     }
 }
