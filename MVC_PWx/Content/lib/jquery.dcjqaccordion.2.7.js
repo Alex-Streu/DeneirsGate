@@ -11,7 +11,6 @@
 (function($){
 
 	$.fn.dcAccordion = function(options) {
-
 		//set default options 
 		var defaults = {
 			classParent	 : 'dcjq-parent',

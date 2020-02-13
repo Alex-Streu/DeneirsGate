@@ -71,6 +71,7 @@
     <script src="~/Content/lib/chart-master/Chart.js"></script>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
+    @{ var UserData = AppLogic.GetUser(); }
 </head>
 
 <body>
@@ -288,12 +289,18 @@
                 <div id="sidebar" class="nav-collapse ">
                     <!-- sidebar menu start-->
                     <ul class="sidebar-menu" id="nav-accordion">
-                        <p class="centered"><a href="profile.html"><img src="@AppLogic.GetUser().Picture" class="img-circle" width="80"></a></p>
-                        <h5 class="centered">@AppLogic.GetUser().DisplayName</h5>
+                        <p class="centered"><a href="profile.html"><img src="@UserData.Picture" class="img-circle" width="80"></a></p>
+                        <h5 class="centered">@UserData.DisplayName</h5>
                         <li class="mt">
-                            <a class="active" href="index.html">
+                            <a href="@Url.Action("/", "Home")">
                                 <i class="fa fa-dashboard"></i>
                                 <span>Dashboard</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("/", "Campaign")">
+                                <i class="fa fa-compass"></i>
+                                <span>Campaigns</span>
                             </a>
                         </li>
                         <li class="sub-menu">
@@ -409,7 +416,9 @@
             *********************************************************************************************************************************************************** -->
         <!--main content start-->
         <section id="main-content">
-            @RenderBody()
+            <div class="body-content">
+                @RenderBody()
+            </div>
         </section>
         <!--main content end-->
         <!--footer start-->
@@ -431,40 +440,40 @@
         </footer>
         <!--footer end-->
     </section>
-    <!-- js placed at the end of the document so the pages load faster -->
-    <script src="~/Content/lib/jquery/jquery.min.js"></script>
-
-    <script src="~/Content/lib/bootstrap/js/bootstrap.min.js"></script>
-    <script class="include" type="text/javascript" src="~/Content/lib/jquery.dcjqaccordion.2.7.js"></script>
-    <script src="~/Content/lib/jquery.scrollTo.min.js"></script>
-    <script src="~/Content/lib/jquery.nicescroll.js" type="text/javascript"></script>
-    <script src="~/Content/lib/jquery.sparkline.js"></script>
-    <!--common script for all pages-->
-    <script src="~/Content/lib/common-scripts.js"></script>
-    <script type="text/javascript" src="~/Content/lib/gritter/js/jquery.gritter.js"></script>
-    <script type="text/javascript" src="~/Content/lib/gritter-conf.js"></script>
-    <!--script for this page-->
-    <script src="~/Content/lib/sparkline-chart.js"></script>
-    <script src="~/Content/lib/zabuto_calendar.js"></script>
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/extensions")
+    @Scripts.Render("~/bundles/charts")
+    @Scripts.Render("~/bundles/common")
     <script type="text/javascript">
+        var url = '@Request.Path';
+
         $(document).ready(function () {
-            var unique_id = $.gritter.add({
-                // (string | mandatory) the heading of the notification
-                title: 'Welcome to Dashio!',
-                // (string | mandatory) the text inside the notification
-                text: 'Hover me to enable the Close Button. You can hide the left sidebar clicking on the button next to the logo.',
-                // (string | optional) the image to display on the left
-                image: 'img/ui-sam.jpg',
-                // (bool | optional) if you want it to fade out on its own or just sit there
-                sticky: false,
-                // (int | optional) the time you want it to be alive for before fading out
-                time: 8000,
-                // (string | optional) the class name you want to apply to that specific message
-                class_name: 'my-sticky-class'
-            });
+            //var unique_id = $.gritter.add({
+            //    // (string | mandatory) the heading of the notification
+            //    title: 'Welcome to Deneir\'s Gate!',
+            //    // (string | mandatory) the text inside the notification
+            //    text: 'Hover me to enable the Close Button. You can hide the left sidebar clicking on the button next to the logo.',
+            //    // (string | optional) the image to display on the left
+            //    image: 'img/ui-sam.jpg',
+            //    // (bool | optional) if you want it to fade out on its own or just sit there
+            //    sticky: false,
+            //    // (int | optional) the time you want it to be alive for before fading out
+            //    time: 8000,
+            //    // (string | optional) the class name you want to apply to that specific message
+            //    class_name: 'my-sticky-class'
+            //});
 
             return false;
         });
+
+        $('#nav-accordion li a').each(function () {
+            if (url.indexOf($(this).attr('href')) > -1) {
+                $('#nav-accordion li a.active').removeClass('active');
+                $(this).addClass('active'); 
+            }
+        })
+
     </script>
     <script type="application/javascript">
         $(document).ready(function() {
@@ -508,8 +517,6 @@
           console.log('nav ' + nav + ' to: ' + to.month + '/' + to.year);
         }
     </script>
-    @Scripts.Render("~/bundles/jquery")
-    @Scripts.Render("~/bundles/bootstrap")
     @RenderSection("scripts", required: false)
 </body>
 

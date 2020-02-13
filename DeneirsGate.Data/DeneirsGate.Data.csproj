@@ -58,11 +58,13 @@
     <Compile Include="DataModels\AspNetUserClaim.cs" />
     <Compile Include="DataModels\AspNetUserLogin.cs" />
     <Compile Include="DataModels\Background.cs" />
+    <Compile Include="DataModels\Campaign.cs" />
     <Compile Include="DataModels\CharacterInfo.cs" />
     <Compile Include="DataModels\Class.cs" />
     <Compile Include="DataModels\C__MigrationHistory.cs" />
     <Compile Include="DataModels\C__RefactorLog.cs" />
     <Compile Include="DataEntities.cs" />
+    <Compile Include="DataModels\UserCampaign.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="DataModels\Race.cs" />
     <Compile Include="DataModels\Role.cs" />

@@ -18,6 +18,9 @@ namespace DeneirsGate.Services
                     var _user = db.Users.FirstOrDefault(x => x.Username == username);
                     if (_user != null && Regex.Unescape(_user.Password) == password)
                     {
+                        _user.LastLogin = DateTime.Now;
+                        db.SaveChanges();
+
                         user = GetUserData(_user.Id);
                     }
                 }
@@ -103,7 +106,8 @@ namespace DeneirsGate.Services
                     DisplayName = x.DisplayName,
                     UserId = id,
                     Username = x.Username,
-                    Picture = x.Picture
+                    Picture = x.Picture,
+                    Email = x.Email
                 }).FirstOrDefault();
 
                 var userRole = db.UserRoles.FirstOrDefault(y => y.UserFK == id);

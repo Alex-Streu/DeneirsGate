@@ -7,6 +7,8 @@
 .body-content {
     padding-left: 15px;
     padding-right: 15px;
+    padding-top: 75px;
+    padding-bottom: 75px;
 }
 
 /* Override the default bootstrap behavior where horizontal description lists 
@@ -14,6 +16,12 @@
 */
 .dl-horizontal dt {
     white-space: normal;
+}
+
+/* Flexbox */
+.flex-break {
+    width: 100%;
+    height: 0;
 }
 
 /* Set width on the form input elements since they're 100% wide by default */
@@ -52,4 +60,52 @@ textarea {
         cursor: pointer;
         border: 3px solid #ce0606;
         border-radius: 10px;
+    }
+
+.campaign-list-item {
+    padding: 3em;
+    margin: 2em auto;
+    display: flex;
+    flex-wrap: wrap;
+    border-radius: 5px;
+    width: 90%;
+    background-color: #f3f3f3;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.2);
+    transition: all 200ms ease-out;
+}
+
+    .campaign-list-item .campaign-info {
+        width: 70%;
+    }
+
+        .campaign-list-item .campaign-info .name {
+            font-size: 48px;
+            border-bottom: 3px solid #ce0606;
+        }
+
+        .campaign-list-item .campaign-info .description {
+            font-size: large;
+            padding-top: 1em;
+        }
+
+    .campaign-list-item .date {
+        font-size: small;
+        align-self: flex-end;
+        flex-grow: 1;
+    }
+
+    .campaign-list-item .portrait {
+        width: 30%;
+    }
+
+        .campaign-list-item .portrait img {
+            height: 15em;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+    .campaign-list-item:hover {
+        cursor: pointer;
+        box-shadow: 0 0 6px rgba(220, 57, 18, 1);
     }

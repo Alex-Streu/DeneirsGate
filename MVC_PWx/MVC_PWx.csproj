@@ -175,6 +175,8 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\CampaignController.cs" />
+    <Compile Include="Controllers\DeneirsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Global.asax.cs">
@@ -182,6 +184,7 @@
     </Compile>
     <Compile Include="Helpers\AppLogic.cs" />
     <Compile Include="Helpers\Attributes.cs" />
+    <Compile Include="Helpers\CustomHtmlHelpers.cs" />
     <Compile Include="Helpers\StringCipher.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\IdentityModels.cs" />
@@ -210,6 +213,7 @@
     <Content Include="Content\img\avatars\boy-combover.jpg" />
     <Content Include="Content\img\avatars\girl-bangs.jpg" />
     <Content Include="Content\img\blog-bg.jpg" />
+    <Content Include="Content\img\campaigns\campaign-default.png" />
     <Content Include="Content\img\checkbox-gray.png" />
     <Content Include="Content\img\favicon.png" />
     <Content Include="Content\img\friends\fr-01.jpg" />
@@ -429,9 +433,12 @@
     <Content Include="Views\Shared\Lockout.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
     <Content Include="Views\Shared\Info.cshtml" />
+    <Content Include="Views\Campaign\Index.cshtml" />
+    <Content Include="Views\Campaign\Dashboard.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Views\Deneirs\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />

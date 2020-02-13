@@ -16,27 +16,20 @@ using MVC_PWx.Models;
 namespace MVC_PWx.Controllers
 {
     [Authorize]
-    public class AccountController : Controller
+    public class AccountController : DeneirsController
     {
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
-        private AuthService authSvc;
-
-        private void Initialize()
-        {
-            authSvc = new AuthService();
-        }
 
         public AccountController()
         {
-            Initialize();
+
         }
 
         public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager )
         {
             UserManager = userManager;
             SignInManager = signInManager;
-            Initialize();
         }
 
         public ApplicationSignInManager SignInManager
@@ -86,7 +79,7 @@ namespace MVC_PWx.Controllers
                 return View(model);
             }
             
-            var user = authSvc.Authenticate(model.Username.ToLower(), AppLogic.EncryptPassword(model.Password));
+            var user = AuthSvc.Authenticate(model.Username.ToLower(), AppLogic.EncryptPassword(model.Password));
             if (user != null)
             {
                 FormsAuthentication.SetAuthCookie(user.UserId.ToString(), model.RememberMe);
@@ -177,7 +170,7 @@ namespace MVC_PWx.Controllers
         [AnonymousOnly]
         public ActionResult Register()
         {
-            ViewBag.Role = authSvc.GetRoles();
+            ViewBag.Role = AuthSvc.GetRoles();
             return View();
         }
 
@@ -224,7 +217,7 @@ namespace MVC_PWx.Controllers
                     //AddErrors(result);
 
                     model.Password = AppLogic.EncryptPassword(model.Password);
-                    authSvc.AddUser(model);
+                    AuthSvc.AddUser(model);
 
                     return RedirectToAction("Login");
                 }

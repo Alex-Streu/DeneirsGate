@@ -26,6 +26,21 @@ namespace MVC_PWx
                       "~/Content/bootstrap.css",
                       "~/Content/site.css",
                       "~/Content/css/style.css"));
+
+            bundles.Add(new StyleBundle("~/bundles/extensions").Include(
+                        "~/Content/lib/jquery.dcjqaccordion.2.7.js",
+                        "~/Content/lib/jquery.scrollTo.min.js",
+                        "~/Content/lib/jquery.nicescroll.js",
+                        "~/Content/lib/jquery.sparkline.js",
+                        "~/Content/lib/gritter/js/jquery.gritter.js",
+                        "~/Content/lib/gritter-conf.js"));
+
+            bundles.Add(new StyleBundle("~/bundles/charts").Include(
+                      "~/Content/lib/sparkline-chart.js",
+                      "~/Content/lib/zabuto_calendar.js"));
+
+            bundles.Add(new StyleBundle("~/bundles/common").Include(
+                      "~/Content/lib/common-scripts.js"));
         }
     }
 }
