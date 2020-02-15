@@ -59,6 +59,7 @@
     <Compile Include="DataModels\AspNetUserLogin.cs" />
     <Compile Include="DataModels\Background.cs" />
     <Compile Include="DataModels\Campaign.cs" />
+    <Compile Include="DataModels\CampaignCharacterLinker.cs" />
     <Compile Include="DataModels\CharacterInfo.cs" />
     <Compile Include="DataModels\Class.cs" />
     <Compile Include="DataModels\C__MigrationHistory.cs" />

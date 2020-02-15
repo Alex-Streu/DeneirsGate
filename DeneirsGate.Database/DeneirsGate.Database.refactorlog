@@ -21,4 +21,11 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="Backstory" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="c70878e4-b5c4-4a0d-9ae5-5c0c414f849f" ChangeDateTime="02/15/2020 08:35:28">
+    <Property Name="ElementName" Value="[dbo].[CampaignCharacterLinkers].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[CampaignCharacterLinkers]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="CampaignKey" />
+  </Operation>
 </Operations>

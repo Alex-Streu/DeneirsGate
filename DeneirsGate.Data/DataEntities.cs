@@ -1,9 +1,6 @@
 namespace DeneirsGate.Data
 {
-    using System;
     using System.Data.Entity;
-    using System.ComponentModel.DataAnnotations.Schema;
-    using System.Linq;
 
     public partial class DataEntities : DbContext
     {
@@ -18,10 +15,6 @@ namespace DeneirsGate.Data
         public virtual DbSet<AspNetUserClaim> AspNetUserClaims { get; set; }
         public virtual DbSet<AspNetUserLogin> AspNetUserLogins { get; set; }
         public virtual DbSet<AspNetUser> AspNetUsers { get; set; }
-        public virtual DbSet<Background> Backgrounds { get; set; }
-        public virtual DbSet<CharacterInfo> CharacterInfos { get; set; }
-        public virtual DbSet<Class> Classes { get; set; }
-        public virtual DbSet<Race> Races { get; set; }
         public virtual DbSet<Role> Roles { get; set; }
         public virtual DbSet<UserRole> UserRoles { get; set; }
         public virtual DbSet<User> Users { get; set; }
@@ -30,6 +23,16 @@ namespace DeneirsGate.Data
         
         public virtual DbSet<Campaign> Campaigns { get; set; }
         public virtual DbSet<UserCampaign> UserCampaigns { get; set; }
+
+        #endregion
+
+        #region Characters
+
+        public virtual DbSet<CampaignCharacterLinker> CampaignCharacterLinkers { get; set; }
+        public virtual DbSet<Background> Backgrounds { get; set; }
+        public virtual DbSet<CharacterInfo> CharacterInfos { get; set; }
+        public virtual DbSet<Class> Classes { get; set; }
+        public virtual DbSet<Race> Races { get; set; }
 
         #endregion
 
