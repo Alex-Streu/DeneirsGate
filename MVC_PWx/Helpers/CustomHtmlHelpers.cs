@@ -19,5 +19,11 @@ namespace CustomHtmlHelpers
             var str = date.ToString("M/d/yyyy H:mm tt");
             return new MvcHtmlString(str);
         }
+
+        public static string LoadFavicon(string file)
+        {
+            var path = "~\\Content\\img\\icos\\";
+            return path + file;
+        }
     }
 }
