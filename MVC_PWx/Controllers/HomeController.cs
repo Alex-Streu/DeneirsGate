@@ -4,13 +4,13 @@ using System.Web.Mvc;
 namespace MVC_PWx.Controllers
 {
     [Authorize]
-    public class HomeController : Controller
+    public class HomeController : DeneirsController
     {
         public ActionResult Index()
         {
             return View();
         }
-
+        
         public ActionResult About()
         {
             ViewBag.Message = "Your application description page.";

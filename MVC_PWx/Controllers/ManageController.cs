@@ -11,7 +11,7 @@ using MVC_PWx.Models;
 namespace MVC_PWx.Controllers
 {
     [Authorize]
-    public class ManageController : Controller
+    public class ManageController : DeneirsController
     {
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;

@@ -37,7 +37,10 @@ namespace MVC_PWx.Helpers
 
         public static UserDataModel GetUser()
         {
-            var str = StringCipher.Decrypt(HttpContext.Current.Cache["User"].ToString(), passphrase);
+            var cache = HttpContext.Current.Cache["User"];
+            if (cache == null) { return null; }
+
+            var str = StringCipher.Decrypt(cache.ToString(), passphrase);
             var user = Json.Decode<UserDataModel>(str);
 
             return user;

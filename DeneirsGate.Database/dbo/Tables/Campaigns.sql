@@ -1,0 +1,8 @@
+﻿CREATE TABLE [dbo].[Campaigns]
+(
+	[CampaignKey] UNIQUEIDENTIFIER NOT NULL PRIMARY KEY, 
+    [Name] NVARCHAR(50) NOT NULL, 
+    [Description] NVARCHAR(250) NULL, 
+    [Portrait] NVARCHAR(200) NULL, 
+    [LastUpdated] DATETIME NOT NULL DEFAULT GETDATE()
+)

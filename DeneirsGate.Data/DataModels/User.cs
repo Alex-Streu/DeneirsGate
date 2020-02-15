@@ -1,10 +1,7 @@
 namespace DeneirsGate.Data
 {
     using System;
-    using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
-    using System.ComponentModel.DataAnnotations.Schema;
-    using System.Data.Entity.Spatial;
 
     public partial class User
     {
@@ -27,5 +24,7 @@ namespace DeneirsGate.Data
 
         [StringLength(100)]
         public string Picture { get; set; }
+
+        public DateTime LastLogin { get; set; }
     }
 }

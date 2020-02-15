@@ -1,0 +1,32 @@
+﻿@using DeneirsGate.Services
+@using CustomHtmlHelpers
+@model List<CampaignViewModel>  
+
+@{
+    ViewBag.Title = "My Campaigns";
+}
+
+@foreach (var item in Model)
+{
+    <div class="campaign-list-item" data-id="@item.CampaignKey">
+        <div class="campaign-info">
+            <div class="name">@item.Name</div>
+            <div class="description">@item.Description</div>
+        </div>
+        <div class="portrait">
+            <img class="img-responsive" src="@Url.Content(HtmlHelpers.CampaignPortrait(item.Portrait))" />
+        </div>
+        <div class="flex-break"></div>
+        <div class="date">Last Updated: @HtmlHelpers.RenderDateTime(item.LastUpdated)</div>
+    </div>
+}
+
+@section scripts {
+    <script type="text/javascript">
+        var dashboardUrl = '@Url.Action("Dashboard")';
+
+        $('.campaign-list-item').click(function () {
+            window.location.assign(`${dashboardUrl}/${$(this).data('id')}`)
+        });
+    </script>
+}

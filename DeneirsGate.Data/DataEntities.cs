@@ -26,6 +26,13 @@ namespace DeneirsGate.Data
         public virtual DbSet<UserRole> UserRoles { get; set; }
         public virtual DbSet<User> Users { get; set; }
 
+        #region Campaigns
+        
+        public virtual DbSet<Campaign> Campaigns { get; set; }
+        public virtual DbSet<UserCampaign> UserCampaigns { get; set; }
+
+        #endregion
+
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             modelBuilder.Entity<AspNetRole>()
