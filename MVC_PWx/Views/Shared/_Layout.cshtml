@@ -264,7 +264,7 @@
                         <p class="centered"><a href="profile.html"><img src="@UserData.Picture" class="img-circle" width="80"></a></p>
                         <h5 class="centered">@UserData.DisplayName</h5>
                         <li class="mt">
-                            <a href="@Url.Action("/", "Home")">
+                            <a data-alt="/" href="@Url.Action("/", "Home")">
                                 <i class="fa fa-dashboard"></i>
                                 <span>Dashboard</span>
                             </a>
@@ -440,7 +440,8 @@
         });
 
         $('#nav-accordion li a').each(function () {
-            if (url.indexOf($(this).attr('href')) > -1) {
+            console.log($(this).data('alt'))
+            if (url.indexOf($(this).attr('href')) > -1 || url.indexOf($(this).data('alt')) > -1) {
                 $('#nav-accordion li a.active').removeClass('active');
                 $(this).addClass('active'); 
             }
