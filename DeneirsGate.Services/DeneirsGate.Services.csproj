@@ -51,13 +51,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="HelperModels\ModelAttributes.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\BackgroundViewModel.cs" />
     <Compile Include="Models\CampaignViewModel.cs" />
+    <Compile Include="Models\ClassViewModel.cs" />
+    <Compile Include="Models\PlayerViewModel.cs" />
+    <Compile Include="Models\RaceViewModel.cs" />
     <Compile Include="Models\RoleViewModel.cs" />
     <Compile Include="Models\UserDataModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\AuthService.cs" />
     <Compile Include="Services\CampaignService.cs" />
+    <Compile Include="Services\DeneirsService.cs" />
+    <Compile Include="Services\PresetService.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DeneirsGate.Data\DeneirsGate.Data.csproj">

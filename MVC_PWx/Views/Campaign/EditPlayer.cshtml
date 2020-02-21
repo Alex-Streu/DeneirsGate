@@ -1,0 +1,227 @@
+﻿@using DeneirsGate.Services
+@using CustomHtmlHelpers
+@model PlayerViewModel
+
+@{
+    ViewBag.Title = "Player Sheet";
+}
+
+<h2>Player Sheet</h2>
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+<div class="form-horizontal player-sheet">
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    @Html.HiddenFor(model => model.PlayerKey)
+    @Html.HiddenFor(model => model.CharacterKey)
+    @Html.HiddenFor(model => model.CampaignKey)
+
+
+    <div class="top-info">
+        @Url.RenderImageUpload("Portrait", Model.Portrait, Model.CampaignKey, Model.CharacterKey);
+
+        @HtmlHelpers.RenderFancyTextbox("lg", "FirstName", 50, Model.FirstName, "First Name", Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "text-danger" }))
+
+        @HtmlHelpers.RenderFancyTextbox("lg", "LastName", 50, Model.LastName, "Last Name", Html.ValidationMessageFor(model => model.LastName, "", new { @class = "text-danger" }))
+
+        @HtmlHelpers.RenderFancyNumberbox(1, 20, "xlg short center", "Level", Model.Level.ToString(), "Level", Html.ValidationMessageFor(model => model.Level, "", new { @class = "text-danger" }))
+
+    </div>
+    <div class="content-area">
+        <div class="attributes">
+            <div class="attribute">
+                <label class="attr-label">Strength</label>
+                @HtmlHelpers.RenderFancyNumberbox(1, 30, "lg attr-stat center", "Strength", Model.Strength.ToString(), null, Html.ValidationMessageFor(model => model.Strength, "", new { @class = "text-danger" }))
+                <label class="attr-mod">+0</label>
+            </div>
+            <div class="attribute">
+                <label class="attr-label">Dexterity</label>
+                @HtmlHelpers.RenderFancyNumberbox(1, 30, "lg attr-stat center", "Dexterity", Model.Dexterity.ToString(), null, Html.ValidationMessageFor(model => model.Dexterity, "", new { @class = "text-danger" }))
+                <label class="attr-mod">+0</label>
+            </div>
+            <div class="attribute">
+                <label class="attr-label">Constitution</label>
+                @HtmlHelpers.RenderFancyNumberbox(1, 30, "lg attr-stat center", "Constitution", Model.Constitution.ToString(), null, Html.ValidationMessageFor(model => model.Constitution, "", new { @class = "text-danger" }))
+                <label class="attr-mod">+0</label>
+            </div>
+            <div class="attribute">
+                <label class="attr-label">Intelligence</label>
+                @HtmlHelpers.RenderFancyNumberbox(1, 30, "lg attr-stat center", "Intelligence", Model.Intelligence.ToString(), null, Html.ValidationMessageFor(model => model.Intelligence, "", new { @class = "text-danger" }))
+                <label class="attr-mod">+0</label>
+            </div>
+            <div class="attribute">
+                <label class="attr-label">Wisdom</label>
+                @HtmlHelpers.RenderFancyNumberbox(1, 30, "lg attr-stat center", "Wisdom", Model.Wisdom.ToString(), null, Html.ValidationMessageFor(model => model.Wisdom, "", new { @class = "text-danger" }))
+                <label class="attr-mod">+0</label>
+            </div>
+            <div class="attribute">
+                <label class="attr-label">Charisma</label>
+                @HtmlHelpers.RenderFancyNumberbox(1, 30, "lg attr-stat center", "Charisma", Model.Charisma.ToString(), null, Html.ValidationMessageFor(model => model.Charisma, "", new { @class = "text-danger" }))
+                <label class="attr-mod">+0</label>
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="background">
+                <div class="fancy-dropdown">
+                    @Html.LabelFor(model => model.RaceKey, htmlAttributes: new { @class = "control-label" })
+                    @Html.DropDownListFor(model => model.RaceKey, HtmlHelpers.RaceDropdown(Model.RaceKey), new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.RaceKey, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="fancy-dropdown">
+                    @Html.LabelFor(model => model.ClassKey, htmlAttributes: new { @class = "control-label" })
+                    @Html.DropDownListFor(model => model.ClassKey, HtmlHelpers.ClassDropdown(Model.ClassKey), new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.ClassKey, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="fancy-dropdown">
+                    @Html.LabelFor(model => model.BackgroundKey, htmlAttributes: new { @class = "control-label" })
+                    @Html.DropDownListFor(model => model.BackgroundKey, HtmlHelpers.BackgroundDropdown(Model.BackgroundKey), new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.BackgroundKey, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="fancy-dropdown">
+                    @Html.LabelFor(model => model.Alignment, htmlAttributes: new { @class = "control-label" })
+                    @Html.DropDownListFor(model => model.Alignment, HtmlHelpers.AlignmentDropdown(Model.Alignment), new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.Alignment, "", new { @class = "text-danger" })
+                </div>
+
+                @HtmlHelpers.RenderFancyNumberbox(1, 1000, "lg center", "MaxHP", Model.MaxHP.ToString(), "Max HP", Html.ValidationMessageFor(model => model.MaxHP, "", new { @class = "text-danger" }))
+            </div>
+
+            <div class="textareas">
+                <div class="ability-status">
+                    @HtmlHelpers.RenderFancyTextarea(null, "Abilities", 500, Model.Abilities, "Abilities", Html.ValidationMessageFor(model => model.Abilities, "", new { @class = "text-danger" }))
+
+                    @HtmlHelpers.RenderFancyTextarea(null, "Status", 500, Model.Status, "Status", Html.ValidationMessageFor(model => model.Status, "", new { @class = "text-danger" }))
+                </div>
+
+                <div class="fear-ideal">
+                    @HtmlHelpers.RenderFancyTextarea(null, "Fears", 500, Model.Fears, "Fears", Html.ValidationMessageFor(model => model.Fears, "", new { @class = "text-danger" }))
+
+                    @HtmlHelpers.RenderFancyTextarea(null, "Ideals", 500, Model.Ideals, "Ideals", Html.ValidationMessageFor(model => model.Ideals, "", new { @class = "text-danger" }))
+
+                    @HtmlHelpers.RenderFancyTextarea(null, "Languages", 500, Model.Languages, "Languages", Html.ValidationMessageFor(model => model.Languages, "", new { @class = "text-danger" }))
+                </div>
+            </div>
+        </div>
+    </div>    
+</div>
+}
+
+<div>
+    <div class="btn btn-default" onclick="save()">Save</div>
+    @Html.ActionLink("Back to Dashboard", "Dashboard", new { id = Model.CampaignKey })
+</div>
+
+@section scripts {
+    <script type="text/javascript">
+        var updatePlayerAction = '@Url.Action("UpdatePlayer")';
+
+        $(document).ready(function () {
+            $('.attribute').each(function () {
+                calculateMod(this);
+            })
+        })
+
+        $('.attr-stat input').blur(function () {
+            forceNumValue(this);
+            calculateMod($(this).parentsUntil('.attribute').parent());
+        })
+
+        $('.attr-stat input').bind('mouseup', function () {
+            calculateMod($(this).parentsUntil('.attribute').parent());
+        });
+
+        $('#Level').blur(function () {
+            forceNumValue(this);
+        });
+
+        $('#MaxHP').blur(function () {
+            forceNumValue(this);
+        });
+
+        function forceNumValue(attr) {
+            var val = $(attr).val();
+            var min = parseInt($(attr).attr('min'));
+            var max = parseInt($(attr).attr('max'));
+            if (val == null || val == '') {
+                val = 1;
+            }
+            val = Math.min(Math.max(val, min), max);
+            $(attr).val(val);
+        }
+
+
+        function calculateMod(attr) {
+            var val = $(attr).find('.attr-stat input').val();
+            if (val % 2 > 0) { val -= 1; }
+
+            var mod = (val - 10) / 2;
+            var result = mod.toString();
+
+            if (mod >= 0) { result = '+' + result; }
+
+            $(attr).find('.attr-mod').text(result);
+        }
+
+        $('.attr-stat input').focus(function () {
+            $(this).parentsUntil('.attributes').parent().addClass('active');
+            $(this).parentsUntil('.attribute').parent().addClass('active');
+        })
+
+        $('.attr-stat input').blur(function () {
+            $(this).parentsUntil('.attributes').parent().removeClass('active');
+            $(this).parentsUntil('.attribute').parent().removeClass('active');
+        })
+
+        function save() {
+            var postData = {
+                PlayerKey: $('#PlayerKey').val(),
+                Level: $('#Level').val(),
+                MaxHP: $('#MaxHP').val(),
+                Strength: $('#Strength').val(),
+                Dexterity: $('#Dexterity').val(),
+                Constitution: $('#Constitution').val(),
+                Intelligence: $('#Intelligence').val(),
+                Wisdom: $('#Wisdom').val(),
+                Charisma: $('#Charisma').val(),
+                Abilities: $('#Abilities').val(),
+                Status: $('#Status').val(),
+                CharacterKey: $('#CharacterKey').val(),
+                FirstName: $('#FirstName').val(),
+                LastName: $('#LastName').val(),
+                Portrait: $('#Portrait').val(),
+                RaceKey: $('#RaceKey').val(),
+                ClassKey: $('#ClassKey').val(),
+                BackgroundKey: $('#BackgroundKey').val(),
+                Fears: $('#Fears').val(),
+                Ideals: $('#Ideals').val(),
+                Backstory: $('#Backstory').val(),
+                CampaignKey: $('#CampaignKey').val(),
+                Languages: $('#Languages').val(),
+                Alignment: $('#Alignment').val()
+            }
+
+            $.ajax({
+                type: "POST",
+                url: updatePlayerAction,
+                data: JSON.stringify(postData),
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data.success) {
+                        uploadImage($('#Portrait').parent().find('.uploader'), 'Characters/' + $('#CharacterKey').val(), $('#Portrait').val());
+                    }
+                },
+                error: function (error) {
+                }
+            })
+        }
+    </script>
+
+}

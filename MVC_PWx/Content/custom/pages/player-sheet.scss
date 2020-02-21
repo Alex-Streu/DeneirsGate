@@ -1,0 +1,125 @@
+﻿$red: #ce0606;
+$lightRed: #ed5565;
+$gray: #797979;
+$red80: rgba(206, 6, 6, 0.80);
+$red60: rgba(206, 6, 6, 0.60);
+$white: #fcfcfc;
+
+.player-sheet {
+    padding: 3em;
+    margin: 2em auto;
+    border-radius: 5px;
+    width: 90%;
+    background-color: #f3f3f3;
+    box-shadow: 2px 2px 5px 4px rgba(0, 0, 0, 0.2);
+
+    .top-info {
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+        width: 100%;
+
+        img {
+            width: 100px;
+            height: 100px;
+            max-width: 100px;
+            max-height: 100px;
+        }
+    }
+
+    .top-info > * {
+        margin: 1em;
+    }
+
+    .content-area {
+        display: flex;
+        margin-top: 1em;
+
+        .attributes {
+            width: 25%;
+            border: 1px solid $gray;
+            display: flex;
+            flex-wrap: wrap;
+            border-radius: 5%;
+            padding: 0.5em;
+            font-size: 24px;
+            background-color: $white;
+            transition: all 0.2s ease-in-out;
+
+            .attribute {
+                width: 100%;
+                display: flex;
+                align-items: baseline;
+
+                .attr-label {
+                    width: 50%;
+                }
+
+                .attr-stat {
+                    width: 25%;
+                }
+
+                .attr-mod {
+                    width: 25%;
+                    text-align: center;
+                }
+            }
+
+            .attribute.active {
+                color: $red;
+            }
+        }
+
+        .attributes.active {
+            border-color: $red80 !important;
+            box-shadow: 0 1px 1px rgba(229, 103, 23, 0.075) inset, 0 0 8px $red60 !important;
+            outline: 0 none !important;
+        }
+
+        .content {
+            width: 75%;
+
+            .background {
+                width: 100%;
+                display: flex;
+                justify-content: space-around;
+                align-items: flex-end;
+
+                .fancy-textbox {
+                    margin-bottom: 0px !important;
+                }
+            }
+
+            .textareas {
+                display: flex;
+                margin: 1em;
+
+                .ability-status {
+                    width: 70%;
+                }
+
+                .fear-ideal {
+                    width: 30%;
+                }
+
+                .ability-status, .fear-ideal {
+                    display: flex;
+                    flex-wrap: wrap;
+
+                    .fancy-textarea {
+                        width: 100%;
+                        margin: 1em;
+                    }
+                }
+
+                .ability-status .fancy-textarea textarea {
+                    height: 200px;
+                }
+
+                .fear-ideal .fancy-textarea textarea {
+                    height: 100px;
+                }
+            }
+        }
+    }
+}

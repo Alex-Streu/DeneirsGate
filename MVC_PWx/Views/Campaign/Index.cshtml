@@ -14,7 +14,7 @@
             <div class="description">@item.Description</div>
         </div>
         <div class="portrait">
-            <img class="img-responsive" src="@Url.Content(HtmlHelpers.CampaignPortrait(item.Portrait))" />
+            <img class="img-responsive" src="@Url.CampaignPortrait(item.CampaignKey, item.Portrait)" />
         </div>
         <div class="flex-break"></div>
         <div class="date">Last Updated: @HtmlHelpers.RenderDateTime(item.LastUpdated)</div>

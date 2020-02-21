@@ -26,11 +26,19 @@ namespace DeneirsGate.Data
 
         #endregion
 
+        #region Players
+
+        public virtual DbSet<Player> Players { get; set; }
+        public virtual DbSet<UserPlayerLinker> UserPlayerLinkers { get; set; }
+        public virtual DbSet<CampaignPlayerLinker> CampaignPlayerLinkers { get; set; }
+
+        #endregion
+
         #region Characters
 
         public virtual DbSet<CampaignCharacterLinker> CampaignCharacterLinkers { get; set; }
         public virtual DbSet<Background> Backgrounds { get; set; }
-        public virtual DbSet<CharacterInfo> CharacterInfos { get; set; }
+        public virtual DbSet<Character> Characters { get; set; }
         public virtual DbSet<Class> Classes { get; set; }
         public virtual DbSet<Race> Races { get; set; }
 

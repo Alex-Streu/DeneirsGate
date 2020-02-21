@@ -1,7 +1,22 @@
-﻿
+﻿@using DeneirsGate.Services
+@using CustomHtmlHelpers
+@model CampaignDashboardViewModel
+
 @{
     ViewBag.Title = "Campaign Dashboard";
 }
 
 <h2>Campaign Dashboard</h2>
 
+<a class="btn btn-primary" href="@Url.Action("CreatePlayer", "Campaign", new { id = Model.CampaignKey })">Add Player</a>
+
+<div class="dashboard-players">
+    @foreach (var item in Model.Players)
+    {
+        <div class='fancy-portrait'>
+            <a href="@Url.Action("EditPlayer", new { id = item.PlayerKey, ownerId = Model.CampaignKey })">
+                <img class='img-xs img-responsive' src='@Url.CharacterPortrait(item.CampaignKey, item.CharacterKey, item.Portrait)' />
+            </a>
+        </div>
+    }
+</div>

@@ -25,6 +25,7 @@ namespace MVC_PWx
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.css",
                       "~/Content/site.css",
+                      "~/Content/Bundled.css",
                       "~/Content/css/style.css"));
 
             bundles.Add(new StyleBundle("~/bundles/extensions").Include(
@@ -40,7 +41,8 @@ namespace MVC_PWx
                       "~/Content/lib/zabuto_calendar.js"));
 
             bundles.Add(new StyleBundle("~/bundles/common").Include(
-                      "~/Content/lib/common-scripts.js"));
+                      "~/Content/lib/common-scripts.js",
+                      "~/Scripts/Site.js"));
         }
     }
 }

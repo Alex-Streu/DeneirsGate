@@ -1,4 +1,7 @@
 ﻿using DeneirsGate.Services;
+using System;
+using System.IO;
+using System.Linq;
 using System.Web;
 using System.Web.Helpers;
 
@@ -14,6 +17,7 @@ namespace MVC_PWx.Helpers
         }
 
         static string passphrase = "TrackerOverweening102076";
+
 
         public static string EncryptPassword(string password)
         {
@@ -45,5 +49,34 @@ namespace MVC_PWx.Helpers
 
             return user;
         }
+
+        #region Content Directories
+
+        public static string GetCampaignContentDir(Guid campaignKey)
+        {
+            return $"~\\Content\\CampaignImages\\campaign-{campaignKey.ToString()}\\";
+        }
+
+        public static string GetCharacterContentDir(Guid campaignKey, Guid characterKey)
+        {
+            return $"{GetCampaignContentDir(campaignKey)}\\Characters\\{characterKey.ToString()}\\";
+        }
+
+        public static string GetIconDir()
+        {
+            return "~\\Content\\img\\icos\\";
+        }
+
+        public static string GetDefaultPortrait()
+        {
+            return "~\\Content\\img\\avatars\\blank-portrait.png";
+        }
+
+        public static string GetDefaultCampaignImage()
+        {
+            return "~\\Content\\img\\campaigns\\campaign-default.png";
+        }
+
+        #endregion
     }
 }

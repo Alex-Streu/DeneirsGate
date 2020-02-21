@@ -4,8 +4,8 @@ namespace DeneirsGate.Data
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
 
-    [Table("CharacterInfos")]
-    public partial class CharacterInfo
+    [Table("Characters")]
+    public partial class Character
     {
         [Key]
         public Guid CharacterKey { get; set; }
@@ -17,7 +17,7 @@ namespace DeneirsGate.Data
         public string LastName { get; set; }
 
         [StringLength(250)]
-        public string PortraitUrl { get; set; }
+        public string Portrait { get; set; }
 
         public Guid RaceKey { get; set; }
 
@@ -32,5 +32,11 @@ namespace DeneirsGate.Data
         public string Ideals { get; set; }
 
         public string Backstory { get; set; }
+
+        [StringLength(250)]
+        public string Languages { get; set; }
+
+        [Required, StringLength(2)]
+        public string Alignment { get; set; }
     }
 }

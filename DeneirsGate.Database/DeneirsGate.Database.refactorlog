@@ -28,4 +28,25 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="CampaignKey" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="9962480a-c0e2-468c-8f40-df74f25cec7d" ChangeDateTime="02/15/2020 10:28:03">
+    <Property Name="ElementName" Value="[dbo].[Players].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[Players]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="PlayerKey" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="04390bda-8d64-474b-bcd0-ce7ab71bfc17" ChangeDateTime="02/15/2020 10:43:44">
+    <Property Name="ElementName" Value="[dbo].[PlayerCharacterLinkers].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[PlayerCharacterLinkers]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="PlayerKey" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="d0554e04-8ea0-490e-aef8-450f379fed92" ChangeDateTime="02/21/2020 07:51:34">
+    <Property Name="ElementName" Value="[dbo].[Characters].[PortraitUrl]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[Characters]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="Portrait" />
+  </Operation>
 </Operations>

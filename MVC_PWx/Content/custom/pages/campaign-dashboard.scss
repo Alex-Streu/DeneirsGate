@@ -1,0 +1,14 @@
+﻿.dashboard-players {
+    display: flex;
+    justify-content: flex-start;
+    flex-wrap: nowrap;
+    align-content: center;
+    margin: 1em;
+
+    .fancy-portrait img {
+        width: 100px;
+        height: 100px;
+        max-width: 100px;
+        max-height: 100px;
+    }
+}
