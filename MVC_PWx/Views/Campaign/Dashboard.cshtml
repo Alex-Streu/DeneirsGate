@@ -17,6 +17,13 @@
             <a href="@Url.Action("EditPlayer", new { id = item.PlayerKey, ownerId = Model.CampaignKey })">
                 <img class='img-xs img-responsive' src='@Url.CharacterPortrait(item.CampaignKey, item.CharacterKey, item.Portrait)' />
             </a>
+            <div class="player-info">
+                <div class="name-level">
+                    <div class="name">@item.FirstName @item.LastName</div>
+                    <div class="level">@item.Level</div>
+                </div>
+                <div class="extra">@item.Race @item.Class</div>
+            </div>
         </div>
     }
 </div>

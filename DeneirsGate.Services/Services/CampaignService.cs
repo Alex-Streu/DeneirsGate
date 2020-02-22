@@ -225,7 +225,9 @@ namespace DeneirsGate.Services
                     PlayerKey = p.PlayerKey,
                     Portrait = x.Portrait,
                     CampaignKey = campaignId,
-                    CharacterKey = cKey.Value
+                    CharacterKey = cKey.Value,
+                    Race = DB.Races.FirstOrDefault(y => y.RaceKey == x.RaceKey).Name,
+                    Class = DB.Classes.FirstOrDefault(y => y.ClassKey == x.ClassKey).Name
                 }).FirstOrDefault();
             }
 

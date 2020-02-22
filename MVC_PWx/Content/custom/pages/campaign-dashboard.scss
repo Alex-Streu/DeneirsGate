@@ -1,14 +1,135 @@
-﻿.dashboard-players {
+﻿$red: #ce0606;
+$lightRed: #ed5565;
+$gray: #797979;
+$red80: rgba(206, 6, 6, 0.80);
+$red60: rgba(206, 6, 6, 0.60);
+$white: #fcfcfc;
+
+.dashboard-players {
     display: flex;
     justify-content: flex-start;
     flex-wrap: nowrap;
     align-content: center;
     margin: 1em;
 
-    .fancy-portrait img {
-        width: 100px;
-        height: 100px;
-        max-width: 100px;
-        max-height: 100px;
+    .fancy-portrait {
+        img {
+            width: 100px;
+            height: 100px;
+            max-width: 100px;
+            max-height: 100px;
+        }
+
+        .player-info {
+            display: none;
+            position: absolute;
+            top: 0px;
+            left: 110px;
+            width: 200px;
+            height: 100px;
+            padding: 15px;
+            background-image: url(/Content/img/campaigns/player-info-background.png);
+            text-shadow: 2px 2px 4px #000000;
+
+            .name-level {
+                display: flex;
+                align-items: center;
+                justify-content: space-around;
+                font-size: large;
+
+                .name {
+                    color: $red;
+                }
+
+                .level {
+                    border-radius: 50%;
+                    border: 2px solid $white;
+                    box-shadow: 1px 1px 4px #000;
+                    width: 30px;
+                    height: 30px;
+                    text-align: center;
+                    color: $white;
+                }
+            }
+
+            .extra {
+                color: #000;
+                font-size: small;
+                text-shadow: 2px 2px 4px #000000;
+            }
+        }
+    }
+
+    .fancy-portrait:hover .player-info {
+        display: block;
+        -webkit-animation: fadein 0.75s; /* Safari, Chrome and Opera > 12.1 */
+        -moz-animation: fadein 0.75s; /* Firefox < 16 */
+        -ms-animation: fadein 0.75s; /* Internet Explorer */
+        -o-animation: fadein 0.75s; /* Opera < 12.1 */
+        animation: fadein 0.75s;
+    }
+}
+
+@keyframes fadein {
+    from {
+        opacity: 0;
+        left: 30px;
+    }
+
+    to {
+        opacity: 1;
+        left: 110px;
+    }
+}
+
+/* Firefox < 16 */
+@-moz-keyframes fadein {
+    from {
+        opacity: 0;
+        left: 30px;
+    }
+
+    to {
+        opacity: 1;
+        left: 110px;
+    }
+}
+
+/* Safari, Chrome and Opera > 12.1 */
+@-webkit-keyframes fadein {
+    from {
+        opacity: 0;
+        left: 30px;
+    }
+
+    to {
+        opacity: 1;
+        left: 110px;
+    }
+}
+
+/* Internet Explorer */
+@-ms-keyframes fadein {
+    from {
+        opacity: 0;
+        left: 30px;
+    }
+
+    to {
+        opacity: 1;
+        left: 110px;
+    }
+}
+
+/* Opera < 12.1 */
+@-o-keyframes fadein {
+    from {
+        opacity: 0;
+        left: 30px;
+    }
+
+    to {
+        opacity: 1;
+        left: 110px;
     }
 }

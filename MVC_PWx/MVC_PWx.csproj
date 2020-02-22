@@ -225,6 +225,7 @@
     <Content Include="Content\img\avatars\girl-bangs.jpg" />
     <Content Include="Content\img\blog-bg.jpg" />
     <Content Include="Content\img\campaigns\campaign-default.png" />
+    <Content Include="Content\img\campaigns\player-info-background.png" />
     <Content Include="Content\img\checkbox-gray.png" />
     <Content Include="Content\img\favicon.png" />
     <Content Include="Content\img\friends\fr-01.jpg" />
