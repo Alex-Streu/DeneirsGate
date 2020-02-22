@@ -408,6 +408,7 @@
     <Content Include="Content\lib\xchart\xcharts.css" />
     <Content Include="Content\lib\xchart\xcharts.min.js" />
     <Content Include="Content\lib\zabuto_calendar.js" />
+    <Content Include="Content\notiflix-2.0.0.css" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
@@ -445,6 +446,7 @@
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
+    <Content Include="Content\lib\notiflix-2.0.0.js" />
     <Content Include="Scripts\Site.js" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">

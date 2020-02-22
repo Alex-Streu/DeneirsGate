@@ -38,9 +38,11 @@ $('input[type="file"]').change(function () {
  * @return {number}
  */
 function uploadImage(fileElement, folder, name, isTemp = false) {
-    var reader = new FileReader();
     var f = $(fileElement).prop('files')[0];
+    if (f == undefined) { return; }
+
     var parent = $(fileElement).parent();
+    var reader = new FileReader();
     imageUploadCampaignKey = $(parent).data('campaign');
 
     reader.onloadend = function () {

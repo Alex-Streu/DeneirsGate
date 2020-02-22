@@ -215,10 +215,14 @@
                 contentType: 'application/json',
                 success: function (data) {
                     if (data.success) {
+                        Notiflix.NotifyContent.Success(data.message);
                         uploadImage($('#Portrait').parent().find('.uploader'), 'Characters/' + $('#CharacterKey').val(), $('#Portrait').val());
+                    } else {
+                        Notiflix.NotifyContent.Failure(data.message);
                     }
                 },
                 error: function (error) {
+                    Notiflix.NotifyContent.Failure(error.responseText);
                 }
             })
         }

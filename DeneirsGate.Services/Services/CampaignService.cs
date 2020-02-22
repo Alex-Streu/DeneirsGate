@@ -15,7 +15,7 @@ namespace DeneirsGate.Services
             Character
         };
 
-        private bool UserHasAccess(Guid userId, Guid contentKey, ContentType type)
+        private void UserHasAccess(Guid userId, Guid contentKey, ContentType type)
         {
             var hasAccess = false;
             using (DBReset())
@@ -87,7 +87,10 @@ namespace DeneirsGate.Services
                 }
             }
 
-            return hasAccess;
+            if (!hasAccess)
+            {
+                throw new Exception("You do not have access to this content!");
+            }
         }
 
         public List<CampaignViewModel> GetCampaigns(Guid userId, bool isOwner)
@@ -112,7 +115,7 @@ namespace DeneirsGate.Services
 
         public CampaignDashboardViewModel GetCampaignDashboard(Guid userId, Guid campaignId)
         {
-            if (!UserHasAccess(userId, campaignId, ContentType.Campaign)) { return null; }
+            UserHasAccess(userId, campaignId, ContentType.Campaign);
 
             var dashboard = new CampaignDashboardViewModel();
             dashboard.CampaignKey = campaignId;
@@ -123,7 +126,7 @@ namespace DeneirsGate.Services
 
         public List<PlayerViewModel> GetPlayers(Guid userId, Guid campaignId)
         {
-            if (!UserHasAccess(userId, campaignId, ContentType.Campaign)) { return null; }
+            UserHasAccess(userId, campaignId, ContentType.Campaign);
 
             var players = new List<PlayerViewModel>();
             using (DBReset())
@@ -142,7 +145,7 @@ namespace DeneirsGate.Services
 
         public List<PlayerShortViewModel> GetPlayerShorts(Guid userId, Guid campaignId)
         {
-            if (!UserHasAccess(userId, campaignId, ContentType.Campaign)) { return null; }
+            UserHasAccess(userId, campaignId, ContentType.Campaign);
 
             var players = new List<PlayerShortViewModel>();
             using (DBReset())
@@ -165,7 +168,7 @@ namespace DeneirsGate.Services
 
             if (player == null)
             {
-                if (!UserHasAccess(userId, playerId, ContentType.Player)) { return null; }
+                UserHasAccess(userId, playerId, ContentType.Player);
 
                 using (DBReset())
                 {
@@ -206,7 +209,7 @@ namespace DeneirsGate.Services
 
         public PlayerShortViewModel GetPlayerShort(Guid userId, Guid campaignId, Guid playerId)
         {
-            if (!UserHasAccess(userId, playerId, ContentType.Player)) { return null; }
+            UserHasAccess(userId, playerId, ContentType.Player);
 
             var player = new PlayerShortViewModel();
 
@@ -252,7 +255,7 @@ namespace DeneirsGate.Services
 
         public void UpdatePlayer(Guid userId, PlayerPostModel model)
         {
-            if (!UserHasAccess(userId, model.PlayerKey, ContentType.Player)) { return; }
+            UserHasAccess(userId, model.PlayerKey, ContentType.Player);
 
             using (DBReset())
             {

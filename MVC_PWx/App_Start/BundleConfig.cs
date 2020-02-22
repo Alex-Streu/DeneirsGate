@@ -24,6 +24,7 @@ namespace MVC_PWx
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.css",
+                      "~/Content/notiflix-2.0.0.css",
                       "~/Content/site.css",
                       "~/Content/Bundled.css",
                       "~/Content/css/style.css"));
@@ -34,7 +35,8 @@ namespace MVC_PWx
                         "~/Content/lib/jquery.nicescroll.js",
                         "~/Content/lib/jquery.sparkline.js",
                         "~/Content/lib/gritter/js/jquery.gritter.js",
-                        "~/Content/lib/gritter-conf.js"));
+                        "~/Content/lib/gritter-conf.js",
+                        "~/Content/lib/notiflix-2.0.0.js"));
 
             bundles.Add(new StyleBundle("~/bundles/charts").Include(
                       "~/Content/lib/sparkline-chart.js",
