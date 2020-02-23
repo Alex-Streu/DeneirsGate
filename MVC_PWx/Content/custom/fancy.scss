@@ -1,6 +1,7 @@
 ﻿$red: #ce0606;
 $lightRed: #ed5565;
 $gray: #797979;
+$darkgray: #2f323a;
 $red80: rgba(206, 6, 6, 0.80);
 $red60: rgba(206, 6, 6, 0.60);
 $white: #fcfcfc;
@@ -102,6 +103,9 @@ $transparent: rgba(0, 0, 0, 0.00);
     }
 }
 
+
+
+/* Dropdown */
 .fancy-dropdown {
     select {
         border-color: $gray !important;
@@ -157,4 +161,54 @@ $transparent: rgba(0, 0, 0, 0.00);
     cursor: pointer;
     display: block;
     background: linear-gradient($transparent, $black40);
+}
+
+
+
+/* NAV TABS */
+.fancy-tabs {
+    background-color: $darkgray !important;
+    display: flex;
+    justify-content: center;
+
+    .fancy-tab-item {
+        margin: 0em 5px;
+        border: none;
+        background: none;
+        color: #fff;
+        padding: 10px 15px;
+        font-size: medium;
+        cursor: pointer;
+    }
+
+    .fancy-tab-item:hover, .fancy-tab-item.active {
+        background-color: $red !important;
+        border: none;
+        box-shadow: 2px 0px 4px #000;
+    }
+}
+
+.fancy-tab-pane {
+    display: none;
+}
+
+.fancy-tab-pane.active {
+    display: block !important;
+}
+
+.fancy-tab-pane.slide-right {
+    position: relative;
+    animation: animateright 0.4s
+}
+
+@keyframes animateright {
+    from {
+        right: -300px;
+        opacity: 0
+    }
+
+    to {
+        right: 0;
+        opacity: 1
+    }
 }

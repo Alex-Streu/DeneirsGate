@@ -6,123 +6,151 @@
     ViewBag.Title = "Player Sheet";
 }
 
-<h2>Player Sheet</h2>
+<h2 style="text-align:center">Player Sheet</h2>
+
+<div class="fancy-tabs" data-panes="player-panes">
+    <div class="fancy-tab-item active" data-tab="player-sheet-pane">Character</div>
+    <div class="fancy-tab-item" data-tab="weapons-pane">Weapons and Spells</div>
+    <div class="fancy-tab-item" data-tab="inventory-pane">Inventory</div>
+    <div class="fancy-tab-item" data-tab="backstory-pane">Backstory</div>
+</div>
 
 
-@using (Html.BeginForm())
-{
-    @Html.AntiForgeryToken()
-
-<div class="form-horizontal player-sheet">
-    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-    @Html.HiddenFor(model => model.PlayerKey)
-    @Html.HiddenFor(model => model.CharacterKey)
-    @Html.HiddenFor(model => model.CampaignKey)
+<div id="player-panes">
+    <div id="player-sheet-pane" class="form-horizontal player-sheet fancy-tab-pane slide-right active">
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.PlayerKey)
+        @Html.HiddenFor(model => model.CharacterKey)
+        @Html.HiddenFor(model => model.CampaignKey)
 
 
-    <div class="top-info">
-        @Url.RenderImageUpload("Portrait", Model.Portrait, Model.CampaignKey, Model.CharacterKey);
+        <div class="top-info">
+            @Url.RenderImageUpload("Portrait", Model.Portrait, Model.CampaignKey, Model.CharacterKey);
 
-        @HtmlHelpers.RenderFancyTextbox("lg", "FirstName", 50, Model.FirstName, "First Name", Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "text-danger" }))
+            @HtmlHelpers.RenderFancyTextbox("lg", "FirstName", 50, Model.FirstName, "First Name", Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "text-danger" }))
 
-        @HtmlHelpers.RenderFancyTextbox("lg", "LastName", 50, Model.LastName, "Last Name", Html.ValidationMessageFor(model => model.LastName, "", new { @class = "text-danger" }))
+            @HtmlHelpers.RenderFancyTextbox("lg", "LastName", 50, Model.LastName, "Last Name", Html.ValidationMessageFor(model => model.LastName, "", new { @class = "text-danger" }))
 
-        @HtmlHelpers.RenderFancyNumberbox(1, 20, "xlg short center", "Level", Model.Level.ToString(), "Level", Html.ValidationMessageFor(model => model.Level, "", new { @class = "text-danger" }))
+            @HtmlHelpers.RenderFancyNumberbox(1, 20, "xlg short center", "Level", Model.Level.ToString(), "Level", Html.ValidationMessageFor(model => model.Level, "", new { @class = "text-danger" }))
+
+        </div>
+        <div class="content-area">
+            <div class="attributes">
+                <div class="attribute">
+                    <label class="attr-label">Strength</label>
+                    @HtmlHelpers.RenderFancyNumberbox(1, 30, "lg attr-stat center", "Strength", Model.Strength.ToString(), null, Html.ValidationMessageFor(model => model.Strength, "", new { @class = "text-danger" }))
+                    <label class="attr-mod">+0</label>
+                </div>
+                <div class="attribute">
+                    <label class="attr-label">Dexterity</label>
+                    @HtmlHelpers.RenderFancyNumberbox(1, 30, "lg attr-stat center", "Dexterity", Model.Dexterity.ToString(), null, Html.ValidationMessageFor(model => model.Dexterity, "", new { @class = "text-danger" }))
+                    <label class="attr-mod">+0</label>
+                </div>
+                <div class="attribute">
+                    <label class="attr-label">Constitution</label>
+                    @HtmlHelpers.RenderFancyNumberbox(1, 30, "lg attr-stat center", "Constitution", Model.Constitution.ToString(), null, Html.ValidationMessageFor(model => model.Constitution, "", new { @class = "text-danger" }))
+                    <label class="attr-mod">+0</label>
+                </div>
+                <div class="attribute">
+                    <label class="attr-label">Intelligence</label>
+                    @HtmlHelpers.RenderFancyNumberbox(1, 30, "lg attr-stat center", "Intelligence", Model.Intelligence.ToString(), null, Html.ValidationMessageFor(model => model.Intelligence, "", new { @class = "text-danger" }))
+                    <label class="attr-mod">+0</label>
+                </div>
+                <div class="attribute">
+                    <label class="attr-label">Wisdom</label>
+                    @HtmlHelpers.RenderFancyNumberbox(1, 30, "lg attr-stat center", "Wisdom", Model.Wisdom.ToString(), null, Html.ValidationMessageFor(model => model.Wisdom, "", new { @class = "text-danger" }))
+                    <label class="attr-mod">+0</label>
+                </div>
+                <div class="attribute">
+                    <label class="attr-label">Charisma</label>
+                    @HtmlHelpers.RenderFancyNumberbox(1, 30, "lg attr-stat center", "Charisma", Model.Charisma.ToString(), null, Html.ValidationMessageFor(model => model.Charisma, "", new { @class = "text-danger" }))
+                    <label class="attr-mod">+0</label>
+                </div>
+            </div>
+
+            <div class="content">
+                <div class="background">
+                    <div class="fancy-dropdown">
+                        @Html.LabelFor(model => model.RaceKey, htmlAttributes: new { @class = "control-label" })
+                        @Html.DropDownListFor(model => model.RaceKey, HtmlHelpers.RaceDropdown(Model.RaceKey), new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.RaceKey, "", new { @class = "text-danger" })
+                    </div>
+
+                    <div class="fancy-dropdown">
+                        @Html.LabelFor(model => model.ClassKey, htmlAttributes: new { @class = "control-label" })
+                        @Html.DropDownListFor(model => model.ClassKey, HtmlHelpers.ClassDropdown(Model.ClassKey), new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.ClassKey, "", new { @class = "text-danger" })
+                    </div>
+
+                    <div class="fancy-dropdown">
+                        @Html.LabelFor(model => model.BackgroundKey, htmlAttributes: new { @class = "control-label" })
+                        @Html.DropDownListFor(model => model.BackgroundKey, HtmlHelpers.BackgroundDropdown(Model.BackgroundKey), new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.BackgroundKey, "", new { @class = "text-danger" })
+                    </div>
+
+                    <div class="fancy-dropdown">
+                        @Html.LabelFor(model => model.Alignment, htmlAttributes: new { @class = "control-label" })
+                        @Html.DropDownListFor(model => model.Alignment, HtmlHelpers.AlignmentDropdown(Model.Alignment), new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.Alignment, "", new { @class = "text-danger" })
+                    </div>
+
+                    @HtmlHelpers.RenderFancyNumberbox(1, 1000, "lg center", "MaxHP", Model.MaxHP.ToString(), "Max HP", Html.ValidationMessageFor(model => model.MaxHP, "", new { @class = "text-danger" }))
+                </div>
+
+                <div class="textareas">
+                    <div class="ability-status">
+                        @HtmlHelpers.RenderFancyTextarea(null, "Abilities", 500, Model.Abilities, "Abilities", Html.ValidationMessageFor(model => model.Abilities, "", new { @class = "text-danger" }))
+
+                        @HtmlHelpers.RenderFancyTextarea(null, "Status", 500, Model.Status, "Status", Html.ValidationMessageFor(model => model.Status, "", new { @class = "text-danger" }))
+                    </div>
+
+                    <div class="fear-ideal">
+                        @HtmlHelpers.RenderFancyTextarea(null, "Fears", 500, Model.Fears, "Fears", Html.ValidationMessageFor(model => model.Fears, "", new { @class = "text-danger" }))
+
+                        @HtmlHelpers.RenderFancyTextarea(null, "Ideals", 500, Model.Ideals, "Ideals", Html.ValidationMessageFor(model => model.Ideals, "", new { @class = "text-danger" }))
+
+                        @HtmlHelpers.RenderFancyTextarea(null, "Languages", 500, Model.Languages, "Languages", Html.ValidationMessageFor(model => model.Languages, "", new { @class = "text-danger" }))
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="weapons-pane" class="form-horizontal fancy-tab-pane slide-right">
 
     </div>
-    <div class="content-area">
-        <div class="attributes">
-            <div class="attribute">
-                <label class="attr-label">Strength</label>
-                @HtmlHelpers.RenderFancyNumberbox(1, 30, "lg attr-stat center", "Strength", Model.Strength.ToString(), null, Html.ValidationMessageFor(model => model.Strength, "", new { @class = "text-danger" }))
-                <label class="attr-mod">+0</label>
-            </div>
-            <div class="attribute">
-                <label class="attr-label">Dexterity</label>
-                @HtmlHelpers.RenderFancyNumberbox(1, 30, "lg attr-stat center", "Dexterity", Model.Dexterity.ToString(), null, Html.ValidationMessageFor(model => model.Dexterity, "", new { @class = "text-danger" }))
-                <label class="attr-mod">+0</label>
-            </div>
-            <div class="attribute">
-                <label class="attr-label">Constitution</label>
-                @HtmlHelpers.RenderFancyNumberbox(1, 30, "lg attr-stat center", "Constitution", Model.Constitution.ToString(), null, Html.ValidationMessageFor(model => model.Constitution, "", new { @class = "text-danger" }))
-                <label class="attr-mod">+0</label>
-            </div>
-            <div class="attribute">
-                <label class="attr-label">Intelligence</label>
-                @HtmlHelpers.RenderFancyNumberbox(1, 30, "lg attr-stat center", "Intelligence", Model.Intelligence.ToString(), null, Html.ValidationMessageFor(model => model.Intelligence, "", new { @class = "text-danger" }))
-                <label class="attr-mod">+0</label>
-            </div>
-            <div class="attribute">
-                <label class="attr-label">Wisdom</label>
-                @HtmlHelpers.RenderFancyNumberbox(1, 30, "lg attr-stat center", "Wisdom", Model.Wisdom.ToString(), null, Html.ValidationMessageFor(model => model.Wisdom, "", new { @class = "text-danger" }))
-                <label class="attr-mod">+0</label>
-            </div>
-            <div class="attribute">
-                <label class="attr-label">Charisma</label>
-                @HtmlHelpers.RenderFancyNumberbox(1, 30, "lg attr-stat center", "Charisma", Model.Charisma.ToString(), null, Html.ValidationMessageFor(model => model.Charisma, "", new { @class = "text-danger" }))
-                <label class="attr-mod">+0</label>
-            </div>
+    <div id="inventory-pane" class="form-horizontal fancy-tab-pane slide-right">
+
+    </div>
+    <div id="backstory-pane" class="form-horizontal fancy-tab-pane slide-right">
+        <div id="backstory-editor">
+            @Html.Raw(Model.Backstory)
         </div>
-
-        <div class="content">
-            <div class="background">
-                <div class="fancy-dropdown">
-                    @Html.LabelFor(model => model.RaceKey, htmlAttributes: new { @class = "control-label" })
-                    @Html.DropDownListFor(model => model.RaceKey, HtmlHelpers.RaceDropdown(Model.RaceKey), new { @class = "form-control" })
-                    @Html.ValidationMessageFor(model => model.RaceKey, "", new { @class = "text-danger" })
-                </div>
-
-                <div class="fancy-dropdown">
-                    @Html.LabelFor(model => model.ClassKey, htmlAttributes: new { @class = "control-label" })
-                    @Html.DropDownListFor(model => model.ClassKey, HtmlHelpers.ClassDropdown(Model.ClassKey), new { @class = "form-control" })
-                    @Html.ValidationMessageFor(model => model.ClassKey, "", new { @class = "text-danger" })
-                </div>
-
-                <div class="fancy-dropdown">
-                    @Html.LabelFor(model => model.BackgroundKey, htmlAttributes: new { @class = "control-label" })
-                    @Html.DropDownListFor(model => model.BackgroundKey, HtmlHelpers.BackgroundDropdown(Model.BackgroundKey), new { @class = "form-control" })
-                    @Html.ValidationMessageFor(model => model.BackgroundKey, "", new { @class = "text-danger" })
-                </div>
-
-                <div class="fancy-dropdown">
-                    @Html.LabelFor(model => model.Alignment, htmlAttributes: new { @class = "control-label" })
-                    @Html.DropDownListFor(model => model.Alignment, HtmlHelpers.AlignmentDropdown(Model.Alignment), new { @class = "form-control" })
-                    @Html.ValidationMessageFor(model => model.Alignment, "", new { @class = "text-danger" })
-                </div>
-
-                @HtmlHelpers.RenderFancyNumberbox(1, 1000, "lg center", "MaxHP", Model.MaxHP.ToString(), "Max HP", Html.ValidationMessageFor(model => model.MaxHP, "", new { @class = "text-danger" }))
-            </div>
-
-            <div class="textareas">
-                <div class="ability-status">
-                    @HtmlHelpers.RenderFancyTextarea(null, "Abilities", 500, Model.Abilities, "Abilities", Html.ValidationMessageFor(model => model.Abilities, "", new { @class = "text-danger" }))
-
-                    @HtmlHelpers.RenderFancyTextarea(null, "Status", 500, Model.Status, "Status", Html.ValidationMessageFor(model => model.Status, "", new { @class = "text-danger" }))
-                </div>
-
-                <div class="fear-ideal">
-                    @HtmlHelpers.RenderFancyTextarea(null, "Fears", 500, Model.Fears, "Fears", Html.ValidationMessageFor(model => model.Fears, "", new { @class = "text-danger" }))
-
-                    @HtmlHelpers.RenderFancyTextarea(null, "Ideals", 500, Model.Ideals, "Ideals", Html.ValidationMessageFor(model => model.Ideals, "", new { @class = "text-danger" }))
-
-                    @HtmlHelpers.RenderFancyTextarea(null, "Languages", 500, Model.Languages, "Languages", Html.ValidationMessageFor(model => model.Languages, "", new { @class = "text-danger" }))
-                </div>
-            </div>
-        </div>
-    </div>    
+    </div>
 </div>
-}
 
-<div>
-    <div class="btn btn-default" onclick="save()">Save</div>
-    @Html.ActionLink("Back to Dashboard", "Dashboard", new { id = Model.CampaignKey })
+<div class="submit-footer">
+    <a class="btn btn-lg btn-primary" href="@Url.Action("Dashboard", new { id = Model.CampaignKey })">Back To Campaign</a>
+    <div class="btn btn-lg btn-default save-button" onclick="save()">Save</div>
 </div>
 
 @section scripts {
+    <script src="https://cdn.ckeditor.com/ckeditor5/16.0.0/classic/ckeditor.js"></script>
     <script type="text/javascript">
         var updatePlayerAction = '@Url.Action("UpdatePlayer")';
+        var backstory;
 
         $(document).ready(function () {
+            ClassicEditor
+                .create(document.querySelector('#backstory-editor'), {
+                    toolbar: ['heading', '|', 'bold', 'italic', 'bulletedList', 'numberedList', '|', 'indent', 'outdent', '|', 'blockQuote', 'insertTable', 'undo', 'redo' ]
+                })
+                .then(newEditor => {
+                    backstory = newEditor;
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+
             $('.attribute').each(function () {
                 calculateMod(this);
             })
@@ -201,7 +229,7 @@
                 BackgroundKey: $('#BackgroundKey').val(),
                 Fears: $('#Fears').val(),
                 Ideals: $('#Ideals').val(),
-                Backstory: $('#Backstory').val(),
+                Backstory: backstory.getData(),
                 CampaignKey: $('#CampaignKey').val(),
                 Languages: $('#Languages').val(),
                 Alignment: $('#Alignment').val()

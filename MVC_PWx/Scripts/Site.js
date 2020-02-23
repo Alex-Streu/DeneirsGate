@@ -15,6 +15,22 @@ $('.fancy-dropdown select').blur(function () {
     $(this).parent().find('label').removeClass('active');
 })
 
+$('.fancy-tab-item').click(function () {
+    var tab = $(this).data('tab');
+    var panes = $(this).parent().data('panes');
+
+    $(`#${panes}`).find('.fancy-tab-pane').each(function () {
+        $(this).removeClass('active');
+    });
+
+    $(this).parent().find('.fancy-tab-item').each(function () {
+        $(this).removeClass('active');
+    });
+
+    $(`#${tab}`).addClass('active');
+    $(this).addClass('active');
+})
+
 
 /* IMAGE UPLOADING */
 var uploadImageUtilityAction = '/Utility/UploadImage/';

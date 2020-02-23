@@ -73,6 +73,7 @@
 .fancy-textarea label.active {
   color: #ce0606; }
 
+/* Dropdown */
 .fancy-dropdown select {
   border-color: #797979 !important;
   color: #797979 !important; }
@@ -113,6 +114,42 @@
   cursor: pointer;
   display: block;
   background: linear-gradient(transparent, rgba(0, 0, 0, 0.4)); }
+
+/* NAV TABS */
+.fancy-tabs {
+  background-color: #2f323a !important;
+  display: flex;
+  justify-content: center; }
+  .fancy-tabs .fancy-tab-item {
+    margin: 0em 5px;
+    border: none;
+    background: none;
+    color: #fff;
+    padding: 10px 15px;
+    font-size: medium;
+    cursor: pointer; }
+  .fancy-tabs .fancy-tab-item:hover, .fancy-tabs .fancy-tab-item.active {
+    background-color: #ce0606 !important;
+    border: none;
+    box-shadow: 2px 0px 4px #000; }
+
+.fancy-tab-pane {
+  display: none; }
+
+.fancy-tab-pane.active {
+  display: block !important; }
+
+.fancy-tab-pane.slide-right {
+  position: relative;
+  animation: animateright 0.4s; }
+
+@keyframes animateright {
+  from {
+    right: -300px;
+    opacity: 0; }
+  to {
+    right: 0;
+    opacity: 1; } }
 
 .player-sheet {
   padding: 3em;
@@ -156,7 +193,10 @@
           width: 25%; }
         .player-sheet .content-area .attributes .attribute .attr-mod {
           width: 25%;
-          text-align: center; }
+          text-align: center;
+          border-radius: 10px;
+          border: 2px solid #797979;
+          margin-left: 1em; }
       .player-sheet .content-area .attributes .attribute.active {
         color: #ce0606; }
     .player-sheet .content-area .attributes.active {
@@ -189,6 +229,21 @@
           height: 200px; }
         .player-sheet .content-area .content .textareas .fear-ideal .fancy-textarea textarea {
           height: 100px; }
+
+#backstory-editor ~ .ck-editor .ck-editor__editable {
+  min-height: 500px;
+  max-height: 600px;
+  color: #000; }
+
+.submit-footer {
+  display: flex;
+  justify-content: flex-start;
+  margin-top: 1em; }
+  .submit-footer * {
+    margin: 0.5em; }
+
+.save-button {
+  width: 150px; }
 
 .dashboard-players {
   display: flex;
