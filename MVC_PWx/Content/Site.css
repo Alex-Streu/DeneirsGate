@@ -106,3 +106,12 @@ textarea {
         cursor: pointer;
         box-shadow: 0 0 6px rgba(220, 57, 18, 1);
     }
+
+.content-box {
+    padding: 3em;
+    margin: 2em auto;
+    border-radius: 5px;
+    width: 90%;
+    background-color: #f3f3f3;
+    box-shadow: 2px 2px 5px 4px rgba(0, 0, 0, 0.2);
+}

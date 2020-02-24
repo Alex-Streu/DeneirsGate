@@ -6,12 +6,6 @@ $red60: rgba(206, 6, 6, 0.60);
 $white: #fcfcfc;
 
 .player-sheet {
-    padding: 3em;
-    margin: 2em auto;
-    border-radius: 5px;
-    width: 90%;
-    background-color: #f3f3f3;
-    box-shadow: 2px 2px 5px 4px rgba(0, 0, 0, 0.2);
 
     .top-info {
         display: flex;
@@ -63,8 +57,9 @@ $white: #fcfcfc;
                     width: 25%;
                     text-align: center;
                     border-radius: 10px;
-                    border: 2px solid $gray;
+                    border: 1px solid $gray;
                     margin-left: 1em;
+                    box-shadow: 2px 2px 4px #000;
                 }
             }
 

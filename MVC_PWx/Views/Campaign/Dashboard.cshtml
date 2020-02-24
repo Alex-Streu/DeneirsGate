@@ -14,7 +14,7 @@
     @foreach (var item in Model.Players)
     {
         <div class='fancy-portrait'>
-            <a href="@Url.Action("EditPlayer", new { id = item.PlayerKey, ownerId = Model.CampaignKey })">
+            <a href="@Url.Action("EditPlayer", new { id = item.CharacterKey, ownerId = Model.CampaignKey })">
                 <img class='img-xs img-responsive' src='@Url.CharacterPortrait(item.CampaignKey, item.CharacterKey, item.Portrait)' />
             </a>
             <div class="player-info">

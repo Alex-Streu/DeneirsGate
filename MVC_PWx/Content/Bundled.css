@@ -151,84 +151,80 @@
     right: 0;
     opacity: 1; } }
 
-.player-sheet {
-  padding: 3em;
-  margin: 2em auto;
-  border-radius: 5px;
-  width: 90%;
-  background-color: #f3f3f3;
-  box-shadow: 2px 2px 5px 4px rgba(0, 0, 0, 0.2); }
-  .player-sheet .top-info {
+.player-sheet .top-info {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  width: 100%; }
+  .player-sheet .top-info img {
+    width: 100px;
+    height: 100px;
+    max-width: 100px;
+    max-height: 100px; }
+
+.player-sheet .top-info > * {
+  margin: 1em; }
+
+.player-sheet .content-area {
+  display: flex;
+  margin-top: 1em; }
+  .player-sheet .content-area .attributes {
+    width: 25%;
+    border: 1px solid #797979;
     display: flex;
-    align-items: flex-end;
-    justify-content: center;
-    width: 100%; }
-    .player-sheet .top-info img {
-      width: 100px;
-      height: 100px;
-      max-width: 100px;
-      max-height: 100px; }
-  .player-sheet .top-info > * {
-    margin: 1em; }
-  .player-sheet .content-area {
-    display: flex;
-    margin-top: 1em; }
-    .player-sheet .content-area .attributes {
-      width: 25%;
-      border: 1px solid #797979;
+    flex-wrap: wrap;
+    border-radius: 5%;
+    padding: 0.5em;
+    font-size: 24px;
+    background-color: #fcfcfc;
+    transition: all 0.2s ease-in-out; }
+    .player-sheet .content-area .attributes .attribute {
+      width: 100%;
       display: flex;
-      flex-wrap: wrap;
-      border-radius: 5%;
-      padding: 0.5em;
-      font-size: 24px;
-      background-color: #fcfcfc;
-      transition: all 0.2s ease-in-out; }
-      .player-sheet .content-area .attributes .attribute {
-        width: 100%;
+      align-items: baseline; }
+      .player-sheet .content-area .attributes .attribute .attr-label {
+        width: 50%; }
+      .player-sheet .content-area .attributes .attribute .attr-stat {
+        width: 25%; }
+      .player-sheet .content-area .attributes .attribute .attr-mod {
+        width: 25%;
+        text-align: center;
+        border-radius: 10px;
+        border: 1px solid #797979;
+        margin-left: 1em;
+        box-shadow: 2px 2px 4px #000; }
+    .player-sheet .content-area .attributes .attribute.active {
+      color: #ce0606; }
+  .player-sheet .content-area .attributes.active {
+    border-color: rgba(206, 6, 6, 0.8) !important;
+    box-shadow: 0 1px 1px rgba(229, 103, 23, 0.075) inset, 0 0 8px rgba(206, 6, 6, 0.6) !important;
+    outline: 0 none !important; }
+  .player-sheet .content-area .content {
+    width: 75%; }
+    .player-sheet .content-area .content .background {
+      width: 100%;
+      display: flex;
+      justify-content: space-around;
+      align-items: flex-end; }
+      .player-sheet .content-area .content .background .fancy-textbox {
+        margin-bottom: 0px !important; }
+    .player-sheet .content-area .content .textareas {
+      display: flex;
+      margin: 1em; }
+      .player-sheet .content-area .content .textareas .ability-status {
+        width: 70%; }
+      .player-sheet .content-area .content .textareas .fear-ideal {
+        width: 30%; }
+      .player-sheet .content-area .content .textareas .ability-status, .player-sheet .content-area .content .textareas .fear-ideal {
         display: flex;
-        align-items: baseline; }
-        .player-sheet .content-area .attributes .attribute .attr-label {
-          width: 50%; }
-        .player-sheet .content-area .attributes .attribute .attr-stat {
-          width: 25%; }
-        .player-sheet .content-area .attributes .attribute .attr-mod {
-          width: 25%;
-          text-align: center;
-          border-radius: 10px;
-          border: 2px solid #797979;
-          margin-left: 1em; }
-      .player-sheet .content-area .attributes .attribute.active {
-        color: #ce0606; }
-    .player-sheet .content-area .attributes.active {
-      border-color: rgba(206, 6, 6, 0.8) !important;
-      box-shadow: 0 1px 1px rgba(229, 103, 23, 0.075) inset, 0 0 8px rgba(206, 6, 6, 0.6) !important;
-      outline: 0 none !important; }
-    .player-sheet .content-area .content {
-      width: 75%; }
-      .player-sheet .content-area .content .background {
-        width: 100%;
-        display: flex;
-        justify-content: space-around;
-        align-items: flex-end; }
-        .player-sheet .content-area .content .background .fancy-textbox {
-          margin-bottom: 0px !important; }
-      .player-sheet .content-area .content .textareas {
-        display: flex;
-        margin: 1em; }
-        .player-sheet .content-area .content .textareas .ability-status {
-          width: 70%; }
-        .player-sheet .content-area .content .textareas .fear-ideal {
-          width: 30%; }
-        .player-sheet .content-area .content .textareas .ability-status, .player-sheet .content-area .content .textareas .fear-ideal {
-          display: flex;
-          flex-wrap: wrap; }
-          .player-sheet .content-area .content .textareas .ability-status .fancy-textarea, .player-sheet .content-area .content .textareas .fear-ideal .fancy-textarea {
-            width: 100%;
-            margin: 1em; }
-        .player-sheet .content-area .content .textareas .ability-status .fancy-textarea textarea {
-          height: 200px; }
-        .player-sheet .content-area .content .textareas .fear-ideal .fancy-textarea textarea {
-          height: 100px; }
+        flex-wrap: wrap; }
+        .player-sheet .content-area .content .textareas .ability-status .fancy-textarea, .player-sheet .content-area .content .textareas .fear-ideal .fancy-textarea {
+          width: 100%;
+          margin: 1em; }
+      .player-sheet .content-area .content .textareas .ability-status .fancy-textarea textarea {
+        height: 200px; }
+      .player-sheet .content-area .content .textareas .fear-ideal .fancy-textarea textarea {
+        height: 100px; }
 
 #backstory-editor ~ .ck-editor .ck-editor__editable {
   min-height: 500px;

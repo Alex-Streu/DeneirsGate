@@ -83,9 +83,6 @@
     <Build Include="dbo\Tables\Campaigns.sql" />
     <Build Include="dbo\Tables\UserCampaigns.sql" />
     <Build Include="dbo\Tables\CampaignCharacterLinkers.sql" />
-    <Build Include="dbo\Tables\Players.sql" />
-    <Build Include="dbo\Tables\UserPlayerLinkers.sql" />
-    <Build Include="dbo\Tables\CampaignPlayerLinkers.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="DeneirsGate.Database.LOCAL.publish.xml" />

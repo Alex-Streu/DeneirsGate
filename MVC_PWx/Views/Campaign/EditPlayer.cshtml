@@ -17,15 +17,15 @@
 
 
 <div id="player-panes">
-    <div id="player-sheet-pane" class="form-horizontal player-sheet fancy-tab-pane slide-right active">
+    <div id="player-sheet-pane" class="content-box player-sheet fancy-tab-pane slide-right active">
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        @Html.HiddenFor(model => model.PlayerKey)
+        @Html.HiddenFor(model => model.UserKey)
         @Html.HiddenFor(model => model.CharacterKey)
         @Html.HiddenFor(model => model.CampaignKey)
 
 
         <div class="top-info">
-            @Url.RenderImageUpload("Portrait", Model.Portrait, Model.CampaignKey, Model.CharacterKey);
+            @Url.RenderImageUpload("Portrait", Model.Portrait, Model.CampaignKey, Model.CharacterKey)
 
             @HtmlHelpers.RenderFancyTextbox("lg", "FirstName", 50, Model.FirstName, "First Name", Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "text-danger" }))
 
@@ -115,13 +115,13 @@
             </div>
         </div>
     </div>
-    <div id="weapons-pane" class="form-horizontal fancy-tab-pane slide-right">
+    <div id="weapons-pane" class="content-box fancy-tab-pane slide-right">
 
     </div>
-    <div id="inventory-pane" class="form-horizontal fancy-tab-pane slide-right">
+    <div id="inventory-pane" class="content-box fancy-tab-pane slide-right">
 
     </div>
-    <div id="backstory-pane" class="form-horizontal fancy-tab-pane slide-right">
+    <div id="backstory-pane" class="fancy-tab-pane slide-right">
         <div id="backstory-editor">
             @Html.Raw(Model.Backstory)
         </div>
@@ -209,7 +209,7 @@
 
         function save() {
             var postData = {
-                PlayerKey: $('#PlayerKey').val(),
+                UserKey: $('#UserKey').val(),
                 Level: $('#Level').val(),
                 MaxHP: $('#MaxHP').val(),
                 Strength: $('#Strength').val(),

@@ -43,7 +43,7 @@ namespace MVC_PWx.Controllers
         [HasAccess(Priviledge = AppLogic.Priviledge.DM)]
         public ActionResult EditPlayer(Guid ownerId, Guid id)
         {
-            var player = new PlayerViewModel();
+            var player = new CharacterViewModel();
             try
             {
                 player = CampaignSvc.GetPlayer(UserData.UserId, ownerId, id);
@@ -55,13 +55,13 @@ namespace MVC_PWx.Controllers
 
         [HttpPost]
         [HasAccess(Priviledge = AppLogic.Priviledge.DM)]
-        public JsonResult UpdatePlayer(PlayerPostModel model)
+        public JsonResult UpdatePlayer(CharacterPostModel model)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
-                    CampaignSvc.UpdatePlayer(UserData.UserId, model);
+                    CampaignSvc.UpdateCharacter(UserData.UserId, model);
                 }
             }
             catch (Exception ex)

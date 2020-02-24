@@ -12,5 +12,9 @@ namespace DeneirsGate.Data
 
         [Key, Column(Order = 1)]
         public Guid CharacterKey { get; set; }
+
+        public Guid UserKey { get; set; }
+
+        public bool IsUser { get; set; }
     }
 }

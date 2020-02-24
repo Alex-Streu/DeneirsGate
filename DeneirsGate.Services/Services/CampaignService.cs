@@ -11,7 +11,6 @@ namespace DeneirsGate.Services
         private enum ContentType
         {
             Campaign,
-            Player,
             Character
         };
 
@@ -24,61 +23,29 @@ namespace DeneirsGate.Services
                 {
                     case ContentType.Campaign:
                         //Check if exists
-                        if (DB.Campaigns.FirstOrDefault(x => x.CampaignKey == contentKey) == null)
-                        {
-                            hasAccess = true;
-                            break;
-                        }
+                        if (DB.Campaigns.FirstOrDefault(x => x.CampaignKey == contentKey) == null) { break; }
 
                         if (DB.UserCampaigns.FirstOrDefault(x => x.UserKey == userId && x.CampaignKey == contentKey && x.IsOwner) != null)
                         {
                             hasAccess = true;
                         }
                         break;
-                    case ContentType.Player:
-                        //Check if exists
-                        if (DB.Players.FirstOrDefault(x => x.PlayerKey == contentKey) == null)
-                        {
-                            hasAccess = true;
-                            break;
-                        }
 
-                        //Check user of player
-                        if (DB.UserPlayerLinkers.FirstOrDefault(x => x.UserKey == userId && x.PlayerKey == contentKey) != null)
-                        {
-                            hasAccess = true;
-                            break;
-                        }
-
-                        //Check campaign owner
-                        var campaignKeys = DB.UserCampaigns.Where(x => x.UserKey == userId && x.IsOwner).Select(x => x.CampaignKey).ToList();
-                        if (campaignKeys == null) { break; }
-                        if (DB.CampaignPlayerLinkers.FirstOrDefault(x => campaignKeys.Contains(x.CampaignKey) && x.PlayerKey == contentKey) != null)
-                        {
-                            hasAccess = true;
-                            break;
-                        }
-                        break;
                     case ContentType.Character:
                         //Check if exists
-                        if (DB.Characters.FirstOrDefault(x => x.CharacterKey == contentKey) == null)
-                        {
-                            hasAccess = true;
-                            break;
-                        }
+                        if (DB.Characters.FirstOrDefault(x => x.CharacterKey == contentKey) == null) { break; }
 
                         //Check user of player
-                        var players = DB.UserPlayerLinkers.Where(x => x.UserKey == userId).Select(x => x.PlayerKey).ToList();
-                        if (DB.CampaignPlayerLinkers.FirstOrDefault(x => players.Contains(x.PlayerKey) && x.CharacterKey == contentKey) != null)
+                        if (DB.CampaignCharacterLinkers.FirstOrDefault(x => x.IsUser && x.UserKey == userId && x.CharacterKey == contentKey) == null)
                         {
                             hasAccess = true;
                             break;
                         }
 
                         //Check campaign owner
-                        campaignKeys = db.UserCampaigns.Where(x => x.UserKey == userId && x.IsOwner).Select(x => x.CampaignKey).ToList();
+                        var campaignKeys = db.UserCampaigns.Where(x => x.UserKey == userId && x.IsOwner).Select(x => x.CampaignKey).ToList();
                         if (campaignKeys == null) { break; }
-                        if (DB.CampaignPlayerLinkers.FirstOrDefault(x => campaignKeys.Contains(x.CampaignKey) && x.CharacterKey == contentKey) != null)
+                        if (DB.CampaignCharacterLinkers.FirstOrDefault(x => campaignKeys.Contains(x.CampaignKey) && x.CharacterKey == contentKey) != null)
                         {
                             hasAccess = true;
                             break;
@@ -131,10 +98,10 @@ namespace DeneirsGate.Services
             var players = new List<PlayerViewModel>();
             using (DBReset())
             {
-                var _players = DB.CampaignPlayerLinkers.Where(x => x.CampaignKey == campaignId).ToList();
+                var _players = DB.CampaignCharacterLinkers.Where(x => x.CampaignKey == campaignId && x.IsUser).ToList();
                 foreach (var _p in _players)
                 {
-                    var addPlayer = GetPlayer(userId, campaignId, _p.PlayerKey);
+                    var addPlayer = GetPlayer(userId, campaignId, _p.CharacterKey, _p.UserKey);
 
                     if (addPlayer != null) { players.Add(addPlayer); }
                 }
@@ -150,10 +117,10 @@ namespace DeneirsGate.Services
             var players = new List<PlayerShortViewModel>();
             using (DBReset())
             {
-                var _players = DB.CampaignPlayerLinkers.Where(x => x.CampaignKey == campaignId).ToList();
+                var _players = DB.CampaignCharacterLinkers.Where(x => x.IsUser && x.CampaignKey == campaignId).ToList();
                 foreach (var _p in _players)
                 {
-                    var addPlayer = GetPlayerShort(userId, campaignId, _p.PlayerKey);
+                    var addPlayer = GetPlayerShort(userId, campaignId, _p.CharacterKey, _p.UserKey);
 
                     if (addPlayer != null) { players.Add(addPlayer); }
                 }
@@ -162,44 +129,43 @@ namespace DeneirsGate.Services
             return players;
         }
 
-        public PlayerViewModel GetPlayer(Guid userId, Guid campaignId, Guid playerId)
+        public PlayerViewModel GetPlayer(Guid userId, Guid campaignId, Guid characterId, Guid? userKey = null)
         {
-            var player = CreatePlayer(campaignId, playerId);
+            var player = CreatePlayer(campaignId, characterId);
 
             if (player == null)
             {
-                UserHasAccess(userId, playerId, ContentType.Player);
+                UserHasAccess(userId, characterId, ContentType.Character);
 
                 using (DBReset())
                 {
-                    var p = DB.Players.FirstOrDefault(x => x.PlayerKey == playerId);
-                    var cKey = DB.CampaignPlayerLinkers.FirstOrDefault(x => x.CampaignKey == campaignId && x.PlayerKey == playerId)?.CharacterKey;
-                    player = DB.Characters.Where(x => x.CharacterKey == cKey).Select(x => new PlayerViewModel
+                    if (userKey == null) { userKey = DB.CampaignCharacterLinkers.FirstOrDefault(x => x.CampaignKey == campaignId && x.CharacterKey == characterId).UserKey; }
+                    player = DB.Characters.Where(x => x.CharacterKey == characterId).Select(x => new PlayerViewModel
                     {
-                        Abilities = p.Abilities,
+                        Abilities = x.Abilities,
                         Alignment = x.Alignment,
                         BackgroundKey = x.BackgroundKey,
                         Backstory = x.Backstory,
                         CharacterKey = x.CharacterKey,
-                        Charisma = p.Charisma,
+                        Charisma = x.Charisma,
                         ClassKey = x.ClassKey,
-                        Constitution = p.Constitution,
-                        Dexterity = p.Dexterity,
+                        Constitution = x.Constitution,
+                        Dexterity = x.Dexterity,
                         Fears = x.Fears,
                         FirstName = x.FirstName,
                         Ideals = x.Ideals,
-                        Intelligence = p.Intelligence,
+                        Intelligence = x.Intelligence,
                         Languages = x.Languages,
                         LastName = x.LastName,
-                        Level = p.Level,
-                        MaxHP = p.MaxHP,
-                        PlayerKey = p.PlayerKey,
+                        Level = x.Level,
+                        MaxHP = x.MaxHP,
                         Portrait = x.Portrait,
                         RaceKey = x.RaceKey,
-                        Status = p.Status,
-                        Strength = p.Strength,
-                        Wisdom = p.Wisdom,
-                        CampaignKey = campaignId
+                        Status = x.Status,
+                        Strength = x.Strength,
+                        Wisdom = x.Wisdom,
+                        CampaignKey = campaignId,
+                        UserKey = userKey.Value
                     }).FirstOrDefault();
                 }
             }
@@ -207,39 +173,38 @@ namespace DeneirsGate.Services
             return player;
         }
 
-        public PlayerShortViewModel GetPlayerShort(Guid userId, Guid campaignId, Guid playerId)
+        public PlayerShortViewModel GetPlayerShort(Guid userId, Guid campaignId, Guid characterId, Guid? userKey = null)
         {
-            UserHasAccess(userId, playerId, ContentType.Player);
+            UserHasAccess(userId, characterId, ContentType.Character);
 
             var player = new PlayerShortViewModel();
 
             using (DBReset())
             {
-                var p = DB.Players.FirstOrDefault(x => x.PlayerKey == playerId);
-                var cKey = DB.CampaignPlayerLinkers.FirstOrDefault(x => x.CampaignKey == campaignId && x.PlayerKey == playerId)?.CharacterKey;
-                player = DB.Characters.Where(x => x.CharacterKey == cKey).Select(x => new PlayerShortViewModel
+                if (userKey == null) { userKey = DB.CampaignCharacterLinkers.FirstOrDefault(x => x.CampaignKey == campaignId && x.CharacterKey == characterId).UserKey; }
+                player = DB.Characters.Where(x => x.CharacterKey == characterId).Select(x => new PlayerShortViewModel
                 {
                     FirstName = x.FirstName,
                     LastName = x.LastName,
-                    Level = p.Level,
-                    PlayerKey = p.PlayerKey,
+                    Level = x.Level,
                     Portrait = x.Portrait,
                     CampaignKey = campaignId,
-                    CharacterKey = cKey.Value,
+                    CharacterKey = characterId,
                     Race = DB.Races.FirstOrDefault(y => y.RaceKey == x.RaceKey).Name,
-                    Class = DB.Classes.FirstOrDefault(y => y.ClassKey == x.ClassKey).Name
+                    Class = DB.Classes.FirstOrDefault(y => y.ClassKey == x.ClassKey).Name,
+                    UserKey = userKey.Value,
                 }).FirstOrDefault();
             }
 
             return player;
         }
 
-        public PlayerViewModel CreatePlayer(Guid campaignId, Guid playerId)
+        public CharacterViewModel CreateCharacter(Guid campaignId, Guid characterId)
         {
             var exists = false;
             using (DBReset())
             {
-                if (DB.CampaignPlayerLinkers.FirstOrDefault(x => x.CampaignKey == campaignId && x.PlayerKey == playerId) != null)
+                if (DB.CampaignCharacterLinkers.FirstOrDefault(x => x.CampaignKey == campaignId && x.CharacterKey == characterId) != null)
                 {
                     exists = true;
                 }
@@ -247,43 +212,58 @@ namespace DeneirsGate.Services
             
             if (exists) { return null; }
 
-            return new PlayerViewModel
+            return new CharacterViewModel
             {
                 CampaignKey = campaignId,
-                CharacterKey = Guid.NewGuid(),
-                PlayerKey = playerId
+                CharacterKey = characterId
             };
         }
 
-        public void UpdatePlayer(Guid userId, PlayerPostModel model)
+        public PlayerViewModel CreatePlayer(Guid campaignId, Guid characterId)
         {
-            UserHasAccess(userId, model.PlayerKey, ContentType.Player);
+            var exists = false;
+            using (DBReset())
+            {
+                if (DB.CampaignCharacterLinkers.FirstOrDefault(x => x.CampaignKey == campaignId && x.CharacterKey == characterId) != null)
+                {
+                    exists = true;
+                }
+            }
+
+            if (exists) { return null; }
+
+            return new PlayerViewModel
+            {
+                CampaignKey = campaignId,
+                CharacterKey = characterId
+            };
+        }
+
+        public void UpdateCharacter(Guid userId, CharacterPostModel model)
+        {
+            UserHasAccess(userId, model.CharacterKey, ContentType.Character);
 
             using (DBReset())
             {
                 var add = false;
-                var player = db.Players.FirstOrDefault(x => x.PlayerKey == model.PlayerKey);
                 var character = db.Characters.FirstOrDefault(x => x.CharacterKey == model.CharacterKey);
 
-                if (player == null)
+                if (character == null)
                 {
-                    player = new Player();
                     character = new Character();
                     add = true;
                 }
 
-                player.Abilities = model.Abilities;
-                player.Charisma = model.Charisma;
-                player.Constitution = model.Constitution;
-                player.Dexterity = model.Dexterity;
-                player.Intelligence = model.Intelligence;
-                player.Level = model.Level;
-                player.MaxHP = model.MaxHP;
-                player.PlayerKey = model.PlayerKey;
-                player.Status = model.Status;
-                player.Strength = model.Strength;
-                player.Wisdom = model.Wisdom;
-
+                character.Abilities = model.Abilities;
+                character.Charisma = model.Charisma;
+                character.Constitution = model.Constitution;
+                character.Dexterity = model.Dexterity;
+                character.Intelligence = model.Intelligence;
+                character.Level = model.Level;
+                character.MaxHP = model.MaxHP;
+                character.Status = model.Status;
+                character.Strength = model.Strength;
+                character.Wisdom = model.Wisdom;
                 character.Alignment = model.Alignment;
                 character.BackgroundKey = model.BackgroundKey;
                 character.Backstory = model.Backstory;
@@ -299,15 +279,71 @@ namespace DeneirsGate.Services
 
                 if (add)
                 {
-                    DB.Players.Add(player);
                     DB.Characters.Add(character);
-                    
+
                     //Add linkers
-                    DB.CampaignPlayerLinkers.Add(new CampaignPlayerLinker
+                    DB.CampaignCharacterLinkers.Add(new CampaignCharacterLinker
                     {
                         CampaignKey = model.CampaignKey,
                         CharacterKey = model.CharacterKey,
-                        PlayerKey = player.PlayerKey
+                        IsUser = false,
+                        UserKey = Guid.Empty
+                    });
+                }
+
+                DB.SaveChanges();
+            }
+        }
+
+        public void UpdatePlayer(Guid userId, PlayerPostModel model)
+        {
+            UserHasAccess(userId, model.CharacterKey, ContentType.Character);
+
+            using (DBReset())
+            {
+                var add = false;
+                var character = db.Characters.FirstOrDefault(x => x.CharacterKey == model.CharacterKey);
+
+                if (character == null)
+                {
+                    character = new Character();
+                    add = true;
+                }
+
+                character.Abilities = model.Abilities;
+                character.Charisma = model.Charisma;
+                character.Constitution = model.Constitution;
+                character.Dexterity = model.Dexterity;
+                character.Intelligence = model.Intelligence;
+                character.Level = model.Level;
+                character.MaxHP = model.MaxHP;
+                character.Status = model.Status;
+                character.Strength = model.Strength;
+                character.Wisdom = model.Wisdom;
+                character.Alignment = model.Alignment;
+                character.BackgroundKey = model.BackgroundKey;
+                character.Backstory = model.Backstory;
+                character.CharacterKey = model.CharacterKey;
+                character.ClassKey = model.ClassKey;
+                character.Fears = model.Fears;
+                character.FirstName = model.FirstName;
+                character.Ideals = model.Ideals;
+                character.Languages = model.Languages;
+                character.LastName = model.LastName;
+                character.Portrait = model.Portrait;
+                character.RaceKey = model.RaceKey;
+
+                if (add)
+                {
+                    DB.Characters.Add(character);
+
+                    //Add linkers
+                    DB.CampaignCharacterLinkers.Add(new CampaignCharacterLinker
+                    {
+                        CampaignKey = model.CampaignKey,
+                        CharacterKey = model.CharacterKey,
+                        IsUser = true,
+                        UserKey = model.UserKey
                     });
                 }
 

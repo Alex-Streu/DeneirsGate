@@ -56,7 +56,7 @@
     <Compile Include="Models\BackgroundViewModel.cs" />
     <Compile Include="Models\CampaignViewModel.cs" />
     <Compile Include="Models\ClassViewModel.cs" />
-    <Compile Include="Models\PlayerViewModel.cs" />
+    <Compile Include="Models\CharacterViewModel.cs" />
     <Compile Include="Models\RaceViewModel.cs" />
     <Compile Include="Models\RoleViewModel.cs" />
     <Compile Include="Models\UserDataModel.cs" />

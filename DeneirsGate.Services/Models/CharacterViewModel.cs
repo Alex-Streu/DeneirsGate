@@ -3,9 +3,9 @@ using System.ComponentModel;
 
 namespace DeneirsGate.Services
 {
-    public class PlayerViewModel
+    public class CharacterViewModel
     {
-        public Guid PlayerKey { get; set; }
+        public Guid CharacterKey { get; set; }
         public int Level { get; set; } = 1;
         [DisplayName("Max HP")]
         public int MaxHP { get; set; } = 1;
@@ -17,7 +17,6 @@ namespace DeneirsGate.Services
         public int Charisma { get; set; } = 10;
         public string Abilities { get; set; }
         public string Status { get; set; }
-        public Guid CharacterKey { get; set; }
         [DisplayName("First Name")]
         public string FirstName { get; set; }
         [DisplayName("Last Name")]
@@ -38,9 +37,8 @@ namespace DeneirsGate.Services
         public string Alignment { get; set; }
     }
 
-    public class PlayerShortViewModel
+    public class CharacterShortViewModel
     {
-        public Guid PlayerKey { get; set; }
         public Guid CharacterKey { get; set; }
         public Guid CampaignKey { get; set; }
         public string FirstName { get; set; }
@@ -51,10 +49,10 @@ namespace DeneirsGate.Services
         public string Portrait { get; set; }
     }
 
-    public class PlayerPostModel
+    public class CharacterPostModel
     {
         [NotEmptyGuid]
-        public Guid PlayerKey { get; set; }
+        public Guid CharacterKey { get; set; }
         public int Level { get; set; }
         public int MaxHP { get; set; }
         public int CurrentHP { get; set; }
@@ -66,8 +64,6 @@ namespace DeneirsGate.Services
         public int Charisma { get; set; }
         public string Abilities { get; set; }
         public string Status { get; set; }
-        [NotEmptyGuid]
-        public Guid CharacterKey { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Portrait { get; set; }
@@ -81,5 +77,20 @@ namespace DeneirsGate.Services
         public Guid CampaignKey { get; set; }
         public string Languages { get; set; }
         public string Alignment { get; set; }
+    }
+
+    public class PlayerViewModel : CharacterViewModel
+    {
+        public Guid UserKey { get; set; }
+    }
+
+    public class PlayerShortViewModel : CharacterShortViewModel
+    {
+        public Guid UserKey { get; set; }
+    }
+
+    public class PlayerPostModel : CharacterPostModel
+    {
+        public Guid UserKey { get; set; }
     }
 }

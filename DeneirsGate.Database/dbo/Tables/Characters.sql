@@ -11,6 +11,21 @@
     [Backstory]     NVARCHAR (MAX)   NULL,
     [Languages] NVARCHAR(250) NULL, 
     [Alignment] NVARCHAR(2) NOT NULL DEFAULT 'TN', 
+    [Level] INT NOT NULL DEFAULT 1, 
+    [MaxHP] INT NOT NULL DEFAULT 1, 
+    [Strength] INT NOT NULL DEFAULT 10, 
+    [Dexterity] INT NOT NULL DEFAULT 10, 
+    [Constitution] INT NOT NULL DEFAULT 10, 
+    [Intelligence] INT NOT NULL DEFAULT 10, 
+    [Wisdom] INT NOT NULL DEFAULT 10, 
+    [Charisma] INT NOT NULL DEFAULT 10, 
+    [Abilities] NVARCHAR(MAX) NULL, 
+    [Status] NVARCHAR(MAX) NULL,
+    [Armor] NVARCHAR(25) NULL, 
+    [ArmorClass] INT NOT NULL DEFAULT 10, 
+    [SpellcsatingAbility] UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID(), 
+    [SpellcastingMod] INT NOT NULL DEFAULT 1, 
+    [SpellSaveDC] INT NOT NULL DEFAULT 10, 
     PRIMARY KEY CLUSTERED ([CharacterKey] ASC)
 );
 
