@@ -47,6 +47,11 @@ $transparent: rgba(0, 0, 0, 0.00);
     color: $red;
 }
 
+.fancy-textbox.sm input,
+.fancy-textbox.sm label {
+    font-size: 12px;
+}
+
 .fancy-textbox.lg input,
 .fancy-textbox.lg label {
     font-size: 24px;
@@ -70,6 +75,19 @@ $transparent: rgba(0, 0, 0, 0.00);
 
 .fancy-textbox.medium {
     max-width: 40%;
+    width: 100px
+}
+
+.fancy-textbox.long {
+    max-width: 90%;
+}
+
+.fancy-textbox.full {
+    max-width: 100%;
+
+    input {
+        max-width: 100%;
+    }
 }
 
 .fancy-textbox.center input {
@@ -100,6 +118,20 @@ $transparent: rgba(0, 0, 0, 0.00);
 
     label.active {
         color: $red;
+    }
+}
+
+.fancy-textarea.lg {
+    textarea {
+        font-size: large;
+    }
+}
+
+.fancy-textbox.full {
+    max-width: 100%;
+
+    textarea {
+        max-width: 100%;
     }
 }
 

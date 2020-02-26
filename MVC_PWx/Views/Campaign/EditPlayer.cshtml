@@ -6,7 +6,10 @@
     ViewBag.Title = "Player Sheet";
 }
 
-<h2 style="text-align:center">Player Sheet</h2>
+<div class="user-header">
+    <label class="text-large">@Model.UserName</label>
+    <div id="invite-player" class="btn btn-sm btn-default">Invite Player</div>
+</div>
 
 <div class="fancy-tabs" data-panes="player-panes">
     <div class="fancy-tab-item active" data-tab="player-sheet-pane">Character</div>
@@ -31,7 +34,7 @@
 
             @HtmlHelpers.RenderFancyTextbox("lg", "LastName", 50, Model.LastName, "Last Name", Html.ValidationMessageFor(model => model.LastName, "", new { @class = "text-danger" }))
 
-            @HtmlHelpers.RenderFancyNumberbox(1, 20, "xlg short center", "Level", Model.Level.ToString(), "Level", Html.ValidationMessageFor(model => model.Level, "", new { @class = "text-danger" }))
+            @HtmlHelpers.RenderFancyNumberbox(1, 20, "xlg short center force-num", "Level", Model.Level.ToString(), "Level", Html.ValidationMessageFor(model => model.Level, "", new { @class = "text-danger" }))
 
         </div>
         <div class="content-area">
@@ -54,17 +57,17 @@
                 <div class="attribute">
                     <label class="attr-label">Intelligence</label>
                     @HtmlHelpers.RenderFancyNumberbox(1, 30, "lg attr-stat center", "Intelligence", Model.Intelligence.ToString(), null, Html.ValidationMessageFor(model => model.Intelligence, "", new { @class = "text-danger" }))
-                    <label class="attr-mod">+0</label>
+                    <label class="attr-mod" data-abr="INT">+0</label>
                 </div>
                 <div class="attribute">
                     <label class="attr-label">Wisdom</label>
                     @HtmlHelpers.RenderFancyNumberbox(1, 30, "lg attr-stat center", "Wisdom", Model.Wisdom.ToString(), null, Html.ValidationMessageFor(model => model.Wisdom, "", new { @class = "text-danger" }))
-                    <label class="attr-mod">+0</label>
+                    <label class="attr-mod" data-abr="WIS">+0</label>
                 </div>
                 <div class="attribute">
                     <label class="attr-label">Charisma</label>
                     @HtmlHelpers.RenderFancyNumberbox(1, 30, "lg attr-stat center", "Charisma", Model.Charisma.ToString(), null, Html.ValidationMessageFor(model => model.Charisma, "", new { @class = "text-danger" }))
-                    <label class="attr-mod">+0</label>
+                    <label class="attr-mod" data-abr="CHA">+0</label>
                 </div>
             </div>
 
@@ -94,7 +97,9 @@
                         @Html.ValidationMessageFor(model => model.Alignment, "", new { @class = "text-danger" })
                     </div>
 
-                    @HtmlHelpers.RenderFancyNumberbox(1, 1000, "lg center", "MaxHP", Model.MaxHP.ToString(), "Max HP", Html.ValidationMessageFor(model => model.MaxHP, "", new { @class = "text-danger" }))
+                    @HtmlHelpers.RenderFancyNumberbox(1, 1000, "lg center force-num", "MaxHP", Model.MaxHP.ToString(), "Max HP", Html.ValidationMessageFor(model => model.MaxHP, "", new { @class = "text-danger" }))
+
+                    @HtmlHelpers.RenderFancyNumberbox(1, 10, "lg center force-num", "Proficiency", Model.Proficiency.ToString(), "Proficiency", Html.ValidationMessageFor(model => model.Proficiency, "", new { @class = "text-danger" }))
                 </div>
 
                 <div class="textareas">
@@ -116,10 +121,332 @@
         </div>
     </div>
     <div id="weapons-pane" class="content-box fancy-tab-pane slide-right">
+        <div class="weapons-pane">
+            <div class="weapons-side">
+                <div class="armor-row">
+                    @HtmlHelpers.RenderFancyTextbox("lg armor full", "Armor", 50, Model.Armor, "Armor", Html.ValidationMessageFor(model => model.Armor))
 
+                    @HtmlHelpers.RenderFancyNumberbox(1, 30, "lg", "ArmorClass", Model.ArmorClass.ToString(), "AC", Html.ValidationMessageFor(model => model.ArmorClass))
+                </div>
+                <div class="weapons">
+                    <div class="weapons-label">
+                        <div class="box-label text-md">Weapons</div>
+                    </div>
+                    <div class="weapons-list">
+                        @for (var i = 0; i < 10; i++)
+                        {
+                            if (i >= Model.Weapons.Count)
+                            {
+                                <div class="weapon-row">
+                                    <input class="hidden weapon-key" type="text" value="@Guid.NewGuid()" />
+                                    @HtmlHelpers.RenderFancyTextbox("name", null, 50, null, "Weapon")
+                                    @HtmlHelpers.RenderFancyNumberbox(-10, 20, "attack-mod center", null, null, "ATK")
+                                    @HtmlHelpers.RenderFancyTextbox("damage-dice", null, 10, null, "Damage")
+                                    @HtmlHelpers.RenderFancyNumberbox(-10, 20, "damage-mod center", null, null, "DMG")
+                                    <div class="fancy-dropdown damage-type">
+                                        @Html.DropDownList($"DamageType{i}", HtmlHelpers.DamageTypeDropdown(Guid.Empty), new { @class = "form-control" })
+                                    </div>
+                                    <i class="fa fa-eraser delete"></i>
+                                </div>
+                            }
+                            else
+                            {
+                                var item = Model.Weapons.ElementAt(i);
+                                <div class="weapon-row">
+                                    <input class="hidden weapon-key" type="text" value="@item.WeaponKey" />
+                                    @HtmlHelpers.RenderFancyTextbox("name", null, 50, item.Name, "Weapon")
+                                    @HtmlHelpers.RenderFancyNumberbox(-10, 20, "attack-mod center", null, item.AttackMod.ToString(), "ATK")
+                                    @HtmlHelpers.RenderFancyTextbox("damage-dice", null, 10, item.DamageDice, "Damage")
+                                    @HtmlHelpers.RenderFancyNumberbox(-10, 20, "damage-mod center", null, item.DamageMod.ToString(), "DMG")
+                                    <div class="fancy-dropdown damage-type">
+                                        @Html.DropDownList($"DamageType{i}", HtmlHelpers.DamageTypeDropdown(item.DamageType), new { @class = "form-control" })
+                                    </div>
+                                    <i class="fa fa-eraser delete"></i>
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="spell-side">
+                <div class="spellcasting-info">
+                    <div class="fancy-dropdown">
+                        @Html.LabelFor(model => model.SpellcastingAbility, htmlAttributes: new { @class = "control-label" })
+                        @Html.DropDownList("SpellcastingAbility", HtmlHelpers.SpellcastingAbilityDropdown(Model.SpellcastingAbility), "None", new { @class = "form-control" })
+                    </div>
+
+                    @HtmlHelpers.RenderFancyNumberbox(0, 20, "lg medium center force-num", "SpellSaveDC", Model.SpellSaveDC.ToString(), "Save DC")
+
+                    @HtmlHelpers.RenderFancyNumberbox(0, 20, "lg medium center force-num", "SpellcastingMod", Model.SpellcastingMod.ToString(), "Spell Attack")
+
+                    @HtmlHelpers.RenderFancyNumberbox(0, 50, "lg medium center force-num", "SpellsPerDay", Model.SpellsPerDay.ToString(), "Spells Per Day")
+                </div>
+                <div class="spell-content">
+                    <div class="spell-column">
+                        <div class="spell-column-title">
+                            <label class="text-large">Cantrips Known</label>
+                            @HtmlHelpers.RenderFancyNumberbox(0, 10, "lg center medium force-num", "Cantrips", Model.Cantrips.ToString(), null)
+                        </div>
+
+                        @for (var i = 0; i < 8; i++)
+                        {
+                            <div class="spell-row" data-level="0">
+                                @{ var spells = Model.Spells.Where(x => x.Level == 0).ToList(); }
+                                @if (i < spells.Count())
+                                {
+                                    <input class="hidden spell-key" value="@spells.ElementAt(i).SpellKey" />
+                                    @HtmlHelpers.RenderFancyTextbox("sm full spell", null, 50, spells.ElementAt(i).Name, null)
+                                }
+                                else
+                                {
+                                    <input class="hidden spell-key" value="@Guid.NewGuid()" />
+                                    @HtmlHelpers.RenderFancyTextbox("sm full spell", null, 50, null, null)
+                                }
+                                <i class="fa fa-eraser delete"></i>
+                            </div>
+                        }
+
+                        <div class="spell-column-title">
+                            <label class="text-large">Level 1 Known</label>
+                            @HtmlHelpers.RenderFancyNumberbox(0, 10, "lg center medium force-num", "Level1Spells", Model.Level1Spells.ToString(), null)
+                        </div>
+
+                        @for (var i = 0; i < 13; i++)
+                        {
+                            <div class="spell-row" data-level="1">
+                                @{ var spells = Model.Spells.Where(x => x.Level == 1).ToList(); }
+                                @if (i < spells.Count())
+                                {
+                                    <input class="hidden spell-key" value="@spells.ElementAt(i).SpellKey" />
+                                    @HtmlHelpers.RenderFancyTextbox("sm full spell", null, 50, spells.ElementAt(i).Name, null)
+                                }
+                                else
+                                {
+                                    <input class="hidden spell-key" value="@Guid.NewGuid()" />
+                                    @HtmlHelpers.RenderFancyTextbox("sm full spell", null, 50, null, null)
+                                }
+                                <i class="fa fa-eraser delete"></i>
+                            </div>
+                        }
+
+                        <div class="spell-column-title">
+                            <label class="text-large">Level 2 Known</label>
+                            @HtmlHelpers.RenderFancyNumberbox(0, 10, "lg center medium force-num", "Level2Spells", Model.Level2Spells.ToString(), null)
+                        </div>
+
+                        @for (var i = 0; i < 13; i++)
+                        {
+                            <div class="spell-row" data-level="2">
+                                @{ var spells = Model.Spells.Where(x => x.Level == 2).ToList(); }
+                                @if (i < spells.Count())
+                                {
+                                    <input class="hidden spell-key" value="@spells.ElementAt(i).SpellKey" />
+                                    @HtmlHelpers.RenderFancyTextbox("sm full spell", null, 50, spells.ElementAt(i).Name, null)
+                                }
+                                else
+                                {
+                                    <input class="hidden spell-key" value="@Guid.NewGuid()" />
+                                    @HtmlHelpers.RenderFancyTextbox("sm full spell", null, 50, null, null)
+                                }
+                                <i class="fa fa-eraser delete"></i>
+                            </div>
+                        }
+                    </div>
+                    <div class="spell-column border">
+                        <div class="spell-column-title">
+                            <label class="text-large">Level 3 Known</label>
+                            @HtmlHelpers.RenderFancyNumberbox(0, 10, "lg center medium force-num", "Level3Spells", Model.Level3Spells.ToString(), null)
+                        </div>
+
+                        @for (var i = 0; i < 13; i++)
+                        {
+                            <div class="spell-row" data-level="3">
+                                @{ var spells = Model.Spells.Where(x => x.Level == 3).ToList(); }
+                                @if (i < spells.Count())
+                                {
+                                    <input class="hidden spell-key" value="@spells.ElementAt(i).SpellKey" />
+                                    @HtmlHelpers.RenderFancyTextbox("sm full spell", null, 50, spells.ElementAt(i).Name, null)
+                                }
+                                else
+                                {
+                                    <input class="hidden spell-key" value="@Guid.NewGuid()" />
+                                    @HtmlHelpers.RenderFancyTextbox("sm full spell", null, 50, null, null)
+                                }
+                                <i class="fa fa-eraser delete"></i>
+                            </div>
+                        }
+
+                        <div class="spell-column-title">
+                            <label class="text-large">Level 4 Known</label>
+                            @HtmlHelpers.RenderFancyNumberbox(0, 10, "lg center medium force-num", "Level4Spells", Model.Level4Spells.ToString(), null)
+                        </div>
+
+                        @for (var i = 0; i < 13; i++)
+                        {
+                            <div class="spell-row" data-level="4">
+                                @{ var spells = Model.Spells.Where(x => x.Level == 4).ToList(); }
+                                @if (i < spells.Count())
+                                {
+                                    <input class="hidden spell-key" value="@spells.ElementAt(i).SpellKey" />
+                                    @HtmlHelpers.RenderFancyTextbox("sm full spell", null, 50, spells.ElementAt(i).Name, null)
+                                }
+                                else
+                                {
+                                    <input class="hidden spell-key" value="@Guid.NewGuid()" />
+                                    @HtmlHelpers.RenderFancyTextbox("sm full spell", null, 50, null, null)
+                                }
+                                <i class="fa fa-eraser delete"></i>
+                            </div>
+                        }
+
+                        <div class="spell-column-title">
+                            <label class="text-large">Level 5 Known</label>
+                            @HtmlHelpers.RenderFancyNumberbox(0, 10, "lg center medium force-num", "Level5Spells", Model.Level5Spells.ToString(), null)
+                        </div>
+
+                        @for (var i = 0; i < 9; i++)
+                        {
+                            <div class="spell-row" data-level="5">
+                                @{ var spells = Model.Spells.Where(x => x.Level == 5).ToList(); }
+                                @if (i < spells.Count())
+                                {
+                                    <input class="hidden spell-key" value="@spells.ElementAt(i).SpellKey" />
+                                    @HtmlHelpers.RenderFancyTextbox("sm full spell", null, 50, spells.ElementAt(i).Name, null)
+                                }
+                                else
+                                {
+                                    <input class="hidden spell-key" value="@Guid.NewGuid()" />
+                                    @HtmlHelpers.RenderFancyTextbox("sm full spell", null, 50, null, null)
+                                }
+                                <i class="fa fa-eraser delete"></i>
+                            </div>
+                        }
+                    </div>
+                    <div class="spell-column border">
+                        <div class="spell-column-title">
+                            <label class="text-large">Level 6 Known</label>
+                            @HtmlHelpers.RenderFancyNumberbox(0, 10, "lg center medium force-num", "Level6Spells", Model.Level6Spells.ToString(), null)
+                        </div>
+
+                        @for (var i = 0; i < 9; i++)
+                        {
+                            <div class="spell-row" data-level="6">
+                                @{ var spells = Model.Spells.Where(x => x.Level == 6).ToList(); }
+                                @if (i < spells.Count())
+                                {
+                                    <input class="hidden spell-key" value="@spells.ElementAt(i).SpellKey" />
+                                    @HtmlHelpers.RenderFancyTextbox("sm full spell", null, 50, spells.ElementAt(i).Name, null)
+                                }
+                                else
+                                {
+                                    <input class="hidden spell-key" value="@Guid.NewGuid()" />
+                                    @HtmlHelpers.RenderFancyTextbox("sm full spell", null, 50, null, null)
+                                }
+                                <i class="fa fa-eraser delete"></i>
+                            </div>
+                        }
+
+                        <div class="spell-column-title">
+                            <label class="text-large">Level 7 Known</label>
+                            @HtmlHelpers.RenderFancyNumberbox(0, 10, "lg center medium force-num", "Level7Spells", Model.Level7Spells.ToString(), null)
+                        </div>
+
+                        @for (var i = 0; i < 9; i++)
+                        {
+                            <div class="spell-row" data-level="7">
+                                @{ var spells = Model.Spells.Where(x => x.Level == 7).ToList(); }
+                                @if (i < spells.Count())
+                                {
+                                    <input class="hidden spell-key" value="@spells.ElementAt(i).SpellKey" />
+                                    @HtmlHelpers.RenderFancyTextbox("sm full spell", null, 50, spells.ElementAt(i).Name, null)
+                                }
+                                else
+                                {
+                                    <input class="hidden spell-key" value="@Guid.NewGuid()" />
+                                    @HtmlHelpers.RenderFancyTextbox("sm full spell", null, 50, null, null)
+                                }
+                                <i class="fa fa-eraser delete"></i>
+                            </div>
+                        }
+
+                        <div class="spell-column-title">
+                            <label class="text-large">Level 8 Known</label>
+                            @HtmlHelpers.RenderFancyNumberbox(0, 10, "lg center medium force-num", "Level8Spells", Model.Level8Spells.ToString(), null)
+                        </div>
+
+                        @for (var i = 0; i < 7; i++)
+                        {
+                            <div class="spell-row" data-level="8">
+                                @{ var spells = Model.Spells.Where(x => x.Level == 8).ToList(); }
+                                @if (i < spells.Count())
+                                {
+                                    <input class="hidden spell-key" value="@spells.ElementAt(i).SpellKey" />
+                                    @HtmlHelpers.RenderFancyTextbox("sm full spell", null, 50, spells.ElementAt(i).Name, null)
+                                }
+                                else
+                                {
+                                    <input class="hidden spell-key" value="@Guid.NewGuid()" />
+                                    @HtmlHelpers.RenderFancyTextbox("sm full spell", null, 50, null, null)
+                                }
+                                <i class="fa fa-eraser delete"></i>
+                            </div>
+                        }
+
+                        <div class="spell-column-title">
+                            <label class="text-large">Level 9 Known</label>
+                            @HtmlHelpers.RenderFancyNumberbox(0, 10, "lg center medium force-num", "Level9Spells", Model.Level9Spells.ToString(), null)
+                        </div>
+
+                        @for (var i = 0; i < 7; i++)
+                        {
+                            <div class="spell-row" data-level="9">
+                                @{ var spells = Model.Spells.Where(x => x.Level == 9).ToList(); }
+                                @if (i < spells.Count())
+                                {
+                                    <input class="hidden spell-key" value="@spells.ElementAt(i).SpellKey" />
+                                    @HtmlHelpers.RenderFancyTextbox("sm full spell", null, 50, spells.ElementAt(i).Name, null)
+                                }
+                                else
+                                {
+                                    <input class="hidden spell-key" value="@Guid.NewGuid()" />
+                                    @HtmlHelpers.RenderFancyTextbox("sm full spell", null, 50, null, null)
+                                }
+                                <i class="fa fa-eraser delete"></i>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
     <div id="inventory-pane" class="content-box fancy-tab-pane slide-right">
-
+        <div class="inventory-pane">
+            <div class="coins">
+                <div class="coin">
+                    <label class="text-large">Copper</label>
+                    @HtmlHelpers.RenderFancyNumberbox(0, 1000000, "lg medium center force-num", "Copper", Model.Copper.ToString(), null)
+                </div>
+                <div class="coin">
+                    <label class="text-large">Silver</label>
+                    @HtmlHelpers.RenderFancyNumberbox(0, 1000000, "lg medium center force-num", "Silver", Model.Silver.ToString(), null)
+                </div>
+                <div class="coin">
+                    <label class="text-large">Electrum</label>
+                    @HtmlHelpers.RenderFancyNumberbox(0, 1000000, "lg medium center force-num", "Electrum", Model.Electrum.ToString(), null)
+                </div>
+                <div class="coin">
+                    <label class="text-large">Gold</label>
+                    @HtmlHelpers.RenderFancyNumberbox(0, 1000000, "lg medium center force-num", "Gold", Model.Gold.ToString(), null)
+                </div>
+                <div class="coin">
+                    <label class="text-large">Platinum</label>
+                    @HtmlHelpers.RenderFancyNumberbox(0, 1000000, "lg medium center force-num", "Platinum", Model.Platinum.ToString(), null)
+                </div>
+            </div>
+            <div class="inventory">
+                @HtmlHelpers.RenderFancyTextarea("full lg", "Inventory", null, Model.Inventory, "Inventory")
+            </div>
+        </div>
     </div>
     <div id="backstory-pane" class="fancy-tab-pane slide-right">
         <div id="backstory-editor">
@@ -137,6 +464,7 @@
     <script src="https://cdn.ckeditor.com/ckeditor5/16.0.0/classic/ckeditor.js"></script>
     <script type="text/javascript">
         var updatePlayerAction = '@Url.Action("UpdatePlayer")';
+        var registerPlayerAction = '@Url.Action("RegisterPlayer", "Account", new { id = Model.UserCode }, this.Request.Url.Scheme)';
         var backstory;
 
         $(document).ready(function () {
@@ -156,6 +484,48 @@
             })
         })
 
+
+
+        /********************** Helpers ******************************/
+        function isEmpty(val) {
+            if (val == undefined || val == null || val == '') { return true; }
+
+            return false;
+        }
+
+
+
+        /********************** Calculating Spellcasting ******************************/
+        function calculateSpellcasting() {
+            var ability = $('#SpellcastingAbility').val();
+            if (isEmpty(ability)) {
+                $('#SpellSaveDC').val(0);
+                $('#SpellcastingMod').val(0);
+                return;
+            }
+
+            var proficiency = parseInt($('#Proficiency').val());
+            var mod = parseInt($(`.attr-mod[data-abr=${ability}]`).text());
+
+            $('#SpellSaveDC').val(8 + proficiency + mod);
+            $('#SpellcastingMod').val(proficiency + mod);
+        }
+
+        $('#SpellcastingAbility').change(function () {
+            calculateSpellcasting();
+        })
+
+        $('#Proficiency').change(function () {
+            calculateSpellcasting();
+        })
+
+        $('.attr-stat').change(function () {
+            calculateSpellcasting();
+        })
+
+
+
+        /********************** Calculating Numbers ******************************/
         $('.attr-stat input').blur(function () {
             forceNumValue(this);
             calculateMod($(this).parentsUntil('.attribute').parent());
@@ -165,11 +535,7 @@
             calculateMod($(this).parentsUntil('.attribute').parent());
         });
 
-        $('#Level').blur(function () {
-            forceNumValue(this);
-        });
-
-        $('#MaxHP').blur(function () {
+        $('.force-num input').blur(function () {
             forceNumValue(this);
         });
 
@@ -177,10 +543,11 @@
             var val = $(attr).val();
             var min = parseInt($(attr).attr('min'));
             var max = parseInt($(attr).attr('max'));
-            if (val == null || val == '') {
-                val = 1;
+            if (isEmpty(val)) {
+                val = min;
             }
             val = Math.min(Math.max(val, min), max);
+
             $(attr).val(val);
         }
 
@@ -197,6 +564,28 @@
             $(attr).find('.attr-mod').text(result);
         }
 
+
+
+        /********************** Interactive Functionality ******************************/
+        $('.weapon-row .delete').click(function () {
+            $(this).parent().find('*').each(function () {
+                if ($(this).hasClass('weapon-key')) { return; }
+
+                $(this).val('');
+            })
+        })
+
+        $('.spell-row .delete').click(function () {
+            $(this).parent().find('*').each(function () {
+                if ($(this).hasClass('spell-key')) { return; }
+
+                $(this).val('');
+            })
+        })
+
+
+
+        /********************** Active Classes ******************************/
         $('.attr-stat input').focus(function () {
             $(this).parentsUntil('.attributes').parent().addClass('active');
             $(this).parentsUntil('.attribute').parent().addClass('active');
@@ -207,11 +596,80 @@
             $(this).parentsUntil('.attribute').parent().removeClass('active');
         })
 
+        $('.weapons-list *').focus(function () {
+            $(this).parentsUntil('.weapons-list').parent().addClass('active');
+        })
+
+        $('.weapons-list *').blur(function () {
+            $(this).parentsUntil('.weapons-list').parent().removeClass('active');
+        })
+
+        $('.spell-column-title *').focus(function () {
+            $(this).parentsUntil('.spell-column-title').parent().addClass('active');
+        })
+
+        $('.spell-column-title *').blur(function () {
+            $(this).parentsUntil('.spell-column-title').parent().removeClass('active');
+        })
+
+        $('.coin *').focus(function () {
+            $(this).parentsUntil('.coin').parent().addClass('active');
+        })
+
+        $('.coin *').blur(function () {
+            $(this).parentsUntil('.coin').parent().removeClass('active');
+        })
+
+
+
+        /********************** Invite Player ******************************/
+        $('#invite-player').click(function () {
+            Notiflix.Report.Info(
+                'Invite Player',
+                'Username? ' + registerPlayerAction,
+                'Send',
+                function () {
+                    //TODO
+                }
+            )
+        })
+
+
+
+        /********************** Saving ******************************/
         function save() {
+            var weapons = [];
+            $('.weapon-row').each(function () {
+                var name = $(this).find('.name input').val();
+                if (!isEmpty(name)) {
+                    weapons.push({
+                        WeaponKey: $(this).find('.weapon-key').val(),
+                        Name: name,
+                        AttackMod: $(this).find('.attack-mod input').val(),
+                        DamageDice: $(this).find('.damage-dice input').val(),
+                        DamageMod: $(this).find('.damage-mod input').val(),
+                        DamageType: $(this).find('.damage-type select').val()
+                    })
+                }
+            })
+
+            var spells = [];
+            $('.spell-row').each(function () {
+                var name = $(this).find('.spell input').val();
+                if (!isEmpty(name)) {
+                    spells.push({
+                        SpellKey: $(this).find('.spell-key').val(),
+                        Name: name,
+                        Level: $(this).data('level')
+                    })
+                }
+            })
+
             var postData = {
                 UserKey: $('#UserKey').val(),
                 Level: $('#Level').val(),
                 MaxHP: $('#MaxHP').val(),
+                Proficiency: $('#Proficiency').val(),
                 Strength: $('#Strength').val(),
                 Dexterity: $('#Dexterity').val(),
                 Constitution: $('#Constitution').val(),
@@ -232,7 +690,31 @@
                 Backstory: backstory.getData(),
                 CampaignKey: $('#CampaignKey').val(),
                 Languages: $('#Languages').val(),
-                Alignment: $('#Alignment').val()
+                Alignment: $('#Alignment').val(),
+                Armor: $('#Armor').val(),
+                ArmorClass: $('#ArmorClass').val(),
+                SpellcastingAbility: $('#SpellcastingAbility').val(),
+                SpellSaveDC: $('#SpellSaveDC').val(),
+                SpellcastingMod: $('#SpellcastingMod').val(),
+                SpellsPerDay: $('#SpellsPerDay').val(),
+                Cantrips: $('#Cantrips').val(),
+                Level1Spells: $('#Level1Spells').val(),
+                Level2Spells: $('#Level2Spells').val(),
+                Level3Spells: $('#Level3Spells').val(),
+                Level4Spells: $('#Level4Spells').val(),
+                Level5Spells: $('#Level5Spells').val(),
+                Level6Spells: $('#Level6Spells').val(),
+                Level7Spells: $('#Level7Spells').val(),
+                Level8Spells: $('#Level8Spells').val(),
+                Level9Spells: $('#Level9Spells').val(),
+                Copper: $('#Copper').val(),
+                Silver: $('#Silver').val(),
+                Electrum: $('#Electrum').val(),
+                Gold: $('#Gold').val(),
+                Platinum: $('#Platinum').val(),
+                Inventory: $('#Inventory').val(),
+                Weapons: weapons,
+                Spells: spells
             }
 
             $.ajax({

@@ -40,10 +40,10 @@ namespace MVC_PWx.Controllers
             return RedirectToAction("EditPlayer", new { ownerId = id, id = Guid.NewGuid() });
         }
 
-        [HasAccess(Priviledge = AppLogic.Priviledge.DM)]
+        [HasAccess(Priviledge = AppLogic.Priviledge.Player)]
         public ActionResult EditPlayer(Guid ownerId, Guid id)
         {
-            var player = new CharacterViewModel();
+            var player = new PlayerViewModel();
             try
             {
                 player = CampaignSvc.GetPlayer(UserData.UserId, ownerId, id);
@@ -54,14 +54,14 @@ namespace MVC_PWx.Controllers
         }
 
         [HttpPost]
-        [HasAccess(Priviledge = AppLogic.Priviledge.DM)]
-        public JsonResult UpdatePlayer(CharacterPostModel model)
+        [HasAccess(Priviledge = AppLogic.Priviledge.Player)]
+        public JsonResult UpdatePlayer(PlayerPostModel model)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
-                    CampaignSvc.UpdateCharacter(UserData.UserId, model);
+                    CampaignSvc.UpdateCharacter(UserData.UserId, model, true, model.UserKey);
                 }
             }
             catch (Exception ex)

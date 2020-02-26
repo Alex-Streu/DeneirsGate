@@ -1,0 +1,7 @@
+﻿CREATE TABLE [dbo].[CharacterSpells]
+(
+	[SpellKey] UNIQUEIDENTIFIER NOT NULL PRIMARY KEY, 
+    [CharacterKey] UNIQUEIDENTIFIER NOT NULL, 
+    [Level] INT NOT NULL, 
+    [Name] NVARCHAR(50) NOT NULL
+)

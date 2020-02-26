@@ -90,5 +90,34 @@ namespace DeneirsGate.Services
 
             return items;
         }
+
+        public Dictionary<string, string> GetSpellcastingAbilities()
+        {
+            var items = new Dictionary<string, string>();
+            items.Add("INT", "Intelligence");
+            items.Add("WIS", "Wisdom");
+            items.Add("CHA", "Charisma");
+
+            return items;
+        }
+
+        public List<DamageTypeViewModel> GetDamageTypes()
+        {
+            var types = new List<DamageTypeViewModel>();
+            try
+            {
+                using (DBReset())
+                {
+                    types = DB.DamageTypes.Select(x => new DamageTypeViewModel
+                    {
+                        Name = x.Name,
+                        TypeKey = x.TypeKey
+                    }).OrderBy(x => x.Name).ToList();
+                }
+            }
+            catch (Exception ex) { }
+
+            return types;
+        }
     }
 }

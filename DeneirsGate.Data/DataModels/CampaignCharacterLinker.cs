@@ -15,6 +15,8 @@ namespace DeneirsGate.Data
 
         public Guid UserKey { get; set; }
 
-        public bool IsUser { get; set; }
+        public bool IsPlayer { get; set; }
+
+        public bool IsRegistered { get; set; }
     }
 }

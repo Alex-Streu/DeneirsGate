@@ -4,5 +4,6 @@
     [CharacterKey] UNIQUEIDENTIFIER NOT NULL,
 	[UserKey] UNIQUEIDENTIFIER NOT NULL
 	CONSTRAINT [PK_CampaignCharacterLinkers] PRIMARY KEY NONCLUSTERED ([CampaignKey], [CharacterKey]), 
-    [IsUser] BIT NOT NULL DEFAULT 0
+    [IsPlayer] BIT NOT NULL DEFAULT 0, 
+    [IsRegistered] BIT NOT NULL DEFAULT 0
 )

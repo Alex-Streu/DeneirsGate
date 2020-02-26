@@ -5,6 +5,10 @@ $red80: rgba(206, 6, 6, 0.80);
 $red60: rgba(206, 6, 6, 0.60);
 $white: #fcfcfc;
 
+.user-header {
+    margin-bottom: 1em;
+}
+
 .player-sheet {
 
     .top-info {
@@ -118,6 +122,224 @@ $white: #fcfcfc;
                     height: 100px;
                 }
             }
+        }
+    }
+}
+
+.weapons-pane {
+    display: flex;
+
+    .weapons-side {
+        width: 40%;
+
+        .armor-row {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+
+            .armor {
+                width: 80%;
+            }
+        }
+
+        .weapons {
+            width: 100%;
+            display: flex;
+            flex-wrap: wrap;
+
+            .weapons-label {
+                display: flex;
+                align-content: flex-end;
+
+                .box-label {
+                    margin-right: 1em;
+                }
+            }
+
+            .weapons-list {
+                width: 100%;
+                border: 1px solid $gray;
+                border-radius: 5%;
+                padding: 0.5em;
+                font-size: 24px;
+                background-color: $white;
+                transition: all 0.2s ease-in-out;
+                margin-top: 0.25em;
+
+                .weapon-row {
+                    display: flex;
+                    width: 100%;
+                    align-items: baseline;
+
+                    * {
+                        padding: 0.25em;
+                    }
+
+                    .delete {
+                        width: 5%;
+                        cursor: pointer;
+                        font-size: medium;
+                        transition: all 0.2s ease-in-out;
+                    }
+
+                    .delete:hover {
+                        color: $red;
+                    }
+
+                    .name {
+                        width: 30%;
+                    }
+
+                    .attack-mod {
+                        width: 10%;
+                    }
+
+                    .damage-dice {
+                        width: 20%;
+                    }
+
+                    .damage-mod {
+                        width: 10%;
+                    }
+
+                    .damage-type {
+                        width: 25%;
+                    }
+                }
+            }
+
+            .weapons-list.active {
+                border-color: $red80 !important;
+                box-shadow: 0 1px 1px rgba(229, 103, 23, 0.075) inset, 0 0 8px $red60 !important;
+                outline: 0 none !important;
+            }
+        }
+    }
+
+    .spell-side {
+        width: 60%;
+        border-left: 1px solid $gray;
+        margin-left: 2em;
+
+        .spellcasting-info {
+            width: 100%;
+            display: flex;
+            justify-content: space-around;
+            align-items: flex-end;
+
+            .fancy-textbox {
+                margin-bottom: 0px !important;
+            }
+        }
+
+        .spell-content {
+            display: flex;
+            justify-content: flex-start;
+            width: 100%;
+            margin-top: 1em;
+            background-color: $white;
+
+            .spell-column {
+                flex-grow: 1;
+                padding: 0em 2em;
+
+                .fancy-textbox {
+                    margin-bottom: 0.5em !important;
+                }
+
+                .spell-column-title {
+                    display: flex;
+                    justify-content: space-around;
+                    align-items: baseline;
+                    width: 100%;
+                    border: 1px solid $gray;
+                    box-shadow: 2px 2px 4px #000;
+                    border-radius: 10px;
+                    transition: all 0.2s ease-in-out;
+                    margin-top: 1em;
+                    margin-bottom: 2em;
+                    padding: 2px;
+
+                    .fancy-textbox {
+                        margin-bottom: 0.5em !important;
+                    }
+                }
+
+                .spell-column-title.active {
+                    border-color: $red;
+                    color: $red;
+                }
+
+                .spell-row {
+                    display: flex;
+                    width: 100%;
+                    align-items: baseline;
+
+                    * {
+                        padding: 0.25em;
+                    }
+
+                    .spell {
+                        width: 95%;
+                    }
+
+                    .delete {
+                        width: 5%;
+                        cursor: pointer;
+                        font-size: medium;
+                        transition: all 0.2s ease-in-out;
+                    }
+
+                    .delete:hover {
+                        color: $red;
+                    }
+                }
+            }
+
+            .spell-column.border {
+                border-left: 1px solid $gray;
+            }
+        }
+    }
+}
+
+.inventory-pane {
+    .coins {
+        width: 100%;
+        display: flex;
+        justify-content: space-around;
+        align-content: baseline;
+
+        .coin {
+            display: flex;
+            justify-content: space-around;
+            align-items: baseline;
+            width: 100%;
+            border: 1px solid $gray;
+            box-shadow: 2px 2px 4px #000;
+            border-radius: 10px;
+            transition: all 0.2s ease-in-out;
+            margin: 2em;
+            padding: 1em;
+            background-color: $white;
+
+            .fancy-textbox {
+                margin-bottom: 0.5em !important;
+            }
+        }
+
+        .coin.active {
+            border-color: $red;
+            color: $red;
+        }
+    }
+
+    .inventory {
+        width: 100%;
+
+        textarea {
+            min-height: 200px;
         }
     }
 }

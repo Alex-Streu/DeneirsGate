@@ -33,6 +33,9 @@ namespace DeneirsGate.Data
         public virtual DbSet<Character> Characters { get; set; }
         public virtual DbSet<Class> Classes { get; set; }
         public virtual DbSet<Race> Races { get; set; }
+        public virtual DbSet<CharacterWeapon> CharacterWeapons { get; set; }
+        public virtual DbSet<CharacterSpell> CharacterSpells { get; set; }
+        public virtual DbSet<DamageType> DamageTypes { get; set; }
 
         #endregion
 

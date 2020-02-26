@@ -1,0 +1,74 @@
+﻿@using DeneirsGate.Services
+@model PlayerRegistryViewModel
+
+@{
+    ViewBag.Title = "Register Character";
+}
+
+@Html.HiddenFor(model => model.CharacterKey)
+<div id="player-register-body">
+    <div id="prompt-register" class="content-box fancy-tab-pane active">
+        <div class="title">
+            Would you like to register as this character?
+        </div>
+        <div class="message">
+            @Model.Name
+        </div>
+        <div class="options">
+            <div class="btn btn-large btn-default" onclick="register()">Yes, Please!</div>
+        </div>
+    </div>
+
+    <div id="register-success-response" class="content-box fancy-tab-pane slide-right">
+        <div class="title">
+            Congratulations on your new character!
+        </div>
+        <div class="options">
+            <a class="btn btn-large btn-default" href="@Url.Action("EditPlayer", "Campaign", new { ownerId = Model.CampaignKey, id = Model.CharacterKey })">Meet Your New Pal!</a>
+        </div>
+    </div>
+
+    <div id="register-error-response" class="content-box fancy-tab-pane slide-right">
+        <div class="title">
+            Uh oh, something went wrong!!
+        </div>
+        <div class="message">
+            Your Dungeon Master has been notified of the issue.
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script type="text/javascript">
+        var registerAction = '@Url.Action("RegisterPlayer")';
+
+        function register() {
+            var postData = {
+                CharacterKey: $('#CharacterKey').val()
+            }
+
+            $.ajax({
+                type: "POST",
+                url: registerAction,
+                data: JSON.stringify(postData),
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    $('#prompt-register').removeClass('active');
+
+                    if (data.success) {
+                        Notiflix.Notify.Success(data.message);
+                        $('#register-success-response').addClass('active');
+                    } else {
+                        Notiflix.Notify.Failure(data.message);
+                        $('#register-error-response').addClass('active');
+                    }
+                },
+                error: function (error) {
+                    Notiflix.Notify.Failure(error.responseText);
+                    $('#register-error-response').addClass('active');
+                }
+            })
+        }
+    </script>
+}

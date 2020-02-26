@@ -32,6 +32,10 @@
   font-size: 12px;
   color: #ce0606; }
 
+.fancy-textbox.sm input,
+.fancy-textbox.sm label {
+  font-size: 12px; }
+
 .fancy-textbox.lg input,
 .fancy-textbox.lg label {
   font-size: 24px; }
@@ -50,7 +54,16 @@
   max-width: 10%; }
 
 .fancy-textbox.medium {
-  max-width: 40%; }
+  max-width: 40%;
+  width: 100px; }
+
+.fancy-textbox.long {
+  max-width: 90%; }
+
+.fancy-textbox.full {
+  max-width: 100%; }
+  .fancy-textbox.full input {
+    max-width: 100%; }
 
 .fancy-textbox.center input {
   text-align: center; }
@@ -72,6 +85,14 @@
 
 .fancy-textarea label.active {
   color: #ce0606; }
+
+.fancy-textarea.lg textarea {
+  font-size: large; }
+
+.fancy-textbox.full {
+  max-width: 100%; }
+  .fancy-textbox.full textarea {
+    max-width: 100%; }
 
 /* Dropdown */
 .fancy-dropdown select {
@@ -151,6 +172,9 @@
     right: 0;
     opacity: 1; } }
 
+.user-header {
+  margin-bottom: 1em; }
+
 .player-sheet .top-info {
   display: flex;
   align-items: flex-end;
@@ -225,6 +249,147 @@
         height: 200px; }
       .player-sheet .content-area .content .textareas .fear-ideal .fancy-textarea textarea {
         height: 100px; }
+
+.weapons-pane {
+  display: flex; }
+  .weapons-pane .weapons-side {
+    width: 40%; }
+    .weapons-pane .weapons-side .armor-row {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end; }
+      .weapons-pane .weapons-side .armor-row .armor {
+        width: 80%; }
+    .weapons-pane .weapons-side .weapons {
+      width: 100%;
+      display: flex;
+      flex-wrap: wrap; }
+      .weapons-pane .weapons-side .weapons .weapons-label {
+        display: flex;
+        align-content: flex-end; }
+        .weapons-pane .weapons-side .weapons .weapons-label .box-label {
+          margin-right: 1em; }
+      .weapons-pane .weapons-side .weapons .weapons-list {
+        width: 100%;
+        border: 1px solid #797979;
+        border-radius: 5%;
+        padding: 0.5em;
+        font-size: 24px;
+        background-color: #fcfcfc;
+        transition: all 0.2s ease-in-out;
+        margin-top: 0.25em; }
+        .weapons-pane .weapons-side .weapons .weapons-list .weapon-row {
+          display: flex;
+          width: 100%;
+          align-items: baseline; }
+          .weapons-pane .weapons-side .weapons .weapons-list .weapon-row * {
+            padding: 0.25em; }
+          .weapons-pane .weapons-side .weapons .weapons-list .weapon-row .delete {
+            width: 5%;
+            cursor: pointer;
+            font-size: medium;
+            transition: all 0.2s ease-in-out; }
+          .weapons-pane .weapons-side .weapons .weapons-list .weapon-row .delete:hover {
+            color: #ce0606; }
+          .weapons-pane .weapons-side .weapons .weapons-list .weapon-row .name {
+            width: 30%; }
+          .weapons-pane .weapons-side .weapons .weapons-list .weapon-row .attack-mod {
+            width: 10%; }
+          .weapons-pane .weapons-side .weapons .weapons-list .weapon-row .damage-dice {
+            width: 20%; }
+          .weapons-pane .weapons-side .weapons .weapons-list .weapon-row .damage-mod {
+            width: 10%; }
+          .weapons-pane .weapons-side .weapons .weapons-list .weapon-row .damage-type {
+            width: 25%; }
+      .weapons-pane .weapons-side .weapons .weapons-list.active {
+        border-color: rgba(206, 6, 6, 0.8) !important;
+        box-shadow: 0 1px 1px rgba(229, 103, 23, 0.075) inset, 0 0 8px rgba(206, 6, 6, 0.6) !important;
+        outline: 0 none !important; }
+  .weapons-pane .spell-side {
+    width: 60%;
+    border-left: 1px solid #797979;
+    margin-left: 2em; }
+    .weapons-pane .spell-side .spellcasting-info {
+      width: 100%;
+      display: flex;
+      justify-content: space-around;
+      align-items: flex-end; }
+      .weapons-pane .spell-side .spellcasting-info .fancy-textbox {
+        margin-bottom: 0px !important; }
+    .weapons-pane .spell-side .spell-content {
+      display: flex;
+      justify-content: flex-start;
+      width: 100%;
+      margin-top: 1em;
+      background-color: #fcfcfc; }
+      .weapons-pane .spell-side .spell-content .spell-column {
+        flex-grow: 1;
+        padding: 0em 2em; }
+        .weapons-pane .spell-side .spell-content .spell-column .fancy-textbox {
+          margin-bottom: 0.5em !important; }
+        .weapons-pane .spell-side .spell-content .spell-column .spell-column-title {
+          display: flex;
+          justify-content: space-around;
+          align-items: baseline;
+          width: 100%;
+          border: 1px solid #797979;
+          box-shadow: 2px 2px 4px #000;
+          border-radius: 10px;
+          transition: all 0.2s ease-in-out;
+          margin-top: 1em;
+          margin-bottom: 2em;
+          padding: 2px; }
+          .weapons-pane .spell-side .spell-content .spell-column .spell-column-title .fancy-textbox {
+            margin-bottom: 0.5em !important; }
+        .weapons-pane .spell-side .spell-content .spell-column .spell-column-title.active {
+          border-color: #ce0606;
+          color: #ce0606; }
+        .weapons-pane .spell-side .spell-content .spell-column .spell-row {
+          display: flex;
+          width: 100%;
+          align-items: baseline; }
+          .weapons-pane .spell-side .spell-content .spell-column .spell-row * {
+            padding: 0.25em; }
+          .weapons-pane .spell-side .spell-content .spell-column .spell-row .spell {
+            width: 95%; }
+          .weapons-pane .spell-side .spell-content .spell-column .spell-row .delete {
+            width: 5%;
+            cursor: pointer;
+            font-size: medium;
+            transition: all 0.2s ease-in-out; }
+          .weapons-pane .spell-side .spell-content .spell-column .spell-row .delete:hover {
+            color: #ce0606; }
+      .weapons-pane .spell-side .spell-content .spell-column.border {
+        border-left: 1px solid #797979; }
+
+.inventory-pane .coins {
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  align-content: baseline; }
+  .inventory-pane .coins .coin {
+    display: flex;
+    justify-content: space-around;
+    align-items: baseline;
+    width: 100%;
+    border: 1px solid #797979;
+    box-shadow: 2px 2px 4px #000;
+    border-radius: 10px;
+    transition: all 0.2s ease-in-out;
+    margin: 2em;
+    padding: 1em;
+    background-color: #fcfcfc; }
+    .inventory-pane .coins .coin .fancy-textbox {
+      margin-bottom: 0.5em !important; }
+  .inventory-pane .coins .coin.active {
+    border-color: #ce0606;
+    color: #ce0606; }
+
+.inventory-pane .inventory {
+  width: 100%; }
+  .inventory-pane .inventory textarea {
+    min-height: 200px; }
 
 #backstory-editor ~ .ck-editor .ck-editor__editable {
   min-height: 500px;
@@ -336,3 +501,23 @@
   to {
     opacity: 1;
     left: 110px; } }
+
+#player-register-body .title {
+  display: flex;
+  width: 100%;
+  font-size: 36px;
+  justify-content: center;
+  margin: 1em; }
+
+#player-register-body .message {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  margin: 3em 1em 1em 1em;
+  font-size: 24px; }
+
+#player-register-body .options {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  margin: 4em 1em 1em 1em; }

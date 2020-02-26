@@ -436,6 +436,7 @@
     <Content Include="Content\custom\pages\player-sheet.scss" />
     <Content Include="Content\custom\settings.scss" />
     <Content Include="Content\custom\pages\campaign-dashboard.scss" />
+    <Content Include="Content\custom\pages\register-player.scss" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.3.1.js" />
     <Content Include="Scripts\jquery-3.3.1.min.js" />
@@ -487,6 +488,7 @@
     <Content Include="Views\Campaign\Index.cshtml" />
     <Content Include="Views\Campaign\Dashboard.cshtml" />
     <Content Include="Views\Campaign\EditPlayer.cshtml" />
+    <Content Include="Views\Account\RegisterPlayer.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

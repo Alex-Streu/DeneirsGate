@@ -36,9 +36,21 @@ namespace CustomHtmlHelpers
             return list;
         }
 
+        public static SelectList DamageTypeDropdown(Guid typeKey)
+        {
+            var list = new SelectList(PresetSvc.GetDamageTypes(), "TypeKey", "Name", typeKey);
+            return list;
+        }
+
         public static SelectList AlignmentDropdown(string alignmentKey)
         {
             var list = new SelectList(PresetSvc.GetAlignments(), "Key", "Value", alignmentKey);
+            return list;
+        }
+
+        public static SelectList SpellcastingAbilityDropdown(string abilityKey)
+        {
+            var list = new SelectList(PresetSvc.GetSpellcastingAbilities(), "Key", "Value", abilityKey);
             return list;
         }
 
@@ -73,7 +85,7 @@ namespace CustomHtmlHelpers
         public static MvcHtmlString RenderFancyTextbox(string size, string id, int? limit, string value, string label, MvcHtmlString extra = null)
         {
             var str = $@"<div class='fancy-textbox {size ?? ""}'>
-                            <input type='text' id='{id}' autocomplete='screw-autocomplete' required='' {(limit == null ? "" : $"maxlength='{limit}'")} value='{value}' />     
+                            <input type='text' {(!id.IsNullOrEmpty() ? $"id='{id}'" : "")} autocomplete='screw-autocomplete' required='' {(limit == null ? "" : $"maxlength='{limit}'")} value='{value}' />     
                             {(String.IsNullOrEmpty(label) ? "" : $"<label for='{id}'>{label}</label>")}
                             {(extra == null ? "" : extra.ToString())}
                         </div>";
@@ -84,7 +96,7 @@ namespace CustomHtmlHelpers
         public static MvcHtmlString RenderFancyNumberbox(int min, int max, string size, string id, string value, string label, MvcHtmlString extra = null)
         {
             var str = $@"<div class='fancy-textbox {size ?? ""}'>
-                            <input type='number' min='{min}' max='{max}' id='{id}' autocomplete='screw-autocomplete' required='' value='{value}' />     
+                            <input type='number' min='{min}' max='{max}' {(!id.IsNullOrEmpty() ? $"id='{id}'" : "")} autocomplete='screw-autocomplete' required='' value='{value}' />     
                             {(String.IsNullOrEmpty(label) ? "" : $"<label for='{id}'>{label}</label>")}
                             {(extra == null ? "" : extra.ToString())}
                         </div>";
@@ -96,7 +108,7 @@ namespace CustomHtmlHelpers
         {
             var str = $@"<div class='fancy-textarea {size ?? ""}'>
                             {(String.IsNullOrEmpty(label) ? "" : $"<label for='{id}'>{label}</label>")}
-                            <textarea class='form-control' id='{id}' {(limit == null ? "" : $"maxlength='{limit}'")}>{value}</textarea>
+                            <textarea class='form-control' {(!id.IsNullOrEmpty() ? $"id='{id}'" : "")} {(limit == null ? "" : $"maxlength='{limit}'")}>{value}</textarea>
                             {(extra == null ? "" : extra.ToString())}
                         </div>";
 
@@ -106,7 +118,7 @@ namespace CustomHtmlHelpers
         public static MvcHtmlString RenderImageUpload(this UrlHelper urlHelper, string id, string value, Guid campaignKey, Guid contentKey)
         {
             var str = $@"<div class='upload-image' data-campaign='{campaignKey}'>
-                            <input id='{id}' type='text' class='image-name hidden' value='{value}' />
+                            <input {(!id.IsNullOrEmpty() ? $"id='{id}'" : "")} type='text' class='image-name hidden' value='{value}' />
                             <input class='uploader hidden' type='file' name='file' accept='image/*' />
                             <img class='img-xs img-responsive' src='{urlHelper.CharacterPortrait(campaignKey, contentKey, value)}' />
                             <div class='overlay'></div>

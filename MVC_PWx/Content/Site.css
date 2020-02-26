@@ -115,3 +115,11 @@ textarea {
     background-color: #f3f3f3;
     box-shadow: 2px 2px 5px 4px rgba(0, 0, 0, 0.2);
 }
+
+.text-large {
+    font-size: large;
+}
+
+.text-md {
+    font-size: medium;
+}

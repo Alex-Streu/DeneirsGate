@@ -40,6 +40,8 @@ namespace DeneirsGate.Data
         public string Alignment { get; set; }
 
         public int Level { get; set; }
+        
+        public int Proficiency { get; set; }
 
         public int MaxHP { get; set; }
 
@@ -58,5 +60,51 @@ namespace DeneirsGate.Data
         public string Abilities { get; set; }
 
         public string Status { get; set; }
+
+        [StringLength(50)]
+        public string Armor { get; set; }
+
+        public int ArmorClass { get; set; }
+
+        [StringLength(10)]
+        public string SpellcastingAbility { get; set; }
+
+        public int SpellcastingMod { get; set; }
+
+        public int SpellSaveDC { get; set; }
+
+        public int SpellsPerDay { get; set; }
+
+        public int Cantrips { get; set; }
+
+        public int Level1Spells { get; set; }
+
+        public int Level2Spells { get; set; }
+
+        public int Level3Spells { get; set; }
+
+        public int Level4Spells { get; set; }
+
+        public int Level5Spells { get; set; }
+
+        public int Level6Spells { get; set; }
+
+        public int Level7Spells { get; set; }
+
+        public int Level8Spells { get; set; }
+
+        public int Level9Spells { get; set; }
+
+        public int Copper { get; set; }
+
+        public int Silver { get; set; }
+
+        public int Electrum { get; set; }
+
+        public int Gold { get; set; }
+
+        public int Platinum { get; set; }
+
+        public string Inventory { get; set; }
     }
 }

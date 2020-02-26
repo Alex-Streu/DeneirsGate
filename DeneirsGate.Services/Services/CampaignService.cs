@@ -36,7 +36,7 @@ namespace DeneirsGate.Services
                         if (DB.Characters.FirstOrDefault(x => x.CharacterKey == contentKey) == null) { break; }
 
                         //Check user of player
-                        if (DB.CampaignCharacterLinkers.FirstOrDefault(x => x.IsUser && x.UserKey == userId && x.CharacterKey == contentKey) == null)
+                        if (DB.CampaignCharacterLinkers.FirstOrDefault(x => x.IsRegistered && x.UserKey == userId && x.CharacterKey == contentKey) != null)
                         {
                             hasAccess = true;
                             break;
@@ -98,7 +98,7 @@ namespace DeneirsGate.Services
             var players = new List<PlayerViewModel>();
             using (DBReset())
             {
-                var _players = DB.CampaignCharacterLinkers.Where(x => x.CampaignKey == campaignId && x.IsUser).ToList();
+                var _players = DB.CampaignCharacterLinkers.Where(x => x.CampaignKey == campaignId && x.IsPlayer).ToList();
                 foreach (var _p in _players)
                 {
                     var addPlayer = GetPlayer(userId, campaignId, _p.CharacterKey, _p.UserKey);
@@ -117,7 +117,7 @@ namespace DeneirsGate.Services
             var players = new List<PlayerShortViewModel>();
             using (DBReset())
             {
-                var _players = DB.CampaignCharacterLinkers.Where(x => x.IsUser && x.CampaignKey == campaignId).ToList();
+                var _players = DB.CampaignCharacterLinkers.Where(x => x.IsPlayer && x.CampaignKey == campaignId).ToList();
                 foreach (var _p in _players)
                 {
                     var addPlayer = GetPlayerShort(userId, campaignId, _p.CharacterKey, _p.UserKey);
@@ -139,7 +139,12 @@ namespace DeneirsGate.Services
 
                 using (DBReset())
                 {
-                    if (userKey == null) { userKey = DB.CampaignCharacterLinkers.FirstOrDefault(x => x.CampaignKey == campaignId && x.CharacterKey == characterId).UserKey; }
+                    if (userKey == null)
+                    {
+                        var linker = DB.CampaignCharacterLinkers.FirstOrDefault(x => x.CampaignKey == campaignId && x.CharacterKey == characterId);
+                        if (linker.IsRegistered) { userKey = linker.UserKey; }
+                    }
+
                     player = DB.Characters.Where(x => x.CharacterKey == characterId).Select(x => new PlayerViewModel
                     {
                         Abilities = x.Abilities,
@@ -165,8 +170,52 @@ namespace DeneirsGate.Services
                         Strength = x.Strength,
                         Wisdom = x.Wisdom,
                         CampaignKey = campaignId,
-                        UserKey = userKey.Value
+                        Armor = x.Armor,
+                        ArmorClass = x.ArmorClass,
+                        Proficiency = x.Proficiency,
+                        SpellcastingAbility = x.SpellcastingAbility,
+                        SpellcastingMod = x.SpellcastingMod,
+                        SpellSaveDC = x.SpellSaveDC,
+                        Cantrips = x.Cantrips,
+                        Level1Spells = x.Level1Spells,
+                        Level2Spells = x.Level2Spells,
+                        Level3Spells = x.Level3Spells,
+                        Level4Spells = x.Level4Spells,
+                        Level5Spells = x.Level5Spells,
+                        Level6Spells = x.Level6Spells,
+                        Level7Spells = x.Level7Spells,
+                        Level8Spells = x.Level8Spells,
+                        Level9Spells = x.Level9Spells,
+                        Copper = x.Copper,
+                        Silver = x.Silver,
+                        Electrum = x.Electrum,
+                        Gold = x.Gold,
+                        Platinum = x.Platinum,
+                        Inventory = x.Inventory,
+                        Weapons = DB.CharacterWeapons.Where(y => y.CharacterKey == characterId).Select(y => new CharacterWeaponViewModel
+                        {
+                            AttackMod = y.AttackMod,
+                            DamageDice = y.DamageDice,
+                            DamageMod = y.DamageMod,
+                            DamageType = y.DamageType,
+                            Name = y.Name,
+                            WeaponKey = y.WeaponKey
+                        }).ToList(),
+                        Spells = DB.CharacterSpells.Where(y => y.CharacterKey == characterId).Select(y => new CharacterSpellViewModel
+                        {
+                            Level = y.Level,
+                            Name = y.Name,
+                            SpellKey = y.SpellKey
+                        }).ToList()
                     }).FirstOrDefault();
+
+                    player.UserKey = userKey ?? Guid.Empty;
+                    player.UserCode = Convert.ToBase64String(characterId.ToByteArray()).Replace("=", "");
+
+                    if (player.UserKey != Guid.Empty)
+                    {
+                        player.UserName = db.Users.Where(x => x.Id == player.UserKey).Select(x => x.Username).FirstOrDefault();
+                    }
                 }
             }
 
@@ -239,7 +288,7 @@ namespace DeneirsGate.Services
             };
         }
 
-        public void UpdateCharacter(Guid userId, CharacterPostModel model)
+        public void UpdateCharacter(Guid userId, CharacterPostModel model, bool isPlayer = false, Guid? userKey = null)
         {
             UserHasAccess(userId, model.CharacterKey, ContentType.Character);
 
@@ -276,62 +325,57 @@ namespace DeneirsGate.Services
                 character.LastName = model.LastName;
                 character.Portrait = model.Portrait;
                 character.RaceKey = model.RaceKey;
+                character.ArmorClass = model.ArmorClass;
+                character.Armor = model.Armor;
+                character.Proficiency = model.Proficiency;
+                character.SpellcastingAbility = model.SpellcastingAbility;
+                character.SpellcastingMod = model.SpellcastingMod;
+                character.SpellSaveDC = model.SpellSaveDC;
+                character.Cantrips = model.Cantrips;
+                character.Level1Spells = model.Level1Spells;
+                character.Level2Spells = model.Level2Spells;
+                character.Level3Spells = model.Level3Spells;
+                character.Level4Spells = model.Level4Spells;
+                character.Level5Spells = model.Level5Spells;
+                character.Level6Spells = model.Level6Spells;
+                character.Level7Spells = model.Level7Spells;
+                character.Level8Spells = model.Level8Spells;
+                character.Level9Spells = model.Level9Spells;
+                character.Copper = model.Copper;
+                character.Silver = model.Silver;
+                character.Electrum = model.Electrum;
+                character.Gold = model.Gold;
+                character.Platinum = model.Platinum;
+                character.Inventory = model.Inventory;
 
-                if (add)
+                //Weapons
+                DB.CharacterWeapons.RemoveRange(DB.CharacterWeapons.Where(x => x.CharacterKey == model.CharacterKey).ToList());
+                foreach (var item in model.Weapons)
                 {
-                    DB.Characters.Add(character);
-
-                    //Add linkers
-                    DB.CampaignCharacterLinkers.Add(new CampaignCharacterLinker
+                    DB.CharacterWeapons.Add(new CharacterWeapon
                     {
-                        CampaignKey = model.CampaignKey,
+                        AttackMod = item.AttackMod,
                         CharacterKey = model.CharacterKey,
-                        IsUser = false,
-                        UserKey = Guid.Empty
+                        DamageDice = item.DamageDice,
+                        DamageMod = item.DamageMod,
+                        DamageType = item.DamageType,
+                        Name = item.Name,
+                        WeaponKey = item.WeaponKey
                     });
                 }
 
-                DB.SaveChanges();
-            }
-        }
-
-        public void UpdatePlayer(Guid userId, PlayerPostModel model)
-        {
-            UserHasAccess(userId, model.CharacterKey, ContentType.Character);
-
-            using (DBReset())
-            {
-                var add = false;
-                var character = db.Characters.FirstOrDefault(x => x.CharacterKey == model.CharacterKey);
-
-                if (character == null)
+                //Spells
+                DB.CharacterSpells.RemoveRange(DB.CharacterSpells.Where(x => x.CharacterKey == model.CharacterKey).ToList());
+                foreach (var item in model.Spells)
                 {
-                    character = new Character();
-                    add = true;
+                    DB.CharacterSpells.Add(new CharacterSpell
+                    {
+                        CharacterKey = model.CharacterKey,
+                        Level = item.Level,
+                        Name = item.Name,
+                        SpellKey = item.SpellKey
+                    });
                 }
-
-                character.Abilities = model.Abilities;
-                character.Charisma = model.Charisma;
-                character.Constitution = model.Constitution;
-                character.Dexterity = model.Dexterity;
-                character.Intelligence = model.Intelligence;
-                character.Level = model.Level;
-                character.MaxHP = model.MaxHP;
-                character.Status = model.Status;
-                character.Strength = model.Strength;
-                character.Wisdom = model.Wisdom;
-                character.Alignment = model.Alignment;
-                character.BackgroundKey = model.BackgroundKey;
-                character.Backstory = model.Backstory;
-                character.CharacterKey = model.CharacterKey;
-                character.ClassKey = model.ClassKey;
-                character.Fears = model.Fears;
-                character.FirstName = model.FirstName;
-                character.Ideals = model.Ideals;
-                character.Languages = model.Languages;
-                character.LastName = model.LastName;
-                character.Portrait = model.Portrait;
-                character.RaceKey = model.RaceKey;
 
                 if (add)
                 {
@@ -342,8 +386,8 @@ namespace DeneirsGate.Services
                     {
                         CampaignKey = model.CampaignKey,
                         CharacterKey = model.CharacterKey,
-                        IsUser = true,
-                        UserKey = model.UserKey
+                        IsPlayer = isPlayer,
+                        UserKey = userKey ?? Guid.Empty
                     });
                 }
 

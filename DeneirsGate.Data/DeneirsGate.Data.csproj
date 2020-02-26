@@ -61,10 +61,13 @@
     <Compile Include="DataModels\Campaign.cs" />
     <Compile Include="DataModels\CampaignCharacterLinker.cs" />
     <Compile Include="DataModels\Character.cs" />
+    <Compile Include="DataModels\CharacterSpell.cs" />
+    <Compile Include="DataModels\CharacterWeapon.cs" />
     <Compile Include="DataModels\Class.cs" />
     <Compile Include="DataModels\C__MigrationHistory.cs" />
     <Compile Include="DataModels\C__RefactorLog.cs" />
     <Compile Include="DataEntities.cs" />
+    <Compile Include="DataModels\DamageType.cs" />
     <Compile Include="DataModels\UserCampaign.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="DataModels\Race.cs" />

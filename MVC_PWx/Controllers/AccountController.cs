@@ -162,6 +162,33 @@ namespace MVC_PWx.Controllers
             }
         }
 
+        public ActionResult RegisterPlayer(string id)
+        {
+            var model = new PlayerRegistryViewModel();
+            try
+            {
+                model = AuthSvc.GetPlayerRegistry(id);
+            }
+            catch (Exception ex) { }
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public JsonResult RegisterPlayer(PlayerRegistryPostModel model)
+        {
+            try
+            {
+                AuthSvc.UpdatePlayerRegistry(UserData.UserId, model);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+
+            return Json(new { success = true, message = "Character Registration Successful!" });
+        }
+
         //
         // GET: /Account/Register
         [AllowAnonymous]

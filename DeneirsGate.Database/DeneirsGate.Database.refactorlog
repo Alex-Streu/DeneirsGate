@@ -56,4 +56,53 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="Armor" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="6391df99-9ba5-42ec-a24a-65535d75af6c" ChangeDateTime="02/24/2020 07:52:43">
+    <Property Name="ElementName" Value="[dbo].[CharacterWeapons].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[CharacterWeapons]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="CharacterKey" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="5488eaac-4d50-43e9-9a36-ea98f824f428" ChangeDateTime="02/24/2020 17:30:57">
+    <Property Name="ElementName" Value="[dbo].[CharacterWeapons].[Attack]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[CharacterWeapons]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="AttackMod" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="8548785c-f414-4293-831a-fe2c2ed3e30d" ChangeDateTime="02/24/2020 17:31:00">
+    <Property Name="ElementName" Value="[dbo].[CharacterWeapons].[Damage]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[CharacterWeapons]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="DamageDice" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="9418c96c-f28f-4419-b884-6f10787f34a0" ChangeDateTime="02/24/2020 17:33:02">
+    <Property Name="ElementName" Value="[dbo].[DamageTypes].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[DamageTypes]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="TypeKey" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="9e643205-2fec-4fe5-beae-ebd19fd69ea7" ChangeDateTime="02/25/2020 02:05:36">
+    <Property Name="ElementName" Value="[dbo].[Characters].[SpellcsatingAbility]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[Characters]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="SpellcastingAbility" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="d0a35f60-2153-45e4-a326-4e414ed42e4d" ChangeDateTime="02/25/2020 08:19:02">
+    <Property Name="ElementName" Value="[dbo].[CharacterSpells].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[CharacterSpells]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="SpellKey" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="7e44e645-2d0b-4588-815a-b08d933bb75a" ChangeDateTime="02/26/2020 05:27:35">
+    <Property Name="ElementName" Value="[dbo].[CampaignCharacterLinkers].[IsUser]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[CampaignCharacterLinkers]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="IsPlayer" />
+  </Operation>
 </Operations>

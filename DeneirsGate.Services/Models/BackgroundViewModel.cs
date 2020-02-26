@@ -7,4 +7,10 @@ namespace DeneirsGate.Services
         public Guid BackgroundKey { get; set; }
         public string Name { get; set; }
     }
+
+    public class DamageTypeViewModel
+    {
+        public Guid TypeKey { get; set; }
+        public string Name { get; set; }
+    }
 }
