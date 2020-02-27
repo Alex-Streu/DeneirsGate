@@ -4,7 +4,7 @@ namespace DeneirsGate.Services
 {
     public class DeneirsService
     {
-        protected DataEntities db;
+        private DataEntities db;
 
         protected DataEntities DB
         {

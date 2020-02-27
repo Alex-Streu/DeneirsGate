@@ -13,13 +13,13 @@ namespace DeneirsGate.Services
             UserDataModel user = null;
             try
             {
-                using (var db = new DataEntities())
+                using (DBReset())
                 {
-                    var _user = db.Users.FirstOrDefault(x => x.Username == username);
+                    var _user = DB.Users.FirstOrDefault(x => x.Username == username);
                     if (_user != null && Regex.Unescape(_user.Password) == password)
                     {
                         _user.LastLogin = DateTime.Now;
-                        db.SaveChanges();
+                        DB.SaveChanges();
 
                         user = GetUserData(_user.Id);
                     }
@@ -27,7 +27,6 @@ namespace DeneirsGate.Services
             }
             catch (Exception ex)
             {
-
             }
 
             return user;
@@ -37,9 +36,9 @@ namespace DeneirsGate.Services
         {
             var roles = new List<RoleDataModel>();
 
-            using (var db = new DataEntities())
+            using (DBReset())
             {
-                roles = db.Roles.Select(x => new RoleDataModel
+                roles = DB.Roles.Select(x => new RoleDataModel
                 {
                     Id = x.Id,
                     Name = x.Name,
@@ -53,9 +52,9 @@ namespace DeneirsGate.Services
         public List<RoleViewModel> GetRoles()
         {
             var roles = new List<RoleViewModel>();
-            using (var db = new DataEntities())
+            using (DBReset())
             {
-                roles = db.Roles.Where(x => x.Name != "Admin").Select(x => new RoleViewModel
+                roles = DB.Roles.Where(x => x.Name != "Admin").Select(x => new RoleViewModel
                 {
                     Id = x.Id,
                     Name = x.Name,
@@ -68,7 +67,7 @@ namespace DeneirsGate.Services
 
         public void AddUser(RegisterViewModel model)
         {
-            using (var db = new DataEntities())
+            using (DBReset())
             {
                 var user = new User
                 {
@@ -77,16 +76,17 @@ namespace DeneirsGate.Services
                     Email = model.Email,
                     Password = model.Password,
                     Username = model.Username.ToLower(),
-                    Picture = model.Picture
+                    Picture = model.Picture,
+                    LastLogin = DateTime.Now
                 };
 
-                db.Users.Add(user);
-                db.UserRoles.Add(new UserRole
+                DB.Users.Add(user);
+                DB.UserRoles.Add(new UserRole
                 {
                     RoleFK = model.Role,
                     UserFK = user.Id
                 });
-                db.SaveChanges();
+                DB.SaveChanges();
             }
         }
 
@@ -99,9 +99,9 @@ namespace DeneirsGate.Services
         public UserDataModel GetUserData(Guid id)
         {
             var user = new UserDataModel();
-            using (var db = new DataEntities())
+            using (DBReset())
             {
-                user = db.Users.Where(x => x.Id == id).Select(x => new UserDataModel
+                user = DB.Users.Where(x => x.Id == id).Select(x => new UserDataModel
                 {
                     DisplayName = x.DisplayName,
                     UserId = id,
@@ -110,19 +110,19 @@ namespace DeneirsGate.Services
                     Email = x.Email
                 }).FirstOrDefault();
 
-                var userRole = db.UserRoles.FirstOrDefault(y => y.UserFK == id);
+                var userRole = DB.UserRoles.FirstOrDefault(y => y.UserFK == id);
                 if (userRole == null)
                 {
                     userRole = new UserRole
                     {
-                        RoleFK = db.Roles.FirstOrDefault(x => x.Name == "Player").Id,
+                        RoleFK = DB.Roles.FirstOrDefault(x => x.Name == "Player").Id,
                         UserFK = id
                     };
-                    db.UserRoles.Add(userRole);
-                    db.SaveChangesAsync();
+                    DB.UserRoles.Add(userRole);
+                    DB.SaveChangesAsync();
                 }
 
-                var role = db.Roles.FirstOrDefault(x => x.Id == userRole.RoleFK);
+                var role = DB.Roles.FirstOrDefault(x => x.Id == userRole.RoleFK);
                 user.Priviledge = role.Priviledge;
                 user.Role = role.Id;
             }

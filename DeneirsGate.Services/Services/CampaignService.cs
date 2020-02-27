@@ -43,7 +43,7 @@ namespace DeneirsGate.Services
                         }
 
                         //Check campaign owner
-                        var campaignKeys = db.UserCampaigns.Where(x => x.UserKey == userId && x.IsOwner).Select(x => x.CampaignKey).ToList();
+                        var campaignKeys = DB.UserCampaigns.Where(x => x.UserKey == userId && x.IsOwner).Select(x => x.CampaignKey).ToList();
                         if (campaignKeys == null) { break; }
                         if (DB.CampaignCharacterLinkers.FirstOrDefault(x => campaignKeys.Contains(x.CampaignKey) && x.CharacterKey == contentKey) != null)
                         {
@@ -214,7 +214,7 @@ namespace DeneirsGate.Services
 
                     if (player.UserKey != Guid.Empty)
                     {
-                        player.UserName = db.Users.Where(x => x.Id == player.UserKey).Select(x => x.Username).FirstOrDefault();
+                        player.UserName = DB.Users.Where(x => x.Id == player.UserKey).Select(x => x.Username).FirstOrDefault();
                     }
                 }
             }
@@ -295,7 +295,7 @@ namespace DeneirsGate.Services
             using (DBReset())
             {
                 var add = false;
-                var character = db.Characters.FirstOrDefault(x => x.CharacterKey == model.CharacterKey);
+                var character = DB.Characters.FirstOrDefault(x => x.CharacterKey == model.CharacterKey);
 
                 if (character == null)
                 {

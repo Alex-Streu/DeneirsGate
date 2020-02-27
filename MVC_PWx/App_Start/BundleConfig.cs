@@ -22,12 +22,12 @@ namespace MVC_PWx
             bundles.Add(new ScriptBundle("~/bundles/bootstrap").Include(
                       "~/Scripts/bootstrap.js"));
 
-            bundles.Add(new StyleBundle("~/Content/css").Include(
+            bundles.Add(new StyleBundle("~/bundles/Content/css").Include(
                       "~/Content/bootstrap.css",
                       "~/Content/notiflix-2.0.0.css",
                       "~/Content/site.css",
                       "~/Content/Bundled.css",
-                      "~/Content/css/style.css"));
+                      "~/Content/dashio-css/*.css"));
 
             bundles.Add(new StyleBundle("~/bundles/extensions").Include(
                         "~/Content/lib/jquery.dcjqaccordion.2.7.js",

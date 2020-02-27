@@ -1,3 +1,0 @@
-﻿CREATE LOGIN [deneir]
-    WITH PASSWORD = N'caeEqu{yY|vBha{WwfFooj|,msFT7_&#$!~<yEw2l|gD=mqe', SID = 0x306C54B8BA66AB41877CC7BF2F2D1567, DEFAULT_DATABASE = [DeneirsGate], DEFAULT_LANGUAGE = [us_english], CHECK_EXPIRATION = ON;
-

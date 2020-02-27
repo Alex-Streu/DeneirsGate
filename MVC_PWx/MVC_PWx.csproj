@@ -207,11 +207,11 @@
     <Content Include="Content\Bundled.min.css">
       <DependentUpon>Bundled.css</DependentUpon>
     </Content>
-    <Content Include="Content\css\style-responsive.css" />
-    <Content Include="Content\css\style.css" />
-    <Content Include="Content\css\table-responsive.css" />
-    <Content Include="Content\css\to-do.css" />
-    <Content Include="Content\css\zabuto_calendar.css" />
+    <Content Include="Content\dashio-css\style-responsive.css" />
+    <Content Include="Content\dashio-css\style.css" />
+    <Content Include="Content\dashio-css\table-responsive.css" />
+    <Content Include="Content\dashio-css\to-do.css" />
+    <Content Include="Content\dashio-css\zabuto_calendar.css" />
     <Content Include="Content\dummyData.html" />
     <Content Include="Content\img\404.png" />
     <Content Include="Content\img\500.png" />
@@ -437,6 +437,8 @@
     <Content Include="Content\custom\settings.scss" />
     <Content Include="Content\custom\pages\campaign-dashboard.scss" />
     <Content Include="Content\custom\pages\register-player.scss" />
+    <None Include="Properties\PublishProfiles\DEV.pubxml" />
+    <None Include="Properties\PublishProfiles\PROD.pubxml" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.3.1.js" />
     <Content Include="Scripts\jquery-3.3.1.min.js" />
@@ -489,6 +491,12 @@
     <Content Include="Views\Campaign\Dashboard.cshtml" />
     <Content Include="Views\Campaign\EditPlayer.cshtml" />
     <Content Include="Views\Account\RegisterPlayer.cshtml" />
+    <None Include="Web.DEV.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </None>
+    <None Include="Web.PROD.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -518,6 +526,24 @@
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'DEV|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'PROD|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />

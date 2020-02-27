@@ -11,17 +11,14 @@ Author: Carlos Alvarez
 Website: http://Alvarez.is/
 */
 
-/* Import fonts */
-@import url(http://fonts.googleapis.com/css?family=Ruda:400,700,900);
-
 /* BASIC THEME CONFIGURATION */
 body {
     color: #797979;
-	background: #eaeaea;
-    font-family: 'Ruda', sans-serif;
+    background: #eaeaea;
+    font-family: 'Quattrocento', sans-serif;
     padding: 0px !important;
     margin: 0px !important;
-    font-size:13px;
+    font-size: 13px;
 }
 
 ul li {
