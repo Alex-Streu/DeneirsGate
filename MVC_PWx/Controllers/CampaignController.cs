@@ -14,7 +14,7 @@ namespace MVC_PWx.Controllers
             var campaigns = new List<CampaignViewModel>();
             try
             {
-                campaigns = CampaignSvc.GetCampaigns(UserData.UserId, UserData.Priviledge > (int)AppLogic.Priviledge.Player);
+                campaigns = CampaignSvc.GetCampaigns(AppUser.UserId, true);
             }
             catch (Exception ex) { }
 
@@ -27,7 +27,7 @@ namespace MVC_PWx.Controllers
             var model = new CampaignDashboardViewModel();
             try
             {
-                model = CampaignSvc.GetCampaignDashboard(UserData.UserId, id);
+                model = CampaignSvc.GetCampaignDashboard(AppUser.UserId, id);
             }
             catch (Exception ex) { }
 
@@ -46,7 +46,7 @@ namespace MVC_PWx.Controllers
             var player = new PlayerViewModel();
             try
             {
-                player = CampaignSvc.GetPlayer(UserData.UserId, ownerId, id);
+                player = CampaignSvc.GetPlayer(AppUser.UserId, ownerId, id);
             }
             catch (Exception ex) { }
 
@@ -61,7 +61,7 @@ namespace MVC_PWx.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    CampaignSvc.UpdateCharacter(UserData.UserId, model, true, model.UserKey);
+                    CampaignSvc.UpdateCharacter(AppUser.UserId, model, true, model.UserKey);
                 }
             }
             catch (Exception ex)

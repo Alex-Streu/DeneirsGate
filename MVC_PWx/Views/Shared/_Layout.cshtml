@@ -46,7 +46,7 @@
     <script src="~/Content/lib/chart-master/Chart.js"></script>
     @Styles.Render("~/bundles/Content/css")
     @Scripts.Render("~/bundles/modernizr")
-    @{ var UserData = AppLogic.GetUser(); }
+    @{ var UserData = (ApplicationUser)ViewBag.User; }
 </head>
 
 <body>
@@ -265,13 +265,26 @@
                     <!-- sidebar menu start-->
                     <ul class="sidebar-menu" id="nav-accordion">
                         <p class="centered"><a href="profile.html"><img src="@UserData.Picture" class="img-circle" width="80"></a></p>
-                        <h5 class="centered">@UserData.DisplayName</h5>
+                        <h5 class="centered">@UserData.UserName</h5>
                         <li class="mt">
                             <a data-alt="/" href="@Url.Action("/", "Home")">
                                 <i class="fa fa-dashboard"></i>
                                 <span>Dashboard</span>
                             </a>
                         </li>
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <li class="sub-menu">
+                                <a href="javascript:;">
+                                    <i class="fa fa-lock"></i>
+                                    <span>Admin</span>
+                                </a>
+                                <ul class="sub">
+                                    <li><a href="@Url.Action("Users", "Admin")">Users</a></li>
+                                    <li><a href="@Url.Action("Roles", "Admin")">Roles</a></li>
+                                </ul>
+                            </li>
+                        }
                         <li>
                             <a href="@Url.Action("/", "Campaign")">
                                 <i class="fa fa-compass"></i>

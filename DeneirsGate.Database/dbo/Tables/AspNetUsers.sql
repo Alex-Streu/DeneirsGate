@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[AspNetUsers] (
-    [Id]                   UNIQUEIDENTIFIER NOT NULL,
-    [UserName]             NVARCHAR (50)    NOT NULL,
+    [Id]                   NVARCHAR(128) NOT NULL,
+	[UserId]               UNIQUEIDENTIFIER NOT NULL,
     [Email]                NVARCHAR (256)   NULL,
     [EmailConfirmed]       BIT              NOT NULL,
     [PasswordHash]         NVARCHAR (MAX)   NULL,
@@ -11,6 +11,10 @@
     [LockoutEndDateUtc]    DATETIME         NULL,
     [LockoutEnabled]       BIT              NOT NULL,
     [AccessFailedCount]    INT              NOT NULL,
+	[UserName]             NVARCHAR (256)   NOT NULL ,
+	[Picture]              NVARCHAR (100)	NULL,
+    [LastLoginDate] DATETIME NOT NULL DEFAULT GETUTCDATE(), 
+    [CreatedDate] DATETIME NOT NULL DEFAULT GETUTCDATE(), 
     CONSTRAINT [PK_dbo.AspNetUsers] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
 
@@ -18,4 +22,3 @@
 GO
 CREATE UNIQUE NONCLUSTERED INDEX [UserNameIndex]
     ON [dbo].[AspNetUsers]([UserName] ASC);
-

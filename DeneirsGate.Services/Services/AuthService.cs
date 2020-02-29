@@ -8,6 +8,7 @@ namespace DeneirsGate.Services
 {
     public class AuthService : DeneirsService
     {
+        [Obsolete]
         public UserDataModel Authenticate(string username, string password)
         {
             UserDataModel user = null;
@@ -65,6 +66,7 @@ namespace DeneirsGate.Services
             return roles;
         }
 
+        [Obsolete]
         public void AddUser(RegisterViewModel model)
         {
             using (DBReset())
@@ -90,12 +92,14 @@ namespace DeneirsGate.Services
             }
         }
 
+        [Obsolete]
         public UserDataModel GetUserData(string id)
         {
-            var _id = Guid.Parse(id);
-            return GetUserData(_id);
+            //var _id = Guid.Parse(id);
+            return GetUserData(Guid.NewGuid());
         }
 
+        [Obsolete]
         public UserDataModel GetUserData(Guid id)
         {
             var user = new UserDataModel();

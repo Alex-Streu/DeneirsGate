@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace DeneirsGate.Services
@@ -50,7 +49,7 @@ namespace DeneirsGate.Services
     public class LoginViewModel
     {
         [Required]
-        [Display(Name = "Username")]
+        [Display(Name = "Username or Email")]
         //[EmailAddress]
         public string Username { get; set; }
 

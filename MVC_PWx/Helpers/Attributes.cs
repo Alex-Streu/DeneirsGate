@@ -1,4 +1,5 @@
-﻿using System.Web.Mvc;
+﻿using System.Collections.Generic;
+using System.Web.Mvc;
 using static MVC_PWx.Helpers.AppLogic;
 
 namespace MVC_PWx.Helpers
@@ -20,7 +21,17 @@ namespace MVC_PWx.Helpers
 
         public override void OnAuthorization(AuthorizationContext filterContext)
         {
-            if (!HasPriviledge(Priviledge))
+            var hasAccess = false;
+            foreach (KeyValuePair<string, int> entry in Priviledges)
+            {
+                if ((int)Priviledge <= entry.Value && filterContext.HttpContext.User.IsInRole(entry.Key))
+                {
+                    hasAccess = true;
+                    break;
+                }
+            }
+            
+            if (!hasAccess)
             {
                 filterContext.Result = new RedirectResult("/");
             }

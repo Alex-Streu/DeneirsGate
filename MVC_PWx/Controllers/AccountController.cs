@@ -9,7 +9,6 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using MVC_PWx.Helpers;
-using MVC_PWx.Models;
 
 namespace MVC_PWx.Controllers
 {
@@ -17,17 +16,17 @@ namespace MVC_PWx.Controllers
     public class AccountController : DeneirsController
     {
         private ApplicationSignInManager _signInManager;
-        private ApplicationUserManager _userManager;
 
         public AccountController()
         {
 
         }
 
-        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager )
+        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager, ApplicationRoleManager roleManager)
         {
             UserManager = userManager;
             SignInManager = signInManager;
+            RoleManager = roleManager;
         }
 
         public ApplicationSignInManager SignInManager
@@ -39,18 +38,6 @@ namespace MVC_PWx.Controllers
             private set 
             { 
                 _signInManager = value; 
-            }
-        }
-
-        public ApplicationUserManager UserManager
-        {
-            get
-            {
-                return _userManager ?? HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
-            }
-            private set
-            {
-                _userManager = value;
             }
         }
 
@@ -76,16 +63,16 @@ namespace MVC_PWx.Controllers
             {
                 return View(model);
             }
-            
-            var user = AuthSvc.Authenticate(model.Username.ToLower(), AppLogic.EncryptPassword(model.Password));
-            if (user != null)
-            {
-                FormsAuthentication.SetAuthCookie(user.UserId.ToString(), model.RememberMe);
-                AppLogic.SetUser(user);
-                return RedirectToLocal(returnUrl);
-            }
 
-            return View("Error");
+            //var user = AuthSvc.Authenticate(model.Username.ToLower(), AppLogic.EncryptPassword(model.Password));
+            //if (user != null)
+            //{
+            //    FormsAuthentication.SetAuthCookie(user.UserId.ToString(), model.RememberMe);
+            //    AppLogic.SetUser(user);
+            //    return RedirectToLocal(returnUrl);
+            //}
+
+            //return View("Error");
 
             //// Require the user to have a confirmed email before they can log on.
             //var user = await UserManager.FindByNameAsync(model.Email);
@@ -100,22 +87,25 @@ namespace MVC_PWx.Controllers
             //    }
             //}
 
-            //// This doesn't count login failures towards account lockout
-            //// To enable password failures to trigger account lockout, change to shouldLockout: true
-            //var result = await SignInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, shouldLockout: false);
-            //switch (result)
-            //{
-            //    case SignInStatus.Success:
-            //        return RedirectToLocal(returnUrl);
-            //    case SignInStatus.LockedOut:
-            //        return View("Lockout");
-            //    case SignInStatus.RequiresVerification:
-            //        return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });
-            //    case SignInStatus.Failure:
-            //    default:
-            //        ModelState.AddModelError("", "Invalid login attempt.");
-            //        return View(model);
-            //}
+            // This doesn't count login failures towards account lockout
+            // To enable password failures to trigger account lockout, change to shouldLockout: true
+            var user = await UserManager.FindByNameOrEmailAsync(model.Username);
+            var result = await SignInManager.PasswordSignInAsync(user.UserName, model.Password, model.RememberMe, shouldLockout: false);
+            switch (result)
+            {
+                case SignInStatus.Success:
+                    user.LastLoginDate = DateTime.UtcNow;
+                    await UserManager.UpdateAsync(user);
+                    return RedirectToLocal(returnUrl);
+                case SignInStatus.LockedOut:
+                    return View("Lockout");
+                case SignInStatus.RequiresVerification:
+                    return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });
+                case SignInStatus.Failure:
+                default:
+                    ModelState.AddModelError("", "Invalid login attempt.");
+                    return View(model);
+            }
         }
 
         //
@@ -179,7 +169,7 @@ namespace MVC_PWx.Controllers
         {
             try
             {
-                AuthSvc.UpdatePlayerRegistry(UserData.UserId, model);
+                //AuthSvc.UpdatePlayerRegistry(UserData.UserId, model);
             }
             catch (Exception ex)
             {
@@ -195,6 +185,8 @@ namespace MVC_PWx.Controllers
         [AnonymousOnly]
         public ActionResult Register()
         {
+            var user = UserManager.FindByEmail("kaboosepwnsu@gmail.com");
+            if (user != null) { UserManager.Delete(user); }
             ViewBag.Role = AuthSvc.GetRoles();
             return View();
         }
@@ -211,38 +203,43 @@ namespace MVC_PWx.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    //var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
-                    //var result = await UserManager.CreateAsync(user, model.Password);
-                    //if (result.Succeeded)
-                    //{
-                    //    //  Comment the following line to prevent log in until the user is confirmed.
-                    //    // await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
+                    var user = new ApplicationUser { UserName = model.Username, Picture = model.Picture, Email = model.Email, CreatedDate = DateTime.UtcNow };
+                    var result = await UserManager.CreateAsync(user, model.Password);
+                    if (result.Succeeded)
+                    {
+                        user = await UserManager.FindByNameAsync(model.Username);
+                        user.UserId = new Guid(user.Id);
+                        await UserManager.UpdateAsync(user);
 
-                    //    string callbackUrl = await SendEmailConfirmationTokenAsync(user.Id, "Confirm your account");
+                        //  Comment the following line to prevent log in until the user is confirmed.
+                        await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
 
-                    //    // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=320771
-                    //    // Send an email with this link
-                    //    // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
-                    //    // var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-                    //    // await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
+                        //string callbackUrl = await SendEmailConfirmationTokenAsync(user.Id, "Confirm your account");
 
-                    //    //string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
-                    //    //var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-                    //    //await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
+                        // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=320771
+                        // Send an email with this link
+                        // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
+                        // var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
+                        // await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
 
-                    //    // Uncomment to debug locally 
-                    //    // TempData["ViewBagLink"] = callbackUrl;
+                        //string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
+                        //var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
+                        //await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
 
-                    //    ViewBag.Message = "Check your email and confirm your account, you must be confirmed "
-                    //                    + "before you can log in.";
+                        // Uncomment to debug locally 
+                        // TempData["ViewBagLink"] = callbackUrl;
 
-                    //    return View("Info");
-                    //    //return RedirectToAction("Index", "Home");
-                    //}
-                    //AddErrors(result);
+                        //ViewBag.Message = "Check your email and confirm your account, you must be confirmed "
+                        //                + "before you can log in.";
 
-                    model.Password = AppLogic.EncryptPassword(model.Password);
-                    AuthSvc.AddUser(model);
+                        //return View("Info");
+                        return RedirectToAction("Index", "Home");
+                    }
+                    AddErrors(result);
+
+                    //MY CODE
+                    //model.Password = AppLogic.EncryptPassword(model.Password);
+                    //AuthSvc.AddUser(model);
 
                     return RedirectToAction("Login");
                 }
@@ -476,7 +473,7 @@ namespace MVC_PWx.Controllers
         //[ValidateAntiForgeryToken]
         public ActionResult LogOff()
         {
-            FormsAuthentication.SignOut();
+            AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
             return RedirectToAction("Login");
         }
 
@@ -492,12 +489,6 @@ namespace MVC_PWx.Controllers
         {
             if (disposing)
             {
-                if (_userManager != null)
-                {
-                    _userManager.Dispose();
-                    _userManager = null;
-                }
-
                 if (_signInManager != null)
                 {
                     _signInManager.Dispose();

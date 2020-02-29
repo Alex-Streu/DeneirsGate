@@ -1,5 +1,6 @@
 ﻿using DeneirsGate.Services;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Web;
@@ -16,6 +17,19 @@ namespace MVC_PWx.Helpers
             Admin
         }
 
+        public static Dictionary<string, int> Priviledges
+        {
+            get
+            {
+                return new Dictionary<string, int>()
+                {
+                    { "Player", (int)Priviledge.Player },
+                    { "Dungeon Master", (int)Priviledge.DM },
+                    { "Admin", (int)Priviledge.Admin }
+                };
+            }
+        }
+
         static string passphrase = "TrackerOverweening102076";
 
 
@@ -26,12 +40,18 @@ namespace MVC_PWx.Helpers
             return System.Text.Encoding.ASCII.GetString(data);
         }
 
-        public static bool HasPriviledge(Priviledge priviledge)
-        {
-            var user = GetUser();
+        //public static bool HasPriviledge(Priviledge priviledge)
+        //{
+        //    var dic = new Dictionary<string, Priviledge>()
+        //    {
+        //        { "Player", Priviledge.Player },
+        //        { "Dungeon Master", Priviledge.DM },
+        //        { "Admin", Priviledge.Admin }
+        //    };
+        //    var user = GetUser();
 
-            return user.Priviledge >= (int)priviledge;
-        }
+        //    return user.Priviledge >= (int)priviledge;
+        //}
 
         public static void SetUser(UserDataModel user)
         {

@@ -175,6 +175,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\CampaignController.cs" />
     <Compile Include="Controllers\DeneirsController.cs" />
     <Compile Include="Controllers\CharacterController.cs" />
@@ -491,6 +492,10 @@
     <Content Include="Views\Campaign\Dashboard.cshtml" />
     <Content Include="Views\Campaign\EditPlayer.cshtml" />
     <Content Include="Views\Account\RegisterPlayer.cshtml" />
+    <Content Include="Views\Admin\Users.cshtml" />
+    <Content Include="Views\Admin\Roles.cshtml" />
+    <Content Include="Views\Admin\EditRole.cshtml" />
+    <Content Include="Views\Admin\EditUser.cshtml" />
     <None Include="Web.DEV.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

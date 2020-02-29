@@ -126,6 +126,32 @@ textarea {
 
 
 
+/* FLEXBOX */
+.flex-container {
+    display: flex !important;
+    align-items: baseline;
+    padding-left: 1em;
+    padding-right: 1em;
+}
+
+.flex-container.space-between {
+    justify-content: space-between !important;
+}
+
+.flex-container.space-around {
+    justify-content: space-around !important;
+}
+
+.flex-container.center {
+    justify-content: center !important;
+}
+
+    .flex-container.center * {
+        padding-right: 0.5em;
+    }
+
+
+
 /* BOOTSTRAP BUTTONS */
 .btn-default {
     color: #fff !important;

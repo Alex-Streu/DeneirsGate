@@ -16,11 +16,14 @@ namespace DeneirsGate.Data
             AspNetRoles = new HashSet<AspNetRole>();
         }
 
-        public Guid Id { get; set; }
+        public string Id { get; set; }
 
         [Required]
-        [StringLength(50)]
+        [StringLength(256)]
         public string UserName { get; set; }
+
+        [StringLength(100)]
+        public string Picture { get; set; }
 
         [StringLength(256)]
         public string Email { get; set; }
@@ -42,6 +45,10 @@ namespace DeneirsGate.Data
         public bool LockoutEnabled { get; set; }
 
         public int AccessFailedCount { get; set; }
+
+        public DateTime LastLoginDate { get; set; }
+
+        public DateTime CreatedDate { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<AspNetUserClaim> AspNetUserClaims { get; set; }

@@ -14,7 +14,7 @@ namespace DeneirsGate.Data
             AspNetUsers = new HashSet<AspNetUser>();
         }
 
-        public Guid Id { get; set; }
+        public string Id { get; set; }
 
         [Required]
         [StringLength(256)]
@@ -22,6 +22,8 @@ namespace DeneirsGate.Data
 
         [StringLength(256)]
         public string DisplayName { get; set; }
+
+        public int Priviledge { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<AspNetUser> AspNetUsers { get; set; }

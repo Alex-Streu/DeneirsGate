@@ -26,7 +26,7 @@
     <div class="form-group">
         @Html.LabelFor(m => m.Picture, new { @class = "col-md-2 control-label" })
         <div class="col-md-10">
-            @Html.TextBoxFor(m => m.Picture, new { style = "display:none", @class = "form-control" })
+            @Html.TextBoxFor(m => m.Picture, new { style = "display:none", @class = "form-control", Value = "/Content/img/avatars/boy-combover.jpg" })
             <img id="picturePreview" class="img-sm img-responsive" src="~/Content/img/avatars/boy-combover.jpg" />
             <a class="btn btn-primary" onclick="showModal('pictureModal')">Change Profile Picture</a>
         </div>
