@@ -89,9 +89,6 @@
     <Compile Include="DataModels\UserCampaign.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="DataModels\Race.cs" />
-    <Compile Include="DataModels\Role.cs" />
-    <Compile Include="DataModels\User.cs" />
-    <Compile Include="DataModels\UserRole.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

@@ -18,6 +18,8 @@ namespace DeneirsGate.Data
 
         public string Id { get; set; }
 
+        public Guid UserId { get; set; }
+
         [Required]
         [StringLength(256)]
         public string UserName { get; set; }

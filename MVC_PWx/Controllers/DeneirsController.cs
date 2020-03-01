@@ -1,7 +1,6 @@
 ﻿using DeneirsGate.Services;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
-using MVC_PWx.Helpers;
 using System.Web;
 using System.Web.Mvc;
 

@@ -3,7 +3,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
-using System.Web.Security;
 using DeneirsGate.Services;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
@@ -64,32 +63,21 @@ namespace MVC_PWx.Controllers
                 return View(model);
             }
 
-            //var user = AuthSvc.Authenticate(model.Username.ToLower(), AppLogic.EncryptPassword(model.Password));
-            //if (user != null)
-            //{
-            //    FormsAuthentication.SetAuthCookie(user.UserId.ToString(), model.RememberMe);
-            //    AppLogic.SetUser(user);
-            //    return RedirectToLocal(returnUrl);
-            //}
+            // Require the user to have a confirmed email before they can log on.
+            var user = await UserManager.FindByNameOrEmailAsync(model.Username);
+            if (user != null)
+            {
+                if (!await UserManager.IsEmailConfirmedAsync(user.Id))
+                {
+                    string callbackUrl = await SendEmailConfirmationTokenAsync(user.Id, "Confirm your account-Resend");
 
-            //return View("Error");
-
-            //// Require the user to have a confirmed email before they can log on.
-            //var user = await UserManager.FindByNameAsync(model.Email);
-            //if (user != null)
-            //{
-            //    if (!await UserManager.IsEmailConfirmedAsync(user.Id))
-            //    {
-            //        string callbackUrl = await SendEmailConfirmationTokenAsync(user.Id, "Confirm your account-Resend");
-
-            //        ViewBag.errorMessage = "You must have a confirmed email to log on.";
-            //        return View("Error");
-            //    }
-            //}
+                    ViewBag.errorMessage = "You must have a confirmed email to log on.";
+                    return View("Error");
+                }
+            }
 
             // This doesn't count login failures towards account lockout
             // To enable password failures to trigger account lockout, change to shouldLockout: true
-            var user = await UserManager.FindByNameOrEmailAsync(model.Username);
             var result = await SignInManager.PasswordSignInAsync(user.UserName, model.Password, model.RememberMe, shouldLockout: false);
             switch (result)
             {
@@ -185,9 +173,7 @@ namespace MVC_PWx.Controllers
         [AnonymousOnly]
         public ActionResult Register()
         {
-            var user = UserManager.FindByEmail("kaboosepwnsu@gmail.com");
-            if (user != null) { UserManager.Delete(user); }
-            ViewBag.Role = AuthSvc.GetRoles();
+            ViewBag.Role = RoleManager.Roles.Where(x => x.Name != "Admin").OrderBy(x => x.Priviledge).ToList();
             return View();
         }
 
@@ -210,38 +196,19 @@ namespace MVC_PWx.Controllers
                         user = await UserManager.FindByNameAsync(model.Username);
                         user.UserId = new Guid(user.Id);
                         await UserManager.UpdateAsync(user);
+                        await UserManager.AddToRoleAsync(user.Id, model.Role);
 
                         //  Comment the following line to prevent log in until the user is confirmed.
-                        await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
+                        //await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
 
-                        //string callbackUrl = await SendEmailConfirmationTokenAsync(user.Id, "Confirm your account");
+                        string callbackUrl = await SendEmailConfirmationTokenAsync(user.Id, "Confirm your account");
 
-                        // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=320771
-                        // Send an email with this link
-                        // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
-                        // var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-                        // await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
+                        ViewBag.Message = "Check your email and confirm your account, you must be confirmed "
+                                        + "before you can log in.";
 
-                        //string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
-                        //var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-                        //await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
-
-                        // Uncomment to debug locally 
-                        // TempData["ViewBagLink"] = callbackUrl;
-
-                        //ViewBag.Message = "Check your email and confirm your account, you must be confirmed "
-                        //                + "before you can log in.";
-
-                        //return View("Info");
-                        return RedirectToAction("Index", "Home");
+                        return View("Info");
                     }
                     AddErrors(result);
-
-                    //MY CODE
-                    //model.Password = AppLogic.EncryptPassword(model.Password);
-                    //AuthSvc.AddUser(model);
-
-                    return RedirectToAction("Login");
                 }
             }
             catch (Exception ex)
@@ -250,7 +217,7 @@ namespace MVC_PWx.Controllers
             }
 
             // If we got this far, something failed, redisplay form
-            ViewBag.Role = AuthSvc.GetRoles();
+            ViewBag.Role = RoleManager.Roles.Where(x => x.Name != "Admin").OrderBy(x => x.Priviledge).ToList();
             return View(model);
         }
 
@@ -503,9 +470,9 @@ namespace MVC_PWx.Controllers
         {
             string code = await UserManager.GenerateEmailConfirmationTokenAsync(userID);
             var callbackUrl = Url.Action("ConfirmEmail", "Account",
-               new { userId = userID, code = code }, protocol: Request.Url.Scheme);
-            await UserManager.SendEmailAsync(userID, subject,
-               "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
+               new { userId = userID, code }, protocol: Request.Url.Scheme);
+            var body = $"You'll need to confirm your account before you get to log in.<br/><br/>You can confirm your account by clicking <a href='{callbackUrl}'>here</a>!";
+            await UserManager.SendEmailAsync(userID, subject, AppLogic.GetEmailBody("Congrats on your new account!", body));
 
             return callbackUrl;
         }

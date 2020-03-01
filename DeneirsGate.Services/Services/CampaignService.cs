@@ -214,7 +214,7 @@ namespace DeneirsGate.Services
 
                     if (player.UserKey != Guid.Empty)
                     {
-                        player.UserName = DB.Users.Where(x => x.Id == player.UserKey).Select(x => x.Username).FirstOrDefault();
+                        player.UserName = DB.AspNetUsers.Where(x => x.UserId == player.UserKey).Select(x => x.UserName).FirstOrDefault();
                     }
                 }
             }

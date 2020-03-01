@@ -258,6 +258,7 @@
     <Content Include="Content\img\icos\apple-icon-precomposed.png" />
     <Content Include="Content\img\icos\apple-icon.png" />
     <Content Include="Content\img\icos\browserconfig.xml" />
+    <Content Include="Content\img\icos\DGIco_Transparent.png" />
     <Content Include="Content\img\icos\favicon-16x16.png" />
     <Content Include="Content\img\icos\favicon-32x32.png" />
     <Content Include="Content\img\icos\favicon-96x96.png" />

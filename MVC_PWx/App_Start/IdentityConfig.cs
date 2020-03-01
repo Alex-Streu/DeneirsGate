@@ -20,33 +20,14 @@ namespace MVC_PWx
 {
     public class EmailService : IIdentityMessageService
     {
-        public async Task SendAsync(IdentityMessage message)
+        public Task SendAsync(IdentityMessage message)
         {
             // Plug in your email service here to send an email.
-            
-            var sentFrom = "dot.net.email.4477@gmail.com";
 
-            // Configure the client:
-            System.Net.Mail.SmtpClient client = new System.Net.Mail.SmtpClient("smtp.gmail.com");
-
-            client.Port = 587;
-            client.DeliveryMethod = System.Net.Mail.SmtpDeliveryMethod.Network;
-            client.UseDefaultCredentials = false;
-
-            // Create the credentials:
-            System.Net.NetworkCredential credentials = new NetworkCredential(
-                 ConfigurationManager.AppSettings["mailAccount"],
-                 ConfigurationManager.AppSettings["mailPassword"]
-                 );
-            client.EnableSsl = true;
-            client.Credentials = credentials;
-
-            // Create the message:
-            var mail = new System.Net.Mail.MailMessage(sentFrom, message.Destination);
-            mail.Subject = message.Subject;
-            mail.Body = message.Body;
-
-            await client.SendMailAsync(mail);
+            SmtpClient client = new SmtpClient();
+            var mail = new MailMessage(ConfigurationManager.AppSettings["fromMailAccount"], message.Destination, message.Subject, message.Body);
+            mail.IsBodyHtml = true;
+            return client.SendMailAsync(mail);
         }
     }
 

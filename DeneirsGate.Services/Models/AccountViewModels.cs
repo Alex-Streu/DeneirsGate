@@ -71,7 +71,7 @@ namespace DeneirsGate.Services
 
         [Required]
         [Display(Name = "Role")]
-        public Guid Role { get; set; }
+        public string Role { get; set; }
 
         [Required]
         [EmailAddress]
