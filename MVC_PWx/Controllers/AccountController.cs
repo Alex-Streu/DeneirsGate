@@ -246,28 +246,27 @@ namespace MVC_PWx.Controllers
         // POST: /Account/ForgotPassword
         [HttpPost]
         [AllowAnonymous]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> ForgotPassword(ForgotPasswordViewModel model)
+        public async Task<JsonResult> ForgotPassword(ForgotPasswordViewModel model)
         {
             if (ModelState.IsValid)
             {
-                var user = await UserManager.FindByNameAsync(model.Email);
+                var user = await UserManager.FindByEmailAsync(model.Email);
                 if (user == null || !(await UserManager.IsEmailConfirmedAsync(user.Id)))
                 {
                     // Don't reveal that the user does not exist or is not confirmed
-                    return View("ForgotPasswordConfirmation");
+                    return Json(new { success = true, message = "Please check your email to reset your password." });
                 }
 
                 // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=320771
                 // Send an email with this link
                  string code = await UserManager.GeneratePasswordResetTokenAsync(user.Id);
-                 var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);		
-                 await UserManager.SendEmailAsync(user.Id, "Reset Password", "Please reset your password by clicking <a href=\"" + callbackUrl + "\">here</a>");
-                 return RedirectToAction("ForgotPasswordConfirmation", "Account");
+                 var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code }, protocol: Request.Url.Scheme);
+                 await UserManager.SendEmailAsync(user.Id, "Reset Password", AppLogic.GetEmailBody("Did you request a password change?", "If this was you, I get it. Happens all the time.<br/><br/>You can reset your password by clicking <a href=\"" + callbackUrl + "\">here</a>."));
+                 return Json(new { success = true, message = "Please check your email to reset your password." });
             }
 
             // If we got this far, something failed, redisplay form
-            return View(model);
+            return Json(new { success = false, message = ModelState?.Values?.FirstOrDefault()?.Errors?.FirstOrDefault().ErrorMessage ?? "Oops! Something went wrong." });
         }
 
         //

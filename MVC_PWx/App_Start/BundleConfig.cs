@@ -26,10 +26,12 @@ namespace MVC_PWx
                       "~/Content/bootstrap.css",
                       "~/Content/notiflix-2.0.0.css",
                       "~/Content/site.css",
-                      "~/Content/Bundled.css",
-                      "~/Content/dashio-css/*.css"));
+                      "~/Content/Bundled.css")
+                      .IncludeDirectory(
+                      "~/Content/dashio-css", "*.css"));
 
             bundles.Add(new StyleBundle("~/bundles/extensions").Include(
+                        "~/Content/lib/jquery.backstretch.min.js",
                         "~/Content/lib/jquery.dcjqaccordion.2.7.js",
                         "~/Content/lib/jquery.scrollTo.min.js",
                         "~/Content/lib/jquery.nicescroll.js",
