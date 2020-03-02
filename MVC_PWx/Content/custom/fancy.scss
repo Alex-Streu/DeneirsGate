@@ -30,7 +30,7 @@ $transparent: rgba(0, 0, 0, 0.00);
     background: transparent;
     width: 100%;
     padding-top: 8px;
-    font-size: 16px;
+    font-size: inherit;
     color: $gray;
 }
 
@@ -53,9 +53,14 @@ $transparent: rgba(0, 0, 0, 0.00);
     font-size: 12px;
 }
 
+.fancy-textbox.md input,
+.fancy-textbox.md label {
+    font-size: 16px;
+}
+
 .fancy-textbox.lg input,
 .fancy-textbox.lg label {
-    font-size: 24px;
+    font-size: 1.5vw;
 }
 .fancy-textbox.lg label {
     top: 10px;

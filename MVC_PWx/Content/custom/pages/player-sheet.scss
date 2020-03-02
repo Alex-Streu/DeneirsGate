@@ -51,14 +51,17 @@ $white: #fcfcfc;
 
                 .attr-label {
                     width: 50%;
+                    max-width: 50%;
                 }
 
                 .attr-stat {
                     width: 25%;
+                    max-width: 25%;
                 }
 
                 .attr-mod {
                     width: 25%;
+                    max-width: 25%;
                     text-align: center;
                     border-radius: 10px;
                     border: 1px solid $gray;
@@ -86,6 +89,10 @@ $white: #fcfcfc;
                 display: flex;
                 justify-content: space-around;
                 align-items: flex-end;
+
+                * {
+                    margin: 0em 0.5em;
+                }
 
                 .fancy-textbox {
                     margin-bottom: 0px !important;
@@ -161,8 +168,8 @@ $white: #fcfcfc;
                 width: 100%;
                 border: 1px solid $gray;
                 border-radius: 5%;
-                padding: 0.5em;
-                font-size: 24px;
+                padding: 1.5em 0.5em 0.5em 0.5em;
+                /*font-size: 24px;*/
                 background-color: $white;
                 transition: all 0.2s ease-in-out;
                 margin-top: 0.25em;
@@ -228,6 +235,10 @@ $white: #fcfcfc;
             justify-content: space-around;
             align-items: flex-end;
 
+            * {
+                margin: 0em 0.5em;
+            }
+
             .fancy-textbox {
                 margin-bottom: 0px !important;
             }
@@ -236,12 +247,15 @@ $white: #fcfcfc;
         .spell-content {
             display: flex;
             justify-content: flex-start;
+            flex-wrap: wrap;
             width: 100%;
             margin-top: 1em;
             background-color: $white;
 
             .spell-column {
                 flex-grow: 1;
+                flex-basis: 275px;
+                width: 275px;
                 padding: 0em 2em;
 
                 .fancy-textbox {
@@ -259,7 +273,12 @@ $white: #fcfcfc;
                     transition: all 0.2s ease-in-out;
                     margin-top: 1em;
                     margin-bottom: 2em;
-                    padding: 2px;
+                    padding: 0.5em 1em;
+                    font-size: 1vw;
+
+                    * {
+                        margin: 0em 0.5em;
+                    }
 
                     .fancy-textbox {
                         margin-bottom: 0.5em !important;
@@ -308,21 +327,24 @@ $white: #fcfcfc;
     .coins {
         width: 100%;
         display: flex;
+        flex-wrap: wrap;
         justify-content: space-around;
-        align-content: baseline;
+        align-items: baseline;
 
         .coin {
             display: flex;
             justify-content: space-around;
             align-items: baseline;
-            width: 100%;
+            width: 15%;
+            min-width: 175px;
             border: 1px solid $gray;
             box-shadow: 2px 2px 4px #000;
             border-radius: 10px;
             transition: all 0.2s ease-in-out;
-            margin: 2em;
+            margin: 1em;
             padding: 1em;
             background-color: $white;
+            font-size: 1vw;
 
             .fancy-textbox {
                 margin-bottom: 0.5em !important;

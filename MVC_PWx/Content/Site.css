@@ -16,6 +16,10 @@
 }
 
 /* COMMON */
+.responsive-text {
+    font-size: var(--size) !important;
+}
+
 .red {
     color: #ce0606;
 }

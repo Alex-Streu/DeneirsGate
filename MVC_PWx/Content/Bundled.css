@@ -18,7 +18,7 @@
   background: transparent;
   width: 100%;
   padding-top: 8px;
-  font-size: 16px;
+  font-size: inherit;
   color: #797979; }
 
 .fancy-textbox input:focus {
@@ -37,9 +37,13 @@
 .fancy-textbox.sm label {
   font-size: 12px; }
 
+.fancy-textbox.md input,
+.fancy-textbox.md label {
+  font-size: 16px; }
+
 .fancy-textbox.lg input,
 .fancy-textbox.lg label {
-  font-size: 24px; }
+  font-size: 1.5vw; }
 
 .fancy-textbox.lg label {
   top: 10px; }
@@ -331,7 +335,7 @@ fieldset[disabled] .btn-primary.focus {
 
 .login-title {
   font: 'Quattrocento';
-  font-size: 84px !important;
+  /*font-size: 8vw !important;*/
   color: #fff;
   text-shadow: 2px 2px 4px #000;
   text-align: center;
@@ -531,11 +535,14 @@ fieldset[disabled] .btn-primary.focus {
       display: flex;
       align-items: baseline; }
       .player-sheet .content-area .attributes .attribute .attr-label {
-        width: 50%; }
+        width: 50%;
+        max-width: 50%; }
       .player-sheet .content-area .attributes .attribute .attr-stat {
-        width: 25%; }
+        width: 25%;
+        max-width: 25%; }
       .player-sheet .content-area .attributes .attribute .attr-mod {
         width: 25%;
+        max-width: 25%;
         text-align: center;
         border-radius: 10px;
         border: 1px solid #797979;
@@ -554,6 +561,8 @@ fieldset[disabled] .btn-primary.focus {
       display: flex;
       justify-content: space-around;
       align-items: flex-end; }
+      .player-sheet .content-area .content .background * {
+        margin: 0em 0.5em; }
       .player-sheet .content-area .content .background .fancy-textbox {
         margin-bottom: 0px !important; }
     .player-sheet .content-area .content .textareas {
@@ -598,8 +607,8 @@ fieldset[disabled] .btn-primary.focus {
         width: 100%;
         border: 1px solid #797979;
         border-radius: 5%;
-        padding: 0.5em;
-        font-size: 24px;
+        padding: 1.5em 0.5em 0.5em 0.5em;
+        /*font-size: 24px;*/
         background-color: #fcfcfc;
         transition: all 0.2s ease-in-out;
         margin-top: 0.25em; }
@@ -639,16 +648,21 @@ fieldset[disabled] .btn-primary.focus {
       display: flex;
       justify-content: space-around;
       align-items: flex-end; }
+      .weapons-pane .spell-side .spellcasting-info * {
+        margin: 0em 0.5em; }
       .weapons-pane .spell-side .spellcasting-info .fancy-textbox {
         margin-bottom: 0px !important; }
     .weapons-pane .spell-side .spell-content {
       display: flex;
       justify-content: flex-start;
+      flex-wrap: wrap;
       width: 100%;
       margin-top: 1em;
       background-color: #fcfcfc; }
       .weapons-pane .spell-side .spell-content .spell-column {
         flex-grow: 1;
+        flex-basis: 275px;
+        width: 275px;
         padding: 0em 2em; }
         .weapons-pane .spell-side .spell-content .spell-column .fancy-textbox {
           margin-bottom: 0.5em !important; }
@@ -663,7 +677,10 @@ fieldset[disabled] .btn-primary.focus {
           transition: all 0.2s ease-in-out;
           margin-top: 1em;
           margin-bottom: 2em;
-          padding: 2px; }
+          padding: 0.5em 1em;
+          font-size: 1vw; }
+          .weapons-pane .spell-side .spell-content .spell-column .spell-column-title * {
+            margin: 0em 0.5em; }
           .weapons-pane .spell-side .spell-content .spell-column .spell-column-title .fancy-textbox {
             margin-bottom: 0.5em !important; }
         .weapons-pane .spell-side .spell-content .spell-column .spell-column-title.active {
@@ -690,20 +707,23 @@ fieldset[disabled] .btn-primary.focus {
 .inventory-pane .coins {
   width: 100%;
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-around;
-  align-content: baseline; }
+  align-items: baseline; }
   .inventory-pane .coins .coin {
     display: flex;
     justify-content: space-around;
     align-items: baseline;
-    width: 100%;
+    width: 15%;
+    min-width: 175px;
     border: 1px solid #797979;
     box-shadow: 2px 2px 4px #000;
     border-radius: 10px;
     transition: all 0.2s ease-in-out;
-    margin: 2em;
+    margin: 1em;
     padding: 1em;
-    background-color: #fcfcfc; }
+    background-color: #fcfcfc;
+    font-size: 1vw; }
     .inventory-pane .coins .coin .fancy-textbox {
       margin-bottom: 0.5em !important; }
   .inventory-pane .coins .coin.active {

@@ -39,34 +39,34 @@
         </div>
         <div class="content-area">
             <div class="attributes">
-                <div class="attribute">
+                <div class="attribute responsive-text" style="--size:1.25vw">
                     <label class="attr-label">Strength</label>
-                    @HtmlHelpers.RenderFancyNumberbox(1, 30, "lg attr-stat center", "Strength", Model.Strength.ToString(), null, Html.ValidationMessageFor(model => model.Strength, "", new { @class = "text-danger" }))
+                    @HtmlHelpers.RenderFancyNumberbox(1, 30, "attr-stat center", "Strength", Model.Strength.ToString(), null, Html.ValidationMessageFor(model => model.Strength, "", new { @class = "text-danger" }))
                     <label class="attr-mod">+0</label>
                 </div>
-                <div class="attribute">
+                <div class="attribute responsive-text" style="--size:1.25vw">
                     <label class="attr-label">Dexterity</label>
-                    @HtmlHelpers.RenderFancyNumberbox(1, 30, "lg attr-stat center", "Dexterity", Model.Dexterity.ToString(), null, Html.ValidationMessageFor(model => model.Dexterity, "", new { @class = "text-danger" }))
+                    @HtmlHelpers.RenderFancyNumberbox(1, 30, "attr-stat center", "Dexterity", Model.Dexterity.ToString(), null, Html.ValidationMessageFor(model => model.Dexterity, "", new { @class = "text-danger" }))
                     <label class="attr-mod">+0</label>
                 </div>
-                <div class="attribute">
+                <div class="attribute responsive-text" style="--size:1.25vw">
                     <label class="attr-label">Constitution</label>
-                    @HtmlHelpers.RenderFancyNumberbox(1, 30, "lg attr-stat center", "Constitution", Model.Constitution.ToString(), null, Html.ValidationMessageFor(model => model.Constitution, "", new { @class = "text-danger" }))
+                    @HtmlHelpers.RenderFancyNumberbox(1, 30, "attr-stat center", "Constitution", Model.Constitution.ToString(), null, Html.ValidationMessageFor(model => model.Constitution, "", new { @class = "text-danger" }))
                     <label class="attr-mod">+0</label>
                 </div>
-                <div class="attribute">
+                <div class="attribute responsive-text" style="--size:1.25vw">
                     <label class="attr-label">Intelligence</label>
-                    @HtmlHelpers.RenderFancyNumberbox(1, 30, "lg attr-stat center", "Intelligence", Model.Intelligence.ToString(), null, Html.ValidationMessageFor(model => model.Intelligence, "", new { @class = "text-danger" }))
+                    @HtmlHelpers.RenderFancyNumberbox(1, 30, "attr-stat center", "Intelligence", Model.Intelligence.ToString(), null, Html.ValidationMessageFor(model => model.Intelligence, "", new { @class = "text-danger" }))
                     <label class="attr-mod" data-abr="INT">+0</label>
                 </div>
-                <div class="attribute">
+                <div class="attribute responsive-text" style="--size:1.25vw">
                     <label class="attr-label">Wisdom</label>
-                    @HtmlHelpers.RenderFancyNumberbox(1, 30, "lg attr-stat center", "Wisdom", Model.Wisdom.ToString(), null, Html.ValidationMessageFor(model => model.Wisdom, "", new { @class = "text-danger" }))
+                    @HtmlHelpers.RenderFancyNumberbox(1, 30, "attr-stat center", "Wisdom", Model.Wisdom.ToString(), null, Html.ValidationMessageFor(model => model.Wisdom, "", new { @class = "text-danger" }))
                     <label class="attr-mod" data-abr="WIS">+0</label>
                 </div>
-                <div class="attribute">
+                <div class="attribute responsive-text" style="--size:1.25vw">
                     <label class="attr-label">Charisma</label>
-                    @HtmlHelpers.RenderFancyNumberbox(1, 30, "lg attr-stat center", "Charisma", Model.Charisma.ToString(), null, Html.ValidationMessageFor(model => model.Charisma, "", new { @class = "text-danger" }))
+                    @HtmlHelpers.RenderFancyNumberbox(1, 30, "attr-stat center", "Charisma", Model.Charisma.ToString(), null, Html.ValidationMessageFor(model => model.Charisma, "", new { @class = "text-danger" }))
                     <label class="attr-mod" data-abr="CHA">+0</label>
                 </div>
             </div>
@@ -75,25 +75,25 @@
                 <div class="background">
                     <div class="fancy-dropdown">
                         @Html.LabelFor(model => model.RaceKey, htmlAttributes: new { @class = "control-label" })
-                        @Html.DropDownListFor(model => model.RaceKey, HtmlHelpers.RaceDropdown(Model.RaceKey), new { @class = "form-control" })
+                        @Html.DropDownListFor(model => model.RaceKey, HtmlHelpers.RaceDropdown(Model.RaceKey), new { @class = "form-control responsive-text", style="--size:0.75vw" })
                         @Html.ValidationMessageFor(model => model.RaceKey, "", new { @class = "text-danger" })
                     </div>
 
                     <div class="fancy-dropdown">
                         @Html.LabelFor(model => model.ClassKey, htmlAttributes: new { @class = "control-label" })
-                        @Html.DropDownListFor(model => model.ClassKey, HtmlHelpers.ClassDropdown(Model.ClassKey), new { @class = "form-control" })
+                        @Html.DropDownListFor(model => model.ClassKey, HtmlHelpers.ClassDropdown(Model.ClassKey), new { @class = "form-control responsive-text", style="--size:0.75vw" })
                         @Html.ValidationMessageFor(model => model.ClassKey, "", new { @class = "text-danger" })
                     </div>
 
                     <div class="fancy-dropdown">
                         @Html.LabelFor(model => model.BackgroundKey, htmlAttributes: new { @class = "control-label" })
-                        @Html.DropDownListFor(model => model.BackgroundKey, HtmlHelpers.BackgroundDropdown(Model.BackgroundKey), new { @class = "form-control" })
+                        @Html.DropDownListFor(model => model.BackgroundKey, HtmlHelpers.BackgroundDropdown(Model.BackgroundKey), new { @class = "form-control responsive-text", style="--size:0.75vw" })
                         @Html.ValidationMessageFor(model => model.BackgroundKey, "", new { @class = "text-danger" })
                     </div>
 
                     <div class="fancy-dropdown">
                         @Html.LabelFor(model => model.Alignment, htmlAttributes: new { @class = "control-label" })
-                        @Html.DropDownListFor(model => model.Alignment, HtmlHelpers.AlignmentDropdown(Model.Alignment), new { @class = "form-control" })
+                        @Html.DropDownListFor(model => model.Alignment, HtmlHelpers.AlignmentDropdown(Model.Alignment), new { @class = "form-control responsive-text", style="--size:0.75vw" })
                         @Html.ValidationMessageFor(model => model.Alignment, "", new { @class = "text-danger" })
                     </div>
 
@@ -126,7 +126,7 @@
                 <div class="armor-row">
                     @HtmlHelpers.RenderFancyTextbox("lg armor full", "Armor", 50, Model.Armor, "Armor", Html.ValidationMessageFor(model => model.Armor))
 
-                    @HtmlHelpers.RenderFancyNumberbox(1, 30, "lg", "ArmorClass", Model.ArmorClass.ToString(), "AC", Html.ValidationMessageFor(model => model.ArmorClass))
+                    @HtmlHelpers.RenderFancyNumberbox(1, 30, "lg center", "ArmorClass", Model.ArmorClass.ToString(), "AC", Html.ValidationMessageFor(model => model.ArmorClass))
                 </div>
                 <div class="weapons">
                     <div class="weapons-label">
@@ -135,35 +135,33 @@
                     <div class="weapons-list">
                         @for (var i = 0; i < 10; i++)
                         {
-                            if (i >= Model.Weapons.Count)
-                            {
-                                <div class="weapon-row">
+                            <div class="weapon-row responsive-text" style="--size:1vw">
+                                @if (i >= Model.Weapons.Count)
+                                {
                                     <input class="hidden weapon-key" type="text" value="@Guid.NewGuid()" />
                                     @HtmlHelpers.RenderFancyTextbox("name", null, 50, null, "Weapon")
                                     @HtmlHelpers.RenderFancyNumberbox(-10, 20, "attack-mod center", null, null, "ATK")
                                     @HtmlHelpers.RenderFancyTextbox("damage-dice", null, 10, null, "Damage")
                                     @HtmlHelpers.RenderFancyNumberbox(-10, 20, "damage-mod center", null, null, "DMG")
                                     <div class="fancy-dropdown damage-type">
-                                        @Html.DropDownList($"DamageType{i}", HtmlHelpers.DamageTypeDropdown(Guid.Empty), new { @class = "form-control" })
+                                        @Html.DropDownList($"DamageType{i}", HtmlHelpers.DamageTypeDropdown(Guid.Empty), new { @class = "form-control responsive-text", style="--size:0.75vw" })
                                     </div>
                                     <i class="fa fa-eraser delete"></i>
-                                </div>
-                            }
-                            else
-                            {
-                                var item = Model.Weapons.ElementAt(i);
-                                <div class="weapon-row">
+                                }
+                                else
+                                {
+                                    var item = Model.Weapons.ElementAt(i);
                                     <input class="hidden weapon-key" type="text" value="@item.WeaponKey" />
                                     @HtmlHelpers.RenderFancyTextbox("name", null, 50, item.Name, "Weapon")
                                     @HtmlHelpers.RenderFancyNumberbox(-10, 20, "attack-mod center", null, item.AttackMod.ToString(), "ATK")
                                     @HtmlHelpers.RenderFancyTextbox("damage-dice", null, 10, item.DamageDice, "Damage")
                                     @HtmlHelpers.RenderFancyNumberbox(-10, 20, "damage-mod center", null, item.DamageMod.ToString(), "DMG")
                                     <div class="fancy-dropdown damage-type">
-                                        @Html.DropDownList($"DamageType{i}", HtmlHelpers.DamageTypeDropdown(item.DamageType), new { @class = "form-control" })
+                                        @Html.DropDownList($"DamageType{i}", HtmlHelpers.DamageTypeDropdown(item.DamageType), new { @class = "form-control responsive-text", style="--size:0.75vw" })
                                     </div>
                                     <i class="fa fa-eraser delete"></i>
-                                </div>
-                            }
+                                }
+                            </div>
                         }
                     </div>
                 </div>
@@ -172,7 +170,7 @@
                 <div class="spellcasting-info">
                     <div class="fancy-dropdown">
                         @Html.LabelFor(model => model.SpellcastingAbility, htmlAttributes: new { @class = "control-label" })
-                        @Html.DropDownList("SpellcastingAbility", HtmlHelpers.SpellcastingAbilityDropdown(Model.SpellcastingAbility), "None", new { @class = "form-control" })
+                        @Html.DropDownList("SpellcastingAbility", HtmlHelpers.SpellcastingAbilityDropdown(Model.SpellcastingAbility), "None", new { @class = "form-control responsive-text", style = "--size:1vw" })
                     </div>
 
                     @HtmlHelpers.RenderFancyNumberbox(0, 20, "lg medium center force-num", "SpellSaveDC", Model.SpellSaveDC.ToString(), "Save DC")
@@ -184,7 +182,7 @@
                 <div class="spell-content">
                     <div class="spell-column">
                         <div class="spell-column-title">
-                            <label class="text-large">Cantrips Known</label>
+                            <label>Cantrips</label>
                             @HtmlHelpers.RenderFancyNumberbox(0, 10, "lg center medium force-num", "Cantrips", Model.Cantrips.ToString(), null)
                         </div>
 
@@ -207,7 +205,7 @@
                         }
 
                         <div class="spell-column-title">
-                            <label class="text-large">Level 1 Known</label>
+                            <label>Level 1</label>
                             @HtmlHelpers.RenderFancyNumberbox(0, 10, "lg center medium force-num", "Level1Spells", Model.Level1Spells.ToString(), null)
                         </div>
 
@@ -230,7 +228,7 @@
                         }
 
                         <div class="spell-column-title">
-                            <label class="text-large">Level 2 Known</label>
+                            <label>Level 2</label>
                             @HtmlHelpers.RenderFancyNumberbox(0, 10, "lg center medium force-num", "Level2Spells", Model.Level2Spells.ToString(), null)
                         </div>
 
@@ -254,7 +252,7 @@
                     </div>
                     <div class="spell-column border">
                         <div class="spell-column-title">
-                            <label class="text-large">Level 3 Known</label>
+                            <label>Level 3</label>
                             @HtmlHelpers.RenderFancyNumberbox(0, 10, "lg center medium force-num", "Level3Spells", Model.Level3Spells.ToString(), null)
                         </div>
 
@@ -277,7 +275,7 @@
                         }
 
                         <div class="spell-column-title">
-                            <label class="text-large">Level 4 Known</label>
+                            <label>Level 4</label>
                             @HtmlHelpers.RenderFancyNumberbox(0, 10, "lg center medium force-num", "Level4Spells", Model.Level4Spells.ToString(), null)
                         </div>
 
@@ -300,7 +298,7 @@
                         }
 
                         <div class="spell-column-title">
-                            <label class="text-large">Level 5 Known</label>
+                            <label>Level 5</label>
                             @HtmlHelpers.RenderFancyNumberbox(0, 10, "lg center medium force-num", "Level5Spells", Model.Level5Spells.ToString(), null)
                         </div>
 
@@ -324,7 +322,7 @@
                     </div>
                     <div class="spell-column border">
                         <div class="spell-column-title">
-                            <label class="text-large">Level 6 Known</label>
+                            <label>Level 6</label>
                             @HtmlHelpers.RenderFancyNumberbox(0, 10, "lg center medium force-num", "Level6Spells", Model.Level6Spells.ToString(), null)
                         </div>
 
@@ -347,7 +345,7 @@
                         }
 
                         <div class="spell-column-title">
-                            <label class="text-large">Level 7 Known</label>
+                            <label>Level 7</label>
                             @HtmlHelpers.RenderFancyNumberbox(0, 10, "lg center medium force-num", "Level7Spells", Model.Level7Spells.ToString(), null)
                         </div>
 
@@ -370,7 +368,7 @@
                         }
 
                         <div class="spell-column-title">
-                            <label class="text-large">Level 8 Known</label>
+                            <label>Level 8</label>
                             @HtmlHelpers.RenderFancyNumberbox(0, 10, "lg center medium force-num", "Level8Spells", Model.Level8Spells.ToString(), null)
                         </div>
 
@@ -393,7 +391,7 @@
                         }
 
                         <div class="spell-column-title">
-                            <label class="text-large">Level 9 Known</label>
+                            <label>Level 9</label>
                             @HtmlHelpers.RenderFancyNumberbox(0, 10, "lg center medium force-num", "Level9Spells", Model.Level9Spells.ToString(), null)
                         </div>
 
@@ -423,24 +421,24 @@
         <div class="inventory-pane">
             <div class="coins">
                 <div class="coin">
-                    <label class="text-large">Copper</label>
-                    @HtmlHelpers.RenderFancyNumberbox(0, 1000000, "lg medium center force-num", "Copper", Model.Copper.ToString(), null)
+                    <label>Copper</label>
+                    @HtmlHelpers.RenderFancyNumberbox(0, 1000000, "medium center force-num", "Copper", Model.Copper.ToString(), null)
                 </div>
                 <div class="coin">
-                    <label class="text-large">Silver</label>
-                    @HtmlHelpers.RenderFancyNumberbox(0, 1000000, "lg medium center force-num", "Silver", Model.Silver.ToString(), null)
+                    <label>Silver</label>
+                    @HtmlHelpers.RenderFancyNumberbox(0, 1000000, "medium center force-num", "Silver", Model.Silver.ToString(), null)
                 </div>
                 <div class="coin">
-                    <label class="text-large">Electrum</label>
-                    @HtmlHelpers.RenderFancyNumberbox(0, 1000000, "lg medium center force-num", "Electrum", Model.Electrum.ToString(), null)
+                    <label>Electrum</label>
+                    @HtmlHelpers.RenderFancyNumberbox(0, 1000000, "medium center force-num", "Electrum", Model.Electrum.ToString(), null)
                 </div>
                 <div class="coin">
-                    <label class="text-large">Gold</label>
-                    @HtmlHelpers.RenderFancyNumberbox(0, 1000000, "lg medium center force-num", "Gold", Model.Gold.ToString(), null)
+                    <label>Gold</label>
+                    @HtmlHelpers.RenderFancyNumberbox(0, 1000000, "medium center force-num", "Gold", Model.Gold.ToString(), null)
                 </div>
                 <div class="coin">
-                    <label class="text-large">Platinum</label>
-                    @HtmlHelpers.RenderFancyNumberbox(0, 1000000, "lg medium center force-num", "Platinum", Model.Platinum.ToString(), null)
+                    <label>Platinum</label>
+                    @HtmlHelpers.RenderFancyNumberbox(0, 1000000, "medium center force-num", "Platinum", Model.Platinum.ToString(), null)
                 </div>
             </div>
             <div class="inventory">
