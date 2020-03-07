@@ -1,7 +1,8 @@
 ﻿@import url(Site.css);
 .fancy-textbox {
   position: relative;
-  margin-bottom: 25px; }
+  /*margin-bottom: 25px;*/
+  margin-bottom: 1.5em; }
 
 .fancy-textbox label {
   position: absolute;
@@ -136,6 +137,11 @@
 .fancy-portrait:hover {
   cursor: pointer; }
 
+.fancy-portrait:hover .overlay {
+  cursor: pointer;
+  display: block;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.4)); }
+
 .upload-image:hover .overlay {
   cursor: pointer;
   display: block;
@@ -169,9 +175,21 @@
   position: relative;
   animation: animateright 0.4s; }
 
+.fancy-tab-pane.slide-left {
+  position: relative;
+  animation: animateleft 0.4s; }
+
 @keyframes animateright {
   from {
     right: -300px;
+    opacity: 0; }
+  to {
+    right: 0;
+    opacity: 1; } }
+
+@keyframes animateleft {
+  from {
+    right: 300px;
     opacity: 0; }
   to {
     right: 0;
@@ -351,9 +369,10 @@ fieldset[disabled] .btn-primary.focus {
   .login-title span {
     color: #ce0606; }
 
-.form-login {
-  margin-top: 50px !important;
-  box-shadow: 0px 0px 10px 2px #1a1a1a;
+#register-pane .fancy-dropdown {
+  margin-bottom: 2em; }
+
+.form-login.first {
   -webkit-animation: fadein-bottom 1.5s;
   /* Safari, Chrome and Opera > 12.1 */
   -moz-animation: fadein-bottom 1.5s;
@@ -364,7 +383,11 @@ fieldset[disabled] .btn-primary.focus {
   /* Opera < 12.1 */
   animation: fadein-bottom 1.5s; }
 
-.backstretch {
+.form-login {
+  margin-top: 2em !important;
+  box-shadow: 0px 0px 10px 2px #1a1a1a; }
+
+.backstretch.fadein {
   -webkit-animation: fadein 3s;
   /* Safari, Chrome and Opera > 12.1 */
   -moz-animation: fadein 3s;

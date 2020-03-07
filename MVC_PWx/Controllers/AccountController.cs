@@ -46,7 +46,11 @@ namespace MVC_PWx.Controllers
         [AnonymousOnly]
         public ActionResult Login(string returnUrl)
         {
+            var user = UserManager.FindByName("TestRegistration");
+            if (user != null) { UserManager.Delete(user); }
+
             ViewBag.ReturnUrl = returnUrl;
+            ViewBag.Role = RoleManager.Roles.Where(x => x.Name != "Admin").OrderBy(x => x.Priviledge).ToList();
             return View();
         }
 
@@ -58,42 +62,51 @@ namespace MVC_PWx.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Login(LoginViewModel model, string returnUrl)
         {
-            if (!ModelState.IsValid)
+            try
             {
-                return View(model);
-            }
-
-            // Require the user to have a confirmed email before they can log on.
-            var user = await UserManager.FindByNameOrEmailAsync(model.Username);
-            if (user != null)
-            {
-                if (!await UserManager.IsEmailConfirmedAsync(user.Id))
+                if (ModelState.IsValid)
                 {
-                    string callbackUrl = await SendEmailConfirmationTokenAsync(user.Id, "Confirm your account-Resend");
+                    // Require the user to have a confirmed email before they can log on.
+                    var user = await UserManager.FindByNameOrEmailAsync(model.Username);
+                    if (user != null)
+                    {
+                        if (!await UserManager.IsEmailConfirmedAsync(user.Id))
+                        {
+                            //string callbackUrl = await SendEmailConfirmationTokenAsync(user.Id, "Confirm your account - Resend");
 
-                    ViewBag.errorMessage = "You must have a confirmed email to log on.";
-                    return View("Error");
+                            ViewBag.Header = "Slow down, traveler!";
+                            ViewBag.Message = "You must have a confirmed email to log on. Would you like to resend the confirmation email?";
+                            return View("Error");
+                        }
+                    }
+
+                    // This doesn't count login failures towards account lockout
+                    // To enable password failures to trigger account lockout, change to shouldLockout: true
+                    var result = await SignInManager.PasswordSignInAsync(user.UserName, model.Password, model.RememberMe, shouldLockout: false);
+                    switch (result)
+                    {
+                        case SignInStatus.Success:
+                            user.LastLoginDate = DateTime.UtcNow;
+                            await UserManager.UpdateAsync(user);
+                            return RedirectToLocal(returnUrl);
+                        //case SignInStatus.LockedOut:
+                        //    return View("Lockout");
+                        //case SignInStatus.RequiresVerification:
+                        //    return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });
+                        case SignInStatus.Failure:
+                        default:
+                            ModelState.AddModelError("", "Invalid login attempt.");
+                            break;
+                    }
                 }
+            }            
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", ex);
             }
 
-            // This doesn't count login failures towards account lockout
-            // To enable password failures to trigger account lockout, change to shouldLockout: true
-            var result = await SignInManager.PasswordSignInAsync(user.UserName, model.Password, model.RememberMe, shouldLockout: false);
-            switch (result)
-            {
-                case SignInStatus.Success:
-                    user.LastLoginDate = DateTime.UtcNow;
-                    await UserManager.UpdateAsync(user);
-                    return RedirectToLocal(returnUrl);
-                case SignInStatus.LockedOut:
-                    return View("Lockout");
-                case SignInStatus.RequiresVerification:
-                    return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });
-                case SignInStatus.Failure:
-                default:
-                    ModelState.AddModelError("", "Invalid login attempt.");
-                    return View(model);
-            }
+            return Json(new { success = false, message = ModelState.Values.FirstOrDefault(x => x.Errors.Count > 0).Errors.FirstOrDefault().ErrorMessage });
+
         }
 
         //
@@ -139,51 +152,11 @@ namespace MVC_PWx.Controllers
                     return View(model);
             }
         }
-
-        public ActionResult RegisterPlayer(string id)
-        {
-            var model = new PlayerRegistryViewModel();
-            try
-            {
-                model = AuthSvc.GetPlayerRegistry(id);
-            }
-            catch (Exception ex) { }
-
-            return View(model);
-        }
-
-        [HttpPost]
-        public JsonResult RegisterPlayer(PlayerRegistryPostModel model)
-        {
-            try
-            {
-                //AuthSvc.UpdatePlayerRegistry(UserData.UserId, model);
-            }
-            catch (Exception ex)
-            {
-                return Json(new { success = false, message = ex.Message });
-            }
-
-            return Json(new { success = true, message = "Character Registration Successful!" });
-        }
-
-        //
-        // GET: /Account/Register
-        [AllowAnonymous]
-        [AnonymousOnly]
-        public ActionResult Register()
-        {
-            ViewBag.Role = RoleManager.Roles.Where(x => x.Name != "Admin").OrderBy(x => x.Priviledge).ToList();
-            return View();
-        }
-
-        //
-        // POST: /Account/Register
+        
         [HttpPost]
         [AllowAnonymous]
         [AnonymousOnly]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Register(RegisterViewModel model)
+        public async Task<JsonResult> Register(RegisterViewModel model)
         {
             try
             {
@@ -203,10 +176,7 @@ namespace MVC_PWx.Controllers
 
                         string callbackUrl = await SendEmailConfirmationTokenAsync(user.Id, "Confirm your account");
 
-                        ViewBag.Message = "Check your email and confirm your account, you must be confirmed "
-                                        + "before you can log in.";
-
-                        return View("Info");
+                        return Json(new { success = true, title = "Welcome adventurer!", message = "Check your email for a confirmation link, then enjoy your time in the gates!" });
                     }
                     AddErrors(result);
                 }
@@ -216,14 +186,12 @@ namespace MVC_PWx.Controllers
                 ModelState.AddModelError("", ex);
             }
 
-            // If we got this far, something failed, redisplay form
-            ViewBag.Role = RoleManager.Roles.Where(x => x.Name != "Admin").OrderBy(x => x.Priviledge).ToList();
-            return View(model);
+            return Json(new { success = false, message = ModelState.Values.FirstOrDefault(x => x.Errors.Count > 0).Errors.FirstOrDefault().ErrorMessage });
         }
 
         //
         // GET: /Account/ConfirmEmail
-        [AllowAnonymous]
+        [AllowAnonymous, AnonymousOnly]
         public async Task<ActionResult> ConfirmEmail(string userId, string code)
         {
             if (userId == null || code == null)
@@ -231,21 +199,21 @@ namespace MVC_PWx.Controllers
                 return View("Error");
             }
             var result = await UserManager.ConfirmEmailAsync(userId, code);
-            return View(result.Succeeded ? "ConfirmEmail" : "Error");
+            if (result.Succeeded)
+            {
+                ViewBag.Header = "Welcome, adventurer!";
+                ViewBag.Message = "Your messenger owl is confirmed and you are ready to enter the gates!";
+            }
+            else
+            {
+                ViewBag.Header = "You've made a wrong turn!";
+                ViewBag.Message = "We were unable to confirm your email.";
+            }
+            return View("Info");
         }
-
-        //
-        // GET: /Account/ForgotPassword
-        [AllowAnonymous]
-        public ActionResult ForgotPassword()
-        {
-            return View();
-        }
-
-        //
-        // POST: /Account/ForgotPassword
+        
         [HttpPost]
-        [AllowAnonymous]
+        [AllowAnonymous, AnonymousOnly]
         public async Task<JsonResult> ForgotPassword(ForgotPasswordViewModel model)
         {
             if (ModelState.IsValid)
@@ -270,19 +238,17 @@ namespace MVC_PWx.Controllers
         }
 
         //
-        // GET: /Account/ForgotPasswordConfirmation
-        [AllowAnonymous]
-        public ActionResult ForgotPasswordConfirmation()
-        {
-            return View();
-        }
-
-        //
         // GET: /Account/ResetPassword
-        [AllowAnonymous]
+        [AllowAnonymous, AnonymousOnly]
         public ActionResult ResetPassword(string code)
         {
-            return code == null ? View("Error") : View();
+            if (code.IsNullOrEmpty())
+            {
+                return View("Error");
+            }
+
+            ViewBag.Partial = "ResetPassword";
+            return View("Info");
         }
 
         //

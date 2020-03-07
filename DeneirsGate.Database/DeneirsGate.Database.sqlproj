@@ -102,6 +102,7 @@
     <Build Include="dbo\Tables\CharacterWeapons.sql" />
     <Build Include="dbo\Tables\DamageTypes.sql" />
     <Build Include="dbo\Tables\CharacterSpells.sql" />
+    <Build Include="dbo\Tables\FriendRequests.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="DeneirsGate.Database.LOCAL.publish.xml" />

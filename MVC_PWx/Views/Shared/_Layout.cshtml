@@ -10,7 +10,7 @@
     <meta name="description" content="">
     <meta name="author" content="Dashboard">
     <meta name="keyword" content="Dashboard, Bootstrap, Admin, Template, Theme, Responsive, Fluid, Retina">
-    <title>Deneir's Gate</title>
+    <title>@(ViewBag.Title == null || ViewBag.Title == "" ? "" : ViewBag.Title + " | ") Deneir's Gate</title>
 
     <!-- Favicons -->
     <link rel="apple-touch-icon" sizes="57x57" href="@Url.LoadFavicon("apple-icon-57x57.png")">
@@ -486,6 +486,12 @@
             fontFamily: 'Ruda',
             cssAnimationStyle: 'from-bottom'
         })
+
+        //Notify Block
+        Notiflix.Block.Init({
+            svgColor: "#ce0606",
+            backgroundColor:"rgba(255,255,255,0.5)"
+        }); 
 
     </script>
     <script type="application/javascript">

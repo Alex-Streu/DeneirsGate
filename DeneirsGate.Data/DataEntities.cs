@@ -39,6 +39,12 @@ namespace DeneirsGate.Data
 
         #endregion
 
+        #region Social
+
+        public virtual DbSet<FriendRequest> FriendRequests { get; set; }
+
+        #endregion
+
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             modelBuilder.Entity<AspNetRole>()

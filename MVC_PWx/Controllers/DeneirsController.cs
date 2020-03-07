@@ -14,6 +14,7 @@ namespace MVC_PWx.Controllers
 
         private AuthService authSvc;
         private CampaignService campaignSvc;
+        private UserService userSvc;
 
         public ApplicationUser AppUser
         {
@@ -63,6 +64,15 @@ namespace MVC_PWx.Controllers
             {
                 if (campaignSvc == null) { campaignSvc = new CampaignService(); }
                 return campaignSvc;
+            }
+        }
+
+        public UserService UserSvc
+        {
+            get
+            {
+                if (userSvc == null) { userSvc = new UserService(); }
+                return userSvc;
             }
         }
 

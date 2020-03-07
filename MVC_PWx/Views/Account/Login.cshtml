@@ -15,61 +15,142 @@
 
 <div id="login-page">
     <div class="container">
+        <div data-panes="login-panes">
+            <div id="login-tab-item" class="hidden fancy-tab-item active" data-tab="login-pane"></div>
+            <div id="register-tab-item" class="hidden fancy-tab-item" data-tab="register-pane"></div>
+            <div id="information-tab-item" class="hidden fancy-tab-item" data-tab="information-pane"></div>
+        </div>
+
         <div class="login-title responsive-text" style="--size:8vw">DENEIR'S <span>GATE</span></div>
-        @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-login", role = "form" }))
-        {
-            @Html.AntiForgeryToken()
-            <h2 class="form-login-heading">Enter The Gate</h2>
-            <div class="login-wrap">
-                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-                @HtmlHelpers.RenderFancyTextbox("md", "Username", null, null, Html.DisplayNameFor(m => m.Username).ToString(), Html.ValidationMessageFor(m => m.Username, "", new { @class = "text-danger" }))
-                <br>
-                @HtmlHelpers.RenderFancyPassword("md", "Password", null, null, Html.DisplayNameFor(m => m.Password).ToString(), Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" }))
-                <div class="flex-container space-between">
-                    <div>
-                        @Html.CheckBoxFor(m => m.RememberMe)
-                        @Html.LabelFor(m => m.RememberMe)
-                    </div>
-                    <label class="checkbox">
-                        <a class="link red" data-toggle="modal" href="#forgotPasswordModal"> Forgot Password?</a>
-                    </label>
-                </div>
-                <button class="btn btn-default btn-block" type="submit"><i class="fa fa-lock"></i> SIGN IN</button>
-                <hr>
-                <div class="login-social-link centered">
-                    <p>or you can sign in via your social network</p>
-                    <button class="btn btn-facebook" type="submit"><i class="fa fa-facebook"></i> Facebook</button>
-                    <button class="btn btn-twitter" type="submit"><i class="fa fa-twitter"></i> Twitter</button>
-                </div>
-                <div class="registration">
-                    Don't have an account yet?<br />
-                    <a class="link red" href="@Url.Action("Register")">
-                        Create an account
-                    </a>
-                </div>
-            </div>
-            <!-- Modal -->
-            <div aria-hidden="true" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" id="forgotPasswordModal" class="modal fade">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                            <h4 class="modal-title">Forgot Password?</h4>
+
+        <div id="login-panes">
+            <div id="login-pane" class="fancy-tab-pane slide-left active">
+                @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { id = "login-form", @class = "form-login first", role = "form" }))
+                {
+                    @Html.AntiForgeryToken()
+                    <h2 class="form-login-heading">Enter The Gate</h2>
+                    <div class="login-wrap">
+                        @Html.ValidationSummary(true, "", new { @class = "error-text" })
+                        @HtmlHelpers.RenderFancyTextbox("md", "Username", null, null, Html.DisplayNameFor(m => m.Username).ToString(), Html.ValidationMessageFor(m => m.Username, "", new { @class = "text-danger" }))
+                        <br>
+                        @HtmlHelpers.RenderFancyPassword("md", "Password", null, null, Html.DisplayNameFor(m => m.Password).ToString(), Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" }))
+                        <div class="flex-container space-between">
+                            <div>
+                                @Html.CheckBoxFor(m => m.RememberMe)
+                                @Html.LabelFor(m => m.RememberMe)
+                            </div>
+                            <label class="checkbox">
+                                <a class="link red" data-toggle="modal" href="#forgotPasswordModal"> Forgot Password?</a>
+                            </label>
                         </div>
-                        <div class="modal-body">
-                            <p>Enter your e-mail address below to reset your password.</p>
-                            <p class="red" id="forgotResponse"></p>
-                            <input type="text" id="forgotEmail" name="email" placeholder="Email" autocomplete="off" class="form-control placeholder-no-fix">
+                        <button class="btn btn-default btn-block" type="submit"><i class="fa fa-lock"></i> SIGN IN</button>
+                        <hr>
+                        <div class="login-social-link centered">
+                            <p>or you can sign in via your social network</p>
+                            <button class="btn btn-facebook" type="submit"><i class="fa fa-facebook"></i> Facebook</button>
+                            <button class="btn btn-twitter" type="submit"><i class="fa fa-twitter"></i> Twitter</button>
                         </div>
-                        <div class="modal-footer">
-                            <button data-dismiss="modal" class="btn btn-default" type="button">Cancel</button>
-                            <button id="forgotSubmit" class="btn btn-theme" type="button">Submit</button>
+                        <div class="registration">
+                            Don't have an account yet?<br />
+                            <a id="register-link" class="link red" href="#">
+                                Create an account
+                            </a>
                         </div>
                     </div>
+                }
+            </div>
+
+            <div id="register-pane" class="fancy-tab-pane slide-right">
+                <div id="register-form" class="form-login">
+                    <h2 class="form-login-heading">Start Your Adventure</h2>
+                    <div class="login-wrap">
+                        <p class="error-text" id="registerResponse"></p>
+                        @Html.TextBox("Picture", "/Content/img/avatars/boy-combover.jpg", new { style = "display:none", @class = "form-control" })
+                        <div class="flex-container center" style="margin-bottom:1em">
+                            <div class="fancy-portrait" style="max-width:100px;padding-right:0em !important">
+                                <img id="picturePreview" class="img-xs img-responsive" style="padding-right:inherit" src="~/Content/img/avatars/boy-combover.jpg" onclick="showModal('pictureModal')" />
+                                <div class='overlay' onclick="showModal('pictureModal')"></div>
+                            </div>
+                        </div>
+                        <div class="fancy-dropdown">
+                            @Html.Label("RegisterRole", "Role", htmlAttributes: new { @class = "control-label" })
+                            @Html.DropDownList("RegisterRole", new SelectList(ViewBag.Role, "Name", "Name"), new { @class = "form-control responsive-text", style = "--size:0.75vw" })
+                        </div>
+                        @HtmlHelpers.RenderFancyTextbox("md", "RegisterUsername", null, null, "Username")
+                        @HtmlHelpers.RenderFancyTextbox("md", "RegisterEmail", null, null, "Email")
+                        @HtmlHelpers.RenderFancyPassword("md", "RegisterPassword", null, null, "Password")
+                        @HtmlHelpers.RenderFancyPassword("md", "RegisterConfirmPassword", null, null, "Confirm Password")
+                        <button id="registerSubmit" class="btn btn-default btn-block"><i class="fa fa-unlock"></i>&nbsp;&nbsp;REGISTER</button>
+                        <div class="registration">
+                            <br />
+                            Already have an account?<br />
+                            <a class="link red login-link" href="#">
+                                Log In
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <!-- modal -->
-        }
+
+            <div id="information-pane" class="fancy-tab-pane slide-right">
+                <div class="form-login">
+                    <h2 class="form-login-heading"></h2>
+                    <div class="login-wrap">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Forgot Password Modal -->
+<div aria-hidden="true" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" id="forgotPasswordModal" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">Forgot Password?</h4>
+            </div>
+            <div class="modal-body">
+                <p>Enter your e-mail address below to reset your password.</p>
+                <p class="error-text" id="forgotResponse"></p>
+                <input type="text" id="forgotEmail" name="email" placeholder="Email" autocomplete="off" class="form-control placeholder-no-fix">
+            </div>
+            <div class="modal-footer">
+                <button data-dismiss="modal" class="btn btn-default" type="button">Cancel</button>
+                <button id="forgotSubmit" class="btn btn-theme" type="button">Submit</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- modal -->
+
+<!-- Picture Modal -->
+<div id="pictureModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" onclick="hideModal('pictureModal')">&times;</button>
+                <h4 class="modal-title">Profile Picture</h4>
+            </div>
+            <div class="modal-body profile-picture-modal">
+                <div class="profile-picture-selector">
+                    <a class="profile-picture-item"><img class="img-xs img-responsive" src="~/Content/img/avatars/boy-combover.jpg" /></a>
+                    <a class="profile-picture-item"><img class="img-xs img-responsive" src="~/Content/img/avatars/boy-geek.jpg" /></a>
+                    <a class="profile-picture-item"><img class="img-xs img-responsive" src="~/Content/img/avatars/girl-bangs.jpg" /></a>
+                    <a class="profile-picture-item"><img class="img-xs img-responsive" src="~/Content/img/avatars/girl-bun.jpg" /></a>
+                    <a class="profile-picture-item"><img class="img-xs img-responsive" src="~/Content/img/avatars/girl-goth.jpg" /></a>
+                    <a class="profile-picture-item"><img class="img-xs img-responsive" src="~/Content/img/avatars/girl-nerd.jpg" /></a>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" onclick="hideModal('pictureModal')">Close</button>
+            </div>
+        </div>
+
     </div>
 </div>
 
@@ -77,10 +158,66 @@
     @Scripts.Render("~/bundles/jqueryval")
     <script type="text/javascript">
         var forgotPasswordAction = '@Url.Action("ForgotPassword")';
+        var registerAction = '@Url.Action("Register")';
 
+        $(document).ready(function () {
+            $('.backstretch').addClass('fadein');
+        })
+        
         $.backstretch("@Url.Content("~/Content/img/login-background.jpg")", {
             speed: 500
         });
+
+        $(".first").on(
+            "webkitAnimationEnd oanimationend msAnimationEnd animationend",
+            function () {
+                $(this).removeClass("first");
+            }
+        );
+
+        $('#login-form').submit(function () {
+            Notiflix.Block.Pulse('#login-form');
+        })
+
+        $("#login-form").bind('ajax:complete', function () {
+            Notiflix.Block.Remove('#login-form');
+        });
+
+        $('#registerSubmit').click(function () {
+            Notiflix.Block.Pulse('#register-form');
+
+            var postData = {
+                Picture: $('#Picture').val(),
+                Role: $('#RegisterRole').val(),
+                Username: $('#RegisterUsername').val(),
+                Email: $('#RegisterEmail').val(),
+                Password: $('#RegisterPassword').val(),
+                ConfirmPassword: $('#RegisterConfirmPassword').val()
+            }
+
+            $.ajax({
+                type: "POST",
+                url: registerAction,
+                data: JSON.stringify(postData),
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data.success) {
+                        $('#information-pane .form-login-heading').text(data.title);
+                        $('#information-pane .login-wrap').text(data.message);
+                        $('#information-tab-item').click();
+                    } else {
+                        $('#registerResponse').text(data.message);
+                    }
+                },
+                error: function (error) {
+                    $('#registerResponse').text(error.responseText);
+                },
+                complete: function () {
+                    Notiflix.Block.Remove('#register-form');
+                }
+            })
+        })
 
         $('#forgotSubmit').click(function () {
             var postData = {
@@ -101,5 +238,29 @@
                 }
             })
         })
+
+        $('#register-link').click(function () {
+            $('#register-tab-item').click();
+        })
+
+        $('.login-link').click(function () {
+            $('#login-tab-item').click();
+        })
+
+        $('.profile-picture-item').click(function () {
+            hideModal('pictureModal');
+
+            var src = $(this).find('img').attr('src');
+            $('#picturePreview').attr('src', src);
+            $('#Picture').val(src);
+        })
+
+        function hideModal(id) {
+            $('#' + id).modal('hide');
+        }
+
+        function showModal(id) {
+            $('#' + id).modal('show');
+        }
     </script>
 }

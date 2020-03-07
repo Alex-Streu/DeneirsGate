@@ -1,19 +1,13 @@
-﻿@model System.Web.Mvc.HandleErrorInfo
+﻿
+<div class="content-box">
+    <h2>@ViewBag.Header</h2>
+    <h3>@ViewBag.Message</h3>
+</div>
 
-@{
-    ViewBag.Title = "Error";
+@section scripts {
+    <script type="text/javascript">
+        $.backstretch("@Url.Content("~/Content/img/errpr-background.jpg")", {
+            speed: 500
+        });
+    </script>
 }
-
-<h1 class="text-danger">Error.</h1>
-@{
-    if (String.IsNullOrEmpty(ViewBag.errorMessage))
-    {
-        <h2 class="text-danger">An error occurred while processing your request.</h2>
-    }
-    else
-    {
-        <h2 class="text-danger">@ViewBag.errorMessage</h2>
-    }
-}
-
-

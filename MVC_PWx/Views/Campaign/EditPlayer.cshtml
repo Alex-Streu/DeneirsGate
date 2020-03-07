@@ -8,7 +8,6 @@
 
 <div class="user-header">
     <label class="text-large">@Model.UserName</label>
-    <div id="invite-player" class="btn btn-sm btn-default">Invite Player</div>
 </div>
 
 <div class="fancy-tabs" data-panes="player-panes">
@@ -20,7 +19,7 @@
 
 
 <div id="player-panes">
-    <div id="player-sheet-pane" class="content-box player-sheet fancy-tab-pane slide-right active">
+    <div id="player-sheet-pane" class="content-box player-sheet =">
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
         @Html.HiddenFor(model => model.UserKey)
         @Html.HiddenFor(model => model.CharacterKey)
@@ -616,20 +615,6 @@
 
         $('.coin *').blur(function () {
             $(this).parentsUntil('.coin').parent().removeClass('active');
-        })
-
-
-
-        /********************** Invite Player ******************************/
-        $('#invite-player').click(function () {
-            Notiflix.Report.Info(
-                'Invite Player',
-                'Username? ' + registerPlayerAction,
-                'Send',
-                function () {
-                    //TODO
-                }
-            )
         })
 
 

@@ -1,8 +1,13 @@
 ﻿
-@{
-    ViewBag.Title = "Info";
+<div class="content-box">
+    <h2>@ViewBag.Header</h2>
+    <h3>@ViewBag.Message</h3>
+</div>
+
+@section scripts {
+    <script type="text/javascript">
+        $.backstretch("@Url.Content("~/Content/img/info-background.png")", {
+            speed: 500
+        });
+    </script>
 }
-
-<h2>@ViewBag.Title.</h2>
-<h3>@ViewBag.Message</h3>
-

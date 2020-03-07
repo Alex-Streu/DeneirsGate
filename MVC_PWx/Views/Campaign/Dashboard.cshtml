@@ -27,3 +27,23 @@
         </div>
     }
 </div>
+
+@section scripts {
+    <script type="text/javascript">
+        
+
+
+
+        /********************** Invite Player ******************************/
+        $('#invite-player').click(function () {
+            Notiflix.Report.Info(
+                'Invite Player',
+                'Username? ' + registerPlayerAction,
+                'Send',
+                function () {
+                    //TODO
+                }
+            )
+        })
+    </script>
+}

@@ -181,6 +181,7 @@
     <Compile Include="Controllers\CharacterController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
+    <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="Controllers\UtilityController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -228,6 +229,7 @@
     <Content Include="Content\img\campaigns\campaign-default.png" />
     <Content Include="Content\img\campaigns\player-info-background.png" />
     <Content Include="Content\img\checkbox-gray.png" />
+    <Content Include="Content\img\error-background.jpg" />
     <Content Include="Content\img\favicon.png" />
     <Content Include="Content\img\friends\fr-01.jpg" />
     <Content Include="Content\img\friends\fr-02.jpg" />
@@ -267,6 +269,7 @@
     <Content Include="Content\img\icos\ms-icon-150x150.png" />
     <Content Include="Content\img\icos\ms-icon-310x310.png" />
     <Content Include="Content\img\icos\ms-icon-70x70.png" />
+    <Content Include="Content\img\info-background.png" />
     <Content Include="Content\img\instagram.jpg" />
     <Content Include="Content\img\login-background.jpg" />
     <Content Include="Content\img\login-bg.jpg" />
@@ -513,6 +516,7 @@
     <Folder Include="App_Data\" />
     <Folder Include="Views\Character\" />
     <Folder Include="Views\Deneirs\" />
+    <Folder Include="Views\Users\" />
     <Folder Include="Views\Utility\" />
   </ItemGroup>
   <ItemGroup>

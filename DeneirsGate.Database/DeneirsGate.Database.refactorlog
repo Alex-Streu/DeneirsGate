@@ -105,4 +105,11 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="IsPlayer" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="acbedbd6-aac4-447d-9ec8-2aed48ff3a21" ChangeDateTime="03/07/2020 04:01:56">
+    <Property Name="ElementName" Value="[dbo].[FriendRequests].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[FriendRequests]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="UserSender" />
+  </Operation>
 </Operations>
