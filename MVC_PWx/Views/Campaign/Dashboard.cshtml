@@ -30,7 +30,15 @@
 
 @section scripts {
     <script type="text/javascript">
-        
+        @*$(document).ready(function () {
+            $.connection.hub.start().done(function () {
+                var notification = {
+                    Message: "Let's go home!",
+                    Link: '@Url.Action("/", "Home")'
+                }
+                notificationHub.server.send('@User.Identity.Name', notification);
+            });
+        })*@
 
 
 

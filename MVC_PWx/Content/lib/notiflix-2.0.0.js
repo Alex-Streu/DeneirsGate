@@ -957,7 +957,7 @@ var NotiflixNotify = function (message, callback, theType, staticType) {
             // if callback or click to close off
 
             // else auto remove on
-            if (!newNotifySettings.closeButton && !callback) {
+            if (!newNotifySettings.closeButton && (!callback || (callback && typeof callback === 'function' && callback(true)))) {
                 timeoutHide = setTimeout(function () {
                     hideNotifyElementsAndOverlay();
                 }, newNotifySettings.timeout);

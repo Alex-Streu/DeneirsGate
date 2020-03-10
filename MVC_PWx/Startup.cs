@@ -1,7 +1,7 @@
 ﻿using Microsoft.Owin;
 using Owin;
 
-[assembly: OwinStartupAttribute(typeof(MVC_PWx.Startup))]
+[assembly: OwinStartup(typeof(MVC_PWx.Startup))]
 namespace MVC_PWx
 {
     public partial class Startup
@@ -9,6 +9,7 @@ namespace MVC_PWx
         public void Configuration(IAppBuilder app)
         {
             ConfigureAuth(app);
+            app.MapSignalR();
         }
     }
 }
