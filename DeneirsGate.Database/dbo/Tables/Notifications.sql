@@ -1,0 +1,9 @@
+﻿CREATE TABLE [dbo].[Notifications]
+(
+	[NotificationKey] UNIQUEIDENTIFIER NOT NULL PRIMARY KEY, 
+    [UserKey] UNIQUEIDENTIFIER NOT NULL, 
+    [Message] NVARCHAR(100) NOT NULL, 
+    [Link] NVARCHAR(50) NULL, 
+	[DateAdded] DATETIME NOT NULL,
+    [IsRead] BIT NOT NULL DEFAULT 0
+)

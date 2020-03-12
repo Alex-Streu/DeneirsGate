@@ -1,4 +1,6 @@
-﻿using System;
+﻿using DeneirsGate.Services;
+using Microsoft.AspNet.SignalR;
+using System;
 using System.Collections.Generic;
 
 namespace MVC_PWx.Helpers
@@ -24,16 +26,6 @@ namespace MVC_PWx.Helpers
                 };
             }
         }
-
-        //static string passphrase = "TrackerOverweening102076";
-
-
-        //public static string EncryptPassword(string password)
-        //{
-        //    byte[] data = System.Text.Encoding.ASCII.GetBytes(password);
-        //    data = new System.Security.Cryptography.SHA256Managed().ComputeHash(data);
-        //    return System.Text.Encoding.ASCII.GetString(data);
-        //}
 
         #region Content Directories
 

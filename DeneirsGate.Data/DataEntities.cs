@@ -15,9 +15,6 @@ namespace DeneirsGate.Data
         public virtual DbSet<AspNetUserClaim> AspNetUserClaims { get; set; }
         public virtual DbSet<AspNetUserLogin> AspNetUserLogins { get; set; }
         public virtual DbSet<AspNetUser> AspNetUsers { get; set; }
-        //public virtual DbSet<Role> Roles { get; set; }
-        //public virtual DbSet<UserRole> UserRoles { get; set; }
-        //public virtual DbSet<User> Users { get; set; }
 
         #region Campaigns
         
@@ -42,6 +39,12 @@ namespace DeneirsGate.Data
         #region Social
 
         public virtual DbSet<FriendRequest> FriendRequests { get; set; }
+
+        #endregion
+
+        #region
+
+        public virtual DbSet<Notification> Notifications { get; set; }
 
         #endregion
 

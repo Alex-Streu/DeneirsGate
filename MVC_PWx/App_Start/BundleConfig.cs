@@ -46,6 +46,7 @@ namespace MVC_PWx
 
             bundles.Add(new StyleBundle("~/bundles/common").Include(
                       "~/Content/lib/common-scripts.js",
+                      "~/Scripts/notifications.js",
                       "~/Scripts/Site.js"));
         }
     }

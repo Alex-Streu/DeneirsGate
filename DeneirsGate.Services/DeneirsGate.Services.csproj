@@ -75,6 +75,7 @@
     <Compile Include="Models\CampaignViewModel.cs" />
     <Compile Include="Models\ClassViewModel.cs" />
     <Compile Include="Models\CharacterViewModel.cs" />
+    <Compile Include="Models\NotificationViewModel.cs" />
     <Compile Include="Models\PlayerRegistryViewModel.cs" />
     <Compile Include="Models\RaceViewModel.cs" />
     <Compile Include="Models\RoleViewModel.cs" />

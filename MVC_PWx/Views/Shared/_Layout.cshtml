@@ -206,41 +206,25 @@
                         <li id="header_notification_bar" class="dropdown">
                             <a data-toggle="dropdown" class="dropdown-toggle" href="index.html#">
                                 <i class="fa fa-bell-o"></i>
-                                <span class="badge bg-warning">7</span>
+                                <span id="total-notifications" class="badge bg-warning header-notification-count">7</span>
                             </a>
                             <ul class="dropdown-menu extended notification">
                                 <div class="notify-arrow notify-arrow-yellow"></div>
                                 <li>
-                                    <p class="yellow">You have 7 new notifications</p>
+                                    <p class="yellow">You have <span class="header-notification-count">no</span> new notifications</p>
                                 </li>
-                                <li>
-                                    <a href="index.html#">
-                                        <span class="label label-danger"><i class="fa fa-bolt"></i></span>
-                                        Server Overloaded.
-                                        <span class="small italic">4 mins.</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="index.html#">
-                                        <span class="label label-warning"><i class="fa fa-bell"></i></span>
-                                        Memory #2 Not Responding.
-                                        <span class="small italic">30 mins.</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="index.html#">
-                                        <span class="label label-danger"><i class="fa fa-bolt"></i></span>
-                                        Disk Space Reached 85%.
-                                        <span class="small italic">2 hrs.</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="index.html#">
-                                        <span class="label label-success"><i class="fa fa-plus"></i></span>
-                                        New User Registered.
-                                        <span class="small italic">3 hrs.</span>
-                                    </a>
-                                </li>
+                                <span id="notifications-list">
+                                    @foreach (var item in ViewBag.Notifications)
+                                    {
+                                        <li id="@item.NotificationKey">
+                                            <a href="@item.Link">
+                                                @*<span class="label label-danger"><i class="fa fa-bolt"></i></span>*@
+                                                @item.Message
+                                                <span class="small italic">@item.Age</span>
+                                            </a>
+                                        </li>
+                                    }
+                                </span>
                                 <li>
                                     <a href="index.html#">See all notifications</a>
                                 </li>
@@ -441,8 +425,6 @@
     <script src="~/Scripts/jquery.signalR-2.2.2.min.js"></script>
     <script src="~/signalr/hubs"></script>
     <script type="text/javascript">
-        // Reference the auto-generated proxy for the hub.
-        var notificationHub = $.connection.notificationHub;
         var url = '@Request.Path';
 
         $(document).ready(function () {
@@ -460,16 +442,6 @@
             //    // (string | optional) the class name you want to apply to that specific message
             //    class_name: 'my-sticky-class'
             //});
-
-            //Notification functionality
-            // Create a function that the hub can call back to display messages.
-            notificationHub.client.addNotification = function (notification) {
-                Notiflix.Notify.Info(notification.Message, function (autoClose) {
-                    if (autoClose) { return true; }
-
-                    window.location.href = notification.Link;
-                })
-            };
         });
 
         $('#nav-accordion li a').each(function () {
@@ -478,6 +450,9 @@
                 $(this).addClass('active');
             }
         })
+
+        //Notifications Init
+        NotificationHub.Init();
 
 
         //Notify Init

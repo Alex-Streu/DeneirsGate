@@ -201,7 +201,6 @@
     <Compile Include="Helpers\AccountViewModels.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
-    <Compile Include="Models\NotificationModel.cs" />
     <Compile Include="Models\UploadImagePostModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
@@ -469,6 +468,7 @@
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
     <Content Include="Content\lib\notiflix-2.0.0.js" />
+    <Content Include="Scripts\notifications.js" />
     <Content Include="Scripts\Site.js" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>

@@ -79,6 +79,7 @@ namespace MVC_PWx.Controllers
         protected override void OnActionExecuted(ActionExecutedContext filterContext)
         {
             ViewBag.User = AppUser;
+            ViewBag.Notifications = UserSvc.GetNotifications(AppUser.UserId);
             base.OnActionExecuted(filterContext);
         }
         

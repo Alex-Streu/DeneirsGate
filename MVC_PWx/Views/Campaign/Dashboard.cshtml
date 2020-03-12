@@ -9,6 +9,7 @@
 <h2>Campaign Dashboard</h2>
 
 <a class="btn btn-primary" href="@Url.Action("CreatePlayer", "Campaign", new { id = Model.CampaignKey })">Add Player</a>
+<div class="btn btn-default" onclick="sendNotification()">Send Notification</div>
 
 <div class="dashboard-players">
     @foreach (var item in Model.Players)
@@ -30,15 +31,12 @@
 
 @section scripts {
     <script type="text/javascript">
-        @*$(document).ready(function () {
-            $.connection.hub.start().done(function () {
-                var notification = {
-                    Message: "Let's go home!",
-                    Link: '@Url.Action("/", "Home")'
-                }
-                notificationHub.server.send('@User.Identity.Name', notification);
-            });
-        })*@
+        function sendNotification() {
+            NotificationHub.Send('@User.Identity.Name', {
+                Message: 'Take me home!',
+                Link: '@Url.Action("/", "Home")'
+            })
+        }
 
 
 
