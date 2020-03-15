@@ -1,6 +1,8 @@
 ﻿using DeneirsGate.Services;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
+using System;
+using System.Collections.Generic;
 using System.Web;
 using System.Web.Mvc;
 
@@ -15,6 +17,11 @@ namespace MVC_PWx.Controllers
         private AuthService authSvc;
         private CampaignService campaignSvc;
         private UserService userSvc;
+
+        public Dictionary<string, DateTime> OnlineUsers
+        {
+            get { return (Dictionary<string, DateTime>)HttpContext.Application["OnlineUsers"]; }
+        }
 
         public ApplicationUser AppUser
         {
@@ -76,10 +83,24 @@ namespace MVC_PWx.Controllers
             }
         }
 
+        protected ActionResult RedirectToLocal(string returnUrl)
+        {
+            if (Url.IsLocalUrl(returnUrl))
+            {
+                return Redirect(returnUrl);
+            }
+            return RedirectToAction("Index", "Home");
+        }
+
         protected override void OnActionExecuted(ActionExecutedContext filterContext)
         {
-            ViewBag.User = AppUser;
-            ViewBag.Notifications = UserSvc.GetNotifications(AppUser.UserId);
+            if (User.Identity.IsAuthenticated)
+            {
+                ViewBag.User = AppUser;
+                ViewBag.Notifications = UserSvc.GetNotifications(AppUser.UserId);
+                ViewBag.Friends = UserSvc.GetFriends(AppUser.UserId, (Dictionary<string, DateTime>)HttpContext.Application["OnlineUsers"], true);
+            }
+
             base.OnActionExecuted(filterContext);
         }
         

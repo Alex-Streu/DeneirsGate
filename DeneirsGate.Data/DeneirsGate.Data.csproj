@@ -86,6 +86,7 @@
     <Compile Include="DataModels\C__RefactorLog.cs" />
     <Compile Include="DataEntities.cs" />
     <Compile Include="DataModels\DamageType.cs" />
+    <Compile Include="DataModels\FriendBlock.cs" />
     <Compile Include="DataModels\FriendRequest.cs" />
     <Compile Include="DataModels\Notification.cs" />
     <Compile Include="DataModels\UserCampaign.cs" />

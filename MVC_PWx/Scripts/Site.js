@@ -1,4 +1,16 @@
-﻿/* FANCY ITEMS */
+﻿/* HELPERS */
+function isEmpty(val) {
+    if (val == undefined || val == null || val == '') { return true; }
+
+    return false;
+}
+
+$('.modal').on('shown.bs.modal', function () {
+    $(this).find('[autofocus]').focus();
+});
+
+
+/* FANCY ITEMS */
 $('.fancy-textarea textarea').focus(function () {
     $(this).parent().find('label').addClass('active');
 })

@@ -11,11 +11,12 @@
             if (parsed == 'NaN') { parsed = 0; }
 
             parsed++;
-            $('#total-notifications').html(parsed);
+            $('.header-notification-count').html(parsed);
+            $('#total-notifications').removeClass('hidden');
             var newItem = `<li>
                                 <a href="${notification.Link}">
                                     ${notification.Message}
-                                    <span class="small italic">Just now.</span>
+                                    <span class="small italic">Just now</span>
                                 </a>
                             </li>`;
             $('#notifications-list').prepend(newItem);

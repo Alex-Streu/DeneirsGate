@@ -19,7 +19,7 @@
 
 
 <div id="player-panes">
-    <div id="player-sheet-pane" class="content-box player-sheet =">
+    <div id="player-sheet-pane" class="content-box player-sheet fancy-tab-pane slide-right active">
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
         @Html.HiddenFor(model => model.UserKey)
         @Html.HiddenFor(model => model.CharacterKey)
@@ -480,15 +480,6 @@
                 calculateMod(this);
             })
         })
-
-
-
-        /********************** Helpers ******************************/
-        function isEmpty(val) {
-            if (val == undefined || val == null || val == '') { return true; }
-
-            return false;
-        }
 
 
 

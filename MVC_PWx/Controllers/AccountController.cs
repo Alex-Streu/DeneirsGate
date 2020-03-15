@@ -405,6 +405,7 @@ namespace MVC_PWx.Controllers
         //[ValidateAntiForgeryToken]
         public ActionResult LogOff()
         {
+            OnlineUsers.Remove(User.Identity.Name);
             AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
             return RedirectToAction("Login");
         }
@@ -460,15 +461,6 @@ namespace MVC_PWx.Controllers
             {
                 ModelState.AddModelError("", error);
             }
-        }
-
-        private ActionResult RedirectToLocal(string returnUrl)
-        {
-            if (Url.IsLocalUrl(returnUrl))
-            {
-                return Redirect(returnUrl);
-            }
-            return RedirectToAction("Index", "Home");
         }
 
         internal class ChallengeResult : HttpUnauthorizedResult

@@ -1,4 +1,7 @@
-﻿using System.Web.Mvc;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
 
@@ -12,6 +15,27 @@ namespace MVC_PWx
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
+
+            if (Application["OnlineUsers"] == null) { Application["OnlineUsers"] = new Dictionary<string, DateTime>(); }
+        }
+
+        protected void Application_EndRequest()
+        {
+            //Get list
+            var onlineUsers = (Dictionary<string, DateTime>)Application["OnlineUsers"];
+
+            //Update current user
+            if (!onlineUsers.ContainsKey(User.Identity.Name)) { onlineUsers.Add(User.Identity.Name, DateTime.UtcNow); }
+            else { onlineUsers[User.Identity.Name] = DateTime.UtcNow; }
+
+            //Remove inactive users and logged out user
+            foreach (var s in onlineUsers.Where(x => x.Value == DateTime.UtcNow.AddMinutes(-10)).ToList())
+            {
+                onlineUsers.Remove(s.Key);
+            }
+
+            //Set list
+            Application["OnlineUsers"] = onlineUsers;
         }
     }
 }

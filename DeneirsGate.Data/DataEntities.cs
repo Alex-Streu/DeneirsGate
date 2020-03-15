@@ -39,6 +39,7 @@ namespace DeneirsGate.Data
         #region Social
 
         public virtual DbSet<FriendRequest> FriendRequests { get; set; }
+        public virtual DbSet<FriendBlock> FriendBlocks { get; set; }
 
         #endregion
 

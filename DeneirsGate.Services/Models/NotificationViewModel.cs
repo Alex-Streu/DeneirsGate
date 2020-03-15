@@ -8,7 +8,7 @@ namespace DeneirsGate.Services
 {
     public class NotificationViewModel
     {
-        public Guid NotificationKey { get; set; }
+        public Guid NotificationKey { get; set; } = Guid.NewGuid();
         public Guid UserKey { get; set; }
         public string Message { get; set; }
         public string Link { get; set; }

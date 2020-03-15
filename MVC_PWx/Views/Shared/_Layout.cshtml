@@ -63,76 +63,46 @@
                     <div class="fa fa-bars tooltips" data-placement="right" data-original-title="Toggle Navigation"></div>
                 </div>
                 <!--logo start-->
-                <a href="index.html" class="logo"><b>DENEIR'S <span>GATE</span></b></a>
+                <a href="@Url.Action("/", "Home")" class="logo"><b>DENEIR'S <span>GATE</span></b></a>
                 <!--logo end-->
                 <div class="nav notify-row" id="top_menu">
                     <!--  notification start -->
                     <ul class="nav top-menu">
                         <!-- settings start -->
                         <li class="dropdown">
-                            <a data-toggle="dropdown" class="dropdown-toggle" href="index.html#">
-                                <i class="fa fa-tasks"></i>
-                                <span class="badge bg-theme">4</span>
+                            <a data-toggle="dropdown" class="dropdown-toggle" href="#">
+                                <i class="fa fa-user"></i>
+                                @if (ViewBag.Friends.Count > 0)
+                                { <span class="badge bg-green">@ViewBag.Friends.Count</span> }
                             </a>
                             <ul class="dropdown-menu extended tasks-bar">
                                 <div class="notify-arrow notify-arrow-green"></div>
                                 <li>
-                                    <p class="green">You have 4 pending tasks</p>
+                                    <button class=" menu-item-link btn btn-sm btn-theme" data-toggle="modal" data-target="#addFriendModal">Add Friend</button>
                                 </li>
-                                <li>
-                                    <a href="index.html#">
-                                        <div class="task-info">
-                                            <div class="desc">Dashio Admin Panel</div>
-                                            <div class="percent">40%</div>
-                                        </div>
-                                        <div class="progress progress-striped">
-                                            <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width: 40%">
-                                                <span class="sr-only">40% Complete (success)</span>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="index.html#">
-                                        <div class="task-info">
-                                            <div class="desc">Database Update</div>
-                                            <div class="percent">60%</div>
-                                        </div>
-                                        <div class="progress progress-striped">
-                                            <div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%">
-                                                <span class="sr-only">60% Complete (warning)</span>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="index.html#">
-                                        <div class="task-info">
-                                            <div class="desc">Product Development</div>
-                                            <div class="percent">80%</div>
-                                        </div>
-                                        <div class="progress progress-striped">
-                                            <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100" style="width: 80%">
-                                                <span class="sr-only">80% Complete</span>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="index.html#">
-                                        <div class="task-info">
-                                            <div class="desc">Payments Sent</div>
-                                            <div class="percent">70%</div>
-                                        </div>
-                                        <div class="progress progress-striped">
-                                            <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" style="width: 70%">
-                                                <span class="sr-only">70% Complete (Important)</span>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </li>
+                                @if (ViewBag.Friends.Count <= 0)
+                                {
+                                    <li id="no-friends" class="empty-menu-item">
+                                        No friends are currently online.
+                                    </li>
+                                }
+                                else
+                                {
+                                    foreach (var item in ViewBag.Friends)
+                                    {
+                                        <li name="@item.UserId">
+                                            <a class="friend" href="#">
+                                                <span class="online-status @(item.IsOnline ? "online" : "")"></span>
+                                                <img class="picture" alt="avatar" src="@item.Picture">
+                                                <span class="responsive-text" style="--size:1vw">
+                                                    @item.Username
+                                                </span>
+                                            </a>
+                                        </li>
+                                    }
+                                }
                                 <li class="external">
-                                    <a href="#">See All Tasks</a>
+                                    <a href="@Url.Action("Friends", "Users")">View All Friends</a>
                                 </li>
                             </ul>
                         </li>
@@ -204,29 +174,30 @@
                         <!-- inbox dropdown end -->
                         <!-- notification dropdown start-->
                         <li id="header_notification_bar" class="dropdown">
-                            <a data-toggle="dropdown" class="dropdown-toggle" href="index.html#">
+                            <a data-toggle="dropdown" class="dropdown-toggle" href="#">
                                 <i class="fa fa-bell-o"></i>
-                                <span id="total-notifications" class="badge bg-warning header-notification-count">7</span>
+                                <span id="total-notifications" class="badge bg-warning header-notification-count @(ViewBag.Notifications.Count <= 0 ? "hidden" : "")">@ViewBag.Notifications.Count</span>
                             </a>
                             <ul class="dropdown-menu extended notification">
                                 <div class="notify-arrow notify-arrow-yellow"></div>
                                 <li>
-                                    <p class="yellow">You have <span class="header-notification-count">no</span> new notifications</p>
+                                    <p class="yellow">You have <span class="header-notification-count">@(ViewBag.Notifications.Count == 0 ? "no" : ViewBag.Notifications.Count)</span> new notifications</p>
                                 </li>
                                 <span id="notifications-list">
                                     @foreach (var item in ViewBag.Notifications)
                                     {
-                                        <li id="@item.NotificationKey">
-                                            <a href="@item.Link">
-                                                @*<span class="label label-danger"><i class="fa fa-bolt"></i></span>*@
-                                                @item.Message
-                                                <span class="small italic">@item.Age</span>
+                                        <li name="@item.NotificationKey">
+                                            <a href="@item.Link" class="notification-item">
+                                                <div class="notification">
+                                                    <span class="note">@item.Message</span>
+                                                    <span class="age">@item.Age</span>
+                                                </div>
                                             </a>
                                         </li>
                                     }
                                 </span>
                                 <li>
-                                    <a href="index.html#">See all notifications</a>
+                                    <a href="#">See all notifications</a>
                                 </li>
                             </ul>
                         </li>
@@ -416,6 +387,48 @@
         }
         <!--footer end-->
     </section>
+
+    <!-- **********************************************************************************************************************************************************
+    MODAL CONTENT
+    *********************************************************************************************************************************************************** -->
+    <!-- Add Friend -->
+    <div id="addFriendModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Search Users</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="flex-container">
+                        <input type="text" id="SearchUsers" class="form-control full-width" placeholder="Type username..." autofocus />
+                        <div id="SearchUsersBtn" class="btn btn-theme"><i class="fa fa-search"></i></div>
+                    </div>
+                    <div id="SearchUsersResults" class="search-results" style="display:none">
+                        <div name="friend-result">
+                            <div class="flex-container space-between align-center">
+                                <div name="friend" class="friend">
+                                    <img name="picture" class="picture" alt="avatar" src="">
+                                    <span name="name" class="responsive-text" style="--size:1vw"></span>
+                                </div>
+                                <div name="friendRequestStatus">
+                                    <div name="button" class="btn btn-theme">Send Request</div>
+                                    <i name="status"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <i name="status-result"></i>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
     @Scripts.Render("~/bundles/extensions")
@@ -426,6 +439,8 @@
     <script src="~/signalr/hubs"></script>
     <script type="text/javascript">
         var url = '@Request.Path';
+        var searchUsersAction = '@Url.Action("SearchUsers", "Users")';
+        var sendFriendRequestAction = '@Url.Action("SendFriendRequest", "Users")';
 
         $(document).ready(function () {
             //var unique_id = $.gritter.add({
@@ -480,6 +495,97 @@
             svgColor: "#ce0606",
             backgroundColor:"rgba(255,255,255,0.5)"
         });
+
+
+        //*************** AUTHORIZED ONLY ***********************
+        @if (User.Identity.IsAuthenticated)
+        {
+        <text>
+        function sendFriendRequest(username) {
+            postData = {
+                RequestUserName: username
+            }
+
+            $.ajax({
+                type: "POST",
+                url: sendFriendRequestAction,
+                data: JSON.stringify(postData),
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data.success) {
+                        $('#SearchUsersResults [name="status"]').html(data.message);
+                        $('#SearchUsersResults [name="button"]').hide();
+                        $('#SearchUsersResults [name="status"]').show();
+
+                        NotificationHub.Send(username, {
+                            Message: '@UserData.UserName sent you a friend request!',
+                            Link: '@Url.Action("Friends", "Users", new { to = "requests" })'
+                        });
+                    } else {
+                        Notiflix.Notify.Failure(data.message);
+                    }
+                },
+                error: function (error) {
+                    Notiflix.Notify.Failure(error.responseText);
+                }
+            })
+        }
+
+
+        $('#SearchUsersBtn').click(function () {
+            Notiflix.Block.Pulse('#addFriendModal .modal-dialog');
+            $('#SearchUsersResults').hide();
+
+            var postData = {
+                Search: $('#SearchUsers').val()
+            };
+
+            $.ajax({
+                type: "POST",
+                url: searchUsersAction,
+                data: JSON.stringify(postData),
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    var results = $('#SearchUsersResults');
+                    if (data.success) {
+                        var user = data.data;
+
+                        $(results).find('[name="picture"]').attr('src', user.Picture);
+                        $(results).find('[name="name"]').html(user.Username);
+                        if (user.CanAdd) {
+                            $(results).find('[name="button"]').show();
+                            $(results).find('[name="button"]').click(function () { sendFriendRequest(user.Username); });
+                            $(results).find('[name="status"]').hide();
+                        } else {
+                            $(results).find('[name="button"]').hide();
+                            $(results).find('[name="status"]').html(user.StatusMessage);
+                            $(results).find('[name="status"]').show();
+                        }
+                        $(results).find('[name="friend-result"]').show();
+                        $(results).find('[name="status-result"]').hide();
+
+                    } else {
+                        $(results).find('[name="status-result"]').html(data.message);
+                        $(results).find('[name="friend-result"]').hide();
+                        $(results).find('[name="status-result"]').show();
+                    }
+                },
+                error: function (error) {
+                    var results = $('#SearchUsersResults');
+                    $(results).find('[name="status-result"]').html(error.responseText);
+                    $(results).find('[name="friend-result"]').hide();
+                    $(results).find('[name="status-result"]').show();
+                },
+                complete: function () {
+                    Notiflix.Block.Remove('#addFriendModal .modal-dialog');
+                    $('#SearchUsersResults').show();
+                }
+            })
+        })
+        </text>
+        }
 
     </script>
     <script type="application/javascript">

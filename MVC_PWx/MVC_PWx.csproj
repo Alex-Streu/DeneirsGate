@@ -452,6 +452,8 @@
     <Content Include="Content\custom\pages\register-player.scss" />
     <Content Include="Content\custom\pages\login.scss" />
     <Content Include="Content\custom\bootstrap.scss" />
+    <Content Include="Content\custom\menus.scss" />
+    <Content Include="Content\custom\pages\friends.scss" />
     <None Include="Properties\PublishProfiles\DEV.pubxml" />
     <None Include="Properties\PublishProfiles\PROD.pubxml" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
@@ -515,6 +517,11 @@
     <Content Include="Views\Admin\Roles.cshtml" />
     <Content Include="Views\Admin\EditRole.cshtml" />
     <Content Include="Views\Admin\EditUser.cshtml" />
+    <Content Include="Views\Users\Friends.cshtml" />
+    <Content Include="Views\Users\_Friends.cshtml" />
+    <Content Include="Views\Users\_Requests.cshtml" />
+    <Content Include="Views\Users\_Pending.cshtml" />
+    <Content Include="Views\Users\_Blocked.cshtml" />
     <None Include="Web.DEV.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -526,7 +533,6 @@
     <Folder Include="App_Data\" />
     <Folder Include="Views\Character\" />
     <Folder Include="Views\Deneirs\" />
-    <Folder Include="Views\Users\" />
     <Folder Include="Views\Utility\" />
   </ItemGroup>
   <ItemGroup>

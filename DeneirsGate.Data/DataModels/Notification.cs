@@ -15,7 +15,7 @@ namespace DeneirsGate.Data
         [StringLength(100)]
         public string Message { get; set; }
 
-        [StringLength(50)]
+        [StringLength(250)]
         public string Link { get; set; }
 
         public DateTime DateAdded { get; set; }

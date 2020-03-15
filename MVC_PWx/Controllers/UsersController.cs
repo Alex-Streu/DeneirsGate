@@ -1,30 +1,128 @@
 ﻿using DeneirsGate.Services;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
-using System.Web.Security;
 
 namespace MVC_PWx.Controllers
 {
     public class UsersController : DeneirsController
     {
-        [HttpPost]
-        public async Task<JsonResult> SearchUsers(string search)
+        public ActionResult Friends(string to = "friends")
         {
-            var user = new UserViewModel();
+            var friends = new AllFriendsViewModel();
             try
             {
-                var _user = await UserManager.FindByNameAsync(search);
-                if (_user != null)
+                friends = UserSvc.GetAllFriends(AppUser.UserId, OnlineUsers);
+
+                var toList = new List<string> { "friends", "pending", "requests", "blocked" };
+                if (!toList.Contains(to)) { to = "friends"; }
+                ViewBag.To = to;
+            }
+            catch (Exception ex) { }
+
+            return View(friends);
+        }
+        
+        public ActionResult _Friends(Guid id, List<FriendViewModel> list = null)
+        {
+            var friends = new List<FriendViewModel>();
+            try
+            {
+                if (list != null) { friends = list; }
+                else { friends = UserSvc.GetFriends(AppUser.UserId, OnlineUsers); }
+            }
+            catch (Exception ex) { }
+
+            return PartialView(friends);
+        }
+        
+        public ActionResult _Requests(Guid id, List<FriendViewModel> list = null)
+        {
+            var friends = new List<FriendViewModel>();
+            try
+            {
+                if (list != null) { friends = list; }
+                else { friends = UserSvc.GetRequests(AppUser.UserId); }
+            }
+            catch (Exception ex) { }
+
+            return PartialView(friends);
+        }
+        
+        public ActionResult _Pending(Guid id, List<FriendViewModel> list = null)
+        {
+            var friends = new List<FriendViewModel>();
+            try
+            {
+                if (list != null) { friends = list; }
+                else { friends = UserSvc.GetPending(AppUser.UserId); }
+            }
+            catch (Exception ex) { }
+
+            return PartialView(friends);
+        }
+        
+        public ActionResult _Blocked(Guid id, List<FriendViewModel> list = null)
+        {
+            var friends = new List<FriendViewModel>();
+            try
+            {
+                if (list != null) { friends = list; }
+                else { friends = UserSvc.GetBlocked(AppUser.UserId); }
+            }
+            catch (Exception ex) { }
+
+            return PartialView(friends);
+        }
+
+        public ActionResult ReadNotification(Guid id, string returnUrl)
+        {
+            try
+            {
+                UserSvc.ReadNotification(id);
+            }
+            catch (Exception ex) { }
+
+            return RedirectToLocal(returnUrl);
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> SearchUsers(SearchUserPostModel model)
+        {
+            var user = new SearchUserViewModel();
+            var status = FriendStatus.None;
+            try
+            {
+                var _user = await UserManager.FindByNameAsync(model.Search);
+                if (_user != null) { status = UserSvc.CheckFriendStatus(AppUser.UserId, _user.UserId); }
+                if (_user == null || status == FriendStatus.Blocked || _user.UserName == User.Identity.Name)
                 {
-                    user = new UserViewModel
-                    {
-                        Picture = _user.Picture,
-                        UserId = _user.UserId,
-                        Username = _user.UserName
-                    };
+                    throw new Exception($"No user with username '{model.Search}' was found!");
+                }
+                
+                user = new SearchUserViewModel
+                {
+                    Picture = _user.Picture,
+                    UserId = _user.UserId,
+                    Username = _user.UserName,
+                    Status = UserSvc.CheckFriendStatus(AppUser.UserId, _user.UserId)
+                };
+
+                switch (user.Status)
+                {
+                    case FriendStatus.None:
+                        user.CanAdd = true;
+                        user.StatusMessage = "Make a friend!";
+                        break;
+                    case FriendStatus.Accepted:
+                        user.CanAdd = false;
+                        user.StatusMessage = "Already friends!";
+                        break;
+                    case FriendStatus.Pending:
+                        user.CanAdd = false;
+                        user.StatusMessage = "Request pending...";
+                        break;
                 }
             }
             catch (Exception ex)
@@ -36,25 +134,37 @@ namespace MVC_PWx.Controllers
         }
 
         [HttpPost]
-        public JsonResult GetFriends()
+        public async Task<JsonResult> SendFriendRequest(FriendRequestPostModel model)
         {
-            var friends = new List<UserViewModel>();
             try
             {
-                friends = UserSvc.GetFriends(AppUser.UserId);
-                foreach (var friend in friends)
-                {
-                    friend.IsOnline = Membership.GetUser(friend.Username).IsOnline;
-                }
+                var requestUser = await UserManager.FindByNameAsync(model.RequestUserName);
+                if (requestUser == null) { throw new Exception("User not found!"); }
 
-                friends = friends.OrderBy(x => x.IsOnline).ThenBy(x => x.Username).ToList();
+                model.RequestUserId = new Guid(requestUser.Id);
+                UserSvc.SendFriendRequest(AppUser.UserId, model);
             }
             catch (Exception ex)
             {
                 return Json(new { success = false, message = ex.Message });
             }
 
-            return Json(new { success = true, message = "Got friends successfully!", data = friends });
+            return Json(new { success = true, message = "Request sent!" });
+        }
+
+        [HttpPost]
+        public JsonResult UpdateFriendRequest(UpdateFriendRequestPostModel model)
+        {
+            try
+            {
+                UserSvc.UpdateFriendRequest(AppUser.UserId, model.SenderId, model.Status);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+
+            return Json(new { success = true, message = "Updated successfully!" });
         }
 
         public ActionResult RegisterPlayer(string id)

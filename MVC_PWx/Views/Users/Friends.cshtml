@@ -1,0 +1,95 @@
+﻿@using DeneirsGate.Services
+@model AllFriendsViewModel
+
+@{
+    ViewBag.Title = "Friends";
+}
+
+<h2>Friends</h2>
+
+<div class="fancy-tabs" data-panes="friends-panes">
+    <div class="fancy-tab-item active" data-tab="friends-pane">Friends</div>
+    <div class="fancy-tab-item" data-tab="requests-pane">Requests @if (Model.Requests.Count > 0) { <span class="badge bg-theme" style="position:relative;top:-7px"><i style="color:white" class="fa fa-exclamation"></i></span> }</div>
+    <div class="fancy-tab-item" data-tab="pending-pane">Pending</div>
+    <div class="fancy-tab-item" data-tab="blocked-pane">Blocked</div>
+</div>
+
+<div id="friends-panes">
+    <div id="friends-pane" class="content-box fancy-tab-pane slide-right active">
+        @Html.Action("_Friends",  new { id = ViewBag.User.UserId, list = Model.Friends })
+    </div>
+    <div id="requests-pane" class="content-box fancy-tab-pane slide-right">
+        @Html.Action("_Requests", new { id = ViewBag.User.UserId, list = Model.Requests })
+    </div>
+    <div id="pending-pane" class="content-box fancy-tab-pane slide-right">
+        @Html.Action("_Pending", new { id = ViewBag.User.UserId, list = Model.Pending })
+    </div>
+    <div id="blocked-pane" class="content-box fancy-tab-pane slide-right">
+        @Html.Action("_Blocked", new { id = ViewBag.User.UserId, list = Model.Blocked })
+    </div>
+</div>
+
+@section scripts {
+<script type="text/javascript">
+    var updateRequestAction = '@Url.Action("UpdateFriendRequest")';
+
+    var loadFriends = false;
+    var loadBlocked = false;
+
+    $(document).ready(function () {
+        var to = '@ViewBag.To';
+        $(`[data-tab="${to}-pane"]`).click();
+    })
+
+    function updateStatus(id, status) {
+        var postData = {
+            SenderId: id,
+            Status: status
+        };
+
+        $.ajax({
+            type: "POST",
+            url: updateRequestAction,
+            data: JSON.stringify(postData),
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                if (data.success) {
+                    $(`#${id}`).remove();
+
+                    switch (status) {
+                        case @((int)FriendStatus.Accepted):
+                            loadFriends = true;
+                            break;
+                        case @((int)FriendStatus.Blocked):
+                            loadBlocked = true;
+                            break;
+                    }
+                }
+                else {
+                    Notiflix.Notify.Failure(data.message);
+                }
+            },
+            error: function (error) {
+                Notiflix.Notify.Failure(error.responseText);
+            }
+        })
+    }
+
+    $('[data-tab="requests-pane"]').click(function () {
+        $(this).find('.badge').remove();
+    })
+
+    $('[data-tab="friends-pane"]').click(function () {
+        if (loadFriends) {
+            $('#friends-pane').load('@Url.Action("_Friends", new { id = ViewBag.User.UserId })');
+        }
+    })
+
+    $('[data-tab="blocked-pane"]').click(function () {
+        if (loadBlocked) {
+            $('#blocked-pane').load('@Url.Action("_Blocked", new { id = ViewBag.User.UserId })');
+        }
+    })
+</script>
+}

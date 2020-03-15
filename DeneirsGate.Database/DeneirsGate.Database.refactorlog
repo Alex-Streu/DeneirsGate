@@ -119,4 +119,11 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="NotificationKey" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="5cc1b6d8-d870-49dd-b077-ab7003bf7db8" ChangeDateTime="03/13/2020 08:21:26">
+    <Property Name="ElementName" Value="[dbo].[FriendBlocks].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[FriendBlocks]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="UserKey" />
+  </Operation>
 </Operations>
