@@ -2,6 +2,9 @@
 <div class="content-box">
     <h2>@ViewBag.Header</h2>
     <h3>@ViewBag.Message</h3>
+    <div class="flex-container center">
+        @Html.Raw(ViewBag.Html)
+    </div>
 </div>
 
 @section scripts {

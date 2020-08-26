@@ -25,11 +25,14 @@ namespace MVC_PWx
             var onlineUsers = (Dictionary<string, DateTime>)Application["OnlineUsers"];
 
             //Update current user
-            if (!onlineUsers.ContainsKey(User.Identity.Name)) { onlineUsers.Add(User.Identity.Name, DateTime.UtcNow); }
-            else { onlineUsers[User.Identity.Name] = DateTime.UtcNow; }
+            if (User.Identity.IsAuthenticated)
+            {
+                if (!onlineUsers.ContainsKey(User.Identity.Name)) { onlineUsers.Add(User.Identity.Name, DateTime.UtcNow); }
+                else { onlineUsers[User.Identity.Name] = DateTime.UtcNow; }
+            }
 
             //Remove inactive users and logged out user
-            foreach (var s in onlineUsers.Where(x => x.Value == DateTime.UtcNow.AddMinutes(-10)).ToList())
+            foreach (var s in onlineUsers.Where(x => x.Value <= DateTime.UtcNow.AddMinutes(-1)).ToList())
             {
                 onlineUsers.Remove(s.Key);
             }

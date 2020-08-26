@@ -203,6 +203,7 @@ namespace MVC_PWx.Controllers
             {
                 ViewBag.Header = "Welcome, adventurer!";
                 ViewBag.Message = "Your messenger owl is confirmed and you are ready to enter the gates!";
+                ViewBag.Html = $"<a class='btn btn-lg btn-default' href='{Url.Action("Login")}'>Log In</a>";
             }
             else
             {

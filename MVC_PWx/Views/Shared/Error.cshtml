@@ -2,11 +2,14 @@
 <div class="content-box">
     <h2>@ViewBag.Header</h2>
     <h3>@ViewBag.Message</h3>
+    <div class="flex-container center">
+        @Html.Raw(ViewBag.Html)
+    </div>
 </div>
 
 @section scripts {
     <script type="text/javascript">
-        $.backstretch("@Url.Content("~/Content/img/errpr-background.jpg")", {
+        $.backstretch("@Url.Content("~/Content/img/error-background.jpg")", {
             speed: 500
         });
     </script>
