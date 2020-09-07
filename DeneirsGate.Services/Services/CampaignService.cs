@@ -23,7 +23,7 @@ namespace DeneirsGate.Services
                 {
                     case ContentType.Campaign:
                         //Check if exists
-                        if (DB.Campaigns.FirstOrDefault(x => x.CampaignKey == contentKey) == null) { break; }
+                        if (DB.Campaigns.FirstOrDefault(x => x.CampaignKey == contentKey) == null) { hasAccess = true; break; }
 
                         if (DB.UserCampaigns.FirstOrDefault(x => x.UserKey == userId && x.CampaignKey == contentKey && x.IsOwner) != null)
                         {
@@ -33,7 +33,7 @@ namespace DeneirsGate.Services
 
                     case ContentType.Character:
                         //Check if exists
-                        if (DB.Characters.FirstOrDefault(x => x.CharacterKey == contentKey) == null) { break; }
+                        if (DB.Characters.FirstOrDefault(x => x.CharacterKey == contentKey) == null) { hasAccess = true; break; }
 
                         //Check user of player
                         if (DB.CampaignCharacterLinkers.FirstOrDefault(x => x.IsRegistered && x.UserKey == userId && x.CharacterKey == contentKey) != null)
@@ -87,8 +87,47 @@ namespace DeneirsGate.Services
             var dashboard = new CampaignDashboardViewModel();
             dashboard.CampaignKey = campaignId;
             dashboard.Players = GetPlayerShorts(userId, campaignId);
+            dashboard.NPCs = GetCharacterShorts(userId, campaignId).OrderByDescending(x => x.LastUpdateDate).Take(8).ToList();
 
             return dashboard;
+        }
+
+        public List<CharacterShortViewModel> GetAllCharacters(Guid userId, Guid campaignId)
+        {
+            UserHasAccess(userId, campaignId, ContentType.Campaign);
+
+            var characters = new List<CharacterShortViewModel>();
+            using (DBReset())
+            {
+                var _players = DB.CampaignCharacterLinkers.Where(x => x.CampaignKey == campaignId).ToList();
+                foreach (var _p in _players)
+                {
+                    var addPlayer = GetPlayerShort(userId, campaignId, _p.CharacterKey, _p.UserKey);
+
+                    if (addPlayer != null) { characters.Add(addPlayer); }
+                }
+            }
+
+            return characters.OrderBy(x => x.FirstName).ToList();
+        }
+
+        public List<CharacterShortViewModel> GetCharacterShorts(Guid userId, Guid campaignId)
+        {
+            UserHasAccess(userId, campaignId, ContentType.Campaign);
+
+            var characters = new List<CharacterShortViewModel>();
+            using (DBReset())
+            {
+                var _players = DB.CampaignCharacterLinkers.Where(x => !x.IsPlayer && x.CampaignKey == campaignId).ToList();
+                foreach (var _p in _players)
+                {
+                    var addPlayer = GetPlayerShort(userId, campaignId, _p.CharacterKey, _p.UserKey);
+
+                    if (addPlayer != null) { characters.Add(addPlayer); }
+                }
+            }
+
+            return characters;
         }
 
         public List<PlayerViewModel> GetPlayers(Guid userId, Guid campaignId)
@@ -206,7 +245,8 @@ namespace DeneirsGate.Services
                             Level = y.Level,
                             Name = y.Name,
                             SpellKey = y.SpellKey
-                        }).ToList()
+                        }).ToList(),
+                        LastUpdateDate = x.LastUpdateDate
                     }).FirstOrDefault();
 
                     player.UserKey = userKey ?? Guid.Empty;
@@ -242,6 +282,7 @@ namespace DeneirsGate.Services
                     Race = DB.Races.FirstOrDefault(y => y.RaceKey == x.RaceKey).Name,
                     Class = DB.Classes.FirstOrDefault(y => y.ClassKey == x.ClassKey).Name,
                     UserKey = userKey.Value,
+                    LastUpdateDate = x.LastUpdateDate
                 }).FirstOrDefault();
             }
 
@@ -347,6 +388,7 @@ namespace DeneirsGate.Services
                 character.Gold = model.Gold;
                 character.Platinum = model.Platinum;
                 character.Inventory = model.Inventory;
+                character.LastUpdateDate = DateTime.Today;
 
                 //Weapons
                 DB.CharacterWeapons.RemoveRange(DB.CharacterWeapons.Where(x => x.CharacterKey == model.CharacterKey).ToList());

@@ -2,10 +2,10 @@
 @model List<FriendViewModel>
 
 
-<div class="flex-container flex-wrap">
+<div class="flexbox-container">
     @foreach (var item in Model)
     {
-    <div id="@item.UserId" class="friend-list-item flex-container space-around align-center">
+    <div id="@item.UserId" class="friend-list-item flexbox-container justify-around items-center">
         <div class="friend">
             <span class="online-status @(item.IsOnline ? "online" : "")"></span>
             <img class="picture lg" alt="avatar" src="@item.Picture">
@@ -13,7 +13,7 @@
                 @item.Username
             </span>
         </div>
-        <div class="flex-container flex-wrap">
+        <div class="flexbox-container">
             <div class="btn btn-info full-width"><i class="fa fa-comment"></i>&nbsp;Chat</div>
             <div class="btn btn-warning full-width" onclick="updateStatus('@item.UserId', @((int)FriendStatus.None))"><i class="fa fa-times"></i>&nbsp;Unfriend</div>
             <div class="btn btn-failure full-width" onclick="updateStatus('@item.UserId', @((int)FriendStatus.Blocked))"><i class="fa fa-ban"></i>&nbsp;Block</div>

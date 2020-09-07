@@ -47,6 +47,7 @@ $('.fancy-tab-item').click(function () {
 /* IMAGE UPLOADING */
 var uploadImageUtilityAction = '/Utility/UploadImage/';
 var deleteTempUtilityAction = '/Utility/DeleteTemp/';
+var saveTempImageUtilityAction = '/Utility/SaveTempImage/';
 var imageUploadCampaignKey = null;
 
 $('.upload-image .overlay').click(function () {
@@ -55,6 +56,8 @@ $('.upload-image .overlay').click(function () {
 })
 
 $('input[type="file"]').change(function () {
+    if ($(this).val() == null) { return; }
+
     uploadImage(this, null, null, true);
 });
 

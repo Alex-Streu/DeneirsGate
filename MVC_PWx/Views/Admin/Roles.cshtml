@@ -4,7 +4,7 @@
 }
 
 <div class="content-panel">
-    <div class="flex-container space-between">
+    <div class="flexbox-container justify-between">
         <label class="text-large">Roles</label>
         <a class="btn btn-default" href="@Url.Action("EditRole")"><i class="fa fa-plus"></i></a>
     </div>
@@ -25,7 +25,7 @@
                 <td class="hidden key">@role.Id</td>
                 <td>@role.Name</td>
                 <td>@role.Priviledge</td>
-                <td class="flex-container center">
+                <td class="flexbox-container justify-center">
                     <a href="@Url.Action("EditRole", new { id = role.Id })"><i class="fa fa-pencil"></i></a>
                     <a href="@Url.Action("DeleteRole", new { id = role.Id })"><i class="fa fa-trash"></i></a>
                 </td>

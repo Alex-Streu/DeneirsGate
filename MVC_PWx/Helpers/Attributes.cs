@@ -1,5 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Web;
 using System.Web.Mvc;
+using System.Web.Routing;
 using static MVC_PWx.Helpers.AppLogic;
 
 namespace MVC_PWx.Helpers
@@ -35,6 +38,25 @@ namespace MVC_PWx.Helpers
             {
                 filterContext.Result = new RedirectResult("/");
             }
+        }
+    }
+
+    public class HasCampaign : ActionFilterAttribute
+    {
+        public override void OnActionExecuting(ActionExecutingContext filterContext)
+        {
+            var campaign = HttpContext.Current.Session["ActiveCampaign"]?.ToString();
+            if (campaign.IsNullOrEmpty())
+            {
+                filterContext.Result = new RedirectToRouteResult(
+                    new RouteValueDictionary
+                    {
+                            { "controller", "Campaign" },
+                            { "action", "ChangeCampaign" }
+                    });
+            }
+
+            base.OnActionExecuting(filterContext);
         }
     }
 }

@@ -51,6 +51,11 @@ namespace MVC_PWx.Helpers
             return "~\\Content\\img\\avatars\\blank-portrait.png";
         }
 
+        public static string GetDefaultShallowPortrait()
+        {
+            return "~\\Content\\img\\portraits\\gelatinous-cube.jpg";
+        }
+
         public static string GetDefaultCampaignImage()
         {
             return "~\\Content\\img\\campaigns\\campaign-default.png";

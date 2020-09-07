@@ -70,6 +70,16 @@ namespace CustomHtmlHelpers
             return urlHelper.Content(path);
         }
 
+        public static string DefaultCharacterPortrait(this UrlHelper urlHelper)
+        {
+            return urlHelper.Content(AppLogic.GetDefaultPortrait());
+        }
+
+        public static string DefaultShallowPortrait(this UrlHelper urlHelper)
+        {
+            return urlHelper.Content(AppLogic.GetDefaultShallowPortrait());
+        }
+
         public static string LoadFavicon(this UrlHelper urlHelper, string file)
         {
             var path = AppLogic.GetIconDir();

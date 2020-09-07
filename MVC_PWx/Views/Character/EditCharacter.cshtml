@@ -453,7 +453,6 @@
 </div>
 
 <div class="submit-footer">
-    <a class="btn btn-lg btn-primary" href="@Url.Action("Dashboard", new { id = Model.CampaignKey })">Back To Campaign</a>
     <div class="btn btn-lg btn-default save-button" onclick="save()">Save</div>
 </div>
 
@@ -461,7 +460,9 @@
     <script src="https://cdn.ckeditor.com/ckeditor5/16.0.0/classic/ckeditor.js"></script>
     <script type="text/javascript">
         var updatePlayerAction = '@Url.Action("UpdatePlayer")';
+        var updateCharacterAction = '@Url.Action("UpdateCharacter")';
         var registerPlayerAction = '@Url.Action("RegisterPlayer", "Account", new { id = Model.UserCode }, this.Request.Url.Scheme)';
+        var isPlayer = ('@ViewBag.IsPlayer' == 'True');
         var backstory;
 
         $(document).ready(function () {
@@ -690,10 +691,12 @@
                 Weapons: weapons,
                 Spells: spells
             }
+            
+            var url = isPlayer ? updatePlayerAction : updateCharacterAction;
 
             $.ajax({
                 type: "POST",
-                url: updatePlayerAction,
+                url: url,
                 data: JSON.stringify(postData),
                 dataType: 'json',
                 contentType: 'application/json',

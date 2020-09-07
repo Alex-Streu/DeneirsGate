@@ -33,6 +33,7 @@ $transparent: rgba(0, 0, 0, 0.00);
     padding-top: 8px;
     font-size: inherit;
     color: $gray;
+    max-width: 100%;
 }
 
 .fancy-textbox input:focus {
@@ -77,24 +78,22 @@ $transparent: rgba(0, 0, 0, 0.00);
 }
 
 .fancy-textbox.short {
-    max-width: 10%;
+    max-width: 10% !important;
 }
 
 .fancy-textbox.medium {
-    max-width: 40%;
-    width: 100px
+    max-width: 40% !important;
+    width: 100px;
 }
 
 .fancy-textbox.long {
-    max-width: 90%;
+    max-width: 90% !important;
+    width: 90% !important;
 }
 
 .fancy-textbox.full {
-    max-width: 100%;
-
-    input {
-        max-width: 100%;
-    }
+    max-width: 100% !important;
+    width: 100%;
 }
 
 .fancy-textbox.center input {
@@ -134,8 +133,9 @@ $transparent: rgba(0, 0, 0, 0.00);
     }
 }
 
-.fancy-textbox.full {
+.fancy-textarea.full {
     max-width: 100%;
+    width: 100%;
 
     textarea {
         max-width: 100%;
@@ -176,6 +176,10 @@ $transparent: rgba(0, 0, 0, 0.00);
 
     img {
         border-radius: 50%;
+        width: 75px;
+        height: 75px;
+        max-width: 75px;
+        max-height: 75px;
     }
 
     .overlay {
@@ -188,8 +192,6 @@ $transparent: rgba(0, 0, 0, 0.00);
         display: none;
         color: $white;
     }
-
-    
 }
 
 .fancy-portrait:hover {

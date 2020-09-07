@@ -89,6 +89,9 @@
     <Compile Include="DataModels\FriendBlock.cs" />
     <Compile Include="DataModels\FriendRequest.cs" />
     <Compile Include="DataModels\Notification.cs" />
+    <Compile Include="DataModels\RelationshipTree.cs" />
+    <Compile Include="DataModels\RelationshipTreeCharacter.cs" />
+    <Compile Include="DataModels\RelationshipTreeTier.cs" />
     <Compile Include="DataModels\UserCampaign.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="DataModels\Race.cs" />

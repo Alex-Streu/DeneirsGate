@@ -63,6 +63,7 @@ namespace DeneirsGate.Services
         public string Inventory { get; set; }
         public List<CharacterWeaponViewModel> Weapons { get; set; } = new List<CharacterWeaponViewModel>();
         public List<CharacterSpellViewModel> Spells { get; set; } = new List<CharacterSpellViewModel>();
+        public DateTime LastUpdateDate { get; set; }
     }
 
     public class CharacterShortViewModel
@@ -75,6 +76,7 @@ namespace DeneirsGate.Services
         public string Race { get; set; }
         public string Class { get; set; }
         public string Portrait { get; set; }
+        public DateTime LastUpdateDate { get; set; }
     }
 
     public class CharacterPostModel

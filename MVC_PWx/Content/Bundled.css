@@ -1,4 +1,10 @@
 ﻿@import url(Site.css);
+.red {
+  color: #ce0606; }
+
+.background-red {
+  background-color: #ce0606; }
+
 .fancy-textbox {
   position: relative;
   /*margin-bottom: 25px;*/
@@ -20,7 +26,8 @@
   width: 100%;
   padding-top: 8px;
   font-size: inherit;
-  color: #797979; }
+  color: #797979;
+  max-width: 100%; }
 
 .fancy-textbox input:focus {
   border: none;
@@ -57,19 +64,19 @@
   top: 25px; }
 
 .fancy-textbox.short {
-  max-width: 10%; }
+  max-width: 10% !important; }
 
 .fancy-textbox.medium {
-  max-width: 40%;
+  max-width: 40% !important;
   width: 100px; }
 
 .fancy-textbox.long {
-  max-width: 90%; }
+  max-width: 90% !important;
+  width: 90% !important; }
 
 .fancy-textbox.full {
-  max-width: 100%; }
-  .fancy-textbox.full input {
-    max-width: 100%; }
+  max-width: 100% !important;
+  width: 100%; }
 
 .fancy-textbox.center input {
   text-align: center; }
@@ -95,9 +102,10 @@
 .fancy-textarea.lg textarea {
   font-size: large; }
 
-.fancy-textbox.full {
-  max-width: 100%; }
-  .fancy-textbox.full textarea {
+.fancy-textarea.full {
+  max-width: 100%;
+  width: 100%; }
+  .fancy-textarea.full textarea {
     max-width: 100%; }
 
 /* Dropdown */
@@ -123,7 +131,11 @@
   border: 5px solid #fcfcfc;
   box-shadow: 5px 10px 18px #797979; }
   .upload-image img, .fancy-portrait img {
-    border-radius: 50%; }
+    border-radius: 50%;
+    width: 75px;
+    height: 75px;
+    max-width: 75px;
+    max-height: 75px; }
   .upload-image .overlay, .fancy-portrait .overlay {
     position: absolute;
     top: 0;
@@ -466,6 +478,106 @@ fieldset[disabled] .btn-failure.focus {
   .friend .picture.lg {
     width: 75px;
     height: 75px; }
+
+.flexbox-container {
+  display: flex !important;
+  justify-content: flex-start;
+  align-items: baseline;
+  flex-wrap: wrap;
+  padding-left: 1em;
+  padding-right: 1em;
+  /*------------ Justify -----------*/
+  /* -------------------------------*/
+  /*------------ Align Items -----------*/
+  /*--------------------------------*/
+  /*------------ Align Content -----------*/
+  /*--------------------------------*/ }
+  .flexbox-container > * {
+    margin: 0.25em; }
+  .flexbox-container > .need-space {
+    margin: 1em; }
+  .flexbox-container.no-padding {
+    padding: 0em !important; }
+  .flexbox-container.fill {
+    width: 100%; }
+  .flexbox-container.no-wrap {
+    flex-wrap: nowrap; }
+  .flexbox-container.justify-start {
+    justify-content: flex-start; }
+  .flexbox-container.justify-end {
+    justify-content: flex-end; }
+  .flexbox-container.justify-center {
+    justify-content: center; }
+  .flexbox-container.justify-between {
+    justify-content: space-between; }
+  .flexbox-container.justify-around {
+    justify-content: space-around; }
+  .flexbox-container.items-start {
+    align-items: flex-start; }
+  .flexbox-container.items-end {
+    align-items: flex-end; }
+  .flexbox-container.items-center {
+    align-items: center; }
+  .flexbox-container.items-stretch {
+    align-items: stretch; }
+  .flexbox-container.items-baseline {
+    align-items: baseline; }
+  .flexbox-container.content-start {
+    align-content: flex-start; }
+  .flexbox-container.content-end {
+    align-content: flex-end; }
+  .flexbox-container.content-center {
+    align-content: center; }
+  .flexbox-container.content-stretch {
+    align-content: stretch; }
+  .flexbox-container.content-between {
+    align-content: space-between; }
+  .flexbox-container.content-around {
+    align-content: space-around; }
+  .flexbox-container .flex-item {
+    /*------------ Align Content -----------*/
+    /*--------------------------------*/
+    /*------------ Grow -----------*/
+    /*--------------------------------*/
+    /*------------ Grow -----------*/
+    /*--------------------------------*/ }
+    .flexbox-container .flex-item.align-start {
+      align-self: flex-start; }
+    .flexbox-container .flex-item.align-end {
+      align-self: flex-end; }
+    .flexbox-container .flex-item.align-center {
+      align-self: center; }
+    .flexbox-container .flex-item.grow-1 {
+      width: auto !important;
+      flex-grow: 1; }
+    .flexbox-container .flex-item.grow-2 {
+      width: auto !important;
+      flex-grow: 2; }
+    .flexbox-container .flex-item.grow-3 {
+      width: auto !important;
+      flex-grow: 3; }
+    .flexbox-container .flex-item.grow-4 {
+      width: auto !important;
+      flex-grow: 4; }
+    .flexbox-container .flex-item.basis-full {
+      width: auto !important;
+      flex-basis: 100%; }
+    .flexbox-container .flex-item.basis-two-thirds {
+      width: auto !important;
+      flex-basis: 66%; }
+    .flexbox-container .flex-item.basis-half {
+      width: auto !important;
+      flex-basis: 50%; }
+    .flexbox-container .flex-item.basis-third {
+      width: auto !important;
+      flex-basis: 33%; }
+    .flexbox-container .flex-item.basis-quarter {
+      width: auto !important;
+      flex-basis: 25%; }
+
+.flex-break {
+  width: 100%;
+  height: 0; }
 
 .login-title {
   font: 'Quattrocento';
@@ -897,12 +1009,88 @@ fieldset[disabled] .btn-failure.focus {
 .save-button {
   width: 150px; }
 
-.dashboard-players {
+.dashboard-left-panel {
   display: flex;
   justify-content: flex-start;
   flex-wrap: nowrap;
   align-content: center;
+  margin: 1em;
+  width: 25%; }
+  .dashboard-left-panel .npc-panel {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    padding: 1em !important; }
+    .dashboard-left-panel .npc-panel .top-info {
+      display: flex;
+      align-items: flex-end;
+      justify-content: flex-start;
+      width: 100%; }
+    .dashboard-left-panel .npc-panel .top-info > * {
+      margin: 1em; }
+    .dashboard-left-panel .npc-panel .npc-list {
+      display: flex;
+      justify-content: flex-start;
+      flex-wrap: nowrap;
+      align-content: center;
+      margin: 1em;
+      padding: 1em !important; }
+      .dashboard-left-panel .npc-panel .npc-list .fancy-portrait {
+        margin: 1em; }
+        .dashboard-left-panel .npc-panel .npc-list .fancy-portrait img {
+          width: 75px;
+          height: 75px;
+          max-width: 75px;
+          max-height: 75px; }
+        .dashboard-left-panel .npc-panel .npc-list .fancy-portrait .player-info {
+          display: none;
+          position: absolute;
+          top: 0px;
+          left: 110px;
+          width: 200px;
+          height: 100px;
+          padding: 15px;
+          z-index: 10;
+          background-image: url(/Content/img/campaigns/player-info-background.png);
+          text-shadow: 2px 2px 4px #000000; }
+          .dashboard-left-panel .npc-panel .npc-list .fancy-portrait .player-info .name-level {
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            font-size: large; }
+            .dashboard-left-panel .npc-panel .npc-list .fancy-portrait .player-info .name-level .name {
+              color: #ce0606; }
+            .dashboard-left-panel .npc-panel .npc-list .fancy-portrait .player-info .name-level .level {
+              border-radius: 50%;
+              border: 2px solid #fcfcfc;
+              box-shadow: 1px 1px 4px #000;
+              width: 30px;
+              height: 30px;
+              text-align: center;
+              color: #fcfcfc; }
+          .dashboard-left-panel .npc-panel .npc-list .fancy-portrait .player-info .extra {
+            color: #000;
+            font-size: small;
+            text-shadow: 2px 2px 4px #000000; }
+      .dashboard-left-panel .npc-panel .npc-list .fancy-portrait:hover .player-info {
+        display: block;
+        -webkit-animation: fadein-left 0.75s;
+        /* Safari, Chrome and Opera > 12.1 */
+        -moz-animation: fadein-left 0.75s;
+        /* Firefox < 16 */
+        -ms-animation: fadein-left 0.75s;
+        /* Internet Explorer */
+        -o-animation: fadein-left 0.75s;
+        /* Opera < 12.1 */
+        animation: fadein-left 0.75s; }
+
+.dashboard-players {
+  display: flex;
+  justify-content: flex-start;
+  flex-wrap: nowrap;
   margin: 1em; }
+  .dashboard-players > * {
+    margin: 1em; }
   .dashboard-players .fancy-portrait img {
     width: 100px;
     height: 100px;
@@ -1012,3 +1200,107 @@ fieldset[disabled] .btn-failure.focus {
   width: 100%;
   justify-content: center;
   margin: 4em 1em 1em 1em; }
+
+#RelationshipTreePage .tier-box {
+  width: 100%;
+  padding: 0em 1em 1em 1em;
+  border-top: 2px dashed #797979; }
+  #RelationshipTreePage .tier-box .character-container {
+    width: 100%;
+    min-height: 8em; }
+  #RelationshipTreePage .tier-box .delete {
+    visibility: hidden;
+    cursor: pointer;
+    color: #ce0606; }
+
+#RelationshipTreePage .tier-box:hover .delete {
+  visibility: visible; }
+
+#RelationshipTreePage .fancy-portrait .player-info {
+  text-align: center;
+  display: none;
+  position: absolute;
+  top: -30px;
+  left: -112px;
+  width: 300px;
+  height: 30px;
+  z-index: 10;
+  text-shadow: 2px 2px 4px #000000; }
+  #RelationshipTreePage .fancy-portrait .player-info .name {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    font-size: large;
+    color: #ce0606; }
+
+#RelationshipTreePage .fancy-portrait:hover .player-info {
+  display: block;
+  -webkit-animation: fadein-bottom 0.75s;
+  /* Safari, Chrome and Opera > 12.1 */
+  -moz-animation: fadein-bottom 0.75s;
+  /* Firefox < 16 */
+  -ms-animation: fadein-bottom 0.75s;
+  /* Internet Explorer */
+  -o-animation: fadein-bottom 0.75s;
+  /* Opera < 12.1 */
+  animation: fadein-bottom 0.75s; }
+
+#RelationshipTreePage .character-inventory {
+  min-height: 100px;
+  padding-top: 20px;
+  width: 100%;
+  border-left: 1px solid #d3d3d3;
+  border-right: 1px solid #d3d3d3; }
+
+#RelationshipTreePage #ShallowBackstory {
+  height: 150px; }
+
+#RelationshipTreePage .upload-image, #RelationshipTreePage .shallow .fancy-portrait {
+  border-color: #dbe648; }
+
+#RelationshipTreePage #generator > * {
+  margin-bottom: 1em; }
+
+@keyframes fadein-bottom {
+  from {
+    opacity: 0;
+    top: 10px; }
+  to {
+    opacity: 1;
+    top: -30px; } }
+
+/* Firefox < 16 */
+@-moz-keyframes fadein-bottom {
+  from {
+    opacity: 0;
+    top: 10px; }
+  to {
+    opacity: 1;
+    top: -30px; } }
+
+/* Safari, Chrome and Opera > 12.1 */
+@-webkit-keyframes fadein-bottom {
+  from {
+    opacity: 0;
+    top: 10px; }
+  to {
+    opacity: 1;
+    top: -30px; } }
+
+/* Internet Explorer */
+@-ms-keyframes fadein-bottom {
+  from {
+    opacity: 0;
+    top: 10px; }
+  to {
+    opacity: 1;
+    top: -30px; } }
+
+/* Opera < 12.1 */
+@-o-keyframes fadein-bottom {
+  from {
+    opacity: 0;
+    top: 10px; }
+  to {
+    opacity: 1;
+    top: -30px; } }

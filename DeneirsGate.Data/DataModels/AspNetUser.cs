@@ -48,6 +48,8 @@ namespace DeneirsGate.Data
 
         public int AccessFailedCount { get; set; }
 
+        public Guid? ActiveCampaign { get; set; }
+
         public DateTime LastLoginDate { get; set; }
 
         public DateTime CreatedDate { get; set; }

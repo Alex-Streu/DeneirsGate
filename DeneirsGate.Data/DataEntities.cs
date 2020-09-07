@@ -34,6 +34,10 @@ namespace DeneirsGate.Data
         public virtual DbSet<CharacterSpell> CharacterSpells { get; set; }
         public virtual DbSet<DamageType> DamageTypes { get; set; }
 
+        public virtual DbSet<RelationshipTree> RelationshipTrees { get; set; }
+        public virtual DbSet<RelationshipTreeTier> RelationshipTreeTiers { get; set; }
+        public virtual DbSet<RelationshipTreeCharacter> RelationshipTreeCharacters { get; set; }
+
         #endregion
 
         #region Social

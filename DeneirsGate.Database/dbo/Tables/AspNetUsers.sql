@@ -13,6 +13,7 @@
     [AccessFailedCount]    INT              NOT NULL,
 	[UserName]             NVARCHAR (256)   NOT NULL ,
 	[Picture]              NVARCHAR (100)	NULL,
+	[ActiveCampaign]       UNIQUEIDENTIFIER NULL,
     [LastLoginDate] DATETIME NULL, 
     [CreatedDate] DATETIME NOT NULL DEFAULT GETUTCDATE(), 
     CONSTRAINT [PK_dbo.AspNetUsers] PRIMARY KEY CLUSTERED ([Id] ASC)

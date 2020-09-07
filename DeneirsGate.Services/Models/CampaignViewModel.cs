@@ -16,5 +16,6 @@ namespace DeneirsGate.Services
     {
         public Guid CampaignKey { get; set; }
         public List<PlayerShortViewModel> Players { get; set; }
+        public List<CharacterShortViewModel> NPCs { get; set; }
     }
 }

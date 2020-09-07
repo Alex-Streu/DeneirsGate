@@ -30,7 +30,7 @@
                 <td>@user.CreatedDate</td>
                 <td>@user.LastLoginDate</td>
                 <td>@(user.LockoutEndDateUtc != null && user.LockoutEndDateUtc > DateTime.UtcNow ? "<i class='fa fa-check' style='color:green'></i>" : "")</td>
-                <td class="flex-container center">
+                <td class="flexbox-container justify-center">
                     <a href="@Url.Action("EditUser", new { id = user.Id })"><i class="fa fa-pencil"></i></a>
                     <a href="@Url.Action("DeleteUser", new { id = user.Id })"><i class="fa fa-trash"></i></a>
                 </td>

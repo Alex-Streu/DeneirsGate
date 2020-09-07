@@ -44,6 +44,7 @@
     [Gold] INT NOT NULL DEFAULT 0, 
     [Platinum] INT NOT NULL DEFAULT 0, 
     [Inventory] NVARCHAR(MAX) NULL, 
+    [LastUpdateDate] DATETIME NOT NULL DEFAULT GETDATE(), 
     PRIMARY KEY CLUSTERED ([CharacterKey] ASC)
 );
 

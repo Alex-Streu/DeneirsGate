@@ -1,0 +1,57 @@
+﻿@using DeneirsGate.Services
+@using CustomHtmlHelpers
+@model List<CharacterShortViewModel>
+
+@{
+    ViewBag.Title = "Characters";
+}
+
+<style type="text/css">
+    .name {
+        margin-top: 1em;
+        text-align: center;
+        font-size: large;
+        text-wrap: normal;
+        max-width: 85px;
+    }
+</style>
+
+<div id="CharacterIndexPage">
+    <h2>Characters</h2>
+    <br/>
+    <div class="flexbox-container justify-between">
+        @HtmlHelpers.RenderFancyTextbox("lg long", "SearchCharacters", null, "", "Search Characters")
+        <a class="btn btn-default" href="@Url.Action("CreateCharacter")">Create Character</a>
+    </div>
+    <div class="flexbox-container">
+        @foreach (var item in Model)
+        {
+        <div class="flex-item character need-space">
+            <div class='fancy-portrait' style="max-width:85px">
+                <a href="@Url.Action("EditCharacter", new { id = item.CharacterKey })">
+                    <img class='img-xs img-responsive' src='@Url.CharacterPortrait((Guid)ViewBag.CampaignKey, item.CharacterKey, item.Portrait)' />
+                </a>
+            </div>
+            <div class="name red">@item.FirstName @item.LastName</div>
+        </div>
+        }
+    </div>
+</div>
+
+@section scripts {
+    <script type="text/javascript">
+
+        $('#SearchCharacters').keyup(function () {
+            var search = $(this).val().toLowerCase();
+            $('.character-inventory .character').each(function () {
+                var name = $(this).find('.name').text().toLowerCase();
+                if (name.indexOf(search) > -1) {
+                    $(this).show();
+                }
+                else {
+                    $(this).hide();
+                }
+            })
+        })
+    </script>
+}

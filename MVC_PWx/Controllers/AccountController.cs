@@ -87,6 +87,7 @@ namespace MVC_PWx.Controllers
                     {
                         case SignInStatus.Success:
                             user.LastLoginDate = DateTime.UtcNow;
+                            SetActiveCampaign(user.ActiveCampaign, false);
                             await UserManager.UpdateAsync(user);
                             return RedirectToLocal(returnUrl);
                         //case SignInStatus.LockedOut:

@@ -1,32 +1,76 @@
 ﻿@using DeneirsGate.Services
 @using CustomHtmlHelpers
-@model List<CampaignViewModel>  
+@model CampaignDashboardViewModel
 
 @{
-    ViewBag.Title = "My Campaigns";
+    ViewBag.Title = "Campaign Dashboard";
 }
 
-@foreach (var item in Model)
-{
-    <div class="campaign-list-item" data-id="@item.CampaignKey">
-        <div class="campaign-info">
-            <div class="name">@item.Name</div>
-            <div class="description">@item.Description</div>
+<h2>Campaign Dashboard</h2>
+
+<div class="dashboard-left-panel">
+    <div class="npc-panel">
+        <div class="flexbox-container">
+            <label class="text-large">NPCs</label>
+            <a class="btn btn-sm btn-primary" href="@Url.Action("CreateCharacter", "Character")"><i class="fa fa-plus"></i></a>
         </div>
-        <div class="portrait">
-            <img class="img-responsive" src="@Url.CampaignPortrait(item.CampaignKey, item.Portrait)" />
+        <div class="npc-list content-box">
+            @foreach (var item in Model.NPCs)
+            {
+                <div class='fancy-portrait need-space'>
+                    <a href="@Url.Action("EditCharacter", "Character", new { id = item.CharacterKey })">
+                        <img class='img-xs img-responsive' src='@Url.CharacterPortrait(item.CampaignKey, item.CharacterKey, item.Portrait)' />
+                    </a>
+                    <div class="player-info">
+                        <div class="name-level">
+                            <div class="name">@item.FirstName @item.LastName</div>
+                            <div class="level">@item.Level</div>
+                        </div>
+                        <div class="extra">@item.Race @item.Class</div>
+                    </div>
+                </div>
+            }
         </div>
-        <div class="flex-break"></div>
-        <div class="date">Last Updated: @HtmlHelpers.RenderDateTime(item.LastUpdated)</div>
     </div>
-}
+</div>
+
+<div class="dashboard-players items-end">
+    <a style="height:35px" class="btn btn-primary" href="@Url.Action("CreateCharacter", "Character", new { id = Model.CampaignKey, isPlayer = true })">Add Player</a>
+    @foreach (var item in Model.Players)
+    {
+        <div class='fancy-portrait'>
+            <a href="@Url.Action("EditCharacter", "Character", new { id = item.CharacterKey })">
+                <img class='img-xs img-responsive' src='@Url.CharacterPortrait(item.CampaignKey, item.CharacterKey, item.Portrait)' />
+            </a>
+            <div class="player-info">
+                <div class="name-level">
+                    <div class="name">@item.FirstName @item.LastName</div>
+                    <div class="level">@item.Level</div>
+                </div>
+                <div class="extra">@item.Race @item.Class</div>
+            </div>
+        </div>
+    }
+</div>
 
 @section scripts {
     <script type="text/javascript">
-        var dashboardUrl = '@Url.Action("Dashboard")';
 
-        $('.campaign-list-item').click(function () {
-            window.location.assign(`${dashboardUrl}/${$(this).data('id')}`)
-        });
+        /********************** NPCs ******************************/
+
+
+
+
+        /********************** Invite Player ******************************/
+        $('#invite-player').click(function () {
+            Notiflix.Report.Info(
+                'Invite Player',
+                'Username? ' + registerPlayerAction,
+                'Send',
+                function () {
+                    //TODO
+                }
+            )
+        })
     </script>
 }

@@ -5,12 +5,111 @@ $red80: rgba(206, 6, 6, 0.80);
 $red60: rgba(206, 6, 6, 0.60);
 $white: #fcfcfc;
 
-.dashboard-players {
+.dashboard-left-panel {
     display: flex;
     justify-content: flex-start;
     flex-wrap: nowrap;
     align-content: center;
     margin: 1em;
+    width: 25%;
+
+    .npc-panel {
+        width: 100%;
+        display: flex;
+        flex-wrap: wrap;
+        padding: 1em !important;
+
+        .top-info {
+            display: flex;
+            align-items: flex-end;
+            justify-content: flex-start;
+            width: 100%;
+        }
+
+        .top-info > * {
+            margin: 1em;
+        }
+
+        .npc-list {
+            display: flex;
+            justify-content: flex-start;
+            flex-wrap: nowrap;
+            align-content: center;
+            margin: 1em;
+            padding: 1em !important;
+
+            .fancy-portrait {
+                margin: 1em;
+
+                img {
+                    width: 75px;
+                    height: 75px;
+                    max-width: 75px;
+                    max-height: 75px;
+                }
+
+                .player-info {
+                    display: none;
+                    position: absolute;
+                    top: 0px;
+                    left: 110px;
+                    width: 200px;
+                    height: 100px;
+                    padding: 15px;
+                    z-index: 10;
+                    background-image: url(/Content/img/campaigns/player-info-background.png);
+                    text-shadow: 2px 2px 4px #000000;
+
+                    .name-level {
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-around;
+                        font-size: large;
+
+                        .name {
+                            color: $red;
+                        }
+
+                        .level {
+                            border-radius: 50%;
+                            border: 2px solid $white;
+                            box-shadow: 1px 1px 4px #000;
+                            width: 30px;
+                            height: 30px;
+                            text-align: center;
+                            color: $white;
+                        }
+                    }
+
+                    .extra {
+                        color: #000;
+                        font-size: small;
+                        text-shadow: 2px 2px 4px #000000;
+                    }
+                }
+            }
+
+            .fancy-portrait:hover .player-info {
+                display: block;
+                -webkit-animation: fadein-left 0.75s; /* Safari, Chrome and Opera > 12.1 */
+                -moz-animation: fadein-left 0.75s; /* Firefox < 16 */
+                -ms-animation: fadein-left 0.75s; /* Internet Explorer */
+                -o-animation: fadein-left 0.75s; /* Opera < 12.1 */
+                animation: fadein-left 0.75s;
+            }
+        }
+    }
+}
+
+.dashboard-players {
+    display: flex;
+    justify-content: flex-start;
+    flex-wrap: nowrap;
+    margin: 1em;
+
+    & > * {
+        margin: 1em;
+    }
 
     .fancy-portrait {
         img {

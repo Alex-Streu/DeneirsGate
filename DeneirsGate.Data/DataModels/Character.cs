@@ -106,5 +106,7 @@ namespace DeneirsGate.Data
         public int Platinum { get; set; }
 
         public string Inventory { get; set; }
+
+        public DateTime LastUpdateDate { get; set; }
     }
 }

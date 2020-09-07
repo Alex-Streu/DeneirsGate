@@ -17,6 +17,7 @@ namespace MVC_PWx.Controllers
         private AuthService authSvc;
         private CampaignService campaignSvc;
         private UserService userSvc;
+        private RelationshipTreeService relationshipTreeSvc;
 
         public Dictionary<string, DateTime> OnlineUsers
         {
@@ -83,13 +84,33 @@ namespace MVC_PWx.Controllers
             }
         }
 
+        public RelationshipTreeService RelationshipTreeSvc
+        {
+            get
+            {
+                if (relationshipTreeSvc == null) { relationshipTreeSvc = new RelationshipTreeService(); }
+                return relationshipTreeSvc;
+            }
+        }
+
         protected ActionResult RedirectToLocal(string returnUrl)
         {
             if (Url.IsLocalUrl(returnUrl))
             {
                 return Redirect(returnUrl);
             }
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("/", "Campaign");
+        }
+
+        protected void SetActiveCampaign(Guid? campaign, bool updateUser = true)
+        {
+            System.Web.HttpContext.Current.Session["ActiveCampaign"] = campaign;
+
+            if (updateUser)
+            {
+                AppUser.ActiveCampaign = campaign;
+                UserManager.Update(AppUser);
+            }
         }
 
         protected override void OnActionExecuted(ActionExecutedContext filterContext)

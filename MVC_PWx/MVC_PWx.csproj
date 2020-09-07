@@ -187,6 +187,7 @@
     <Compile Include="Controllers\CharacterController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
+    <Compile Include="Controllers\RelationshipTreeController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="Controllers\UtilityController.cs" />
     <Compile Include="Global.asax.cs">
@@ -289,6 +290,7 @@
     <Content Include="Content\img\portfolio\port04.jpg" />
     <Content Include="Content\img\portfolio\port05.jpg" />
     <Content Include="Content\img\portfolio\port06.jpg" />
+    <Content Include="Content\img\portraits\gelatinous-cube.jpg" />
     <Content Include="Content\img\product.jpg" />
     <Content Include="Content\img\profile-01.jpg" />
     <Content Include="Content\img\profile-02.jpg" />
@@ -454,6 +456,8 @@
     <Content Include="Content\custom\bootstrap.scss" />
     <Content Include="Content\custom\menus.scss" />
     <Content Include="Content\custom\pages\friends.scss" />
+    <Content Include="Content\custom\flexbox.scss" />
+    <Content Include="Content\custom\pages\relationship-tree.scss" />
     <None Include="Properties\PublishProfiles\DEV.pubxml" />
     <None Include="Properties\PublishProfiles\PROD.pubxml" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
@@ -511,7 +515,7 @@
     <Content Include="Views\Shared\Info.cshtml" />
     <Content Include="Views\Campaign\Index.cshtml" />
     <Content Include="Views\Campaign\Dashboard.cshtml" />
-    <Content Include="Views\Campaign\EditPlayer.cshtml" />
+    <Content Include="Views\Character\EditCharacter.cshtml" />
     <Content Include="Views\Account\RegisterPlayer.cshtml" />
     <Content Include="Views\Admin\Users.cshtml" />
     <Content Include="Views\Admin\Roles.cshtml" />
@@ -522,6 +526,10 @@
     <Content Include="Views\Users\_Requests.cshtml" />
     <Content Include="Views\Users\_Pending.cshtml" />
     <Content Include="Views\Users\_Blocked.cshtml" />
+    <Content Include="Views\RelationshipTree\Edit.cshtml" />
+    <Content Include="Views\RelationshipTree\Index.cshtml" />
+    <Content Include="Views\Campaign\ChangeCampaign.cshtml" />
+    <Content Include="Views\Character\Index.cshtml" />
     <None Include="Web.DEV.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -531,7 +539,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Views\Character\" />
     <Folder Include="Views\Deneirs\" />
     <Folder Include="Views\Utility\" />
   </ItemGroup>
