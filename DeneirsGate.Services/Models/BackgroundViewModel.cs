@@ -13,4 +13,10 @@ namespace DeneirsGate.Services
         public Guid TypeKey { get; set; }
         public string Name { get; set; }
     }
+
+    public class EnvironmentViewModel
+    {
+        public Guid EnvironmentKey { get; set; }
+        public string Name { get; set; }
+    }
 }

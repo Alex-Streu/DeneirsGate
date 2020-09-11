@@ -43,7 +43,6 @@
             </div>
             <div class="full-width flexbox-container">
                 <button class="btn btn-primary" onclick="addTier()">Add Tier</button>
-                <button class="btn btn-default" onclick="save()">Save Tree</button>
             </div>
             @foreach (var tier in Model.Tiers)
             {
@@ -81,6 +80,11 @@
                 </div>
             }
         </div>
+    </div>
+
+    <div class="submit-footer">
+        <div class="btn btn-lg btn-default save-button" onclick="save()">Save</div>
+        <div id="delete" class="btn btn-lg btn-danger save-button" onclick="promptDelete('deleteTree()')">Delete</div>
     </div>
 
     @* Modals *@
@@ -130,8 +134,8 @@
                 <div class="modal-body">
                     <p>
                         If you delete a tier with a shallow character in it, then the shallow character will be deleted as well.
-                        <br/>
-                        <br/>
+                        <br />
+                        <br />
                         Are you sure you would like to delete this tier?
                     </p>
                 </div>
@@ -168,6 +172,8 @@
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script type="text/javascript">
         var updateTreeAction = '@Url.Action("UpdateTree")';
+        var deleteAction = '@Url.Action("Delete")';
+        var indexAction = '@Url.Action("/")';
         var shallowElement = null;
         var tierToDelete = null;
 
@@ -176,6 +182,8 @@
         })
 
         function resetSortable() {
+            if ('@ViewBag.IsNew' == 'True') { $('#delete').hide(); }
+
             $('.droppable').sortable({
                 connectWith: '.droppable',
                 receive: function (ev, ui) {
@@ -358,6 +366,30 @@
                 success: function (data) {
                     if (data.success) {
                         Notiflix.NotifyContent.Success(data.message);
+                        $('#delete').show();
+                    } else {
+                        Notiflix.NotifyContent.Failure(data.message);
+                    }
+                },
+                error: function (error) {
+                    Notiflix.NotifyContent.Failure(error.responseText);
+                }
+            })
+        }
+
+        function deleteTree() {
+            var postData = { id: '@Model.TreeKey' };
+
+            $.ajax({
+                type: "POST",
+                url: deleteAction,
+                data: JSON.stringify(postData),
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data.success) {
+                        Notiflix.NotifyContent.Success(data.message);
+                        location.replace(indexAction);
                     } else {
                         Notiflix.NotifyContent.Failure(data.message);
                     }

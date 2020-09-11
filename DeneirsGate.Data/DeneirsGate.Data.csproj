@@ -86,8 +86,14 @@
     <Compile Include="DataModels\C__RefactorLog.cs" />
     <Compile Include="DataEntities.cs" />
     <Compile Include="DataModels\DamageType.cs" />
+    <Compile Include="DataModels\Environment.cs" />
     <Compile Include="DataModels\FriendBlock.cs" />
     <Compile Include="DataModels\FriendRequest.cs" />
+    <Compile Include="DataModels\Monster.cs" />
+    <Compile Include="DataModels\MonsterChallengeRating.cs" />
+    <Compile Include="DataModels\MonsterEnvironmentLinker.cs" />
+    <Compile Include="DataModels\MonsterSize.cs" />
+    <Compile Include="DataModels\MonsterType.cs" />
     <Compile Include="DataModels\Notification.cs" />
     <Compile Include="DataModels\RelationshipTree.cs" />
     <Compile Include="DataModels\RelationshipTreeCharacter.cs" />

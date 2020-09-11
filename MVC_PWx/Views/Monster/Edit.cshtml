@@ -1,0 +1,143 @@
+﻿@using DeneirsGate.Services
+@using CustomHtmlHelpers
+@model MonsterEditModel
+
+@{
+    ViewBag.Title = "Edit Monster";
+}
+
+<style type="text/css">
+    #Description {
+        min-height: 200px;
+    }
+
+    .flexbox-container {
+        padding-bottom: 1em;
+    }
+</style>
+
+<h2>Edit Monster</h2>
+
+<div class="content-box">
+    <div class="flexbox-container full-width">
+        @HtmlHelpers.RenderFancyTextbox("lg full", "Name", 50, Model.Name, "Name", Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" }))
+    </div>
+    <div class="flexbox-container items-end justify-between">
+        <div class="fancy-dropdown">
+            @Html.LabelFor(model => model.ChallengeRating, htmlAttributes: new { @class = "control-label" })
+            @Html.DropDownListFor(model => model.ChallengeRating, (SelectList)ViewBag.ChallengeRatings, new { @class = "form-control responsive-text", style = "--size:0.75vw" })
+            @Html.ValidationMessageFor(model => model.ChallengeRating, "", new { @class = "text-danger" })
+        </div>
+
+        <div class="fancy-dropdown">
+            @Html.LabelFor(model => model.Size, htmlAttributes: new { @class = "control-label" })
+            @Html.DropDownListFor(model => model.Size, (SelectList)ViewBag.Sizes, new { @class = "form-control responsive-text", style = "--size:0.75vw" })
+            @Html.ValidationMessageFor(model => model.Size, "", new { @class = "text-danger" })
+        </div>
+
+        <div class="fancy-dropdown">
+            @Html.LabelFor(model => model.Type, htmlAttributes: new { @class = "control-label" })
+            @Html.DropDownListFor(model => model.Type, (SelectList)ViewBag.Types, new { @class = "form-control responsive-text", style = "--size:0.75vw" })
+            @Html.ValidationMessageFor(model => model.Type, "", new { @class = "text-danger" })
+        </div>
+
+        <div class="fancy-dropdown">
+            @Html.LabelFor(model => model.Alignment, htmlAttributes: new { @class = "control-label" })
+            @Html.DropDownListFor(model => model.Alignment, HtmlHelpers.AlignmentDropdown(Model.Alignment), new { @class = "form-control responsive-text", style = "--size:0.75vw" })
+            @Html.ValidationMessageFor(model => model.Alignment, "", new { @class = "text-danger" })
+        </div>
+
+        <div class="fancy-dropdown">
+            @Html.LabelFor(model => model.Environments, htmlAttributes: new { @class = "control-label" })
+            @Html.DropDownListFor(model => model.Environments, (MultiSelectList)ViewBag.Environments, new { @class = "form-control responsive-text selectpicker", style = "--size:0.75vw", multiple = "multiple", title = "Select Environments..." })
+            @Html.ValidationMessageFor(model => model.Environments, "", new { @class = "text-danger" })
+        </div>
+
+        @HtmlHelpers.RenderFancyTextbox("md", "Speed", 50, Model.Speed, "Speed", Html.ValidationMessageFor(model => model.Speed, "", new { @class = "text-danger" }))
+    </div>
+    <div class="flexbox-container">
+        @HtmlHelpers.RenderFancyTextarea("full lg", "Description", null, Model.Description, "Description")
+    </div>
+</div>
+
+<div class="submit-footer">
+    <div class="btn btn-lg btn-default save-button" onclick="save()">Save</div>
+    <div id="delete" class="btn btn-lg btn-danger save-button" onclick="promptDelete('deleteMonster()')">Delete</div>
+</div>
+
+@section scripts {
+    <script type="text/javascript">
+        var updateAction = '@Url.Action("Update")';
+        var deleteAction = '@Url.Action("Delete")';
+        var indexAction = '@Url.Action("/")';
+
+        $(document).ready(function () {
+            if ('@ViewBag.IsNew' == 'True') { $('#delete').hide(); }
+            var environments = [
+                @foreach (var item in Model.Environments)
+                {
+                    @:'@item',
+                }
+            ];
+
+            $('.selectpicker').selectpicker();
+            $('#Environments').selectpicker('val', environments);
+        })
+
+        function save() {
+            var postData = {
+                MonsterKey: '@Model.MonsterKey',
+                Name: $('#Name').val(),
+                Size: $('#Size').val(),
+                Type: $('#Type').val(),
+                ChallengeRating: $('#ChallengeRating').val(),
+                Alignment: $('#Alignment').val(),
+                Environments: $('#Environments').val(),
+                Speed: $('#Speed').val(),
+                Description: $('#Description').val()
+            }
+
+            $.ajax({
+                type: "POST",
+                url: updateAction,
+                data: JSON.stringify(postData),
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data.success) {
+                        Notiflix.NotifyContent.Success(data.message);
+                        $('#delete').show();
+                    } else {
+                        Notiflix.NotifyContent.Failure(data.message);
+                    }
+                },
+                error: function (error) {
+                    Notiflix.NotifyContent.Failure(error.responseText);
+                }
+            })
+        }
+
+        function deleteMonster() {
+            var postData = { id: '@Model.MonsterKey' };
+
+            $.ajax({
+                type: "POST",
+                url: deleteAction,
+                data: JSON.stringify(postData),
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data.success) {
+                        Notiflix.NotifyContent.Success(data.message);
+                        location.replace(indexAction);
+                    } else {
+                        Notiflix.NotifyContent.Failure(data.message);
+                    }
+                },
+                error: function (error) {
+                    Notiflix.NotifyContent.Failure(error.responseText);
+                }
+            })
+        }
+    </script>
+}

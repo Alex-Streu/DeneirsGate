@@ -9,6 +9,11 @@ $('.modal').on('shown.bs.modal', function () {
     $(this).find('[autofocus]').focus();
 });
 
+function promptDelete(callback) {
+    $('#deleteContentBtn').attr('onclick', callback);
+    $('#deleteContentModal').modal('show');
+}
+
 
 /* FANCY ITEMS */
 $('.fancy-textarea textarea').focus(function () {

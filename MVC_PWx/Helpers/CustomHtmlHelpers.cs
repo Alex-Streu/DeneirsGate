@@ -147,5 +147,12 @@ namespace CustomHtmlHelpers
 
             return new MvcHtmlString(str);
         }
+
+        public static string LimitString(string value, int limit = 50)
+        {
+            if (value.IsNullOrEmpty() || value.Length <= limit) { return value; }
+
+            return String.Concat(value.Substring(0, Math.Min(value.Length, limit)), "...");
+        }
     }
 }

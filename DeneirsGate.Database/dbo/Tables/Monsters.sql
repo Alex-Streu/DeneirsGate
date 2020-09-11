@@ -1,0 +1,13 @@
+﻿CREATE TABLE [dbo].[Monsters]
+(
+	[MonsterKey] UNIQUEIDENTIFIER NOT NULL,
+
+    [Name] NVARCHAR(50) NOT NULL, 
+    [Description] NVARCHAR(MAX) NULL, 
+    [Size] UNIQUEIDENTIFIER NOT NULL, 
+    [Type] UNIQUEIDENTIFIER NOT NULL, 
+    [Alignment] NVARCHAR(2) NOT NULL, 
+    [Speed] NVARCHAR(50) NOT NULL, 
+    [ChallengeRating] UNIQUEIDENTIFIER NOT NULL, 
+    PRIMARY KEY CLUSTERED ([MonsterKey] ASC)
+)

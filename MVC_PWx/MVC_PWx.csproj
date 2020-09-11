@@ -187,6 +187,7 @@
     <Compile Include="Controllers\CharacterController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
+    <Compile Include="Controllers\MonsterController.cs" />
     <Compile Include="Controllers\RelationshipTreeController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="Controllers\UtilityController.cs" />
@@ -458,6 +459,7 @@
     <Content Include="Content\custom\pages\friends.scss" />
     <Content Include="Content\custom\flexbox.scss" />
     <Content Include="Content\custom\pages\relationship-tree.scss" />
+    <Content Include="package.json" />
     <None Include="Properties\PublishProfiles\DEV.pubxml" />
     <None Include="Properties\PublishProfiles\PROD.pubxml" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
@@ -530,6 +532,8 @@
     <Content Include="Views\RelationshipTree\Index.cshtml" />
     <Content Include="Views\Campaign\ChangeCampaign.cshtml" />
     <Content Include="Views\Character\Index.cshtml" />
+    <Content Include="Views\Monster\Index.cshtml" />
+    <Content Include="Views\Monster\Edit.cshtml" />
     <None Include="Web.DEV.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

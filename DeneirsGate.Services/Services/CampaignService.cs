@@ -436,5 +436,21 @@ namespace DeneirsGate.Services
                 DB.SaveChanges();
             }
         }
+
+        public void DeleteCharacter(Guid userId, Guid characterId)
+        {
+            UserHasAccess(userId, characterId, ContentType.Character);
+
+            using (DBReset())
+            {
+                DB.Characters.RemoveRange(x => x.CharacterKey == characterId);
+                DB.CampaignCharacterLinkers.RemoveRange(x => x.CharacterKey == characterId);
+                DB.CharacterSpells.RemoveRange(x => x.CharacterKey == characterId);
+                DB.CharacterWeapons.RemoveRange(x => x.CharacterKey == characterId);
+                DB.RelationshipTreeCharacters.RemoveRange(x => x.CharacterKey == characterId);
+
+                DB.SaveChanges();
+            }
+        }
     }
 }

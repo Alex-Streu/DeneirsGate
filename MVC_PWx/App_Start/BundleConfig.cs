@@ -25,6 +25,7 @@ namespace MVC_PWx
             bundles.Add(new StyleBundle("~/bundles/Content/css").Include(
                       "~/Content/bootstrap.css",
                       "~/Content/notiflix-2.0.0.css",
+                       "~/node_modules/bootstrap-select/dist/css/bootstrap-select.min.css",
                       "~/Content/site.css",
                       "~/Content/Bundled.css")
                       .IncludeDirectory(
@@ -38,7 +39,8 @@ namespace MVC_PWx
                         "~/Content/lib/jquery.sparkline.js",
                         "~/Content/lib/gritter/js/jquery.gritter.js",
                         "~/Content/lib/gritter-conf.js",
-                        "~/Content/lib/notiflix-2.0.0.js"));
+                        "~/Content/lib/notiflix-2.0.0.js",
+                        "~/node_modules/bootstrap-select/dist/js/bootstrap-select.min.js"));
 
             bundles.Add(new StyleBundle("~/bundles/charts").Include(
                       "~/Content/lib/sparkline-chart.js",

@@ -3,6 +3,7 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
@@ -15,9 +16,12 @@ namespace MVC_PWx.Controllers
         private ApplicationRoleManager _roleManager;
 
         private AuthService authSvc;
+
         private CampaignService campaignSvc;
+        private PresetService presetSvc;
         private UserService userSvc;
         private RelationshipTreeService relationshipTreeSvc;
+        private MonsterService monsterSvc;
 
         public Dictionary<string, DateTime> OnlineUsers
         {
@@ -66,6 +70,15 @@ namespace MVC_PWx.Controllers
             }
         }
 
+        public PresetService PresetSvc
+        {
+            get
+            {
+                if (presetSvc == null) { presetSvc = new PresetService(); }
+                return presetSvc;
+            }
+        }
+
         public CampaignService CampaignSvc
         {
             get
@@ -91,6 +104,20 @@ namespace MVC_PWx.Controllers
                 if (relationshipTreeSvc == null) { relationshipTreeSvc = new RelationshipTreeService(); }
                 return relationshipTreeSvc;
             }
+        }
+
+        public MonsterService MonsterSvc
+        {
+            get
+            {
+                if (monsterSvc == null) { monsterSvc = new MonsterService(); }
+                return monsterSvc;
+            }
+        }
+
+        protected string GetValidationError()
+        {
+            return ModelState.Values.FirstOrDefault(x => x.Errors.Count > 0).Errors.FirstOrDefault().ErrorMessage;
         }
 
         protected ActionResult RedirectToLocal(string returnUrl)

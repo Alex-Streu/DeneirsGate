@@ -1,6 +1,8 @@
 namespace DeneirsGate.Data
 {
+    using System;
     using System.Data.Entity;
+    using System.Linq;
 
     public partial class DataEntities : DbContext
     {
@@ -40,6 +42,17 @@ namespace DeneirsGate.Data
 
         #endregion
 
+        #region Monsters
+
+        public virtual DbSet<Monster> Monsters { get; set; }
+        public virtual DbSet<Environment> Environments { get; set; }
+        public virtual DbSet<MonsterSize> MonsterSizes { get; set; }
+        public virtual DbSet<MonsterType> MonsterTypes { get; set; }
+        public virtual DbSet<MonsterChallengeRating> MonsterChallengeRatings { get; set; }
+        public virtual DbSet<MonsterEnvironmentLinker> MonsterEnvironmentLinkers { get; set; }
+
+        #endregion
+
         #region Social
 
         public virtual DbSet<FriendRequest> FriendRequests { get; set; }
@@ -73,6 +86,21 @@ namespace DeneirsGate.Data
             //modelBuilder.Entity<Role>()
             //    .Property(e => e.Name)
             //    .IsFixedLength();
+        }
+    }
+
+    public static class DataExtensions
+    {
+        public static void RemoveRange<TEntity>(
+            this DbSet<TEntity> entities,
+            System.Linq.Expressions.Expression<Func<TEntity, bool>> predicate)
+            where TEntity : class
+        {
+            var records = entities
+                .Where(predicate)
+                .ToList();
+            if (records.Count > 0)
+                entities.RemoveRange(records);
         }
     }
 }

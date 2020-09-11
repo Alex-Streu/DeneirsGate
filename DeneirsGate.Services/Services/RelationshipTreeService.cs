@@ -8,21 +8,6 @@ namespace DeneirsGate.Services
     public class RelationshipTreeService : DeneirsService
     {
 
-        private void UserHasAccess(Guid userId, Guid campaignKey)
-        {
-            var hasAccess = false;
-
-            if (DB.UserCampaigns.FirstOrDefault(x => x.UserKey == userId && x.CampaignKey == campaignKey && x.IsOwner) != null)
-            {
-                hasAccess = true;
-            }
-
-            if (!hasAccess)
-            {
-                throw new Exception("You do not have access to this content!");
-            }
-        }
-
         public List<RelationshipTreeSearchModel> GetSearchTrees(Guid userId, Guid campaignKey)
         {
             UserHasAccess(userId, campaignKey);
@@ -190,6 +175,18 @@ namespace DeneirsGate.Services
                 {
                     DB.RelationshipTrees.Add(tree);
                 }
+
+                DB.SaveChanges();
+            }
+        }
+
+        public void DeleteRelationshipTree(Guid userKey, Guid treeId)
+        {
+            using (DBReset())
+            {
+                DB.RelationshipTrees.RemoveRange(x => x.TreeKey == treeId);
+                DB.RelationshipTreeTiers.RemoveRange(x => x.TreeKey == treeId);
+                DB.RelationshipTreeCharacters.RemoveRange(x => x.TreeKey == treeId);
 
                 DB.SaveChanges();
             }

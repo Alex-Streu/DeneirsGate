@@ -119,5 +119,24 @@ namespace DeneirsGate.Services
 
             return types;
         }
+
+        public List<EnvironmentViewModel> GetEnvironments()
+        {
+            var types = new List<EnvironmentViewModel>();
+            try
+            {
+                using (DBReset())
+                {
+                    types = DB.Environments.Select(x => new EnvironmentViewModel
+                    {
+                        Name = x.Name,
+                        EnvironmentKey = x.EnvironmentKey
+                    }).OrderBy(x => x.Name).ToList();
+                }
+            }
+            catch (Exception ex) { }
+
+            return types;
+        }
     }
 }

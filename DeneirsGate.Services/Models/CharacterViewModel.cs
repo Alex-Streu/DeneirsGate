@@ -94,7 +94,7 @@ namespace DeneirsGate.Services
         public int Charisma { get; set; }
         public string Abilities { get; set; }
         public string Status { get; set; }
-        [StringLength(50)]
+        [Required(ErrorMessage = "First Name is required!"), StringLength(50)]
         public string FirstName { get; set; }
         [StringLength(50)]
         public string LastName { get; set; }

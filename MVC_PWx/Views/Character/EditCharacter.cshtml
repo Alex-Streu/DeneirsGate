@@ -454,6 +454,7 @@
 
 <div class="submit-footer">
     <div class="btn btn-lg btn-default save-button" onclick="save()">Save</div>
+    <div id="delete" class="btn btn-lg btn-danger save-button" onclick="promptDelete('deleteCharacter()')">Delete</div>
 </div>
 
 @section scripts {
@@ -461,11 +462,15 @@
     <script type="text/javascript">
         var updatePlayerAction = '@Url.Action("UpdatePlayer")';
         var updateCharacterAction = '@Url.Action("UpdateCharacter")';
+        var deleteCharacterAction = '@Url.Action("DeleteCharacter")';
+        var indexAction = '@Url.Action("/")';
         var registerPlayerAction = '@Url.Action("RegisterPlayer", "Account", new { id = Model.UserCode }, this.Request.Url.Scheme)';
         var isPlayer = ('@ViewBag.IsPlayer' == 'True');
         var backstory;
 
         $(document).ready(function () {
+            if ('@ViewBag.IsNew' == 'True') { $('#delete').hide(); }
+
             ClassicEditor
                 .create(document.querySelector('#backstory-editor'), {
                     toolbar: ['heading', '|', 'bold', 'italic', 'bulletedList', 'numberedList', '|', 'indent', 'outdent', '|', 'blockQuote', 'insertTable', 'undo', 'redo' ]
@@ -703,7 +708,31 @@
                 success: function (data) {
                     if (data.success) {
                         Notiflix.NotifyContent.Success(data.message);
+                        $('#delete').show();
                         uploadImage($('#Portrait').parent().find('.uploader'), 'Characters/' + $('#CharacterKey').val(), $('#Portrait').val());
+                    } else {
+                        Notiflix.NotifyContent.Failure(data.message);
+                    }
+                },
+                error: function (error) {
+                    Notiflix.NotifyContent.Failure(error.responseText);
+                }
+            })
+        }
+
+        function deleteCharacter() {
+            var postData = { id: '@Model.CharacterKey' };
+
+            $.ajax({
+                type: "POST",
+                url: deleteCharacterAction,
+                data: JSON.stringify(postData),
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data.success) {
+                        Notiflix.NotifyContent.Success(data.message);
+                        location.replace(indexAction);
                     } else {
                         Notiflix.NotifyContent.Failure(data.message);
                     }

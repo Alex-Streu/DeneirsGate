@@ -26,11 +26,11 @@ namespace MVC_PWx.Controllers
         [HasCampaign, HasAccess(Priviledge = AppLogic.Priviledge.DM)]
         public ActionResult CreateCharacter(bool isPlayer = false)
         {
-            return RedirectToAction("EditCharacter", new { id = Guid.NewGuid(), isPlayer });
+            return RedirectToAction("EditCharacter", new { id = Guid.NewGuid(), isPlayer = isPlayer, isNew = true });
         }
 
         [HasCampaign, HasAccess(Priviledge = AppLogic.Priviledge.Player)]
-        public ActionResult EditCharacter(Guid id, bool isPlayer = false)
+        public ActionResult EditCharacter(Guid id, bool isPlayer = false, bool isNew = false)
         {
             var player = new PlayerViewModel();
             try
@@ -38,6 +38,7 @@ namespace MVC_PWx.Controllers
                 player = CampaignSvc.GetPlayer(AppUser.UserId, AppUser.ActiveCampaign.Value, id);
 
                 ViewBag.IsPlayer = isPlayer;
+                ViewBag.IsNew = isNew;
             }
             catch (Exception ex) { }
 
@@ -48,38 +49,56 @@ namespace MVC_PWx.Controllers
         [HasCampaign, HasAccess(Priviledge = AppLogic.Priviledge.Player)]
         public JsonResult UpdatePlayer(PlayerPostModel model)
         {
-            try
+            if (ModelState.IsValid)
             {
-                if (ModelState.IsValid)
+                try
                 {
                     CampaignSvc.UpdateCharacter(AppUser.UserId, model, true, model.UserKey);
                 }
-            }
-            catch (Exception ex)
-            {
-                return Json(new { success = false, message = ex.Message });
-            }
+                catch (Exception ex)
+                {
+                    return Json(new { success = false, message = ex.Message });
+                }
 
-            return Json(new { success = true, message = "Updated successfully!" });
+                return Json(new { success = true, message = "Updated successfully!" });
+            }
+            return Json(new { success = false, message = GetValidationError() });
         }
 
         [HttpPost]
         [HasCampaign, HasAccess(Priviledge = AppLogic.Priviledge.DM)]
-        public JsonResult UpdateCharacter(PlayerPostModel model)
+        public JsonResult UpdateCharacter(CharacterPostModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    CampaignSvc.UpdateCharacter(AppUser.UserId, model, false);
+                }
+                catch (Exception ex)
+                {
+                    return Json(new { success = false, message = ex.Message });
+                }
+
+                return Json(new { success = true, message = "Updated successfully!" });
+            }
+            return Json(new { success = false, message = GetValidationError() });
+        }
+
+        [HttpPost]
+        [HasCampaign, HasAccess(Priviledge = AppLogic.Priviledge.DM)]
+        public JsonResult DeleteCharacter(Guid id)
         {
             try
             {
-                if (ModelState.IsValid)
-                {
-                    CampaignSvc.UpdateCharacter(AppUser.UserId, model, false, model.UserKey);
-                }
+                CampaignSvc.DeleteCharacter(AppUser.UserId, id);
             }
             catch (Exception ex)
             {
                 return Json(new { success = false, message = ex.Message });
             }
 
-            return Json(new { success = true, message = "Updated successfully!" });
+            return Json(new { success = true, message = "Deleted successfully!" });
         }
     }
 }

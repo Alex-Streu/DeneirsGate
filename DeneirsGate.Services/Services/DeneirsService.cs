@@ -1,4 +1,6 @@
 ﻿using DeneirsGate.Data;
+using System;
+using System.Linq;
 
 namespace DeneirsGate.Services
 {
@@ -19,6 +21,21 @@ namespace DeneirsGate.Services
         {
             db = new DataEntities();
             return db;
+        }
+
+        protected virtual void UserHasAccess(Guid userId, Guid campaignKey)
+        {
+            var hasAccess = false;
+
+            if (DB.UserCampaigns.FirstOrDefault(x => x.UserKey == userId && x.CampaignKey == campaignKey && x.IsOwner) != null)
+            {
+                hasAccess = true;
+            }
+
+            if (!hasAccess)
+            {
+                throw new Exception("You do not have access to this content!");
+            }
         }
     }
 }

@@ -37,11 +37,12 @@ namespace DeneirsGate.Services
 
     public class RelationshipTreePostModel
     {
+        [NotEmptyGuid]
         public Guid TreeKey { get; set; }
         public Guid CampaignKey { get; set; }
-        [Required, StringLength(50)]
+        [Required(ErrorMessage = "Name is required!"), StringLength(50)]
         public string Name { get; set; }
-        public List<RelationshipTreeTierViewModel> Tiers { get; set; }
+        public List<RelationshipTreeTierViewModel> Tiers { get; set; } = new List<RelationshipTreeTierViewModel>();
     }
 
     public class RelationshipTreeSearchModel
