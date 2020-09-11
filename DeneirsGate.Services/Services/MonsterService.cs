@@ -38,7 +38,7 @@ namespace DeneirsGate.Services
                 }
             }
 
-            return monsters;
+            return monsters.OrderBy(x => x.Name).ToList();
         }
 
         public MonsterViewModel GetMonster(Guid userId, Guid monsterId)
