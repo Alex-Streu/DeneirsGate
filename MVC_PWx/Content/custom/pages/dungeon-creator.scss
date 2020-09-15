@@ -1,0 +1,17 @@
+﻿.edit-dungeon-tile {
+    width: 250px;
+    height: 250px;
+    border: 4px dashed $gray;
+    background-color: $white;
+
+    &:hover {
+        background-color: $lightRed;
+        cursor: pointer;
+    }
+}
+
+.dungeon-tile-container {
+    * {
+        margin: 0em !important;
+    }
+}

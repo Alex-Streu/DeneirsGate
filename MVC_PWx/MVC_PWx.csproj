@@ -185,6 +185,7 @@
     <Compile Include="Controllers\CampaignController.cs" />
     <Compile Include="Controllers\DeneirsController.cs" />
     <Compile Include="Controllers\CharacterController.cs" />
+    <Compile Include="Controllers\DungeonController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\MonsterController.cs" />
@@ -239,6 +240,17 @@
     <Content Include="Content\img\campaigns\campaign-default.png" />
     <Content Include="Content\img\campaigns\player-info-background.png" />
     <Content Include="Content\img\checkbox-gray.png" />
+    <Content Include="Content\img\dungeon tiles\4-way.png" />
+    <Content Include="Content\img\dungeon tiles\bottom-left.png" />
+    <Content Include="Content\img\dungeon tiles\bottom-right.png" />
+    <Content Include="Content\img\dungeon tiles\bottom-t.png" />
+    <Content Include="Content\img\dungeon tiles\horizontal.png" />
+    <Content Include="Content\img\dungeon tiles\left-t.png" />
+    <Content Include="Content\img\dungeon tiles\right-t.png" />
+    <Content Include="Content\img\dungeon tiles\top-left.png" />
+    <Content Include="Content\img\dungeon tiles\top-right.png" />
+    <Content Include="Content\img\dungeon tiles\top-t.png" />
+    <Content Include="Content\img\dungeon tiles\vertical.png" />
     <Content Include="Content\img\error-background.jpg" />
     <Content Include="Content\img\favicon.png" />
     <Content Include="Content\img\friends\fr-01.jpg" />
@@ -431,6 +443,7 @@
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
+    <Content Include="Content\custom\pages\dungeon-creator.scss" />
     <None Include="gulpfile.js" />
     <Content Include="Scripts\bootstrap-select.min.js" />
     <Content Include="Scripts\bootstrap.js" />
@@ -537,6 +550,7 @@
     <Content Include="Views\Character\Index.cshtml" />
     <Content Include="Views\Monster\Index.cshtml" />
     <Content Include="Views\Monster\Edit.cshtml" />
+    <Content Include="Views\Dungeon\Edit.cshtml" />
     <None Include="Web.DEV.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

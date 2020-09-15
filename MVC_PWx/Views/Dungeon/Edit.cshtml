@@ -1,0 +1,108 @@
+﻿@using DeneirsGate.Services
+@using CustomHtmlHelpers\
+
+@{
+    ViewBag.Title = "Edit Dungeon";
+}
+
+<style type="text/css">
+    .edit-dungeon-tile img {
+        width: 100%;
+        height: 100%;
+    }
+
+    .tile-option {
+        margin: 10px;
+        padding: 10px;
+        border: 1px solid gray;
+        border-radius: 10px;
+    }
+
+        .tile-option:hover {
+            cursor: pointer;
+            border: 3px solid #ce0606;
+        }
+</style>
+
+<h2>Edit Dungeon</h2>
+<div class="flexbox-container">
+    <div class="btn btn-default" onclick="addColumn()">Add Column</div>
+    <div class="btn btn-default" onclick="addRow()">Add Row</div>
+</div>
+
+<table class="dungeon-tile-container" style="overflow-x: scroll">
+    @for (var i = 0; i < 5; i++)
+    {
+        <tr>
+            @for (var j = 0; j < 5; j++)
+            {
+                <td>
+                    <div class="edit-dungeon-tile">
+                    </div>
+                </td>
+            }
+        </tr>
+    }
+</table>
+
+<div id="tileModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Select Tile Path</h4>
+            </div>
+            <div class="modal-body">
+                @foreach (var tile in ViewBag.TileImages)
+                {
+                    <img class="img-xs tile-option" src="@tile" />
+                }
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="deleteTier()">Delete</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@section scripts {
+    <script type="text/javascript">
+        var numRows = 5;
+        var numCols = 5;
+        var selectedTile = null;
+
+        function addRow() {
+            var row = '<tr>';
+            for (var i = 0; i < numCols; i++) {
+                row += '<td><div class="edit-dungeon-tile"></div></td>';
+            }
+            row += '</tr>';
+            $('table').append(row);
+            numRows++;
+        }
+
+        function addColumn() {
+            var column = '<td><div class="edit-dungeon-tile"></div></td>';
+            $('tr').append(column);
+            numCols++;
+        }
+
+        $('.edit-dungeon-tile').click(function () {
+            selectedTile = this;
+            $('#tileModal').modal('show');
+        })
+
+        $('.tile-option').click(function () {
+            var img = $(selectedTile).find('img');
+            if (img.length <= 0) {
+                $(selectedTile).html('<img />');
+                img = $(selectedTile).find('img');
+            }
+            img.attr('src', $(this).attr('src'));
+            $('#tileModal').modal('hide');
+        })
+    </script>
+}

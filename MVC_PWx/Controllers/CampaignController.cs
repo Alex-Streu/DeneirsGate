@@ -7,6 +7,7 @@ using System.Web.Mvc;
 
 namespace MVC_PWx.Controllers
 {
+    [Authorize]
     [HasAccess(Priviledge = AppLogic.Priviledge.Player)]
     public class CampaignController : DeneirsController
     {
