@@ -90,3 +90,25 @@ BEGIN
 	INSERT INTO MonsterTypes VALUES (NEWID(), 'Plant')
 	INSERT INTO MonsterTypes VALUES (NEWID(), 'Undead')
 END
+
+IF NOT EXISTS (SELECT TOP 1 1 FROM MagicItemTypes)
+BEGIN
+	INSERT INTO MagicItemTypes VALUES (NEWID(), 'Armor')
+	INSERT INTO MagicItemTypes VALUES (NEWID(), 'Potion')
+	INSERT INTO MagicItemTypes VALUES (NEWID(), 'Rod')
+	INSERT INTO MagicItemTypes VALUES (NEWID(), 'Scroll')
+	INSERT INTO MagicItemTypes VALUES (NEWID(), 'Staff')
+	INSERT INTO MagicItemTypes VALUES (NEWID(), 'Wand')
+	INSERT INTO MagicItemTypes VALUES (NEWID(), 'Weapon')
+	INSERT INTO MagicItemTypes VALUES (NEWID(), 'Wondrous Item')
+END
+
+IF NOT EXISTS (SELECT TOP 1 1 FROM MagicItemRarities)
+BEGIN
+	INSERT INTO MagicItemRarities VALUES (NEWID(), 'Common', 1)
+	INSERT INTO MagicItemRarities VALUES (NEWID(), 'Uncommon', 2)
+	INSERT INTO MagicItemRarities VALUES (NEWID(), 'Rare', 3)
+	INSERT INTO MagicItemRarities VALUES (NEWID(), 'Very Rare', 4)
+	INSERT INTO MagicItemRarities VALUES (NEWID(), 'Legendary', 5)
+	INSERT INTO MagicItemRarities VALUES (NEWID(), 'Artifact', 6)
+END

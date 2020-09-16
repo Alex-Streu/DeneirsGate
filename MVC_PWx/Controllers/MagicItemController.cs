@@ -7,14 +7,14 @@ using System.Web.Mvc;
 namespace MVC_PWx.Controllers
 {
     [Authorize, HasCampaign, HasAccess(Priviledge = AppLogic.Priviledge.DM)]
-    public class MonsterController : DeneirsController
+    public class MagicItemController : DeneirsController
     {
         public ActionResult Index()
         {
-            var model = new List<MonsterViewModel>();
+            var model = new List<MagicItemViewModel>();
             try
             {
-                model = MonsterSvc.GetMonsters(AppUser.UserId, AppUser.ActiveCampaign.Value, !User.IsInRole("Admin"));
+                model = MagicItemSvc.GetMagicItems(AppUser.UserId, AppUser.ActiveCampaign.Value, !User.IsInRole("Admin"));
             }
             catch (Exception ex) { }
             return View(model);
@@ -27,16 +27,14 @@ namespace MVC_PWx.Controllers
 
         public ActionResult Edit(Guid id, bool isNew = false)
         {
-            var model = new MonsterEditModel();
+            var model = new MagicItemEditModel();
             try
             {
-                model = MonsterSvc.GetEditMonster(AppUser.UserId, id, AppUser.ActiveCampaign.Value);
+                model = MagicItemSvc.GetEditMagicItem(AppUser.UserId, id, AppUser.ActiveCampaign.Value);
 
                 ViewBag.IsNew = isNew;
-                ViewBag.Sizes = new SelectList(MonsterSvc.GetSizes(), "SizeKey", "Name");
-                ViewBag.Types = new SelectList(MonsterSvc.GetTypes(), "TypeKey", "Name");
-                ViewBag.ChallengeRatings = new SelectList(MonsterSvc.GetChallengeRatings(), "RatingKey", "Challenge");
-                ViewBag.Environments = new MultiSelectList(PresetSvc.GetEnvironments(), "EnvironmentKey", "Name", model.Environments);
+                ViewBag.Rarities = new SelectList(MagicItemSvc.GetRarities(), "RarityKey", "Name");
+                ViewBag.Types = new SelectList(MagicItemSvc.GetTypes(), "TypeKey", "Name");
             }
             catch (Exception ex) { }
 
@@ -44,13 +42,13 @@ namespace MVC_PWx.Controllers
         }
 
         [HttpPost]
-        public JsonResult Update(MonsterPostModel model)
+        public JsonResult Update(MagicItemPostModel model)
         {
             if (ModelState.IsValid)
             {
                 try
                 {
-                        MonsterSvc.UpdateMonster(AppUser.UserId, model);
+                    MagicItemSvc.Update(AppUser.UserId, model);
                 }
                 catch (Exception ex)
                 {
@@ -67,7 +65,7 @@ namespace MVC_PWx.Controllers
         {
             try
             {
-                MonsterSvc.Delete(AppUser.UserId, id, User.IsInRole("Admin"));
+                MagicItemSvc.Delete(AppUser.UserId, id, User.IsInRole("Admin"));
             }
             catch (Exception ex)
             {

@@ -53,6 +53,14 @@ namespace DeneirsGate.Data
 
         #endregion
 
+        #region Magic Items
+
+        public virtual DbSet<MagicItem> MagicItems { get; set; }
+        public virtual DbSet<MagicItemType> MagicItemTypes { get; set; }
+        public virtual DbSet<MagicItemRarity> MagicItemRarities { get; set; }
+
+        #endregion
+
         #region Social
 
         public virtual DbSet<FriendRequest> FriendRequests { get; set; }
