@@ -6,6 +6,7 @@ using System.Web.Mvc;
 
 namespace MVC_PWx.Controllers
 {
+    [Authorize]
     public class CharacterController : DeneirsController
     {
         [HasCampaign, HasAccess(Priviledge = AppLogic.Priviledge.DM)]

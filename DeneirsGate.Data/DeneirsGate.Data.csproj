@@ -89,6 +89,9 @@
     <Compile Include="DataModels\Environment.cs" />
     <Compile Include="DataModels\FriendBlock.cs" />
     <Compile Include="DataModels\FriendRequest.cs" />
+    <Compile Include="DataModels\MagicItem.cs" />
+    <Compile Include="DataModels\MagicItemRarity.cs" />
+    <Compile Include="DataModels\MagicItemType.cs" />
     <Compile Include="DataModels\Monster.cs" />
     <Compile Include="DataModels\MonsterChallengeRating.cs" />
     <Compile Include="DataModels\MonsterEnvironmentLinker.cs" />

@@ -6,7 +6,7 @@ using System.Web.Mvc;
 
 namespace MVC_PWx.Controllers
 {
-    [HasCampaign, HasAccess(Priviledge = AppLogic.Priviledge.DM)]
+    [Authorize, HasCampaign, HasAccess(Priviledge = AppLogic.Priviledge.DM)]
     public class RelationshipTreeController : DeneirsController
     {
         public ActionResult Index()

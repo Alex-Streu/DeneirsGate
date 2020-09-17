@@ -75,6 +75,7 @@
     <Compile Include="Models\CampaignViewModel.cs" />
     <Compile Include="Models\ClassViewModel.cs" />
     <Compile Include="Models\CharacterViewModel.cs" />
+    <Compile Include="Models\MagicItemViewModel.cs" />
     <Compile Include="Models\MonsterViewModel.cs" />
     <Compile Include="Models\NotificationViewModel.cs" />
     <Compile Include="Models\PlayerRegistryViewModel.cs" />
@@ -87,6 +88,7 @@
     <Compile Include="Services\AuthService.cs" />
     <Compile Include="Services\CampaignService.cs" />
     <Compile Include="Services\DeneirsService.cs" />
+    <Compile Include="Services\MagicItemService.cs" />
     <Compile Include="Services\MonsterService.cs" />
     <Compile Include="Services\PresetService.cs" />
     <Compile Include="Services\RelationshipTreeService.cs" />

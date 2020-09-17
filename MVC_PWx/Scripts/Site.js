@@ -48,6 +48,14 @@ $('.fancy-tab-item').click(function () {
     $(this).addClass('active');
 })
 
+$(document).ready(function () {
+    $('.fancy-switch').each(function () {
+        if ($(this).data('val') == 'True') {
+            $(this).find('input').attr('checked', 'checked');
+        }
+    })
+})
+
 
 /* IMAGE UPLOADING */
 var uploadImageUtilityAction = '/Utility/UploadImage/';

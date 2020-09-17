@@ -115,6 +115,9 @@
     <Build Include="dbo\Tables\MonsterChallengeRatings.sql" />
     <Build Include="dbo\Tables\Monsters.sql" />
     <Build Include="dbo\Tables\MonsterEnvironmentLinkers.sql" />
+    <Build Include="dbo\Tables\MagicItemTypes.sql" />
+    <Build Include="dbo\Tables\MagicItemRarities.sql" />
+    <Build Include="dbo\Tables\MagicItems.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="DeneirsGate.Database.LOCAL.publish.xml" />
