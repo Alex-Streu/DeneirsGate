@@ -58,6 +58,33 @@ namespace DeneirsGate.Data
         public virtual DbSet<MagicItem> MagicItems { get; set; }
         public virtual DbSet<MagicItemType> MagicItemTypes { get; set; }
         public virtual DbSet<MagicItemRarity> MagicItemRarities { get; set; }
+        public virtual DbSet<Gemstone> Gemstones { get; set; }
+        public virtual DbSet<ArtObject> ArtObjects { get; set; }
+        public virtual DbSet<Treasure> Treasures { get; set; }
+        public virtual DbSet<TreasureHoard> TreasureHoards { get; set; }
+
+        #endregion
+
+        #region Dungeons
+
+        public virtual DbSet<Dungeon> Dungeons { get; set; }
+        public virtual DbSet<DungeonTile> DungeonTiles { get; set; }
+        public virtual DbSet<DungeonTileTrap> DungeonTileTraps { get; set; }
+        public virtual DbSet<DungeonTileEncounter> DungeonTileEncounters { get; set; }
+        public virtual DbSet<CampaignDungeonLinker> CampaignDungeonLinkers { get; set; }
+        public virtual DbSet<Trap> Traps { get; set; }
+        public virtual DbSet<TrapNature> TrapNatures { get; set; }
+        public virtual DbSet<TrapType> TrapTypes { get; set; }
+        public virtual DbSet<TrapTypeDamage> TrapTypeDamages { get; set; }
+        public virtual DbSet<CampaignTrapLinker> CampaignTrapLinkers { get; set; }
+
+        #endregion
+
+        #region Encounters
+
+        public virtual DbSet<Encounter> Encounters { get; set; }
+        public virtual DbSet<EncounterMonster> EncounterMonsters { get; set; }
+        public virtual DbSet<EncounterItem> EncounterItems { get; set; }
 
         #endregion
 

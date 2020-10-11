@@ -16,24 +16,10 @@ namespace DeneirsGate.Services
             {
                 if (!customOnly)
                 {
-                    var _monsters = DB.Monsters.ToList();
+                    var _monsters = DB.Monsters.Select(x => x.MonsterKey).ToList();
                     foreach (var monster in _monsters)
                     {
-                        var cr = DB.MonsterChallengeRatings.FirstOrDefault(x => x.RatingKey == monster.ChallengeRating);
-                        var environmentKeys = DB.MonsterEnvironmentLinkers.Where(x => x.MonsterKey == monster.MonsterKey).Select(x => x.EnvironmentKey).ToList();
-                        monsters.Add(new MonsterViewModel
-                        {
-                            Alignment = monster.Alignment,
-                            ChallengeRating = cr.Challenge,
-                            Description = monster.Description,
-                            Difficulty = cr.Difficulty,
-                            Environments = DB.Environments.Where(x => environmentKeys.Contains(x.EnvironmentKey)).Select(x => x.Name).ToList(),
-                            MonsterKey = monster.MonsterKey,
-                            Name = monster.Name,
-                            Size = DB.MonsterSizes.Where(x => x.SizeKey == monster.Size).Select(x => x.Name).FirstOrDefault(),
-                            Speed = monster.Speed,
-                            Type = DB.MonsterTypes.Where(x => x.TypeKey == monster.Type).Select(x => x.Name).FirstOrDefault()
-                        });
+                        monsters.Add(GetMonster(userId, monster));
                     }
                 }
             }
@@ -51,16 +37,17 @@ namespace DeneirsGate.Services
                 var environmentKeys = DB.MonsterEnvironmentLinkers.Where(x => x.MonsterKey == _monster.MonsterKey).Select(x => x.EnvironmentKey).ToList();
                 monster = new MonsterViewModel
                 {
-                    Alignment = monster.Alignment,
+                    Alignment = _monster.Alignment,
                     ChallengeRating = cr.Challenge,
-                    Description = monster.Description,
+                    Description = _monster.Description,
                     Difficulty = cr.Difficulty,
                     Environments = DB.Environments.Where(x => environmentKeys.Contains(x.EnvironmentKey)).Select(x => x.Name).ToList(),
-                    MonsterKey = monster.MonsterKey,
-                    Name = monster.Name,
+                    MonsterKey = _monster.MonsterKey,
+                    Name = _monster.Name,
                     Size = DB.MonsterSizes.Where(x => x.SizeKey == _monster.Size).Select(x => x.Name).FirstOrDefault(),
-                    Speed = monster.Speed,
-                    Type = DB.MonsterTypes.Where(x => x.TypeKey == _monster.Type).Select(x => x.Name).FirstOrDefault()
+                    Speed = _monster.Speed,
+                    Type = DB.MonsterTypes.Where(x => x.TypeKey == _monster.Type).Select(x => x.Name).FirstOrDefault(),
+                    XP = cr.XP
                 };
             }
 
@@ -222,6 +209,35 @@ namespace DeneirsGate.Services
             }
 
             return ratings;
+        }
+
+        public void GetEncounterMonsters(Guid userId, EncounterViewModel model)
+        {
+            using (DBReset())
+            {
+                var totalXp = 0;
+                foreach (var monster in model.Monsters)
+                {
+                    var _monster = GetMonster(userId, monster.MonsterKey);
+                    var monsterItem = model.Monsters.FirstOrDefault(x => x.MonsterKey == monster.MonsterKey);
+                    monsterItem.Alignment = _monster.Alignment;
+                    monsterItem.ChallengeRating = _monster.ChallengeRating;
+                    monsterItem.Description = _monster.Description;
+                    monsterItem.Difficulty = _monster.Difficulty;
+                    monsterItem.Environments = _monster.Environments;
+                    monsterItem.MonsterKey = _monster.MonsterKey;
+                    monsterItem.Name = _monster.Name;
+                    monsterItem.Size = _monster.Size;
+                    monsterItem.Speed = _monster.Speed;
+                    monsterItem.Type = _monster.Type;
+                    monsterItem.XP = _monster.XP;
+                    monsterItem.Count = monster.Count;
+
+                    totalXp += monsterItem.XP * monster.Count;
+                }
+
+                model.TotalXP = totalXp;
+            }
         }
     }
 }

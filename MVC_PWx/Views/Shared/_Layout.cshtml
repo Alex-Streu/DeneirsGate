@@ -230,31 +230,31 @@
                                     <span>Admin</span>
                                 </a>
                                 <ul class="sub">
-                                    <li><a href="@Url.Action("Users", "Admin")">Users</a></li>
-                                    <li><a href="@Url.Action("Roles", "Admin")">Roles</a></li>
+                                    <li><a id="menu_Users" href="@Url.Action("Users", "Admin")">Users</a></li>
+                                    <li><a id="menu_Roles" href="@Url.Action("Roles", "Admin")">Roles</a></li>
                                 </ul>
                             </li>
                         }
                         <li class="mt">
-                            <a href="@Url.Action("ChangeCampaign", "Campaign")">
+                            <a id="menu_Campaign" href="@Url.Action("ChangeCampaign", "Campaign")">
                                 <i class="fa fa-compass"></i>
                                 <span>Campaigns</span>
                             </a>
                         </li>
                         <li>
-                            <a data-alt="/" href="@Url.Action("/", "Campaign")">
+                            <a id="menu_Dashboard" data-alt="/" href="@Url.Action("/", "Campaign")">
                                 <i class="fa fa-dashboard"></i>
                                 <span>Dashboard</span>
                             </a>
                         </li>
                         <li>
-                            <a href="@Url.Action("/", "Character")">
+                            <a id="menu_Character" href="@Url.Action("/", "Character")">
                                 <i class="fa fa-user-circle"></i>
                                 <span>Characters</span>
                             </a>
                         </li>
                         <li>
-                            <a href="@Url.Action("/", "RelationshipTree")">
+                            <a id="menu_RelationshipTree" href="@Url.Action("/", "RelationshipTree")">
                                 <i class="fa fa-sitemap"></i>
                                 <span>Relationship Trees</span>
                             </a>
@@ -262,21 +262,28 @@
                         @if (User.IsInRole("Admin"))
                         {
                             <li>
-                                <a href="@Url.Action("/", "Monster")">
+                                <a id="menu_Monster" href="@Url.Action("/", "Monster")">
                                     <i class="fa fa-optin-monster"></i>
                                     <span>Monsters</span>
                                 </a>
                             </li>
                         }
                         <li>
-                            <a href="@Url.Action("/", "MagicItem")">
+                            <a id="menu_MagicItem" href="@Url.Action("/", "MagicItem")">
                                 <i class="fa fa-trophy"></i>
                                 <span>Magic Items</span>
+                            </a>
                         </li>
                         <li>
-                            <a href="@Url.Action("Create", "Dungeon")">
+                            <a id="menu_Dungeon" href="@Url.Action("/", "Dungeon")">
                                 <i class="fa fa-arrows"></i>
                                 <span>Dungeons</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a id="menu_Trap" href="@Url.Action("Traps", "Dungeon")">
+                                <i class="fa fa-bomb"></i>
+                                <span>Traps</span>
                             </a>
                         </li>
                         @*<li class="sub-menu">
@@ -484,6 +491,24 @@
         </div>
     </div>
 
+    <!-- Encounter -->
+    <div id="encounterModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close fa fa-times fa-2x" data-dismiss="modal" style="font-size:large"></button>
+                    <h4 class="modal-title">Design Encounter</h4>
+                </div>
+                <div id="encounterBody" class="modal-body">
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
     @Scripts.Render("~/bundles/extensions")
@@ -512,12 +537,17 @@
             //    // (string | optional) the class name you want to apply to that specific message
             //    class_name: 'my-sticky-class'
             //});
+            $('[data-toggle="tooltip"]').tooltip();
         });
 
         $('#nav-accordion li a').each(function () {
             if (url.indexOf($(this).attr('href')) > -1 || url.indexOf($(this).data('alt')) > -1) {
                 $('#nav-accordion li a.active').removeClass('active');
                 $(this).addClass('active');
+            }
+            else {
+                $('#nav-accordion li a.active').removeClass('active');
+                $('#menu_@ViewBag.MenuOption').addClass('active');
             }
         })
 

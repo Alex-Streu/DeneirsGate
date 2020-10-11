@@ -150,6 +150,10 @@ textarea {
     box-shadow: 2px 2px 5px 4px rgba(0, 0, 0, 0.2);
 }
 
+.content-box.narrow {
+    padding: 1em 2em 1em 2em;
+}
+
 .content-box > .title {
     font-size: large;
     position: relative;
@@ -162,4 +166,24 @@ textarea {
 
 .text-md {
     font-size: medium;
+}
+
+
+#encounterModal .modal-dialog {
+    width: 90%;
+    height: 90%;
+    margin: 30px auto;
+    padding: 0;
+}
+
+#encounterModal .modal-content {
+    height: auto;
+    min-height: 100%;
+    border-radius: 0;
+    overflow-y: auto;
+}
+
+#encounterModal .modal-body {
+    height: auto;
+    min-height: 100%;
 }

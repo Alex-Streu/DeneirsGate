@@ -23,6 +23,8 @@ namespace MVC_PWx.Controllers
         private RelationshipTreeService relationshipTreeSvc;
         private MonsterService monsterSvc;
         private MagicItemService magicItemSvc;
+        private EventService eventSvc;
+        private DungeonService dungeonSvc;
 
         public Dictionary<string, DateTime> OnlineUsers
         {
@@ -122,6 +124,24 @@ namespace MVC_PWx.Controllers
             {
                 if (magicItemSvc == null) { magicItemSvc = new MagicItemService(); }
                 return magicItemSvc;
+            }
+        }
+
+        public EventService EventSvc
+        {
+            get
+            {
+                if (eventSvc == null) { eventSvc = new EventService(); }
+                return eventSvc;
+            }
+        }
+
+        public DungeonService DungeonSvc
+        {
+            get
+            {
+                if (dungeonSvc == null) { dungeonSvc = new DungeonService(); }
+                return dungeonSvc;
             }
         }
 

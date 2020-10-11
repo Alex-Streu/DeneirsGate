@@ -10,6 +10,10 @@
         margin: 0.25em;
     }
 
+    &.no-margin > * {
+        margin: 0em !important;
+    }
+
     > .need-space {
         margin: 1em;
     }

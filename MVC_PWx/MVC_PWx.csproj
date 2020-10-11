@@ -186,6 +186,7 @@
     <Compile Include="Controllers\DeneirsController.cs" />
     <Compile Include="Controllers\CharacterController.cs" />
     <Compile Include="Controllers\DungeonController.cs" />
+    <Compile Include="Controllers\EventController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\MagicItemController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
@@ -241,7 +242,37 @@
     <Content Include="Content\img\campaigns\campaign-default.png" />
     <Content Include="Content\img\campaigns\player-info-background.png" />
     <Content Include="Content\img\checkbox-gray.png" />
+    <Content Include="Content\img\dungeon tiles\1\1_1_down.png" />
+    <Content Include="Content\img\dungeon tiles\1\1_2_left.png" />
+    <Content Include="Content\img\dungeon tiles\1\1_3_up.png" />
+    <Content Include="Content\img\dungeon tiles\1\1_4_right.png" />
+    <Content Include="Content\img\dungeon tiles\1\1_room_1_down.png" />
+    <Content Include="Content\img\dungeon tiles\1\1_room_2_left.png" />
+    <Content Include="Content\img\dungeon tiles\1\1_room_3_up.png" />
+    <Content Include="Content\img\dungeon tiles\1\1_room_4_right.png" />
+    <Content Include="Content\img\dungeon tiles\2\2_a_room_left_up.png" />
+    <Content Include="Content\img\dungeon tiles\2\2_b_room_right_up.png" />
+    <Content Include="Content\img\dungeon tiles\2\2_c_room_right_down.png" />
+    <Content Include="Content\img\dungeon tiles\2\2_1_horizontal.png" />
+    <Content Include="Content\img\dungeon tiles\2\2_2a_vertical.png" />
+    <Content Include="Content\img\dungeon tiles\2\2_3_left_down.png" />
+    <Content Include="Content\img\dungeon tiles\2\2_4_left_up.png" />
+    <Content Include="Content\img\dungeon tiles\2\2_5_right_up.png" />
+    <Content Include="Content\img\dungeon tiles\2\2_6_right_down.png" />
+    <Content Include="Content\img\dungeon tiles\2\2_2b_room_horizontal.png" />
+    <Content Include="Content\img\dungeon tiles\2\2_2c_room_vertical.png" />
+    <Content Include="Content\img\dungeon tiles\2\2_9_room_left_down.png" />
+    <Content Include="Content\img\dungeon tiles\3\3_1_down.png" />
+    <Content Include="Content\img\dungeon tiles\3\3_2_left.png" />
+    <Content Include="Content\img\dungeon tiles\3\3_3_up.png" />
+    <Content Include="Content\img\dungeon tiles\3\3_4_right.png" />
+    <Content Include="Content\img\dungeon tiles\3\3_5_room_down.png" />
+    <Content Include="Content\img\dungeon tiles\3\3_6_room_left.png" />
+    <Content Include="Content\img\dungeon tiles\3\3_7_room_up.png" />
+    <Content Include="Content\img\dungeon tiles\3\3_8_room_right.png" />
     <Content Include="Content\img\dungeon tiles\4-way.png" />
+    <Content Include="Content\img\dungeon tiles\4\4_1.png" />
+    <Content Include="Content\img\dungeon tiles\4\4_2_room.png" />
     <Content Include="Content\img\dungeon tiles\bottom-left.png" />
     <Content Include="Content\img\dungeon tiles\bottom-right.png" />
     <Content Include="Content\img\dungeon tiles\bottom-t.png" />
@@ -445,6 +476,7 @@
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
     <Content Include="Content\custom\pages\dungeon-creator.scss" />
+    <Content Include="Content\custom\lists.scss" />
     <None Include="gulpfile.js" />
     <Content Include="Scripts\bootstrap-select.min.js" />
     <Content Include="Scripts\bootstrap.js" />
@@ -554,6 +586,12 @@
     <Content Include="Views\MagicItem\Index.cshtml" />
     <Content Include="Views\MagicItem\Edit.cshtml" />
     <Content Include="Views\Dungeon\Edit.cshtml" />
+    <Content Include="Views\Event\_Encounter.cshtml" />
+    <Content Include="Views\Dungeon\Traps.cshtml" />
+    <Content Include="Views\Dungeon\EditTrap.cshtml" />
+    <Content Include="Views\Dungeon\Index.cshtml" />
+    <Content Include="Views\Shared\_Empty.cshtml" />
+    <Content Include="Views\Dungeon\Print.cshtml" />
     <None Include="Web.DEV.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

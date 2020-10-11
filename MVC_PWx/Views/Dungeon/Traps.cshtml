@@ -1,0 +1,91 @@
+﻿@using DeneirsGate.Services
+@using CustomHtmlHelpers
+@model List<TrapViewModel>
+
+@{
+    ViewBag.Title = "Traps";
+    ViewBag.MenuOption = "Trap";
+}
+
+<style type="text/css">
+    .name {
+        margin-top: 1em;
+        text-align: center;
+        font-size: large;
+        text-wrap: normal;
+        max-width: 85px;
+    }
+</style>
+
+<div id="TrapIndexPage">
+    <h2>Traps</h2>
+    <br />
+    <div class="flexbox-container justify-between">
+        @HtmlHelpers.RenderFancyTextbox("lg long", "Search", null, "", "Search Traps")
+        <a class="btn btn-default" href="@Url.Action("CreateTrap")">Create Trap</a>
+    </div>
+    <table class="table table-bordered table-striped">
+        <tbody>
+            <tr>
+                <th style="width:30%">Name</th>
+                <th style="width:40%">Description</th>
+                <th style="width:10%">Nature</th>
+                <th style="width:10%">Type</th>
+                <th style="width:10%" class="text-center">Actions</th>
+            </tr>
+            @foreach (var item in Model)
+            {
+            <tr id="@item.TrapKey" class="table-trap" data-name="@item.Name">
+                <td>@item.Name</td>
+                <td>@HtmlHelpers.LimitString(item.Description)</td>
+                <td class="text-center">@item.Nature</td>
+                <td class="text-center">@item.Type</td>
+                <td class="flexbox-container justify-center content-center">
+                    <a href="@Url.Action("EditTrap", new { id = item.TrapKey })">
+                        <div class="btn btn-sm btn-primary">
+                            <i class="fa fa-pencil"></i>
+                        </div>
+                    </a>
+                    <a onclick="promptDelete(`deleteItem('@item.TrapKey')`)">
+                        <div class="btn btn-sm btn-danger">
+                            <i class="fa fa-trash"></i>
+                        </div>
+                    </a>
+                </td>
+            </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@section scripts {
+    <script type="text/javascript">
+        var deleteAction = '@Url.Action("DeleteTrap")';
+
+        $('#Search').keyup(function () {
+            var search = $(this).val().toLowerCase();
+            $('.table-trap').each(function () {
+                var name = $(this).data('name').toLowerCase();
+                if (name.indexOf(search) > -1) {
+                    $(this).show();
+                }
+                else {
+                    $(this).hide();
+                }
+            })
+        })
+
+        function deleteItem(id) {
+            var postData = { id: id };
+
+            ajaxPost(postData, deleteAction, function (data) {
+                if (data.success) {
+                    Notiflix.NotifyContent.Success(data.message);
+                    $(`#${id}`).remove();
+                } else {
+                    Notiflix.NotifyContent.Failure(data.message);
+                }
+            })
+        }
+    </script>
+}

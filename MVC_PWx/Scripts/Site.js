@@ -14,6 +14,64 @@ function promptDelete(callback) {
     $('#deleteContentModal').modal('show');
 }
 
+function loadEncounter(id) {
+    if (id == undefined) { id = null; }
+
+    if (!isEmpty(id) && id.IsEdited == true) {
+        $("#encounterBody").load(`/Event/_EncounterPost`, id,
+            function (response, status, xhr) {
+                $('#encounterModal').modal('show');
+            }
+        );
+    }
+    else {
+        $("#encounterBody").load(`/Event/_Encounter?id=${id}`,
+            function (response, status, xhr) {
+                $('#encounterModal').modal('show');
+            }
+        );
+    }
+}
+
+function ajaxPost(postData, url, successFunction, errorFunction) {
+    if (errorFunction == null) { errorFunction = defaultErrorFunction; }
+
+    $.ajax({
+        type: "POST",
+        url: url,
+        data: JSON.stringify(postData),
+        dataType: 'json',
+        contentType: 'application/json',
+        success: successFunction,
+        error: errorFunction
+    })
+}
+
+function defaultErrorFunction(error) {
+    Notiflix.NotifyContent.Failure(error.responseText);
+}
+
+jQuery.fn.removeClassExcept = function (val) {
+    return this.each(function () {
+        $(this).removeClass().addClass(val);
+    });
+};
+
+/**
+ * Returns a number whose value is limited to the given range.
+ *
+ * Example: limit the output of this computation to between 0 and 255
+ * (x * 255).clamp(0, 255)
+ *
+ * @param {Number} min The lower boundary of the output range
+ * @param {Number} max The upper boundary of the output range
+ * @returns A number in the range [min, max]
+ * @type Number
+ */
+Number.prototype.clamp = function (min, max) {
+    return Math.min(Math.max(this, min), max);
+};
+
 
 /* FANCY ITEMS */
 $('.fancy-textarea textarea').focus(function () {
@@ -32,7 +90,7 @@ $('.fancy-dropdown select').blur(function () {
     $(this).parent().find('label').removeClass('active');
 })
 
-$('.fancy-tab-item').click(function () {
+$('body').on('click', '.fancy-tab-item', function () {
     var tab = $(this).data('tab');
     var panes = $(this).parent().data('panes');
 

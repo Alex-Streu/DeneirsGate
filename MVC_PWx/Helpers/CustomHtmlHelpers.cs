@@ -18,6 +18,13 @@ namespace CustomHtmlHelpers
             }
         }
 
+        private static string EscapeText(string value)
+        {
+            if (value.IsNullOrEmpty()) { return value; }
+
+            return value.Replace("'", "&#39;");
+        }
+
         public static SelectList RaceDropdown(Guid raceKey)
         {
             var list = new SelectList(PresetSvc.GetRaces(), "RaceKey", "Name", raceKey);
@@ -95,7 +102,7 @@ namespace CustomHtmlHelpers
         public static MvcHtmlString RenderFancyPassword(string size, string id, int? limit, string value, string label, MvcHtmlString extra = null)
         {
             var str = $@"<div class='fancy-textbox {size ?? ""}'>
-                            <input type='password' {(!id.IsNullOrEmpty() ? $"id='{id}' name='{id}'" : "")} autocomplete='screw-autocomplete' required='' {(limit == null ? "" : $"maxlength='{limit}'")} value='{value}' />     
+                            <input type='password' {(!id.IsNullOrEmpty() ? $"id='{id}' name='{id}'" : "")} autocomplete='screw-autocomplete' required='' {(limit == null ? "" : $"maxlength='{limit}'")} value='{EscapeText(value)}' />     
                             {(String.IsNullOrEmpty(label) ? "" : $"<label for='{id}'>{label}</label>")}
                             {(extra == null ? "" : extra.ToString())}
                         </div>";
@@ -106,7 +113,7 @@ namespace CustomHtmlHelpers
         public static MvcHtmlString RenderFancyTextbox(string size, string id, int? limit, string value, string label, MvcHtmlString extra = null)
         {
             var str = $@"<div class='fancy-textbox {size ?? ""}'>
-                            <input type='text' {(!id.IsNullOrEmpty() ? $"id='{id}' name='{id}'" : "")} autocomplete='screw-autocomplete' required='' {(limit == null ? "" : $"maxlength='{limit}'")} value='{value}' />     
+                            <input type='text' {(!id.IsNullOrEmpty() ? $"id='{id}' name='{id}'" : "")} autocomplete='screw-autocomplete' required='' {(limit == null ? "" : $"maxlength='{limit}'")} value='{EscapeText(value)}' />     
                             {(String.IsNullOrEmpty(label) ? "" : $"<label for='{id}'>{label}</label>")}
                             {(extra == null ? "" : extra.ToString())}
                         </div>";

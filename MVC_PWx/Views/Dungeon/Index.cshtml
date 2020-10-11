@@ -1,0 +1,89 @@
+﻿@using DeneirsGate.Services
+@using CustomHtmlHelpers
+@model List<DungeonListViewModel>
+
+@{
+    ViewBag.Title = "Dungeons";
+    ViewBag.MenuOption = "Dungeon";
+}
+
+<style type="text/css">
+    .name {
+        margin-top: 1em;
+        text-align: center;
+        font-size: large;
+        text-wrap: normal;
+        max-width: 85px;
+    }
+</style>
+
+<div id="DungeonIndexPage">
+    <h2>Dungeons</h2>
+    <br />
+    <div class="flexbox-container justify-between">
+        @HtmlHelpers.RenderFancyTextbox("lg long", "Search", null, "", "Search Dungeons")
+        <a class="btn btn-default" href="@Url.Action("Create")">Create Dungeon</a>
+    </div>
+    <table class="table table-bordered table-striped">
+        <tbody>
+            <tr>
+                <th style="width:30%">Name</th>
+                <th style="width:50%">Description</th>
+                <th style="width:10%">Size</th>
+                <th style="width:10%" class="text-center">Actions</th>
+            </tr>
+            @foreach (var item in Model)
+            {
+                <tr id="@item.DungeonKey" class="table-dungeon" data-name="@item.Name">
+                    <td>@item.Name</td>
+                    <td>@HtmlHelpers.LimitString(item.Description)</td>
+                    <td class="text-center">@item.Rows x @item.Columns</td>
+                    <td class="flexbox-container justify-center content-center">
+                        <a href="@Url.Action("Edit", new { id = item.DungeonKey })">
+                            <div class="btn btn-sm btn-primary">
+                                <i class="fa fa-pencil"></i>
+                            </div>
+                        </a>
+                        <a onclick="promptDelete(`deleteItem('@item.DungeonKey')`)">
+                            <div class="btn btn-sm btn-danger">
+                                <i class="fa fa-trash"></i>
+                            </div>
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@section scripts {
+    <script type="text/javascript">
+        var deleteAction = '@Url.Action("Delete")';
+
+        $('#Search').keyup(function () {
+            var search = $(this).val().toLowerCase();
+            $('.table-dungeon').each(function () {
+                var name = $(this).data('name').toLowerCase();
+                if (name.indexOf(search) > -1) {
+                    $(this).show();
+                }
+                else {
+                    $(this).hide();
+                }
+            })
+        })
+
+        function deleteItem(id) {
+            var postData = { id: id };
+
+            ajaxPost(postData, deleteAction, function (data) {
+                if (data.success) {
+                    Notiflix.NotifyContent.Success(data.message);
+                    $(`#${id}`).remove();
+                } else {
+                    Notiflix.NotifyContent.Failure(data.message);
+                }
+            })
+        }
+    </script>
+}

@@ -1,14 +1,20 @@
 ﻿$red: #ce0606;
 $redHover: #a90404;
+$redBorder: #b40303;
 $lightRed: #ed5565;
 $lightGray: #a0a0a0;
 $gray: #797979;
+$darkGray: #484848;
 $red80: rgba(206, 6, 6, 0.80);
 $red60: rgba(206, 6, 6, 0.60);
 $white: #fcfcfc;
 $black40: rgba(0, 0, 0, 0.40);
 $transparent: rgba(0, 0, 0, 0.00);
 $pending: #dbe648;
+$green: #08c23f;
+$greenHover: #1d9007;
+$greenBorder: #029700;
+$orange: #b94706;
 
 .red {
     color: $red;
@@ -16,4 +22,9 @@ $pending: #dbe648;
 
 .background-red {
     background-color: $red;
+}
+
+h2 {
+    font-weight: bold;
+    color: $red;
 }

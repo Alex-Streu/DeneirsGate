@@ -179,5 +179,38 @@ namespace DeneirsGate.Services
 
             return types;
         }
+
+        public List<MagicItemAttunementViewModel> GetAttunements()
+        {
+            var attunements = new List<MagicItemAttunementViewModel>();
+
+            attunements.Add(new MagicItemAttunementViewModel
+            {
+                Attunement = true,
+                Name = "Requires"
+            });
+
+            attunements.Add(new MagicItemAttunementViewModel
+            {
+                Attunement = false,
+                Name = "Doesn't Require"
+            });
+
+            return attunements;
+        }
+
+        public void GetEncounterItems(Guid userId, EncounterViewModel model)
+        {
+            using (DBReset())
+            {
+                var items = new List<MagicItemViewModel>();
+                foreach (var item in model.Items)
+                {
+                    items.Add(GetMagicItem(userId, item.ItemKey));
+                }
+
+                model.Items = items;
+            }
+        }
     }
 }

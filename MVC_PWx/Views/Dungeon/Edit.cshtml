@@ -1,15 +1,22 @@
 ﻿@using DeneirsGate.Services
-@using CustomHtmlHelpers\
+@using CustomHtmlHelpers
+@using System.Web.Script.Serialization
+@model DungeonViewModel
 
 @{
     ViewBag.Title = "Edit Dungeon";
+    ViewBag.MenuOption = "Dungeon";
 }
 
 <style type="text/css">
-    .edit-dungeon-tile img {
-        width: 100%;
-        height: 100%;
+    .edit-dungeon-tile {
+        position: relative;
     }
+
+        .edit-dungeon-tile img {
+            width: 100%;
+            height: 100%;
+        }
 
     .tile-option {
         margin: 10px;
@@ -22,28 +29,92 @@
             cursor: pointer;
             border: 3px solid #ce0606;
         }
+
+    .tile-options {
+        position: absolute;
+        top: 2px;
+        left: 2px;
+    }
+
+    #Description {
+        min-height: 100px;
+        resize: vertical;
+        margin-bottom: 1em;
+    }
+
+    #trap_Description {
+        resize: vertical;
+    }
+
+    #tileDescription {
+        min-height: 200px;
+        resize: vertical;
+    }
+
+    .pad-right {
+        padding-right: 5px;
+    }
 </style>
 
+
+
 <h2>Edit Dungeon</h2>
+<br />
 <div class="flexbox-container">
-    <div class="btn btn-default" onclick="addColumn()">Add Column</div>
-    <div class="btn btn-default" onclick="addRow()">Add Row</div>
+    <div id="dungeon_DetailsContainer" style="width:30%;overflow-y:auto;max-height:50em;padding:1em">
+        <div class="flexbox-container full-width">
+            @HtmlHelpers.RenderFancyTextbox("lg full", "Name", 150, Model.Name, "Name")
+        </div>
+        <div class="flexbox-container full-width">
+            @HtmlHelpers.RenderFancyTextarea("md full", "Description", null, Model.Description, "Description")
+        </div>
+        <div id="roomInfoContainer" class="flexbox-container full-width">
+
+        </div>
+    </div>
+    <div style="width:65%;margin-left:2em;padding:1em">
+        <div class="flexbox-container">
+            @HtmlHelpers.RenderFancyNumberbox(1, 50, "lg short center force-num", "columns", Model.Columns.ToString(), "Width")
+            <span>X</span>
+            @HtmlHelpers.RenderFancyNumberbox(1, 50, "lg short center force-num", "rows", Model.Rows.ToString(), "Height")
+            <div class="btn btn-default" onclick="updateTableSize()">Update Size</div>
+        </div>
+        <div style="overflow-x:auto;overflow-y:auto;max-height:50em">
+            <table class="dungeon-tile-container">
+                @for (var i = 0; i < Model.Rows; i++)
+                {
+                    <tr>
+                        @for (var j = 0; j < Model.Columns; j++)
+                        {
+                            <td>
+                                @{ var tile = Model.Tiles.FirstOrDefault(x => x.Row == i && x.Column == j); }
+                                @if (tile != null)
+                                {
+                                    <div class="edit-dungeon-tile tile-filled" data-row="@i" data-column="@j" data-index="@tile.Index" data-data="@(new JavaScriptSerializer().Serialize(tile))">
+                                        <img src="@tile.Image" />
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="edit-dungeon-tile" data-row="@i" data-column="@j">
+                                    </div>
+                                }
+                            </td>
+                        }
+                    </tr>
+                }
+            </table>
+        </div>
+    </div>
 </div>
 
-<table class="dungeon-tile-container" style="overflow-x: scroll">
-    @for (var i = 0; i < 5; i++)
-    {
-        <tr>
-            @for (var j = 0; j < 5; j++)
-            {
-                <td>
-                    <div class="edit-dungeon-tile">
-                    </div>
-                </td>
-            }
-        </tr>
-    }
-</table>
+<div class="flexbox-container no-padding justify-between">
+    <div class="submit-footer">
+        <div class="btn btn-lg btn-default save-button" onclick="save()">Save</div>
+        <div id="delete" class="btn btn-lg btn-danger save-button" onclick="promptDelete('deleteItem()')">Delete</div>
+    </div>
+    <a id="print" class="btn btn-lg btn-warning save-button" target="_blank" href="@Url.Action("Print", new { id = Model.DungeonKey })"><i class="fa fa-print"></i>&nbsp;Print</a>
+</div>
 
 <div id="tileModal" class="modal fade" role="dialog">
     <div class="modal-dialog">
@@ -54,43 +125,301 @@
                 <h4 class="modal-title">Select Tile Path</h4>
             </div>
             <div class="modal-body">
-                @foreach (var tile in ViewBag.TileImages)
-                {
-                    <img class="img-xs tile-option" src="@tile" />
-                }
+                <div class="fancy-tabs" data-panes="tile-panes">
+                    <div class="fancy-tab-item active" data-tab="one-path-pane">One Path</div>
+                    <div class="fancy-tab-item" data-tab="two-path-pane">Two Path</div>
+                    <div class="fancy-tab-item" data-tab="three-path-pane">Three Path</div>
+                    <div class="fancy-tab-item" data-tab="four-path-pane">Four Path</div>
+                </div>
+                <div id="tile-panes">
+                    <div id="one-path-pane" class="fancy-tab-pane slide-right active">
+                        <div class="flexbox-container justify-center">
+                            @foreach (var tile in ViewBag.TileImages1)
+{
+                                <img class="img-xs tile-option" src="@tile" />
+                            }
+                        </div>
+                    </div>
+                    <div id="two-path-pane" class="fancy-tab-pane slide-right">
+                        <div class="flexbox-container justify-center">
+                            @foreach (var tile in ViewBag.TileImages2)
+{
+                                <img class="img-xs tile-option" src="@tile" />
+                            }
+                        </div>
+                    </div>
+                    <div id="three-path-pane" class="fancy-tab-pane slide-right">
+                        <div class="flexbox-container justify-center">
+                            @foreach (var tile in ViewBag.TileImages3)
+{
+                                <img class="img-xs tile-option" src="@tile" />
+                            }
+                        </div>
+                    </div>
+                    <div id="four-path-pane" class="fancy-tab-pane slide-right">
+                        <div class="flexbox-container justify-center">
+                            @foreach (var tile in ViewBag.TileImages4)
+{
+                                <img class="img-xs tile-option" src="@tile" />
+                            }
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="deleteTier()">Delete</button>
-                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
             </div>
         </div>
 
     </div>
 </div>
 
+<div id="descriptionModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Tile Description</h4>
+            </div>
+            <div class="modal-body">
+                @HtmlHelpers.RenderFancyTextarea("md full", "tileDescription", null, "", null)
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" onclick="saveDescription()">Save</button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div id="trapsModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Set Traps</h4>
+            </div>
+            <div class="modal-body">
+                <div class="flexbox-container fill">
+                    <button style="margin:0.5em 1em" class="btn btn-primary" type="button" data-toggle="collapse" data-target="#enc_FilterTraps" aria-expanded="false" aria-controls="collapseExample">
+                        Filter Traps
+                    </button>
+                </div>
+                <div id="enc_FilterTraps" class="box-area collapse" style="max-height:35em;overflow-y:auto">
+                    <div class="flexbox-container justify-between">
+                        <div style="width: 70%">
+                            @HtmlHelpers.RenderFancyTextbox("full", "trap_NameSearch", 50, null, "Name")
+                        </div>
+                        <button style="margin-top:1em" class="btn btn-sm btn-default" onclick="suggestTrap()">Search Traps</button>
+                    </div>
+                    <div class="flexbox-container fill">
+                        <div class="fancy-dropdown">
+                            @Html.DropDownList("trap_NatureSearch", (SelectList)ViewBag.TrapNatures, "Any Nature", new { @class = "form-control responsive-text", style = "--size:0.75vw" })
+                        </div>
+                        <div class="fancy-dropdown">
+                            @Html.DropDownList("trap_TypeSearch", (SelectList)ViewBag.TrapTypes, "Any Type", new { @class = "form-control responsive-text", style = "--size:0.75vw" })
+                        </div>
+                    </div>
+                    <hr />
+                    <div id="trap_Results">
+                    </div>
+                </div>
+
+                <div class="flexbox-container justify-between">
+                    <div style="width: 70%">
+                        @HtmlHelpers.RenderFancyTextbox("full", "trap_Name", 50, null, "Name")
+                    </div>
+                    <button style="margin-top:1em" class="btn btn-sm btn-default" onclick="generateTrapStats()">Generate Stats</button>
+                </div>
+                <div class="flexbox-container fill">
+                    <div class="fancy-dropdown">
+                        @Html.DropDownList("trap_Nature", (SelectList)ViewBag.TrapNatures, null, new { @class = "form-control responsive-text", style = "--size:0.75vw" })
+                    </div>
+                    <div class="fancy-dropdown">
+                        @Html.DropDownList("trap_Type", (SelectList)ViewBag.TrapTypes, null, new { @class = "form-control responsive-text", style = "--size:0.75vw" })
+                    </div>
+                    @HtmlHelpers.RenderFancyNumberbox(0, 50, "md", "trap_SaveDC", "", "DC")
+                    @HtmlHelpers.RenderFancyNumberbox(0, 50, "md", "trap_AttackBonus", "", "ATK")
+                    @HtmlHelpers.RenderFancyTextbox("md", "trap_Damage", 10, "", "Damage")
+                </div>
+                <div class="flexbox-container full-width">
+                    @HtmlHelpers.RenderFancyTextarea("md full", "trap_Description", null, "", "Description")
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" onclick="saveTrap()">Save</button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@*/* TEMPLATES */*@
+<div id="optionsTemplate">
+    <div class="tile-options" style="display:none">
+        <div class="btn-group btn-group-sm">
+            <a class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown" href="#">
+                <i class="fa fa-pencil pad-right"></i>
+                <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu">
+                <!-- dropdown menu links -->
+                <li><a href="#" class="tile-description"><i class="fa fa-font pad-right"></i>Description</a></li>
+                <li><a href="#" class="tile-traps"><i class="fa fa-bomb pad-right"></i>Trap</a></li>
+                <li><a href="#" class="tile-encounter"><i class="fa fa-optin-monster pad-right"></i>Encounter</a></li>
+                <li class="divider"></li>
+                <li><a href="#" class="tile-delete red"><i class="fa fa-trash pad-right"></i>Delete</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="tile-label" style="display:none"></div>
+</div>
+
+<div id="trapItemTemplate" style="display:none">
+    <div class="list-result flexbox-container justify-between items-center trap-item">
+        <div class="information">
+            <div class="flexbox-container">
+                <label class="title trap-name">[[name]]</label>
+            </div>
+            <div class="flexbox-container">
+                <label class="detail trap-nature">[[nature]]</label>
+                <label class="detail trap-type">[[type]]</label>
+            </div>
+            <div class="flexbox-container">
+                <p class="body trap-description">[[description]]</p>
+            </div>
+        </div>
+        <div class="btn-container">
+            <div class="btn btn-sm btn-default" onclick="selectTrap(this)"><i class="fa fa-plus"></i></div>
+        </div>
+    </div>
+</div>
+
+<div id="roomInfoTemplate">
+    <div data-index="[[index]]" class="full-width room-info-item" style="padding-bottom:2em">
+        <label class="text-x-large red room-info-label"></label>
+        <div class="room-info room-info-description">
+            <p class="text-md"></p>
+        </div>
+        <div class="room-info room-info-trap">
+            <label class="room-trap-name text-bold text-large"></label>
+            <div class="flexbox-container no-padding">
+                <label class="room-trap-nature text-bold"></label>
+                <label class="room-trap-type text-bold"></label>
+            </div>
+            <div class="flexbox-container no-padding">
+                <label>Save DC: <span class="room-trap-savedc text-bold"></span></label>
+                <label>Attack Bonus: +<span class="room-trap-attackbonus text-bold"></span></label>
+                <label>Damage: <span class="room-trap-damage text-bold"></span></label>
+            </div>
+            <p class="room-trap-description"></p>
+        </div>
+        <div class="room-info room-info-encounter">
+            <label class="room-encounter-name text-large text-bold"></label>
+            <p class="room-encounter-description"></p>
+        </div>
+    </div>
+</div>
+
 @section scripts {
     <script type="text/javascript">
+        var generateTrapStatsAction = '@Url.Action("GenerateTrapStats")';
+        var suggestTrapAction = '@Url.Action("SuggestTrap")';
+        var updateAction = '@Url.Action("Update")';
+        var deleteAction = '@Url.Action("Delete")';
+        var indexAction = '@Url.Action("/")';
+
         var numRows = 5;
         var numCols = 5;
         var selectedTile = null;
+        var tileData = [];
+        var maxTileNumber = @(Model.Tiles.Select(x => x.Index).DefaultIfEmpty(0).Max() ?? 0);
 
-        function addRow() {
-            var row = '<tr>';
-            for (var i = 0; i < numCols; i++) {
-                row += '<td><div class="edit-dungeon-tile"></div></td>';
+        var storeEncounter = {};
+
+        $(document).ready(function () {
+            if ('@ViewBag.IsNew' == 'True') { $('#delete').hide(); $('#print').hide(); }
+
+            numRows = $('#rows').val();
+            numCols = $('#columns').val();
+
+            $('.tile-filled').each(function () {
+                $(this).append($('#optionsTemplate').html());
+                if (!isNaN(parseInt($(this).data('index')))) {
+                    selectedTile = $(this);
+                    updateTileInfo();
+                }
+            })
+            $('#roomInfoContainer').each(function () {
+                var $this = $(this);
+                $this.append($this.find('.room-info-item').get().sort(function (a, b) {
+                    return $(a).data('index') - $(b).data('index');
+                }));
+            });
+            $('.dropdown-toggle').dropdown();
+        })
+
+
+        /********************** TABLE SIZE *********************************/
+        function updateTableSize() {
+            var rows = parseInt($('#rows').val());
+            var cols = parseInt($('#columns').val());
+
+            //Columns
+            if (numCols < cols) {
+                addColumn(cols - numCols);
             }
-            row += '</tr>';
-            $('table').append(row);
-            numRows++;
+            else {
+                for (var i = 0; i < numCols - cols; i++) {
+                    $('tr').each(function () {
+                        $(this).find('td').last().remove();
+                    })
+                }
+            }
+            numCols = cols;
+
+            //Rows
+            if (numRows < rows) {
+                addRow(rows - numRows);
+            }
+            else {
+                for (var i = 0; i < numRows - rows; i++) {
+                    $('tr').last().remove();
+                }
+            }
+            numRows = rows;
         }
 
-        function addColumn() {
-            var column = '<td><div class="edit-dungeon-tile"></div></td>';
-            $('tr').append(column);
-            numCols++;
+        function addRow(total) {
+            for (var i = 0; i < total; i++) {
+                var row = '<tr>';
+                for (var j = 0; j < numCols; j++) {
+                    row += `<td><div class="edit-dungeon-tile" data-row="${parseInt(numRows) + parseInt(i)}" data-column="${j}"></div></td>`;
+                }
+                row += '</tr>';
+                $('table').append(row);
+            }
         }
 
-        $('.edit-dungeon-tile').click(function () {
+        function addColumn(total) {
+            for (var i = 0; i < total; i++) {
+                var j = 0;
+                $('tr').each(function () {
+                    $(this).append(`<td><div class="edit-dungeon-tile" data-row="${j}" data-column="${parseInt(numCols) + parseInt(i)}"></div></td>`)
+                    j++;
+                })
+            }
+        }
+
+
+
+
+        /************************* TILE FUNCTIONS ******************************/
+        $('body').on('click', '.edit-dungeon-tile', function () {
             selectedTile = this;
             $('#tileModal').modal('show');
         })
@@ -102,7 +431,347 @@
                 img = $(selectedTile).find('img');
             }
             img.attr('src', $(this).attr('src'));
+
+            $(selectedTile).append($('#optionsTemplate').html());
+            $('.dropdown-toggle').dropdown();
+
+            $(selectedTile).addClass('tile-filled');
+
             $('#tileModal').modal('hide');
         })
+
+
+
+        /************************* TILE MENU OPTIONS ******************************/
+        $('body').on('click', '.tile-options', function (e) {
+            e.stopPropagation();
+        });
+
+        $('body').on('mouseenter', '.tile-filled', function () {
+            $(this).find('.tile-options').show();
+        })
+
+        $('body').on('mouseleave', '.tile-filled', function () {
+            $(this).find('.tile-options').hide();
+        })
+
+
+        // Clear functionality
+        $('body').on('click', '.tile-delete', function () {
+            selectedTile = $(this).closest('.edit-dungeon-tile');
+            promptDelete(`clearTile()`)
+        })
+
+        function clearTile() {
+            updateTileInfo(true);
+
+            $(selectedTile).removeClass('tile-filled').removeData('data');
+            $(selectedTile).find('img').remove();
+            $(selectedTile).find('.tile-options').remove();
+            $(selectedTile).find('.tile-label').remove();
+        }
+
+        // Description functionality
+        $('body').on('click', '.tile-description', function () {
+            selectedTile = $(this).closest('.edit-dungeon-tile');
+
+            var data = $(selectedTile).data('data');
+            if (isEmpty(data)) { data = {}; }
+
+            $('#tileDescription').val(data.Description);
+
+            $('#descriptionModal').modal('show');
+        })
+
+        function saveDescription() {
+            var data = $(selectedTile).data('data');
+            if (isEmpty(data)) { data = {}; }
+
+            data.Description = $('#tileDescription').val();
+            $(selectedTile).data('data', data);
+
+            updateTileInfo();
+        }
+
+        // Encounter functionality
+        $('body').on('click', '.tile-encounter', function () {
+            selectedTile = $(this).closest('.edit-dungeon-tile');
+
+            var data = $(selectedTile).data('data');
+            if (isEmpty(data)) { data = {}; }
+
+            if (isEmpty(data.Encounter)) {
+                loadEncounter();
+            }
+            else if (data.Encounter.IsEdited == true) {
+                loadEncounter(data.Encounter);
+            }
+            else {
+                loadEncounter(data.Encounter.EncounterKey);
+            }
+        })
+
+        function returnEncounter(encounter) {
+            var data = $(selectedTile).data('data');
+            if (isEmpty(data)) { data = {}; }
+
+            data.Encounter = encounter;
+            $(selectedTile).data('data', data);
+
+            updateTileInfo();
+        }
+
+        // Trap functionality
+        $('body').on('click', '.tile-traps', function () {
+            selectedTile = $(this).closest('.edit-dungeon-tile');
+
+            var data = $(selectedTile).data('data');
+            if (isEmpty(data)) { data = {}; }
+
+            if (!isEmpty(data.Trap)) {
+                $('#trap_Name').val(data.Trap.Name);
+                $('#trap_Description').val(data.Trap.Description);
+                $('#trap_Nature').val(data.Trap.NatureKey);
+                $('#trap_Type').val(data.Trap.TypeKey);
+                $('#trap_SaveDC').val(data.Trap.SaveDC);
+                $('#trap_AttackBonus').val(data.Trap.AttackBonus);
+                $('#trap_Damage').val(data.Trap.Damage);
+            }
+
+            $('#trapsModal').modal('show');
+        })
+
+        function generateTrapStats() {
+            var postData = {
+                Name: $('#trap_Name').val(),
+                NatureKey: $('#trap_Nature').val(),
+                TypeKey: $('#trap_Type').val()
+            }
+
+            ajaxPost(postData, generateTrapStatsAction, function (data) {
+                if (data.success) {
+                    $('#trap_SaveDC').val(data.data.SaveDC);
+                    $('#trap_AttackBonus').val(data.data.AttackBonus);
+                    $('#trap_Damage').val(data.data.Damage);
+                }
+                else {
+                    Notiflix.NotifyContent.Failure(data.message);
+                }
+            })
+        }
+
+        function suggestTrap() {
+            var postData = {
+                Name: $('#trap_NameSearch').val(),
+                TypeKey: $('#trap_TypeSearch').val(),
+                NatureKey: $('#trap_NatureSearch').val()
+            }
+
+            ajaxPost(postData, suggestTrapAction, function (data) {
+                if (data.success) {
+                    var trap = data.data;
+
+                    $('#trap_Results').html('');
+
+                    var html = $('#trapItemTemplate').html();
+                    html = html.replace('[[name]]', trap.Name)
+                        .replace('[[description]]', trap.Description)
+                        .replace('[[type]]', trap.Type)
+                        .replace('[[nature]]', trap.Nature);
+
+                    $('#trap_Results').append(html);
+                    var trapItem = $('#trap_Results').find('.trap-item');
+                    $(trapItem).data('data', trap);
+                } else {
+                    Notiflix.NotifyContent.Failure(data.message);
+                }
+            })
+        }
+
+        function selectTrap(element) {
+            var trap = $(element).closest('.trap-item').data('data');
+
+            $('#trap_Name').val(trap.Name);
+            $('#trap_Description').val(trap.Description);
+            $('#trap_Nature').val(trap.NatureKey);
+            $('#trap_Type').val(trap.TypeKey);
+        }
+
+        function saveTrap() {
+            if (isEmpty($('#trap_Name').val())) {
+                Notiflix.NotifyContent.Failure('Name is required!');
+                return;
+            }
+
+            var data = $(selectedTile).data('data');
+            if (isEmpty(data)) { data = {}; }
+
+            data.Trap = {
+                Name: $('#trap_Name').val(),
+                Description: $('#trap_Description').val(),
+                Nature: $('#trap_Nature option:selected').text(),
+                Type: $('#trap_Type option:selected').text(),
+                NatureKey: $('#trap_Nature').val(),
+                TypeKey: $('#trap_Type').val(),
+                SaveDC: $('#trap_SaveDC').val(),
+                AttackBonus: $('#trap_AttackBonus').val(),
+                Damage: $('#trap_Damage').val()
+            };
+
+            $(selectedTile).data('data', data);
+
+
+            $('#trap_Name').val('');
+            $('#trap_Description').val('');
+            $('#trap_SaveDC').val('');
+            $('#trap_AttackBonus').val('');
+            $('#trap_Damage').val('');
+
+            $('#trap_Results').html('');
+
+            updateTileInfo();
+        }
+
+
+        // Update info functionality
+        function updateTileInfo(remove) {
+            if (isEmpty(remove)) { remove = false; }
+
+            var data = $(selectedTile).data('data');
+            if (isEmpty(data)) { data = {}; }
+
+            var label = $(selectedTile).find('.tile-label');
+            
+            if (!remove && !isEmpty(data)) {
+                if (isEmpty(data.Index)) {
+                    maxTileNumber++;
+                    data.Index = maxTileNumber;
+                }
+
+                if ($(label).is(':hidden')) {
+                    $(label).text(data.Index);
+                    $(label).show();
+                }
+                
+                if ($(`.room-info-item[data-index="${data.Index}"]`).length <= 0) {
+                    var html = $('#roomInfoTemplate').html().replace('[[index]]', data.Index);
+                    $('#roomInfoContainer').append(html);
+                }
+
+                var index = data.Index;
+                var room = $(`.room-info-item[data-index="${index}"]`);
+                $(room).find('.room-info-label').text(index);
+
+                // Description
+                if (!isEmpty(data.Description)) {
+                    $(room).find('.room-info-description p').text(data.Description);
+                    (room).find('.room-info-description').show();
+                }
+
+                // Trap
+                if (!isEmpty(data.Trap)) {
+                    $(room).find('.room-trap-name').text(data.Trap.Name);
+                    $(room).find('.room-trap-description').text(data.Trap.Description);
+                    $(room).find('.room-trap-nature').text(data.Trap.Nature);
+                    $(room).find('.room-trap-type').text(data.Trap.Type);
+                    $(room).find('.room-trap-savedc').text(data.Trap.SaveDC);
+                    $(room).find('.room-trap-attackbonus').text(data.Trap.AttackBonus);
+                    $(room).find('.room-trap-damage').text(data.Trap.Damage);
+                    (room).find('.room-info-trap').show();
+                }
+
+                // Encounters
+                if (!isEmpty(data.Encounter)) {
+                    $(room).find('.room-encounter-name').text(data.Encounter.Name);
+                    $(room).find('.room-encounter-description').text(data.Encounter.Description);
+                    (room).find('.room-info-encounter').show();
+                }
+            }
+
+            if (remove && !isEmpty(data.Index)) {
+                maxTileNumber--;
+                var checkIndex = parseInt(data.Index);
+                $(`.room-info-item[data-index="${checkIndex}"]`).remove();
+                $(selectedTile).data('data', '');
+
+                $('.tile-filled').each(function () {
+                    var myData = $(this).data('data');
+                    if (isEmpty(myData)) { myData = {} }
+
+                    var index = parseInt(myData.Index);
+                    if (!isEmpty(index) && index > checkIndex) {
+                        var room = $(`.room-info-item[data-index="${index}"]`);
+                        index--;
+                        myData.Index = index;
+
+                        $(this).data('data', myData);
+                        $(this).data('index', index);
+                        $(this).attr('data-index', index);
+                        $(this).find('.tile-label').text(index);
+                        $(room).data('index', index);
+                        $(room).attr('data-index', index);
+                        $(room).find('.room-info-label').text(index);
+                    }
+                })
+            }
+
+            $('.dropdown-toggle').dropdown();
+        }
+
+
+
+        /************* UPDATE *************/
+        function gatherTiles() {
+            var tiles = [];
+            $('.tile-filled').each(function () {
+                var data = $(this).data('data');
+                if (isEmpty(data)) { data = {}; }
+
+                tiles.push({
+                    Row: $(this).data('row'),
+                    Column: $(this).data('column'),
+                    Description: data.Description,
+                    Trap: data.Trap,
+                    Encounter: data.Encounter,
+                    Image: $(this).find('img').attr('src'),
+                    Index: data.Index
+                })
+            })
+
+            return tiles;
+        }
+
+        function save() {
+            var postData = {
+                DungeonKey: '@Model.DungeonKey',
+                Name: $('#Name').val(),
+                Description: $('#Description').val(),
+                Tiles: gatherTiles()
+            }
+            console.log(postData)
+
+            ajaxPost(postData, updateAction, function (data) {
+                if (data.success) {
+                    Notiflix.NotifyContent.Success(data.message);
+                    $('#delete').show();
+                } else {
+                    Notiflix.NotifyContent.Failure(data.message);
+                }
+            })
+        }
+
+        function deleteItem() {
+            var postData = { id: '@Model.DungeonKey' };
+
+            ajaxPost(postData, deleteAction, function (data) {
+                if (data.success) {
+                    Notiflix.NotifyContent.Success(data.message);
+                    location.replace(indexAction);
+                } else {
+                    Notiflix.NotifyContent.Failure(data.message);
+                }
+            })
+        }
+
     </script>
 }

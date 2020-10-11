@@ -1,0 +1,6 @@
+﻿CREATE TABLE [dbo].[TrapNatures]
+(
+	[NatureKey] UNIQUEIDENTIFIER NOT NULL,
+	[Name] NVARCHAR(50) NOT NULL,
+    PRIMARY KEY CLUSTERED ([NatureKey] ASC)
+)

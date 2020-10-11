@@ -118,6 +118,23 @@
     <Build Include="dbo\Tables\MagicItemTypes.sql" />
     <Build Include="dbo\Tables\MagicItemRarities.sql" />
     <Build Include="dbo\Tables\MagicItems.sql" />
+    <Build Include="dbo\Tables\Gemstones.sql" />
+    <Build Include="dbo\Tables\ArtObjects.sql" />
+    <Build Include="dbo\Tables\Treasures.sql" />
+    <Build Include="dbo\Tables\TreasureHoards.sql" />
+    <Build Include="dbo\Tables\EncounterItems.sql" />
+    <Build Include="dbo\Tables\EncounterMonsters.sql" />
+    <Build Include="dbo\Tables\Encounters.sql" />
+    <Build Include="dbo\Tables\Traps.sql" />
+    <Build Include="dbo\Tables\TrapNatures.sql" />
+    <Build Include="dbo\Tables\TrapTypes.sql" />
+    <Build Include="dbo\Tables\TrapTypeDamages.sql" />
+    <Build Include="dbo\Tables\CampaignTrapLinkers.sql" />
+    <Build Include="dbo\Tables\Dungeons.sql" />
+    <Build Include="dbo\Tables\CampaignDungeonLinkers.sql" />
+    <Build Include="dbo\Tables\DungeonTiles.sql" />
+    <Build Include="dbo\Tables\DungeonTileTraps.sql" />
+    <Build Include="dbo\Tables\DungeonTileEncounters.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="DeneirsGate.Database.LOCAL.publish.xml" />

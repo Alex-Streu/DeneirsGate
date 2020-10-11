@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DeneirsGate.Services
 {
@@ -19,6 +16,7 @@ namespace DeneirsGate.Services
         public string Speed { get; set; }
         public string ChallengeRating { get; set; }
         public int Difficulty { get; set; }
+        public int XP { get; set; }
     }
 
     public class MonsterEditModel

@@ -45,4 +45,10 @@ namespace DeneirsGate.Services
         public Guid TypeKey { get; set; }
         public string Name { get; set; }
     }
+
+    public class MagicItemAttunementViewModel
+    {
+        public bool Attunement { get; set; }
+        public string Name { get; set; }
+    }
 }
