@@ -1,0 +1,77 @@
+﻿@using DeneirsGate.Services
+@model ArcViewModel
+@{
+    ViewBag.Title = "Print";
+    Layout = "~/Views/Shared/_Empty.cshtml";
+}
+<style type="text/css">
+    @@media print {
+        @@page {
+            margin: 2em;
+        }
+    }
+</style>
+
+<h2>@Model.Name</h2>
+<p>@Model.Description</p>
+
+@foreach (var quest in Model.Quests)
+{
+    <hr />
+    <h3 class="red">@quest.Name</h3>
+    <p style="margin-bottom: 3em">@quest.Description</p>
+
+    foreach (var questEvent in quest.Events)
+    {
+        <h4 class="red">@questEvent.Name</h4>
+        <div style="margin-bottom: @(questEvent.Encounter == null ? "3em" : "1em")">@Html.Raw(questEvent.Description)</div>
+
+        if (questEvent.Encounter != null)
+        {
+            <div class="content-box">
+
+                <label class="text-bold red text-large">@questEvent.Encounter.Name</label><br/>
+                <label><b>Total XP:</b>&nbsp;@questEvent.Encounter.TotalXP</label>
+                <p style="margin-bottom:1em">@questEvent.Encounter.Description</p>
+
+                @if (questEvent.Encounter.Monsters != null)
+                {
+                    <label class="text-bold red">Monsters</label>
+                    <p>
+                        @for (var i = 0; i < questEvent.Encounter.Monsters.Count; i++)
+                        {
+                            var monster = questEvent.Encounter.Monsters[i];
+                            <span>@(i > 0 ? ", " : "")@monster.Name</span>
+                        }
+                    </p>
+                }
+
+                @if (questEvent.Encounter.RewardSummary != null || questEvent.Encounter.RewardSummary != null)
+                {
+                    <label class="text-bold red">Treasure</label>
+                    if (questEvent.Encounter.RewardSummary != null)
+                    {
+                        <p>@questEvent.Encounter.RewardSummary</p>
+                    }
+                    if (questEvent.Encounter.Items != null)
+                    {
+                        foreach (var item in questEvent.Encounter.Items)
+                        {
+                            <label class="text-bold">@item.Name</label>
+                            <p style="margin-bottom:2em">@item.Description</p>
+                        }
+                    }
+                }
+            </div>
+        }
+    }
+}
+
+@section scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            print();
+        })
+
+    </script>
+}

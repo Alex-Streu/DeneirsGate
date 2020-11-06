@@ -1,0 +1,69 @@
+﻿@using DeneirsGate.Services
+@model CharacterViewModel
+
+<h2 class="text-center">@Model.FirstName @Model.LastName</h2>
+<div class="flexbox-container full-width justify-between">
+    <label class="text-x-large"><b>@Model.Level</b></label>
+    <label class="text-x-large">HP: <b>@Model.MaxHP</b></label>
+    <label class="text-x-large">Proficiency: <b>+@Model.Proficiency</b></label>
+</div>
+<hr />
+<div class="flexbox-container full-width justify-between">
+    <label class="attr text-large" data-val="@Model.Strength">STR <b></b></label>
+    <label class="attr text-large" data-val="@Model.Dexterity">DEX <b></b></label>
+    <label class="attr text-large" data-val="@Model.Constitution">CON <b></b></label>
+    <label class="attr text-large" data-val="@Model.Intelligence">INT <b></b></label>
+    <label class="attr text-large" data-val="@Model.Wisdom">WIS <b></b></label>
+    <label class="attr text-large" data-val="@Model.Charisma">CHA <b></b></label>
+</div>
+<hr />
+<div class="flexbox-container full-width justify-between">
+    <label class="text-md text-bold">@Model.Class</label>
+    <label class="text-md text-bold">@Model.Race</label>
+    <label class="text-md text-bold">@Model.Background</label>
+    <label class="text-md text-bold">@Model.Alignment</label>
+</div>
+<hr />
+<div style="margin:1em">
+    <label class="text-large text-bold red">Abilities</label>
+    <p>@Model.Abilities</p>
+</div>
+<hr />
+<div style="margin:1em">
+    <label class="text-large text-bold red">Status</label>
+    <p>@Model.Status</p>
+</div>
+<hr />
+<div style="margin:1em">
+    <label class="text-large text-bold red">Fears</label>
+    <p>@Model.Fears</p>
+</div>
+<hr />
+<div style="margin:1em">
+    <label class="text-large text-bold red">Ideals</label>
+    <p>@Model.Ideals</p>
+</div>
+<hr />
+<div style="margin:1em">
+    <label class="text-large text-bold red">Languages</label>
+    <p>@Model.Languages</p>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('.attr').each(function () {
+            $(this).find('b').text(calculateMod($(this).data('val')));
+        })
+    })
+
+    function calculateMod(val) {
+        if (val % 2 > 0) { val -= 1; }
+
+        var mod = (val - 10) / 2;
+        var result = mod.toString();
+
+        if (mod >= 0) { result = '+' + result; }
+
+        return result;
+    }
+</script>

@@ -1,0 +1,74 @@
+﻿.separate-item {
+    padding: 1em;
+    border-top: 1px solid $lightGray;
+    background-color: $white;
+}
+
+#ContentExplorer {
+    background-color: $white;
+    position: fixed;
+    right: 0px;
+    top: 0px;
+    width: 500px;
+    height: 100%;
+    animation: open 0.4s;
+
+    &.closed {
+        width: 5px;
+        animation: close 0.4s;
+
+        #container {
+            display: none;
+        }
+    }
+
+    #container {
+        padding: 6em 1em 1em 1em;
+        overflow-y: auto;
+    }
+
+    .menu-option {
+        width: 80% !important;
+    }
+}
+
+#ContentExplorerSetter {
+    position: absolute;
+    left: -20px;
+    background-color: $darkGray;
+    width: 25px;
+    height: 100%;
+
+    &:hover {
+        background-color: #303030;
+        cursor: pointer;
+    }
+
+    i {
+        top: 50%;
+        right: 2px;
+        color: $white;
+        position: absolute;
+    }
+}
+
+
+@keyframes close {
+    from {
+        width: 500px;
+    }
+
+    to {
+        width: 5px;
+    }
+}
+
+@keyframes open {
+    from {
+        width: 5px;
+    }
+
+    to {
+        width: 500px;
+    }
+}

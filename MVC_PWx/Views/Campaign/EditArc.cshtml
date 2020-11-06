@@ -1,0 +1,886 @@
+﻿@using DeneirsGate.Services
+@using CustomHtmlHelpers
+@using Newtonsoft.Json
+@model ArcViewModel
+
+@{
+    ViewBag.Title = "Edit Arc";
+    ViewBag.MenuOption = "Arc";
+}
+
+<style type="text/css">
+    #Description, #QuestDescription {
+        min-height: 200px;
+        resize: vertical;
+    }
+
+    #mapCanvas.clickable:hover {
+        cursor: pointer !important;
+    }
+</style>
+
+<h2>Story Arc</h2>
+
+<div class="fancy-tabs" data-panes="arc-panes" style="display:none">
+    <div id="arc-tab" class="fancy-tab-item active" data-tab="arc-pane">Home</div>
+    <div id="quest-tab" class="fancy-tab-item" data-tab="quest-pane">Quest</div>
+    <div id="event-tab" class="fancy-tab-item" data-tab="event-pane">Event</div>
+    <div id="map-tab" class="fancy-tab-item" data-tab="map-pane">Map</div>
+</div>
+
+<div id="arc-panes">
+    <div id="arc-pane" class="fancy-tab-pane slide-right active">
+        <div class="content-box">
+            <div class="flexbox-container full-width no-padding justify-between">
+                <div style="width:85%">
+                    @HtmlHelpers.RenderFancyTextbox("lg full", "Name", 150, Model.Name, "Name", Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" }))
+                </div>
+                <div style="width:10%">
+                    <div onclick="$('#map-tab').click()" class="btn btn-warning">Area Map</div>
+                </div>
+            </div>
+            <div class="flexbox-container">
+                @HtmlHelpers.RenderFancyTextarea("full lg", "Description", null, Model.Description, "Description")
+            </div>
+            <div class="flexbox-container full-width justify-between" style="padding-top:2em">
+                <label class="text-x-large text-bold red">Quests</label>
+                <div class="btn btn-default" onclick="loadQuest()">Create Quest</div>
+            </div>
+            <div id="quest-template" class="template">
+                <div>
+                    <div class="quest-item separate-item" data-index="0">
+                        <div class="flexbox-container no-padding justify-between">
+                            <div>
+                                <i class="fa fa-2x fa-ellipsis-v handle"></i>
+                                <label class="text-large text-bold red quest-name"></label>
+                            </div>
+                            <div class="flexbox-container justify-center content-center">
+                                <div class="btn btn-sm btn-primary" onclick="showQuest(this)"><i class="fa fa-info"></i></div>
+                                <div class="arc-loader btn btn-sm btn-default" onclick="loadQuest()"><i class="fa fa-pencil"></i></div>
+                                <div class="arc-delete btn btn-sm btn-danger" onclick="promptDelete(`deleteQuest()`)"><i class="fa fa-trash"></i></div>
+                            </div>
+                        </div>
+                        <p class="text-md quest-description"></p>
+                        <ul class="list-group list-group-flush quest-events" style="display:none">
+                            <li class="list-group-item">
+                                <label class="event-name"></label>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div id="quests" class="droppable">
+                @{ var index = 0; }
+                @foreach (var quest in Model.Quests)
+                {
+                    <div class="quest-item separate-item" data-index="@index">
+                        <div class="flexbox-container no-padding justify-between">
+                            <div>
+                                <i class="fa fa-2x fa-ellipsis-v handle"></i>
+                                <label class="text-large text-bold red quest-name">@quest.Name</label>
+                            </div>
+                            <div class="flexbox-container justify-center content-center">
+                                <div class="btn btn-sm btn-primary" onclick="showQuest(this)"><i class="fa fa-info"></i></div>
+                                <div class="arc-loader btn btn-sm btn-default" onclick="loadQuest(@(index))"><i class="fa fa-pencil"></i></div>
+                                <div class="arc-delete btn btn-sm btn-danger" onclick="promptDelete(`deleteQuest(@(index++))`)"><i class="fa fa-trash"></i></div>
+                            </div>
+                        </div>
+                        <p class="text-md quest-description">@quest.Description</p>
+                        <ul class="list-group list-group-flush quest-events" style="display:none">
+                            @foreach (var item in quest.Events)
+                            {
+                                <li class="list-group-item">
+                                    <label class="event-name">@item.Name</label>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+    <div id="quest-pane" class="fancy-tab-pane slide-right">
+        <div class="content-box">
+            <a onclick="backToArc()"><i class="fa fa-arrow-circle-left"></i> Back to Arc</a>
+            <div class="flexbox-container full-width" style="margin-top:1em">
+                @HtmlHelpers.RenderFancyTextbox("lg full", "QuestName", 150, null, "Name")
+            </div>
+            <div class="flexbox-container">
+                @HtmlHelpers.RenderFancyTextarea("full lg", "QuestDescription", null, null, "Description")
+            </div>
+            <div class="flexbox-container full-width justify-between" style="padding-top:2em">
+                <label class="text-x-large text-bold red">Events</label>
+                <div class="btn btn-default" onclick="loadEvent()">Create Event</div>
+            </div>
+            <div id="event-template" class="template">
+                <div>
+                    <div class="event-item separate-item" data-index="0">
+                        <div class="flexbox-container no-padding justify-between">
+                            <div>
+                                <i class="fa fa-2x fa-ellipsis-v handle"></i>
+                                <label class="text-large text-bold red event-name"></label>
+                            </div>
+                            <div class="flexbox-container justify-center content-center">
+                                <div class="btn btn-sm btn-primary" onclick="showEvent(this)"><i class="fa fa-info"></i></div>
+                                <div class="arc-loader btn btn-sm btn-default" onclick="loadEvent()"><i class="fa fa-pencil"></i></div>
+                                <div class="arc-delete btn btn-sm btn-danger" onclick="promptDelete(`deleteEvent()`)"><i class="fa fa-trash"></i></div>
+                            </div>
+                        </div>
+                        <p class="text-md event-description" style="display:none"></p>
+                    </div>
+                </div>
+            </div>
+            <div id="events" class="droppable">
+
+            </div>
+        </div>
+    </div>
+    <div id="event-pane" class="fancy-tab-pane slide-right">
+        <div class="content-box">
+            <a onclick="backToQuest()"><i class="fa fa-arrow-circle-left"></i> Back to Quest</a>
+            <div class="flexbox-container full-width" style="margin-top:1em">
+                @HtmlHelpers.RenderFancyTextbox("lg full", "EventName", 150, null, "Name")
+            </div>
+            <div id="event-editor">
+
+            </div>
+            <div class="flexbox-container full-width justify-between" style="padding-top:2em">
+                <label class="text-x-large text-bold red">Encounter</label>
+                <div class="flexbox-container no-padding flex-end">
+                    <div id="btnDeleteEncounter" class="btn btn-danger" onclick="promptDelete('deleteEncounter()')">Delete Encounter</div>
+                    <div class="btn btn-default" onclick="editEncounter()">Edit Encounter</div>
+                </div>
+            </div>
+            <div id="event-encounter" style="display:none">
+                <label id="encounter-name" class="text-large text-bold red"></label>
+                <p id="encounter-description" class="text-md"></p>
+            </div>
+        </div>
+    </div>
+    <div id="map-pane" class="fancy-tab-pane slide-right">
+        <div class="content-box">
+            <div class="flexbox-container justify-between no-padding">
+                <a onclick="loadArc()"><i class="fa fa-arrow-circle-left"></i> Back to Arc</a>
+                <div class="flexbox-container justify-end no-padding">
+                    <div id="btnAttachQuests" class="btn btn-default" onclick="loadMapQuests()" style="display:none"><i class="fa fa-map-marker"></i>&nbsp;Attach Quest</div>
+                    @Url.RenderArcMapUpload("ArcMap", Model.Map, (Guid)ViewBag.CampaignKey, Model.ArcKey)
+                </div>
+            </div>
+            <div>
+                <canvas id="mapCanvas" width="800" height="600">
+                    <p>
+                        Your browser does not support Canvas API.
+                    </p>
+                </canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="flexbox-container justify-between">
+    <div class="submit-footer">
+        <div class="btn btn-lg btn-default save-button" onclick="save()">Save</div>
+        <div id="delete" class="btn btn-lg btn-danger save-button" onclick="promptDelete('deleteItem()')">Delete</div>
+    </div>
+    <a class="btn btn-lg btn-warning save-button" target="_blank" href="@Url.Action("Print", new { id = Model.ArcKey })"><i class="fa fa-print"></i>&nbsp;Print</a>
+</div>
+
+<!-- CONTENT EXPLORER -->
+<div id="ContentExplorer">
+    <span id="ContentExplorerSetter"><i class="fa fa-2x fa-chevron-right"></i></span>
+    <div id="container">
+        <div id="content-dir" class="flexbox-container full-width" style="margin-bottom:1em">
+            <a data-tab="#home-tab">Home</a>
+        </div>
+        <div class="fancy-tabs" data-panes="content-panes" style="display:none">
+            <div id="home-tab" class="fancy-tab-item active" data-tab="home-pane">Home</div>
+            <div id="content-tab" class="fancy-tab-item" data-tab="content-pane">Content</div>
+        </div>
+        <div id="content-panes">
+            <div id="home-pane" class="fancy-tab-pane slide-right active">
+                <div class="flexbox-container full-width justify-center">
+                    <div class="btn btn-lg btn-default menu-option menu-link" data-url="@Url.Action("_Arcs", "ContentSearch")" data-dir="Story Arcs">Story Arcs</div>
+                    <div class="btn btn-lg btn-default menu-option menu-link" data-url="@Url.Action("_Characters", "ContentSearch")" data-dir="Characters">Characters</div>
+                    <div class="btn btn-lg btn-default menu-option menu-link" data-url="@Url.Action("_RelationshipTrees", "ContentSearch")" data-dir="Relationship Trees">Relationship Trees</div>
+                    <div class="btn btn-lg btn-default menu-option menu-link" data-url="@Url.Action("_Monsters", "ContentSearch")" data-dir="Monsters">Monsters</div>
+                    <div class="btn btn-lg btn-default menu-option menu-link" data-url="@Url.Action("_MagicItems", "ContentSearch")" data-dir="Magic Items">Magic Items</div>
+                    <div class="btn btn-lg btn-default menu-option menu-link" data-url="@Url.Action("_Dungeons", "ContentSearch")" data-dir="Dungeons">Dungeons</div>
+                    <div class="btn btn-lg btn-default menu-option menu-link" data-url="@Url.Action("_Traps", "ContentSearch")" data-dir="Traps">Traps</div>
+                </div>
+            </div>
+            <div id="content-pane" class="fancy-tab-pane slide-right"></div>
+        </div>
+    </div>
+</div>
+
+<!-- MAP QUEST MODAL -->
+<div id="mapQuestModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Attach Quests</h4>
+            </div>
+            <div class="modal-body">
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@section scripts {
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="https://cdn.ckeditor.com/ckeditor5/16.0.0/classic/ckeditor.js"></script>
+    <script type="text/javascript">
+        var updateAction = '@Url.Action("UpdateArc")';
+        var deleteAction = '@Url.Action("DeleteArc")';
+        var indexAction = '@Url.Action("Arcs")';
+
+        var closeIcon = 'fa-chevron-right';
+        var openIcon = 'fa-chevron-left';
+        var dirSeparator = '<label><i class="fa fa-chevron-right"></i></label>';
+
+        var quests = [];
+        var questIndex = 0;
+        var eventIndex = 0;
+        var sortIndex = 0;
+
+        var eventEditor = null;
+
+        $(document).ready(function () {
+            if ('@ViewBag.IsNew' == 'True') {
+                $('#delete').hide();
+            }
+
+            ClassicEditor
+                .create(document.querySelector('#event-editor'), {
+                    toolbar: ['heading', '|', 'bold', 'italic', 'bulletedList', 'numberedList', '|', 'indent', 'outdent', '|', 'blockQuote', 'insertTable', 'undo', 'redo']
+                })
+                .then(newEditor => {
+                    eventEditor = newEditor;
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+
+            setupSortable();
+
+            //Store quests
+            @foreach (var quest in Model.Quests)
+            {
+                <text>
+                    quests.push(@Html.Raw(JsonConvert.SerializeObject(quest)));
+                </text>
+            }
+
+            //Setup Map
+            @if (Model.Map != null)
+            {
+                <text>
+                    loadArcMap();
+                </text>
+
+                foreach (var pin in Model.Pins)
+                {
+                    <text>
+                        $('#mapCanvas').drawArc({
+                            layer: true,
+                            fillStyle: '#fff',
+                            strokeStyle: '#000',
+                            strokeWidth: 3,
+                            x: @pin.X, y: @pin.Y,
+                            radius: 20,
+                            name: 'quest' + @pin.Index,
+                            groups: ['locations', 'quest' + @pin.Index, 'quest'],
+                            data: {
+                                coordinates: [@pin.X, @pin.Y],
+                                key: '@pin.QuestKey',
+                                index: @pin.Index
+                            }
+                        })
+                            .drawText({
+                                layer: true,
+                                fillStyle: '#ce0606',
+                                x: @pin.X, y: @pin.Y,
+                                fontSize: 24,
+                                text: parseInt(@pin.Index) + 1,
+                                groups: ['locations', 'quest' + @pin.Index, 'label']
+                            })
+                    </text>
+                }
+                <text>$('#mapCanvas').drawLayers();</text>
+            }
+        })
+
+        function setupSortable() {
+            $('.droppable').sortable({
+                connectWith: '.droppable',
+                handle: '.handle',
+                start: function (event, ui) {
+                    sortIndex = ui.item.index();
+                },
+                update: function (event, ui) {
+                    var id = $('.fancy-tab-item.active').attr('id');
+                    switch (id) {
+                        case 'quest-tab':
+                            quests[questIndex].Events.splice(ui.item.index(), 0, quests[questIndex].Events.splice(sortIndex, 1)[0]);
+                            loadQuest(questIndex);
+                            break;
+                        case 'arc-tab':
+                            quests.splice(ui.item.index(), 0, quests.splice(sortIndex, 1)[0]);
+
+                            for (var i = 0; i < quests.length; i++) {
+                                quests[i].SortOrder = i;
+                                if (quests[i].Events != null) {
+                                    for (var j = 0; j < quests[i].Events.length; j++) {
+                                        quests[i].Events[j].SortOrder = j;
+                                    }
+                                }
+                            }
+
+                            loadArc();
+
+                            //Update canvas
+                            $('#mapCanvas').removeLayerGroup('label');
+                            var layers = $('#mapCanvas').getLayerGroup('quest');
+                            if (!isEmpty(layers)) {
+                                for (var i = 0; i < layers.length; i++) {
+                                    var sortOrder = quests.findIndex(x => x.QuestKey == layers[i].data.key);
+                                    $('#mapCanvas').setLayer(layers[i].name, {
+                                        data: {
+                                            coordinates: [layers[i].data.coordinates[0], layers[i].data.coordinates[1]],
+                                            key: layers[i].data.key,
+                                            index: sortOrder
+                                        }
+                                    })
+                                    $('#mapCanvas').drawText({
+                                        layer: true,
+                                        fillStyle: '#ce0606',
+                                        x: layers[i].data.coordinates[0],
+                                        y: layers[i].data.coordinates[1],
+                                        fontSize: 24,
+                                        text: parseInt(sortOrder) + 1,
+                                        groups: ['locations', 'quest' + sortOrder, 'label']
+                                    })
+                                }
+                                $('#mapCanvas').drawLayers();
+                            }
+                            break;
+                    }
+                }
+            });
+        }
+
+        $('#ContentExplorerSetter').click(function () {
+            if ($('#ContentExplorer').hasClass('closed')) {
+                $('#ContentExplorer').removeClass('closed');
+                $('#ContentExplorerSetter i').removeClass(openIcon);
+                $('#ContentExplorerSetter i').addClass(closeIcon);
+            } else {
+                $('#ContentExplorer').addClass('closed');
+                $('#ContentExplorerSetter i').removeClass(closeIcon);
+                $('#ContentExplorerSetter i').addClass(openIcon);
+            }
+        })
+
+        $('body').on('click', '.menu-link', function () {
+            $('#content-pane').removeClass('active');
+            var dir = $(this).data('dir');
+            var url = $(this).data('url');
+            Notiflix.Block.Pulse('#ContentExplorer');
+
+            $('#content-pane').load(url,
+                function (response, status, xhr) {
+                    Notiflix.Block.Remove('#ContentExplorer');
+                    $('#content-tab').click();
+
+                    var link = `<a data-tab="#content-tab" data-url="${url}">${dir}</a>`;
+                    $('#content-dir').append(dirSeparator + link);
+                }
+            );
+        })
+
+        $('body').on('click', '#content-dir a', function () {
+            $('#content-pane').removeClass('active');
+            var tab = $(this).data('tab');
+            if (tab == '#content-tab') {
+                Notiflix.Block.Pulse('#ContentExplorer');
+                $('#content-pane').load($(this).data('url'),
+                    function (response, status, xhr) {
+                        Notiflix.Block.Remove('#ContentExplorer');
+                        $('#content-tab').click();
+                    }
+                );
+            }
+            else {
+                $(tab).click();
+            }
+
+            $(this).nextAll().remove();
+        })
+
+
+        // --------------------------- MAP ----------------------------
+        var clickBoundaries = [0, 0];
+        var questLayerIndex = 0;
+        var canvasQuestKey = '';
+        var isSaving = false;
+
+        function resetCanvas() {
+            $('#mapCanvas').attr('width', 800);
+            $('#mapCanvas').attr('height', 600);
+            $('#mapCanvas').removeLayers();
+            $('#mapCanvas').clearCanvas();
+        }
+
+        function loadArcMap() {
+            var img = $('#ArcMap').parent().find('img').attr('src');
+            var fullImage = new Image();
+            fullImage.onload = function () {
+                $('body').append(fullImage);
+                var wrh = fullImage.width / fullImage.height;
+                var newWidth = $('#mapCanvas').attr('width');
+                var newHeight = newWidth / wrh;
+                if (newHeight > $('#mapCanvas').attr('height')) {
+                    newHeight = $('#mapCanvas').attr('height');
+                    newWidth = newHeight * wrh;
+                }
+                clickBoundaries = [newWidth, newHeight];
+                $('#mapCanvas').drawImage({
+                    source: img,
+                    fromCenter: false,
+                    width: newWidth,
+                    height: newHeight,
+                    layer: true,
+                    name: 'map',
+                    index: 0
+                })
+
+                $('#mapCanvas').attr('width', newWidth);
+                $('#mapCanvas').attr('height', newHeight);
+                $('#mapCanvas').drawLayers();
+
+                $(fullImage).remove();
+                $('#btnAttachQuests').show();
+            }
+            fullImage.src = img;
+        }
+
+        $('#ArcMap').change(function () {
+            if (isSaving) { return; }
+            resetCanvas();
+            loadArcMap();
+        })
+
+        $('#mapCanvas').mousemove(function (e) {
+            if (!$(this).hasClass('clickable')) { return; }
+            $(this).removeLayer('mouse');
+            var rect = $(this)[0].getBoundingClientRect()
+            var x = e.clientX - rect.left
+            var y = e.clientY - rect.top
+
+            $(this).drawArc({
+                layer: true,
+                fillStyle: '#fff',
+                strokeStyle: '#000',
+                strokeWidth: 3,
+                x: x, y: y,
+                radius: 20,
+                name: 'mouse'
+            })
+                .drawLayers();
+        })
+
+        $('#mapCanvas').click(function (e) {
+            if (!$(this).hasClass('clickable')) { return; }
+
+            $(this).removeLayer('mouse');
+
+            var rect = $(this)[0].getBoundingClientRect()
+            var x = e.clientX - rect.left
+            var y = e.clientY - rect.top
+            if (x < clickBoundaries[0] && y < clickBoundaries[1]) {
+                $(this).removeClass('clickable');
+                $(this).drawArc({
+                    layer: true,
+                    fillStyle: '#fff',
+                    strokeStyle: '#000',
+                    strokeWidth: 3,
+                    x: x, y: y,
+                    radius: 20,
+                    name: 'quest' + questLayerIndex,
+                    groups: ['locations', 'quest' + questLayerIndex, 'quest'],
+                    data: {
+                        coordinates: [x, y],
+                        key: canvasQuestKey,
+                        index: questLayerIndex
+                    }
+                })
+                    .drawText({
+                        layer: true,
+                        fillStyle: '#ce0606',
+                        x: x, y: y,
+                        fontSize: 24,
+                        text: parseInt(questLayerIndex) + 1,
+                        groups: ['locations', 'quest' + questLayerIndex, 'label']
+                    })
+                    .drawLayers();
+            }
+        })
+
+        function loadMapQuests() {
+            $('#mapQuestModal').find('.modal-body').html('');
+
+            var layers = $('#mapCanvas').getLayers();
+
+            quests = quests.sort(function (a, b) {return a.SortOrder - b.SortOrder})
+            for (var i = 0; i < quests.length; i++) {
+                var quest = quests[i];
+                var add = true;
+
+                for (var j = 0; j < layers.length; j++) {
+                    if ('quest' + quest.SortOrder == layers[j].name) { add = false; break; }
+                }
+
+                $('#mapQuestModal').find('.modal-body').append(`
+                    <div class="flexbox-container justify-between no-padding">
+                        <div class="flexbox-container no-padding">
+                            <label class="text-large text-bold">${parseInt(quest.SortOrder) + 1}.</label>
+                            <label class="text-large text-bold red quest-name">${quest.Name}</label>
+                        </div>`
+                    + (add ? `<div class="btn btn-default" onclick="addMapQuest(${quest.SortOrder}, '${quest.QuestKey}')"><i class="fa fa-plus"></i></div>`
+                        : `<div class="btn btn-danger" onclick="removeMapQuest(${quest.SortOrder})"><i class="fa fa-times"></i></div>`) +
+                    `</div>
+                `)
+            }
+            $('#mapQuestModal').modal('show');
+        }
+
+        function addMapQuest(index, key) {
+            $('#mapQuestModal').modal('hide');
+            $('#mapCanvas').addClass('clickable');
+            questLayerIndex = index;
+            canvasQuestKey = key;
+        }
+
+        function removeMapQuest(index) {
+            $('#mapQuestModal').modal('hide');
+            $('#mapCanvas').removeLayerGroup('quest' + index).drawLayers();
+        }
+
+
+        // --------------------------- ENCOUNTER ----------------------------
+        function editEncounter() {
+            if (!storeEvent()) { return; }
+
+            var encounter = quests[questIndex].Events[eventIndex].Encounter;
+
+            if (isEmpty(encounter)) {
+                loadEncounter();
+            }
+            else if (encounter.IsEdited == true) {
+                loadEncounter(encounter);
+            }
+            else {
+                loadEncounter(encounter.EncounterKey);
+            }
+        }
+
+        function returnEncounter(encounter) {
+            quests[questIndex].Events[eventIndex].Encounter = encounter;
+
+            $('#encounter-name').text(encounter.Name);
+            $('#encounter-description').text(encounter.Description);
+            $('#event-encounter').show();
+            $('#btnDeleteEncounter').show();
+        }
+
+        function deleteEncounter() {
+            quests[questIndex].Events[eventIndex].Encounter = null;
+            $('#btnDeleteEncounter').hide();
+            $('#event-encounter').hide();
+        }
+
+        /******************** LOAD TABS *****************/
+        // --------------------------- ARCS ----------------------------
+        function loadArc() {
+            if (quests != null) {
+                $('#quests').html('');
+
+                for (var i = 0; i < quests.length; i++) {
+                    var quest = quests[i];
+
+                    var htmlQuest = $($('#quest-template').html());
+                    $('#quests').append(htmlQuest);
+
+                    $(htmlQuest).find('.quest-name').text(quest.Name);
+                    $(htmlQuest).find('.quest-description').text(quest.Description);
+                    $(htmlQuest).find('.quest-events').html('');
+                    $(htmlQuest).find('.arc-loader').attr('onclick', `loadQuest(${i})`);
+                    $(htmlQuest).find('.arc-delete').attr('onclick', `promptDelete('deleteQuest(${i})')`);
+
+                    if (quest.Events != null) {
+                        for (var j = 0; j < quest.Events.length; j++) {
+                            var event = quest.Events[j];
+
+                            var htmlEvent = $($('#quest-template').find('.quest-events').html());
+                            $(htmlQuest).find('.quest-events').append(htmlEvent);
+
+                            $(htmlEvent).find('.event-name').text(event.Name);
+                        }
+
+                    }
+                }
+            }
+
+            $('#arc-tab').click();
+        }
+
+        function backToArc() {
+            if (storeQuest(true)) {
+                loadArc();
+            }
+        }
+
+        // --------------------------- QUESTS ----------------------------
+        function showQuest(element) {
+            $(element).closest('.quest-item').find('.quest-events').toggle(500);
+        }
+
+        function loadQuest(index) {
+            if (index != null) {
+                questIndex = index;
+                var quest = quests[index];
+                $('#QuestName').val(quest.Name);
+                $('#QuestDescription').val(quest.Description);
+
+                if (quest.Events != null) {
+                    $('#events').html('');
+
+                    for (var i = 0; i < quest.Events.length; i++) {
+                        var event = quest.Events[i];
+
+                        var htmlEvent = $($('#event-template').html());
+                        $('#events').append(htmlEvent);
+
+                        $(htmlEvent).find('.event-name').text(event.Name);
+                        $(htmlEvent).find('.event-description').html(event.Description);
+                        $(htmlEvent).find('.arc-loader').attr('onclick', `loadEvent(${i})`);
+                        $(htmlEvent).find('.arc-delete').attr('onclick', `promptDelete('deleteEvent(${i})')`);
+                    }
+                }
+            }
+            else {
+                questIndex = quests.length;
+
+                $('#QuestName').val('');
+                $('#QuestDescription').val('');
+                $('#events').html('');
+            }
+
+            $('#quest-tab').click();
+        }
+
+        function storeQuest(allowEmpty = false) {
+            var events = quests[questIndex] == null ? null : quests[questIndex].Events;
+            var quest = {
+                QuestKey: '@Guid.NewGuid()',
+                Name: $('#QuestName').val(),
+                Description: $('#QuestDescription').val(),
+                SortOrder: questIndex,
+                Events: events
+            }
+
+            if (isEmpty(quest.Name) && isEmpty(quest.Description)) {
+                if (allowEmpty == true) {
+                    return true;
+                }
+
+                Notiflix.NotifyContent.Failure('Quest name is required!');
+                return false;
+            }
+
+            if (isEmpty(quest.Name) && !isEmpty(quest.Description)) {
+                Notiflix.NotifyContent.Failure('Quest name is required!');
+                return false;
+            }
+
+            if (quests.length <= questIndex) { quests.push(quest); }
+            else { quests[questIndex] = quest; }
+
+            return true;
+        }
+
+        function deleteQuest(index) {
+            quests.splice(index, 1);
+            loadArc();
+            removeMapQuest(index);
+        }
+
+        function backToQuest() {
+            if (storeEvent(true)) {
+                loadQuest(questIndex);
+            }
+        }
+
+        // --------------------------- EVENTS ----------------------------
+        function showEvent(element) {
+            $(element).closest('.event-item').find('.event-description').toggle(500);
+        }
+
+        function loadEvent(index) {
+            if (index != null) {
+                eventIndex = index;
+                var event = quests[questIndex].Events[index];
+                $('#EventName').val(event.Name);
+                eventEditor.setData(event.Description);
+
+                if (!isEmpty(event.Encounter)) {
+                    $('#encounter-name').text(event.Encounter.Name);
+                    $('#encounter-description').text(event.Encounter.Description);
+                    $('#event-encounter').show();
+                    $('#btnDeleteEncounter').show();
+                } else {
+                    $('#event-encounter').hide();
+                    $('#btnDeleteEncounter').hide();
+                }
+            }
+            else {
+                if (!storeQuest()) { return; }
+
+                if (!isEmpty(quests[questIndex]) && !isEmpty(quests[questIndex].Events)) {
+                    eventIndex = quests[questIndex].Events.length;
+                } else { eventIndex = 0; }
+
+                $('#EventName').val('');
+                eventEditor.setData('');
+                $('#btnDeleteEncounter').hide();
+            }
+
+            $('#event-tab').click();
+        }
+
+        function storeEvent(allowEmpty = false) {
+            var oldEvent = isEmpty(quests[questIndex].Events) ? null : quests[questIndex].Events[eventIndex];
+            var event = {
+                Name: $('#EventName').val(),
+                Description: eventEditor.getData(),
+                Encounter: !isEmpty(oldEvent) ? oldEvent.Encounter : null
+            }
+
+            if (isEmpty(event.Name) && isEmpty(event.Description) && isEmpty(event.Encounter)) {
+                if (allowEmpty) { return true; }
+                Notiflix.NotifyContent.Failure('Event name is required!');
+                return false;
+            }
+
+            if (isEmpty(event.Name) && (!isEmpty(event.Description) || !isEmpty(event.Encounter))) {
+                Notiflix.NotifyContent.Failure('Event name is required!');
+                return false;
+            }
+
+            if (isEmpty(quests[questIndex].Events)) { quests[questIndex].Events = []; }
+            quests[questIndex].Events[eventIndex] = event;
+
+            return true;
+        }
+
+        function deleteEvent(index) {
+            quests[questIndex].Events.splice(index, 1);
+            loadQuest(questIndex);
+        }
+        /************************************************/
+
+        function save() {
+            var success = true;
+            var id = $('.fancy-tab-item.active').attr('id');
+            switch (id) {
+                case 'quest-tab':
+                    success = storeQuest();
+                    break;
+                case 'event-tab':
+                    success = storeEvent();
+                    if (success) { success = storeQuest(); }
+                    break;
+            }
+            if (!success) { return; }
+
+            var postData = {
+                ArcKey: '@Model.ArcKey',
+                Name: $('#Name').val(),
+                Description: $('#Description').val(),
+                Quests: quests,
+                IsActive: '@Model.IsActive',
+                Map: $('#ArcMap').val(),
+                Pins: getPins()
+            }
+
+            $.ajax({
+                type: "POST",
+                url: updateAction,
+                data: JSON.stringify(postData),
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data.success) {
+                        Notiflix.NotifyContent.Success(data.message);
+                        $('#delete').show();
+                        isSaving = true;
+                        uploadImage($('#ArcMap').parent().find('.uploader'), 'ArcMaps/@Model.ArcKey', $('#ArcMap').val());
+                        isSaving = false;
+                    } else {
+                        Notiflix.NotifyContent.Failure(data.message);
+                    }
+                },
+                error: function (error) {
+                    Notiflix.NotifyContent.Failure(error.responseText);
+                }
+            })
+        }
+
+        function getPins() {
+            var pins = [];
+            var layers = $('#mapCanvas').getLayerGroup('quest');
+            if (!isEmpty(layers)) {
+                for (var i = 0; i < layers.length; i++) {
+                    pins.push({
+                        QuestKey: layers[i].data.key,
+                        Index: layers[i].data.index,
+                        X: layers[i].data.coordinates[0],
+                        Y: layers[i].data.coordinates[1]
+                    })
+                }
+            }
+
+            return pins;
+        }
+
+        function deleteItem() {
+            var postData = { id: '@Model.ArcKey' };
+
+            $.ajax({
+                type: "POST",
+                url: deleteAction,
+                data: JSON.stringify(postData),
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data.success) {
+                        Notiflix.NotifyContent.Success(data.message);
+                        location.replace(indexAction);
+                    } else {
+                        Notiflix.NotifyContent.Failure(data.message);
+                    }
+                },
+                error: function (error) {
+                    Notiflix.NotifyContent.Failure(error.responseText);
+                }
+            })
+        }
+    </script>
+}

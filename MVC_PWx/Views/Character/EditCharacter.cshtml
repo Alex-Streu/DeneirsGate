@@ -24,11 +24,10 @@
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
         @Html.HiddenFor(model => model.UserKey)
         @Html.HiddenFor(model => model.CharacterKey)
-        @Html.HiddenFor(model => model.CampaignKey)
 
 
         <div class="top-info">
-            @Url.RenderImageUpload("Portrait", Model.Portrait, Model.CampaignKey, Model.CharacterKey)
+            @Url.RenderPortraitUpload("Portrait", Model.Portrait, (Guid)ViewBag.CampaignKey, Model.CharacterKey)
 
             @HtmlHelpers.RenderFancyTextbox("lg", "FirstName", 50, Model.FirstName, "First Name", Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "text-danger" }))
 
@@ -669,7 +668,6 @@
                 Fears: $('#Fears').val(),
                 Ideals: $('#Ideals').val(),
                 Backstory: backstory.getData(),
-                CampaignKey: $('#CampaignKey').val(),
                 Languages: $('#Languages').val(),
                 Alignment: $('#Alignment').val(),
                 Armor: $('#Armor').val(),

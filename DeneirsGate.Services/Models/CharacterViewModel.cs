@@ -28,14 +28,16 @@ namespace DeneirsGate.Services
         public string Portrait { get; set; }
         [DisplayName("Race")]
         public Guid RaceKey { get; set; }
+        public string Race { get; set; }
         [DisplayName("Class")]
         public Guid ClassKey { get; set; }
+        public string Class { get; set; }
         [DisplayName("Background")]
         public Guid BackgroundKey { get; set; }
+        public string Background { get; set; }
         public string Fears { get; set; }
         public string Ideals { get; set; }
         public string Backstory { get; set; }
-        public Guid CampaignKey { get; set; }
         public string Languages { get; set; }
         public string Alignment { get; set; }
         public string Armor { get; set; }
@@ -69,7 +71,6 @@ namespace DeneirsGate.Services
     public class CharacterShortViewModel
     {
         public Guid CharacterKey { get; set; }
-        public Guid CampaignKey { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public int Level { get; set; }
@@ -107,8 +108,6 @@ namespace DeneirsGate.Services
         [StringLength(250)]
         public string Ideals { get; set; }
         public string Backstory { get; set; }
-        [NotEmptyGuid]
-        public Guid CampaignKey { get; set; }
         [StringLength(250)]
         public string Languages { get; set; }
         public string Alignment { get; set; }
@@ -138,6 +137,7 @@ namespace DeneirsGate.Services
         public string Inventory { get; set; }
         public List<CharacterWeaponViewModel> Weapons { get; set; } = new List<CharacterWeaponViewModel>();
         public List<CharacterSpellViewModel> Spells { get; set; } = new List<CharacterSpellViewModel>();
+        public bool IsPlayer { get; set; }
     }
 
     public class PlayerViewModel : CharacterViewModel
@@ -167,6 +167,7 @@ namespace DeneirsGate.Services
         public string DamageDice { get; set; }
         public int DamageMod { get; set; }
         public Guid DamageType { get; set; }
+        public string DamageDisplay { get; set; }
     }
 
     public class CharacterSpellViewModel

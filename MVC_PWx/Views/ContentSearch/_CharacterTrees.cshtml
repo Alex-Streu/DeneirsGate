@@ -1,0 +1,13 @@
+﻿@using DeneirsGate.Services
+@using CustomHtmlHelpers
+@model List<RelationshipTreeSearchModel>
+
+<div class="flexbox-container justify-center">
+    @foreach (var item in Model)
+    {
+        <div id="@item.TreeKey" class="btn btn-lg btn-default tree-item menu-option menu-link" data-url="@Url.Action("_RelationshipTree", "ContentSearch", new { id = item.TreeKey })" data-dir="@item.Name">
+            <div class="name">@item.Name</div>
+            <div style="display:none" class="characters">@item.CharacterList</div>
+        </div>
+    }
+</div>

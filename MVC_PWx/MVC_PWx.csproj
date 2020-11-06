@@ -183,6 +183,7 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\CampaignController.cs" />
+    <Compile Include="Controllers\ContentSearchController.cs" />
     <Compile Include="Controllers\DeneirsController.cs" />
     <Compile Include="Controllers\CharacterController.cs" />
     <Compile Include="Controllers\DungeonController.cs" />
@@ -448,6 +449,7 @@
     <Content Include="Content\lib\gritter\images\gritter.png" />
     <Content Include="Content\lib\gritter\images\ie-spacer.gif" />
     <Content Include="Content\lib\gritter\js\jquery.gritter.js" />
+    <Content Include="Content\lib\jcanvas.min.js" />
     <Content Include="Content\lib\jquery-easy-pie-chart\jquery.easy-pie-chart.css" />
     <Content Include="Content\lib\jquery-easy-pie-chart\jquery.easy-pie-chart.js" />
     <Content Include="Content\lib\jquery-ui-1.9.2.custom.min.js" />
@@ -477,6 +479,7 @@
     <Content Include="Content\Site.css" />
     <Content Include="Content\custom\pages\dungeon-creator.scss" />
     <Content Include="Content\custom\lists.scss" />
+    <Content Include="Content\custom\pages\arc-editor.scss" />
     <None Include="gulpfile.js" />
     <Content Include="Scripts\bootstrap-select.min.js" />
     <Content Include="Scripts\bootstrap.js" />
@@ -592,6 +595,31 @@
     <Content Include="Views\Dungeon\Index.cshtml" />
     <Content Include="Views\Shared\_Empty.cshtml" />
     <Content Include="Views\Dungeon\Print.cshtml" />
+    <Content Include="Views\Campaign\Arcs.cshtml" />
+    <Content Include="Views\Campaign\EditArc.cshtml" />
+    <Content Include="Views\ContentSearch\_Arcs.cshtml" />
+    <Content Include="Views\ContentSearch\_Characters.cshtml" />
+    <Content Include="Views\ContentSearch\_Character.cshtml" />
+    <Content Include="Views\ContentSearch\_CharacterBackstory.cshtml" />
+    <Content Include="Views\ContentSearch\_CharacterInfo.cshtml" />
+    <Content Include="Views\ContentSearch\_CharacterWeapons.cshtml" />
+    <Content Include="Views\ContentSearch\_CharacterInventory.cshtml" />
+    <Content Include="Views\ContentSearch\_RelationshipTrees.cshtml" />
+    <Content Include="Views\ContentSearch\_RelationshipTree.cshtml" />
+    <Content Include="Views\ContentSearch\_ShallowCharacterBackstory.cshtml" />
+    <Content Include="Views\ContentSearch\_CharacterTrees.cshtml" />
+    <Content Include="Views\ContentSearch\_Monsters.cshtml" />
+    <Content Include="Views\ContentSearch\_Monster.cshtml" />
+    <Content Include="Views\ContentSearch\_MagicItems.cshtml" />
+    <Content Include="Views\ContentSearch\_MagicItem.cshtml" />
+    <Content Include="Views\ContentSearch\_Dungeons.cshtml" />
+    <Content Include="Views\ContentSearch\_Dungeon.cshtml" />
+    <Content Include="Views\ContentSearch\_Traps.cshtml" />
+    <Content Include="Views\ContentSearch\_Trap.cshtml" />
+    <Content Include="Views\ContentSearch\_Arc.cshtml" />
+    <Content Include="Views\ContentSearch\_ArcQuest.cshtml" />
+    <Content Include="Views\ContentSearch\_ArcQuestEvent.cshtml" />
+    <Content Include="Views\Campaign\Print.cshtml" />
     <None Include="Web.DEV.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

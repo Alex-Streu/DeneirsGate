@@ -59,7 +59,7 @@ namespace DeneirsGate.Services
 
     public class DungeonTilePostModel
     {
-        public Guid TileKey { get; set; }
+        public Guid TileKey { get; set; } = Guid.NewGuid();
         [Required]
         public int Row { get; set; }
         [Required]

@@ -126,6 +126,11 @@ $('.upload-image .overlay').click(function () {
     input.click();
 })
 
+$('.image-upload').click(function () {
+    var input = $(this).parent().find('input[type="file"]');
+    input.click();
+})
+
 $('input[type="file"]').change(function () {
     if ($(this).val() == null) { return; }
 
@@ -140,6 +145,11 @@ $('input[type="file"]').change(function () {
  * @return {number}
  */
 function uploadImage(fileElement, folder, name, isTemp = false) {
+    var image = $(fileElement).parent().find('img');
+    uploadImageExternal(fileElement, folder, name, image, isTemp);
+}
+
+function uploadImageExternal(fileElement, folder, name, imageElement, isTemp = false) {
     var f = $(fileElement).prop('files')[0];
     if (f == undefined) { return; }
 
@@ -170,8 +180,9 @@ function uploadImage(fileElement, folder, name, isTemp = false) {
             processData: false,
             success: function (data) {
                 if (data.success) {
-                    parent.find('img').attr('src', data.imagePath.replace('~', ''));
-                    parent.find('.image-name').val(data.image);
+                    $(imageElement).attr('src', data.imagePath.replace('~', ''));
+                    $(parent).find('.image-name').val(data.image);
+                    $(parent).find('.image-name').change();
                 }
             },
             error: function (error) {

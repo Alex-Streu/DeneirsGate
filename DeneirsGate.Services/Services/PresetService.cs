@@ -82,7 +82,7 @@ namespace DeneirsGate.Services
             items.Add("NG","Neutral Good");
             items.Add("CG","Chaotic Good");
             items.Add("LN","Lawful Neutral");
-            items.Add("NN","Neutral");
+            items.Add("N","Neutral");
             items.Add("CN","Chaotic Neutral");
             items.Add("LE","Lawful Evil");
             items.Add("NE","Neutral Evil");

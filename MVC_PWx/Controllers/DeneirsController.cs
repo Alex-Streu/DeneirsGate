@@ -18,6 +18,7 @@ namespace MVC_PWx.Controllers
         private AuthService authSvc;
 
         private CampaignService campaignSvc;
+        private CharacterService characterSvc;
         private PresetService presetSvc;
         private UserService userSvc;
         private RelationshipTreeService relationshipTreeSvc;
@@ -88,6 +89,15 @@ namespace MVC_PWx.Controllers
             {
                 if (campaignSvc == null) { campaignSvc = new CampaignService(); }
                 return campaignSvc;
+            }
+        }
+
+        public CharacterService CharacterSvc
+        {
+            get
+            {
+                if (characterSvc == null) { characterSvc = new CharacterService(); }
+                return characterSvc;
             }
         }
 
@@ -177,6 +187,7 @@ namespace MVC_PWx.Controllers
                 ViewBag.User = AppUser;
                 ViewBag.Notifications = UserSvc.GetNotifications(AppUser.UserId);
                 ViewBag.Friends = UserSvc.GetFriends(AppUser.UserId, (Dictionary<string, DateTime>)HttpContext.Application["OnlineUsers"], true);
+                ViewBag.CampaignKey = AppUser.ActiveCampaign.Value;
             }
 
             base.OnActionExecuted(filterContext);

@@ -24,7 +24,7 @@
         @HtmlHelpers.RenderFancyTextbox("lg long", "SearchCharacters", null, "", "Search Characters")
         <a class="btn btn-default" href="@Url.Action("CreateCharacter")">Create Character</a>
     </div>
-    <div class="flexbox-container">
+    <div id="character-inventory" class="flexbox-container">
         @foreach (var item in Model)
         {
         <div class="flex-item character need-space">
@@ -44,7 +44,7 @@
 
         $('#SearchCharacters').keyup(function () {
             var search = $(this).val().toLowerCase();
-            $('.character-inventory .character').each(function () {
+            $('#character-inventory .character').each(function () {
                 var name = $(this).find('.name').text().toLowerCase();
                 if (name.indexOf(search) > -1) {
                     $(this).show();

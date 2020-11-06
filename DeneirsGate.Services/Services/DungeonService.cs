@@ -16,22 +16,25 @@ namespace DeneirsGate.Services
         {
             var hasAccess = false;
 
-            switch (type)
+            using (DBReset())
             {
-                case ContentType.Dungeon:
-                    if (DB.CampaignDungeonLinkers.FirstOrDefault(x => x.CampaignKey == campaignId && x.DungeonKey == contentId) != null
-                        || DB.CampaignDungeonLinkers.FirstOrDefault(x => x.DungeonKey == contentId) == null)
-                    {
-                        hasAccess = true;
-                    }
-                    break;
-                case ContentType.Trap:
-                    if (DB.CampaignTrapLinkers.FirstOrDefault(x => x.CampaignKey == campaignId && x.TrapKey == contentId) != null
-                        || DB.CampaignTrapLinkers.FirstOrDefault(x => x.TrapKey == contentId) == null)
-                    {
-                        hasAccess = true;
-                    }
-                    break;
+                switch (type)
+                {
+                    case ContentType.Dungeon:
+                        if (DB.CampaignDungeonLinkers.FirstOrDefault(x => x.CampaignKey == campaignId && x.DungeonKey == contentId) != null
+                            || DB.CampaignDungeonLinkers.FirstOrDefault(x => x.DungeonKey == contentId) == null)
+                        {
+                            hasAccess = true;
+                        }
+                        break;
+                    case ContentType.Trap:
+                        if (DB.CampaignTrapLinkers.FirstOrDefault(x => x.CampaignKey == campaignId && x.TrapKey == contentId) != null
+                            || DB.CampaignTrapLinkers.FirstOrDefault(x => x.TrapKey == contentId) == null)
+                        {
+                            hasAccess = true;
+                        }
+                        break;
+                }
             }
 
             if (!hasAccess)
@@ -164,7 +167,7 @@ namespace DeneirsGate.Services
                 dungeon.Description = model.Description;
 
                 //Remove pre-existing tile assets
-                var existingTileKeys = DB.DungeonTiles.Where(x => x.DungeonKey == model.DungeonKey).Select(x => x.TileKey).ToList() ?? new List<Guid>();
+                var existingTileKeys = DB.DungeonTiles.Where(x => x.DungeonKey == model.DungeonKey).Select(x => x.TileKey).ToList();
                 DB.DungeonTiles.RemoveRange(x => x.DungeonKey == model.DungeonKey);
                 DB.DungeonTileTraps.RemoveRange(x => existingTileKeys.Contains(x.TileKey));
                 DB.DungeonTileEncounters.RemoveRange(x => existingTileKeys.Contains(x.TileKey));
@@ -175,7 +178,7 @@ namespace DeneirsGate.Services
                     var newTile = new DungeonTile
                     {
                         DungeonKey = model.DungeonKey,
-                        TileKey = Guid.NewGuid(),
+                        TileKey = tile.TileKey,
                         Row = tile.Row,
                         Column = tile.Column,
                         Description = tile.Description,

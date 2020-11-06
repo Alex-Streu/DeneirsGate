@@ -1,0 +1,42 @@
+﻿@using DeneirsGate.Services
+@using CustomHtmlHelpers
+@model RelationshipTreeViewModel
+
+<div id="RelationshipTreePage">
+    <div class="flexbox-container items-start">
+        <div id="tierList" class="flexbox-container need-space">
+            @foreach (var tier in Model.Tiers)
+            {
+                <div class="tier-box" data-key="@tier.TierKey">
+                    <div class="character-container droppable flexbox-container justify-center">
+                        @foreach (var character in tier.Characters)
+                        {
+                            if (!character.IsShallow)
+                            {
+                                <div class="flex-item character menu-link" data-url="@Url.Action("_Character", "ContentSearch", new { id = character.CharacterKey, hideOptions = true })" data-dir="@character.Name">
+                                    <div class='fancy-portrait'>
+                                        <img class='img-xs img-responsive' src='@Url.CharacterPortrait(Model.CampaignKey, character.CharacterKey, character.Portrait)' />
+                                        <div class="player-info">
+                                            <div class="name">@character.Name</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="flex-item character shallow menu-link" data-url="@Url.Action("_ShallowCharacterBackstory", "ContentSearch", new { name = character.Name, backstory = character.Backstory })" data-dir="@character.Name">
+                                    <div class='fancy-portrait'>
+                                        <img class='img-xs img-responsive' src='@Url.DefaultShallowPortrait()' />
+                                        <div class="player-info">
+                                            <div class="name">@character.Name</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>

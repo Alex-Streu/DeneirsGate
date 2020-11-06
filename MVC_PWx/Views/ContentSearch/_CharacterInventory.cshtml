@@ -1,0 +1,16 @@
+﻿@using DeneirsGate.Services
+@model CharacterViewModel
+
+<h2 class="text-center">@Model.FirstName @Model.LastName</h2>
+<div class="flexbox-container justify-between">
+    <label class="text-medium"><b>@Model.Copper</b> CP</label>
+    <label class="text-medium"><b>@Model.Silver</b> SP</label>
+    <label class="text-medium"><b>@Model.Electrum</b> EP</label>
+    <label class="text-medium"><b>@Model.Gold</b> GP</label>
+    <label class="text-medium"><b>@Model.Platinum</b> PP</label>
+</div>
+<hr />
+<div style="margin:1em">
+    <label class="text-large text-bold red">Inventory</label>
+    <p class="text-medium">@Model.Inventory</p>
+</div>

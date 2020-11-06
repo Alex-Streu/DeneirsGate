@@ -15,7 +15,7 @@ namespace MVC_PWx.Controllers
             var model = new List<CharacterShortViewModel>();
             try
             {
-                model = CampaignSvc.GetAllCharacters(AppUser.UserId, AppUser.ActiveCampaign.Value);
+                model = CharacterSvc.GetAllCharacters(AppUser.UserId, AppUser.ActiveCampaign.Value);
 
                 ViewBag.CampaignKey = AppUser.ActiveCampaign.Value;
             }
@@ -36,10 +36,11 @@ namespace MVC_PWx.Controllers
             var player = new PlayerViewModel();
             try
             {
-                player = CampaignSvc.GetPlayer(AppUser.UserId, AppUser.ActiveCampaign.Value, id);
+                player = CharacterSvc.GetPlayer(AppUser.UserId, AppUser.ActiveCampaign.Value, id);
 
                 ViewBag.IsPlayer = isPlayer;
                 ViewBag.IsNew = isNew;
+                ViewBag.CampaignKey = AppUser.ActiveCampaign.Value;
             }
             catch (Exception ex) { }
 
@@ -54,7 +55,7 @@ namespace MVC_PWx.Controllers
             {
                 try
                 {
-                    CampaignSvc.UpdateCharacter(AppUser.UserId, model, true, model.UserKey);
+                    CharacterSvc.UpdateCharacter(AppUser.UserId, AppUser.ActiveCampaign.Value, model, true, model.UserKey);
                 }
                 catch (Exception ex)
                 {
@@ -74,7 +75,7 @@ namespace MVC_PWx.Controllers
             {
                 try
                 {
-                    CampaignSvc.UpdateCharacter(AppUser.UserId, model, false);
+                    CharacterSvc.UpdateCharacter(AppUser.UserId, AppUser.ActiveCampaign.Value, model, false);
                 }
                 catch (Exception ex)
                 {
@@ -92,7 +93,7 @@ namespace MVC_PWx.Controllers
         {
             try
             {
-                CampaignSvc.DeleteCharacter(AppUser.UserId, id);
+                CharacterSvc.DeleteCharacter(AppUser.UserId, AppUser.ActiveCampaign.Value, id);
             }
             catch (Exception ex)
             {

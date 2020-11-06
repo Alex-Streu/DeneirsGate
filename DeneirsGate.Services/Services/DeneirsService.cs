@@ -23,13 +23,16 @@ namespace DeneirsGate.Services
             return db;
         }
 
-        protected virtual void UserHasAccess(Guid userId, Guid campaignKey)
+        protected virtual void UserHasAccess(Guid userId, Guid campaignId)
         {
             var hasAccess = false;
 
-            if (DB.UserCampaigns.FirstOrDefault(x => x.UserKey == userId && x.CampaignKey == campaignKey && x.IsOwner) != null)
+            using (DBReset())
             {
-                hasAccess = true;
+                if (DB.UserCampaigns.FirstOrDefault(x => x.UserKey == userId && x.CampaignKey == campaignId && x.IsOwner) != null)
+                {
+                    hasAccess = true;
+                }
             }
 
             if (!hasAccess)

@@ -40,6 +40,7 @@ namespace MVC_PWx
                         "~/Content/lib/gritter/js/jquery.gritter.js",
                         "~/Content/lib/gritter-conf.js",
                         "~/Content/lib/notiflix-2.0.0.js",
+                        "~/Content/lib/jcanvas.min.js",
                         "~/Scripts/bootstrap-select.min.js"));
 
             bundles.Add(new StyleBundle("~/bundles/charts").Include(

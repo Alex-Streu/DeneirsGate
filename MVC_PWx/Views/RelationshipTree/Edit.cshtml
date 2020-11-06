@@ -4,6 +4,7 @@
 
 @{
     ViewBag.Title = "Edit Tree";
+    ViewBag.MenuOption = "RelationshipTree";
 }
 
 <div id="RelationshipTreePage">
@@ -249,7 +250,6 @@
         })
 
         function deleteTier() {
-            console.log('delete called')
             var box = tierToDelete;
 
             $(box).find('.character').each(function () {

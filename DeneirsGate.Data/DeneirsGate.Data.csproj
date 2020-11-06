@@ -71,6 +71,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DataModels\Arc.cs" />
+    <Compile Include="DataModels\ArcCharcterLinker.cs" />
+    <Compile Include="DataModels\ArcMapPin.cs" />
     <Compile Include="DataModels\ArtObject.cs" />
     <Compile Include="DataModels\AspNetRole.cs" />
     <Compile Include="DataModels\AspNetUser.cs" />
@@ -109,6 +112,9 @@
     <Compile Include="DataModels\MonsterSize.cs" />
     <Compile Include="DataModels\MonsterType.cs" />
     <Compile Include="DataModels\Notification.cs" />
+    <Compile Include="DataModels\Quest.cs" />
+    <Compile Include="DataModels\QuestEvent.cs" />
+    <Compile Include="DataModels\QuestEventEncounter.cs" />
     <Compile Include="DataModels\RelationshipTree.cs" />
     <Compile Include="DataModels\RelationshipTreeCharacter.cs" />
     <Compile Include="DataModels\RelationshipTreeTier.cs" />

@@ -9,6 +9,175 @@ h2 {
   font-weight: bold;
   color: #ce0606; }
 
+a {
+  font-size: medium;
+  font-weight: bold;
+  color: #ce0606;
+  cursor: pointer; }
+  a:hover {
+    color: #a90404; }
+
+.ck-editor .ck-editor__editable {
+  min-height: 200px;
+  height: 500px;
+  max-height: 600px;
+  color: #000;
+  resize: vertical; }
+
+.template {
+  display: none; }
+
+.handle {
+  padding-right: 0.5em;
+  cursor: grab; }
+  .handle:active {
+    cursor: grabbing; }
+
+/* ANIMATIONS */
+@-webkit-keyframes glow {
+  from {
+    opacity: 0.4; }
+  to {
+    opacity: 1; } }
+
+/*#region FADEIN-FROM-BOTTOM */
+@keyframes fadein-from-bottom {
+  from {
+    opacity: 0;
+    bottom: 10px; }
+  to {
+    opacity: 1;
+    bottom: -30px; } }
+
+/* Firefox < 16 */
+@-moz-keyframes fadein-from-bottom {
+  from {
+    opacity: 0;
+    bottom: 10px; }
+  to {
+    opacity: 1;
+    bottom: -30px; } }
+
+/* Safari, Chrome and Opera > 12.1 */
+@-webkit-keyframes fadein-from-bottom {
+  from {
+    opacity: 0;
+    bottom: 10px; }
+  to {
+    opacity: 1;
+    bottom: -30px; } }
+
+/* Internet Explorer */
+@-ms-keyframes fadein-from-bottom {
+  from {
+    opacity: 0;
+    bottom: 10px; }
+  to {
+    opacity: 1;
+    bottom: -30px; } }
+
+/* Opera < 12.1 */
+@-o-keyframes fadein-from-bottom {
+  from {
+    opacity: 0;
+    bottom: 10px; }
+  to {
+    opacity: 1;
+    bottom: -30px; } }
+
+/*#endregion */
+/*#region FADEIN-TOP */
+@keyframes fadein-top {
+  from {
+    opacity: 0;
+    top: 10px; }
+  to {
+    opacity: 1;
+    top: -30px; } }
+
+/* Firefox < 16 */
+@-moz-keyframes fadein-top {
+  from {
+    opacity: 0;
+    top: 10px; }
+  to {
+    opacity: 1;
+    top: -30px; } }
+
+/* Safari, Chrome and Opera > 12.1 */
+@-webkit-keyframes fadein-top {
+  from {
+    opacity: 0;
+    top: 10px; }
+  to {
+    opacity: 1;
+    top: -30px; } }
+
+/* Internet Explorer */
+@-ms-keyframes fadein-top {
+  from {
+    opacity: 0;
+    top: 10px; }
+  to {
+    opacity: 1;
+    top: -30px; } }
+
+/* Opera < 12.1 */
+@-o-keyframes fadein-top {
+  from {
+    opacity: 0;
+    top: 10px; }
+  to {
+    opacity: 1;
+    top: -30px; } }
+
+/*#endregion */
+/*#region FADEIN-LEFT */
+@keyframes fadein-left {
+  from {
+    opacity: 0;
+    left: 30px; }
+  to {
+    opacity: 1;
+    left: 110px; } }
+
+/* Firefox < 16 */
+@-moz-keyframes fadein-left {
+  from {
+    opacity: 0;
+    left: 30px; }
+  to {
+    opacity: 1;
+    left: 110px; } }
+
+/* Safari, Chrome and Opera > 12.1 */
+@-webkit-keyframes fadein-left {
+  from {
+    opacity: 0;
+    left: 30px; }
+  to {
+    opacity: 1;
+    left: 110px; } }
+
+/* Internet Explorer */
+@-ms-keyframes fadein-left {
+  from {
+    opacity: 0;
+    left: 30px; }
+  to {
+    opacity: 1;
+    left: 110px; } }
+
+/* Opera < 12.1 */
+@-o-keyframes fadein-left {
+  from {
+    opacity: 0;
+    left: 30px; }
+  to {
+    opacity: 1;
+    left: 110px; } }
+
+/*#endregion */
 .fancy-textbox {
   position: relative;
   /*margin-bottom: 25px;*/
@@ -837,7 +1006,7 @@ hr {
   /* Opera < 12.1 */
   animation: fadein 3s; }
 
-/* FADE IN BOTTOM*/
+/* FADE IN BOTTOM */
 @keyframes fadein-bottom {
   0% {
     opacity: 0; }
@@ -1131,8 +1300,8 @@ hr {
       background-color: #fcfcfc; }
       .weapons-pane .spell-side .spell-content .spell-column {
         flex-grow: 1;
-        flex-basis: 275px;
-        width: 275px;
+        flex-basis: 30%;
+        width: 30%;
         padding: 0em 2em; }
         .weapons-pane .spell-side .spell-content .spell-column .fancy-textbox {
           margin-bottom: 0.5em !important; }
@@ -1205,11 +1374,6 @@ hr {
   .inventory-pane .inventory textarea {
     min-height: 200px; }
 
-#backstory-editor ~ .ck-editor .ck-editor__editable {
-  min-height: 500px;
-  max-height: 600px;
-  color: #000; }
-
 .submit-footer {
   display: flex;
   justify-content: flex-start;
@@ -1221,17 +1385,12 @@ hr {
   width: 150px; }
 
 .dashboard-left-panel {
-  display: flex;
-  justify-content: flex-start;
-  flex-wrap: nowrap;
-  align-content: center;
-  margin: 1em;
   width: 25%; }
+  .dashboard-left-panel .pin-panel {
+    height: 20em;
+    width: 100%; }
   .dashboard-left-panel .npc-panel {
-    width: 100%;
-    display: flex;
-    flex-wrap: wrap;
-    padding: 1em !important; }
+    padding-top: 2em !important; }
     .dashboard-left-panel .npc-panel .top-info {
       display: flex;
       align-items: flex-end;
@@ -1240,14 +1399,14 @@ hr {
     .dashboard-left-panel .npc-panel .top-info > * {
       margin: 1em; }
     .dashboard-left-panel .npc-panel .npc-list {
-      display: flex;
-      justify-content: flex-start;
-      flex-wrap: nowrap;
-      align-content: center;
-      margin: 1em;
-      padding: 1em !important; }
+      padding: 1em !important;
+      height: 20em;
+      width: 100% !important; }
+      .dashboard-left-panel .npc-panel .npc-list > * {
+        margin: 1em !important; }
       .dashboard-left-panel .npc-panel .npc-list .fancy-portrait {
-        margin: 1em; }
+        margin: 1em;
+        height: 85px; }
         .dashboard-left-panel .npc-panel .npc-list .fancy-portrait img {
           width: 75px;
           height: 75px;
@@ -1294,6 +1453,124 @@ hr {
         -o-animation: fadein-left 0.75s;
         /* Opera < 12.1 */
         animation: fadein-left 0.75s; }
+
+.dashboard-arc-panel {
+  width: 50%;
+  /* The actual timeline (the vertical ruler) */
+  /* The actual timeline (the vertical ruler) */
+  /* Container around content */
+  /* The circles on the timeline */
+  /* Place the container to the left */
+  /* Place the container to the right */
+  /* Add arrows to the left container (pointing right) */
+  /* Add arrows to the right container (pointing left) */
+  /* Fix the circle for containers on the right side */
+  /* The actual content */
+  /* Media queries - Responsive timeline on screens less than 600px wide */ }
+  .dashboard-arc-panel * {
+    box-sizing: border-box; }
+  .dashboard-arc-panel .timeline {
+    position: relative;
+    max-width: 1200px;
+    margin: 0 auto; }
+  .dashboard-arc-panel .timeline::after {
+    content: '';
+    position: absolute;
+    width: 6px;
+    background-color: white;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    margin-left: -3px; }
+  .dashboard-arc-panel .timeline-container {
+    padding: 10px 40px;
+    position: relative;
+    background-color: inherit;
+    width: 50%; }
+    .dashboard-arc-panel .timeline-container.quest-incomplete::after {
+      border-color: #797979 !important; }
+    .dashboard-arc-panel .timeline-container.quest-in-progress::after {
+      border-color: #dbe648 !important;
+      background-color: #dbe648 !important;
+      box-shadow: 0px 0px 10px 4px #dbe648;
+      -webkit-animation: glow 1s ease-in-out infinite alternate;
+      -moz-animation: glow 1s ease-in-out infinite alternate;
+      animation: glow 1s ease-in-out infinite alternate; }
+    .dashboard-arc-panel .timeline-container.quest-abandoned::after {
+      border-color: #ce0606 !important;
+      background-color: #ce0606 !important;
+      box-shadow: 0px 0px 20px 4px #ce0606; }
+    .dashboard-arc-panel .timeline-container.quest-completed::after {
+      border-color: #08c23f !important;
+      background-color: #08c23f !important;
+      box-shadow: 0px 0px 10px 1px #08c23f; }
+  .dashboard-arc-panel .timeline-container::after {
+    content: '';
+    position: absolute;
+    width: 25px;
+    height: 25px;
+    right: -12px;
+    background-color: white;
+    border: 4px solid #797979;
+    top: 15px;
+    border-radius: 50%;
+    z-index: 1; }
+  .dashboard-arc-panel .timeline-left {
+    left: 0; }
+  .dashboard-arc-panel .timeline-right {
+    left: 50%; }
+  .dashboard-arc-panel .timeline-left::before {
+    content: " ";
+    height: 0;
+    position: absolute;
+    top: 22px;
+    width: 0;
+    z-index: 1;
+    right: 30px;
+    border: medium solid white;
+    border-width: 10px 0 10px 10px;
+    border-color: transparent transparent transparent white; }
+  .dashboard-arc-panel .timeline-right::before {
+    content: " ";
+    height: 0;
+    position: absolute;
+    top: 22px;
+    width: 0;
+    z-index: 1;
+    left: 30px;
+    border: medium solid white;
+    border-width: 10px 10px 10px 0;
+    border-color: transparent white transparent transparent; }
+  .dashboard-arc-panel .timeline-right::after {
+    left: -13px; }
+  .dashboard-arc-panel .timeline-content {
+    padding: 20px 30px;
+    background-color: white;
+    position: relative;
+    border-radius: 6px;
+    cursor: pointer; }
+  @media screen and (max-width: 600px) {
+    .dashboard-arc-panel {
+      /* Place the timelime to the left */
+      /* Full-width containers */
+      /* Make sure that all arrows are pointing leftwards */
+      /* Make sure all circles are at the same spot */
+      /* Make all right containers behave like the left ones */ }
+      .dashboard-arc-panel .timeline::after {
+        left: 31px; }
+      .dashboard-arc-panel .timeline-container {
+        width: 100%;
+        padding-left: 70px;
+        padding-right: 25px; }
+      .dashboard-arc-panel .timeline-container::before {
+        left: 60px;
+        border: medium solid white;
+        border-width: 10px 10px 10px 0;
+        border-color: transparent white transparent transparent; }
+      .dashboard-arc-panel .timeline-left::after, .dashboard-arc-panel .timeline-right::after {
+        left: 15px; }
+      .dashboard-arc-panel .timeline-right {
+        left: 0%; } }
 
 .dashboard-players {
   display: flex;
@@ -1348,49 +1625,99 @@ hr {
     /* Opera < 12.1 */
     animation: fadein-left 0.75s; }
 
-@keyframes fadein-left {
-  from {
-    opacity: 0;
-    left: 30px; }
-  to {
-    opacity: 1;
-    left: 110px; } }
+.map-label {
+  width: 40px;
+  height: 40px;
+  background-color: #fcfcfc;
+  color: #ce0606;
+  border: 4px solid #444444;
+  border-radius: 50%;
+  position: absolute;
+  font-size: 24px;
+  text-align: center;
+  cursor: pointer; }
+  .map-label.abandoned {
+    border-color: #ce0606; }
+  .map-label.completed {
+    border-color: #08c23f; }
+  .map-label.in-progress {
+    border-color: #dbe648; }
+  .map-label:hover .map-label-info {
+    display: flex;
+    -webkit-animation: fadein 0.75s;
+    /* Safari, Chrome and Opera > 12.1 */
+    -moz-animation: fadein 0.75s;
+    /* Firefox < 16 */
+    -ms-animation: fadein 0.75s;
+    /* Internet Explorer */
+    -o-animation: fadein 0.75s;
+    /* Opera < 12.1 */
+    animation: fadein 0.75s; }
 
-/* Firefox < 16 */
-@-moz-keyframes fadein-left {
-  from {
-    opacity: 0;
-    left: 30px; }
-  to {
-    opacity: 1;
-    left: 110px; } }
+.map-label-info {
+  display: none;
+  text-shadow: 2px 2px 4px #000000;
+  font-weight: bold;
+  font-size: x-large;
+  color: #ce0606;
+  position: absolute;
+  top: 0px;
+  left: 40px;
+  width: 300px;
+  z-index: 10; }
 
-/* Safari, Chrome and Opera > 12.1 */
-@-webkit-keyframes fadein-left {
-  from {
-    opacity: 0;
-    left: 30px; }
-  to {
-    opacity: 1;
-    left: 110px; } }
+#NPCModal .fancy-portrait {
+  margin: 1em;
+  height: 85px; }
+  #NPCModal .fancy-portrait.selected {
+    border: solid 6px #029700; }
+  #NPCModal .fancy-portrait img {
+    width: 75px;
+    height: 75px;
+    max-width: 75px;
+    max-height: 75px; }
+  #NPCModal .fancy-portrait .player-info {
+    display: none;
+    position: absolute;
+    top: 0px;
+    left: 110px;
+    width: 200px;
+    height: 100px;
+    padding: 15px;
+    z-index: 10;
+    background-image: url(/Content/img/campaigns/player-info-background.png);
+    text-shadow: 2px 2px 4px #000000; }
+    #NPCModal .fancy-portrait .player-info .name-level {
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      font-size: large; }
+      #NPCModal .fancy-portrait .player-info .name-level .name {
+        color: #ce0606; }
+      #NPCModal .fancy-portrait .player-info .name-level .level {
+        border-radius: 50%;
+        border: 2px solid #fcfcfc;
+        box-shadow: 1px 1px 4px #000;
+        width: 30px;
+        height: 30px;
+        text-align: center;
+        color: #fcfcfc; }
+    #NPCModal .fancy-portrait .player-info .extra {
+      color: #000;
+      font-size: small;
+      text-shadow: 2px 2px 4px #000000; }
 
-/* Internet Explorer */
-@-ms-keyframes fadein-left {
-  from {
-    opacity: 0;
-    left: 30px; }
-  to {
-    opacity: 1;
-    left: 110px; } }
-
-/* Opera < 12.1 */
-@-o-keyframes fadein-left {
-  from {
-    opacity: 0;
-    left: 30px; }
-  to {
-    opacity: 1;
-    left: 110px; } }
+#NPCModal .fancy-portrait:hover .player-info {
+  display: block;
+  -webkit-animation: fadein-left 0.75s;
+  /* Safari, Chrome and Opera > 12.1 */
+  -moz-animation: fadein-left 0.75s;
+  /* Firefox < 16 */
+  -ms-animation: fadein-left 0.75s;
+  /* Internet Explorer */
+  -o-animation: fadein-left 0.75s;
+  /* Opera < 12.1 */
+  animation: fadein-left 0.75s; }
 
 #player-register-body .title {
   display: flex;
@@ -1446,15 +1773,15 @@ hr {
 
 #RelationshipTreePage .fancy-portrait:hover .player-info {
   display: block;
-  -webkit-animation: fadein-bottom 0.75s;
+  -webkit-animation: fadein-top 0.75s;
   /* Safari, Chrome and Opera > 12.1 */
-  -moz-animation: fadein-bottom 0.75s;
+  -moz-animation: fadein-top 0.75s;
   /* Firefox < 16 */
-  -ms-animation: fadein-bottom 0.75s;
+  -ms-animation: fadein-top 0.75s;
   /* Internet Explorer */
-  -o-animation: fadein-bottom 0.75s;
+  -o-animation: fadein-top 0.75s;
   /* Opera < 12.1 */
-  animation: fadein-bottom 0.75s; }
+  animation: fadein-top 0.75s; }
 
 #RelationshipTreePage .character-inventory {
   min-height: 100px;
@@ -1471,50 +1798,6 @@ hr {
 
 #RelationshipTreePage #generator > * {
   margin-bottom: 1em; }
-
-@keyframes fadein-bottom {
-  from {
-    opacity: 0;
-    top: 10px; }
-  to {
-    opacity: 1;
-    top: -30px; } }
-
-/* Firefox < 16 */
-@-moz-keyframes fadein-bottom {
-  from {
-    opacity: 0;
-    top: 10px; }
-  to {
-    opacity: 1;
-    top: -30px; } }
-
-/* Safari, Chrome and Opera > 12.1 */
-@-webkit-keyframes fadein-bottom {
-  from {
-    opacity: 0;
-    top: 10px; }
-  to {
-    opacity: 1;
-    top: -30px; } }
-
-/* Internet Explorer */
-@-ms-keyframes fadein-bottom {
-  from {
-    opacity: 0;
-    top: 10px; }
-  to {
-    opacity: 1;
-    top: -30px; } }
-
-/* Opera < 12.1 */
-@-o-keyframes fadein-bottom {
-  from {
-    opacity: 0;
-    top: 10px; }
-  to {
-    opacity: 1;
-    top: -30px; } }
 
 .edit-dungeon-tile {
   width: 150px;
@@ -1562,3 +1845,54 @@ hr {
   display: none;
   padding: 1em;
   position: relative; }
+
+.separate-item {
+  padding: 1em;
+  border-top: 1px solid #d3d3d3;
+  background-color: #fcfcfc; }
+
+#ContentExplorer {
+  background-color: #fcfcfc;
+  position: fixed;
+  right: 0px;
+  top: 0px;
+  width: 500px;
+  height: 100%;
+  animation: open 0.4s; }
+  #ContentExplorer.closed {
+    width: 5px;
+    animation: close 0.4s; }
+    #ContentExplorer.closed #container {
+      display: none; }
+  #ContentExplorer #container {
+    padding: 6em 1em 1em 1em;
+    overflow-y: auto; }
+  #ContentExplorer .menu-option {
+    width: 80% !important; }
+
+#ContentExplorerSetter {
+  position: absolute;
+  left: -20px;
+  background-color: #444444;
+  width: 25px;
+  height: 100%; }
+  #ContentExplorerSetter:hover {
+    background-color: #303030;
+    cursor: pointer; }
+  #ContentExplorerSetter i {
+    top: 50%;
+    right: 2px;
+    color: #fcfcfc;
+    position: absolute; }
+
+@keyframes close {
+  from {
+    width: 500px; }
+  to {
+    width: 5px; } }
+
+@keyframes open {
+  from {
+    width: 5px; }
+  to {
+    width: 500px; } }

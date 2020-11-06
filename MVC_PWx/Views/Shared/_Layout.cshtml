@@ -236,15 +236,21 @@
                             </li>
                         }
                         <li class="mt">
+                            <a id="menu_Dashboard" data-alt="/" href="@Url.Action("/", "Campaign")">
+                                <i class="fa fa-dashboard"></i>
+                                <span>Dashboard</span>
+                            </a>
+                        </li>
+                        <li>
                             <a id="menu_Campaign" href="@Url.Action("ChangeCampaign", "Campaign")">
                                 <i class="fa fa-compass"></i>
                                 <span>Campaigns</span>
                             </a>
                         </li>
                         <li>
-                            <a id="menu_Dashboard" data-alt="/" href="@Url.Action("/", "Campaign")">
-                                <i class="fa fa-dashboard"></i>
-                                <span>Dashboard</span>
+                            <a id="menu_Arc" data-alt="/" href="@Url.Action("Arcs", "Campaign")">
+                                <i class="fa fa-pencil-square-o"></i>
+                                <span>Story Arcs</span>
                             </a>
                         </li>
                         <li>
@@ -259,15 +265,12 @@
                                 <span>Relationship Trees</span>
                             </a>
                         </li>
-                        @if (User.IsInRole("Admin"))
-                        {
-                            <li>
-                                <a id="menu_Monster" href="@Url.Action("/", "Monster")">
-                                    <i class="fa fa-optin-monster"></i>
-                                    <span>Monsters</span>
-                                </a>
-                            </li>
-                        }
+                        <li>
+                            <a id="menu_Monster" href="@Url.Action("/", "Monster")">
+                                <i class="fa fa-optin-monster"></i>
+                                <span>Monsters</span>
+                            </a>
+                        </li>
                         <li>
                             <a id="menu_MagicItem" href="@Url.Action("/", "MagicItem")">
                                 <i class="fa fa-trophy"></i>

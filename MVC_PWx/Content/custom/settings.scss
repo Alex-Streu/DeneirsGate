@@ -28,3 +28,253 @@ h2 {
     font-weight: bold;
     color: $red;
 }
+
+a {
+    font-size: medium;
+    font-weight: bold;
+    color: $red;
+    cursor: pointer;
+
+    &:hover {
+        color: $redHover;
+    }
+}
+
+.ck-editor .ck-editor__editable {
+    min-height: 200px;
+    height: 500px;
+    max-height: 600px;
+    color: #000;
+    resize: vertical;
+}
+
+.template {
+    display: none;
+}
+
+.handle {
+    padding-right: 0.5em;
+    cursor: grab;
+
+    &:active {
+        cursor: grabbing;
+    }
+}
+
+
+/* ANIMATIONS */
+@-webkit-keyframes glow {
+    from {
+        opacity: 0.4;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+
+/*#region FADEIN-FROM-BOTTOM */
+
+@keyframes fadein-from-bottom {
+    from {
+        opacity: 0;
+        bottom: 10px;
+    }
+
+    to {
+        opacity: 1;
+        bottom: -30px;
+    }
+}
+
+/* Firefox < 16 */
+@-moz-keyframes fadein-from-bottom {
+    from {
+        opacity: 0;
+        bottom: 10px;
+    }
+
+    to {
+        opacity: 1;
+        bottom: -30px;
+    }
+}
+
+/* Safari, Chrome and Opera > 12.1 */
+@-webkit-keyframes fadein-from-bottom {
+    from {
+        opacity: 0;
+        bottom: 10px;
+    }
+
+    to {
+        opacity: 1;
+        bottom: -30px;
+    }
+}
+
+/* Internet Explorer */
+@-ms-keyframes fadein-from-bottom {
+    from {
+        opacity: 0;
+        bottom: 10px;
+    }
+
+    to {
+        opacity: 1;
+        bottom: -30px;
+    }
+}
+
+/* Opera < 12.1 */
+@-o-keyframes fadein-from-bottom {
+    from {
+        opacity: 0;
+        bottom: 10px;
+    }
+
+    to {
+        opacity: 1;
+        bottom: -30px;
+    }
+}
+
+/*#endregion */
+
+
+/*#region FADEIN-TOP */
+
+@keyframes fadein-top {
+    from {
+        opacity: 0;
+        top: 10px;
+    }
+
+    to {
+        opacity: 1;
+        top: -30px;
+    }
+}
+
+/* Firefox < 16 */
+@-moz-keyframes fadein-top {
+    from {
+        opacity: 0;
+        top: 10px;
+    }
+
+    to {
+        opacity: 1;
+        top: -30px;
+    }
+}
+
+/* Safari, Chrome and Opera > 12.1 */
+@-webkit-keyframes fadein-top {
+    from {
+        opacity: 0;
+        top: 10px;
+    }
+
+    to {
+        opacity: 1;
+        top: -30px;
+    }
+}
+
+/* Internet Explorer */
+@-ms-keyframes fadein-top {
+    from {
+        opacity: 0;
+        top: 10px;
+    }
+
+    to {
+        opacity: 1;
+        top: -30px;
+    }
+}
+
+/* Opera < 12.1 */
+@-o-keyframes fadein-top {
+    from {
+        opacity: 0;
+        top: 10px;
+    }
+
+    to {
+        opacity: 1;
+        top: -30px;
+    }
+}
+
+/*#endregion */
+
+/*#region FADEIN-LEFT */
+
+@keyframes fadein-left {
+    from {
+        opacity: 0;
+        left: 30px;
+    }
+
+    to {
+        opacity: 1;
+        left: 110px;
+    }
+}
+
+/* Firefox < 16 */
+@-moz-keyframes fadein-left {
+    from {
+        opacity: 0;
+        left: 30px;
+    }
+
+    to {
+        opacity: 1;
+        left: 110px;
+    }
+}
+
+/* Safari, Chrome and Opera > 12.1 */
+@-webkit-keyframes fadein-left {
+    from {
+        opacity: 0;
+        left: 30px;
+    }
+
+    to {
+        opacity: 1;
+        left: 110px;
+    }
+}
+
+/* Internet Explorer */
+@-ms-keyframes fadein-left {
+    from {
+        opacity: 0;
+        left: 30px;
+    }
+
+    to {
+        opacity: 1;
+        left: 110px;
+    }
+}
+
+/* Opera < 12.1 */
+@-o-keyframes fadein-left {
+    from {
+        opacity: 0;
+        left: 30px;
+    }
+
+    to {
+        opacity: 1;
+        left: 110px;
+    }
+}
+
+/*#endregion */

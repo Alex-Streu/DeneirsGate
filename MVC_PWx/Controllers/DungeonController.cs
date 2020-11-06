@@ -90,12 +90,16 @@ namespace MVC_PWx.Controllers
             {
                 try
                 {
-                    DungeonSvc.UpdateDungeon(AppUser.UserId, AppUser.ActiveCampaign.Value, model);
+                    //Update Encounters
+                    EventSvc.DeleteDungeonEncounters(model.DungeonKey, model.Tiles.Where(x => x.Encounter != null).Select(x => x.Encounter.EncounterKey).ToList());
                     foreach (var tile in model.Tiles)
                     {
                         if (tile.Encounter == null) { continue; }
                         EventSvc.UpdateEncounter(tile.Encounter);
                     }
+
+                    //Update Dungeon
+                    DungeonSvc.UpdateDungeon(AppUser.UserId, AppUser.ActiveCampaign.Value, model);
                 }
                 catch (Exception ex)
                 {

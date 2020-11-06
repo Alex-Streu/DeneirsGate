@@ -135,6 +135,12 @@
     <Build Include="dbo\Tables\DungeonTiles.sql" />
     <Build Include="dbo\Tables\DungeonTileTraps.sql" />
     <Build Include="dbo\Tables\DungeonTileEncounters.sql" />
+    <Build Include="dbo\Tables\Arcs.sql" />
+    <Build Include="dbo\Tables\Quests.sql" />
+    <Build Include="dbo\Tables\QuestEvents.sql" />
+    <Build Include="dbo\Tables\QuestEventEncounters.sql" />
+    <Build Include="dbo\Tables\ArcMapPins.sql" />
+    <Build Include="dbo\Tables\ArcCharacterLinkers.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="DeneirsGate.Database.LOCAL.publish.xml" />

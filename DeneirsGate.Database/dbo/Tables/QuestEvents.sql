@@ -1,0 +1,10 @@
+﻿CREATE TABLE [dbo].[QuestEvents]
+(
+    [EventKey]        UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID(),
+	[QuestKey]   UNIQUEIDENTIFIER NOT NULL,
+    [Name]          NVARCHAR (150)   NOT NULL,
+	[Description] NVARCHAR(MAX) NULL,
+	[SortOrder] INT NOT NULL DEFAULT 0,
+	[IsComplete] BIT NOT NULL DEFAULT 0
+    PRIMARY KEY CLUSTERED ([EventKey] ASC)
+)

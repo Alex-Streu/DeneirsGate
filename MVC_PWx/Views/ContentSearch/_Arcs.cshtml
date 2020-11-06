@@ -1,0 +1,10 @@
+﻿@using DeneirsGate.Services
+@using CustomHtmlHelpers
+@model List<ArcViewModel>
+
+<div class="flexbox-container full-width justify-center">
+    @foreach (var item in Model)
+    {
+        <div class="btn btn-lg btn-default menu-option menu-link" data-url="@Url.Action("_Arc", "ContentSearch", new { id = item.ArcKey })" data-dir="@HtmlHelpers.LimitString(item.Name, 20)">@HtmlHelpers.LimitString(item.Name, 20)</div>
+    }
+</div>

@@ -1,0 +1,14 @@
+﻿@using DeneirsGate.Services
+@using CustomHtmlHelpers
+@model QuestViewModel
+
+<h2 class="text-center">@Model.Name</h2>
+<div style="margin:1em">
+    <p class="text-md">@Model.Description</p>
+</div>
+<div class="flexbox-container full-width justify-center">
+    @foreach (var item in Model.Events)
+    {
+        <div class="btn btn-lg btn-default menu-option menu-link" data-url="@Url.Action("_ArcQuestEvent", "ContentSearch", new { id = item.EventKey })" data-dir="@HtmlHelpers.LimitString(item.Name, 20)">@HtmlHelpers.LimitString(item.Name, 20)</div>
+    }
+</div>

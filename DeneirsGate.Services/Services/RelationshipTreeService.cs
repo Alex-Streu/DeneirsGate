@@ -7,6 +7,34 @@ namespace DeneirsGate.Services
 {
     public class RelationshipTreeService : DeneirsService
     {
+        public List<RelationshipTreeSearchModel> GetCharacterTrees(Guid userId, Guid campaignKey, Guid characterId)
+        {
+            UserHasAccess(userId, campaignKey);
+
+            var trees = new List<RelationshipTreeSearchModel>();
+
+            using (DBReset())
+            {
+                var treeIds = DB.RelationshipTreeCharacters.Where(x => x.CharacterKey == characterId).Select(x => x.TreeKey).ToList();
+                trees = DB.RelationshipTrees.Where(x => x.CampaignKey == campaignKey && treeIds.Contains(x.TreeKey)).Select(x => new RelationshipTreeSearchModel
+                {
+                    TreeKey = x.TreeKey,
+                    Name = x.Name
+                }).ToList();
+
+                foreach (var tree in trees)
+                {
+                    var shallowNames = DB.RelationshipTreeCharacters.Where(x => x.TreeKey == tree.TreeKey && x.IsShallow).Select(x => x.Name).ToList();
+                    var charIds = DB.RelationshipTreeCharacters.Where(x => x.TreeKey == tree.TreeKey && !x.IsShallow).Select(x => x.CharacterKey).ToList();
+                    var charNames = DB.Characters.Where(x => charIds.Contains(x.CharacterKey)).Select(x => x.FirstName + " " + x.LastName).ToList();
+                    charNames.AddRange(shallowNames);
+
+                    tree.CharacterList = String.Join(",", charNames);
+                }
+            }
+
+            return trees;
+        }
 
         public List<RelationshipTreeSearchModel> GetSearchTrees(Guid userId, Guid campaignKey)
         {

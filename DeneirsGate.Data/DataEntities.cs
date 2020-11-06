@@ -22,6 +22,12 @@ namespace DeneirsGate.Data
         
         public virtual DbSet<Campaign> Campaigns { get; set; }
         public virtual DbSet<UserCampaign> UserCampaigns { get; set; }
+        public virtual DbSet<Arc> Arcs { get; set; }
+        public virtual DbSet<ArcCharacterLinker> ArcCharacterLinkers { get; set; }
+        public virtual DbSet<ArcMapPin> ArcMapPins { get; set; }
+        public virtual DbSet<Quest> Quests { get; set; }
+        public virtual DbSet<QuestEvent> QuestEvents { get; set; }
+        public virtual DbSet<QuestEventEncounter> QuestEventEncounters { get; set; }
 
         #endregion
 
