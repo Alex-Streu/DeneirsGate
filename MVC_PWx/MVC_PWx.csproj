@@ -648,6 +648,9 @@
     <Content Include="Scripts\jquery-3.3.1.min.map" />
   </ItemGroup>
   <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\DeneirsGate.Services\DeneirsGate.Services.csproj">
       <Project>{ab815ebb-98f6-4f31-97dd-111d805558f8}</Project>
       <Name>DeneirsGate.Services</Name>
