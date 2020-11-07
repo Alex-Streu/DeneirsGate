@@ -71,6 +71,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DataModels\ActivityLog.cs" />
     <Compile Include="DataModels\Arc.cs" />
     <Compile Include="DataModels\ArcCharcterLinker.cs" />
     <Compile Include="DataModels\ArcMapPin.cs" />
@@ -85,6 +86,7 @@
     <Compile Include="DataModels\CampaignDungeonLinker.cs" />
     <Compile Include="DataModels\CampaignTrapLinker.cs" />
     <Compile Include="DataModels\Character.cs" />
+    <Compile Include="DataModels\CharacterLog.cs" />
     <Compile Include="DataModels\CharacterSpell.cs" />
     <Compile Include="DataModels\CharacterWeapon.cs" />
     <Compile Include="DataModels\Class.cs" />
@@ -93,6 +95,7 @@
     <Compile Include="DataEntities.cs" />
     <Compile Include="DataModels\DamageType.cs" />
     <Compile Include="DataModels\Dungeon.cs" />
+    <Compile Include="DataModels\DungeonLog.cs" />
     <Compile Include="DataModels\DungeonTile.cs" />
     <Compile Include="DataModels\DungeonTileEncounter.cs" />
     <Compile Include="DataModels\DungeonTileTrap.cs" />
@@ -115,6 +118,7 @@
     <Compile Include="DataModels\Quest.cs" />
     <Compile Include="DataModels\QuestEvent.cs" />
     <Compile Include="DataModels\QuestEventEncounter.cs" />
+    <Compile Include="DataModels\QuestEventLog.cs" />
     <Compile Include="DataModels\RelationshipTree.cs" />
     <Compile Include="DataModels\RelationshipTreeCharacter.cs" />
     <Compile Include="DataModels\RelationshipTreeTier.cs" />

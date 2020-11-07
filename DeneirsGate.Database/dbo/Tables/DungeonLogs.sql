@@ -1,0 +1,6 @@
+﻿CREATE TABLE [dbo].[DungeonLogs]
+(
+	[LogKey] UNIQUEIDENTIFIER NOT NULL, 
+    [DungeonKey] UNIQUEIDENTIFIER NOT NULL
+	CONSTRAINT [PK_DungeonLogs] PRIMARY KEY NONCLUSTERED ([LogKey], [DungeonKey])
+)

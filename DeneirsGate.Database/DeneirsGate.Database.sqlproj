@@ -141,6 +141,10 @@
     <Build Include="dbo\Tables\QuestEventEncounters.sql" />
     <Build Include="dbo\Tables\ArcMapPins.sql" />
     <Build Include="dbo\Tables\ArcCharacterLinkers.sql" />
+    <Build Include="dbo\Tables\ActivityLogs.sql" />
+    <Build Include="dbo\Tables\CharacterLogs.sql" />
+    <Build Include="dbo\Tables\QuestEventLogs.sql" />
+    <Build Include="dbo\Tables\DungeonLogs.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="DeneirsGate.Database.LOCAL.publish.xml" />
