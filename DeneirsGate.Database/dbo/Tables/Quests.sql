@@ -1,0 +1,10 @@
+﻿CREATE TABLE [dbo].[Quests]
+(
+    [QuestKey]        UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID(),
+	[ArcKey]   UNIQUEIDENTIFIER NOT NULL,
+    [Name]          NVARCHAR (150)   NOT NULL,
+	[Description] NVARCHAR(MAX) NULL,
+	[SortOrder] INT NOT NULL DEFAULT 0,
+	[Status] INT NOT NULL DEFAULT 0,
+    PRIMARY KEY CLUSTERED ([QuestKey] ASC)
+)

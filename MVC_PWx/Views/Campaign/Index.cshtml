@@ -1,32 +1,316 @@
 ﻿@using DeneirsGate.Services
 @using CustomHtmlHelpers
-@model List<CampaignViewModel>  
+@using Newtonsoft.Json
+@model CampaignDashboardViewModel
 
 @{
-    ViewBag.Title = "My Campaigns";
+    ViewBag.Title = "Campaign Dashboard";
+    ViewBag.MenuOption = "Dashboard";
 }
 
-@foreach (var item in Model)
-{
-    <div class="campaign-list-item" data-id="@item.CampaignKey">
-        <div class="campaign-info">
-            <div class="name">@item.Name</div>
-            <div class="description">@item.Description</div>
+<h2>Campaign Dashboard</h2>
+
+<div class="flexbox-container full-width justify-end">
+    @Html.DropDownListFor(model => model.Arc.ArcKey, (SelectList)ViewBag.Arcs, "No Active Arc", new { @id = "Arcs", @class = "form-control responsive-text" })
+</div>
+<div class="flexbox-container no-padding items-start">
+    <div class="dashboard-left-panel flexbox-container content-center">
+        <div class="pin-panel content-box">
+            Lorem ipsum.
         </div>
-        <div class="portrait">
-            <img class="img-responsive" src="@Url.CampaignPortrait(item.CampaignKey, item.Portrait)" />
+        <div class="npc-panel flexbox-container full-width no-padding">
+            <div class="flexbox-container full-width justify-between">
+                <label class="text-large">NPCs</label>
+                <div class="btn btn-sm btn-default" data-toggle="modal" data-target="#NPCModal">Add To Arc</div>
+            </div>
+            <div class="npc-list content-box flexbox-container no-margin full-width">
+                @foreach (var item in Model.NPCs)
+                {
+                    <div id="@item.CharacterKey" class='fancy-portrait need-space' style="@(item.IsSelected ? "" : "display:none")">
+                        <a href="@Url.Action("EditCharacter", "Character", new { id = item.CharacterKey })">
+                            <img class='img-xs img-responsive' src='@Url.CharacterPortrait((Guid)ViewBag.CampaignKey, item.CharacterKey, item.Portrait)' />
+                        </a>
+                        <div class="player-info">
+                            <div class="name-level">
+                                <div class="name">@item.FirstName @item.LastName</div>
+                                <div class="level">@item.Level</div>
+                            </div>
+                            <div class="extra">@item.Race @item.Class</div>
+                        </div>
+                    </div>
+                }
+            </div>
         </div>
-        <div class="flex-break"></div>
-        <div class="date">Last Updated: @HtmlHelpers.RenderDateTime(item.LastUpdated)</div>
     </div>
-}
+    <div class="dashboard-arc-panel">
+        <div class="fancy-tabs" data-panes="map-panes">
+            @*<div id="arc-tab" class="fancy-tab-item active" data-tab="world-pane">World</div>*@
+            @if (Model.Arc.Map != null)
+            {
+                <div id="map-tab" class="fancy-tab-item active" data-tab="arc-pane">Arc Map</div>
+            }
+            <div id="timeline-tab" class="fancy-tab-item @(Model.Arc.Map != null ? null : "active")" data-tab="timeline-pane">Timeline</div>
+            <div id="quest-tab" class="fancy-tab-item hidden" data-tab="quest-pane">Quest</div>
+        </div>
+        <div id="map-panes" style="max-height:600px">
+            @*<div id="world-pane" class="fancy-tab-pane slide-right">
+                </div>*@
+            @if (Model.Arc.Map != null)
+            {
+                <div id="arc-pane" class="fancy-tab-pane slide-right active">
+                    <img src="@Url.ArcMap((Guid)ViewBag.CampaignKey, Model.Arc.ArcKey, Model.Arc.Map)" style="width:auto;max-height:600px" />
+                    @foreach (var pin in Model.Arc.Pins)
+                    {
+                        var quest = Model.Arc.Quests.FirstOrDefault(x => x.QuestKey == pin.QuestKey);
+                        var completeClass = "";
+                        switch (quest.Status)
+                        {
+                            case CampaignService.QuestStatus.Abandoned:
+                                completeClass = "abandoned";
+                                break;
+                            case CampaignService.QuestStatus.Completed:
+                                completeClass = "completed";
+                                break;
+                            case CampaignService.QuestStatus.InProgress:
+                                completeClass = "in-progress";
+                                break;
+                        }
+                        <div class="map-label quest-explore @(completeClass)" style="top:@(pin.Y-20)px;left:@(pin.X-20)px" data-data="@(JsonConvert.SerializeObject(quest))">
+                            @(pin.Index + 1)
+                            @if (quest.Status == CampaignService.QuestStatus.InProgress)
+                            {
+                                <div style="position:absolute;top:-40px;left:10px"><i class="red fa fa-2x fa-flag" style="text-shadow:2px 2px 2px #000"></i></div>
+                            }
+                            <div class="map-label-info">@quest.Name</div>
+                        </div>
+                    }
+                </div>
+            }
+            <div id="timeline-pane" class="fancy-tab-pane slide-right @(Model.Arc.Map != null ? null : "active")" style="overflow-y:auto">
+                <div class="timeline">
+                    @{ var isLeft = true; }
+                    @foreach (var quest in Model.Arc.Quests)
+                    {
+                        var completeClass = "quest-incomplete";
+                        switch (quest.Status)
+                        {
+                            case CampaignService.QuestStatus.Abandoned:
+                                completeClass = "quest-abandoned";
+                                break;
+                            case CampaignService.QuestStatus.Completed:
+                                completeClass = "quest-completed";
+                                break;
+                            case CampaignService.QuestStatus.Incomplete:
+                                completeClass = "quest-incomplete";
+                                break;
+                            case CampaignService.QuestStatus.InProgress:
+                                completeClass = "quest-in-progress";
+                                break;
+                        }
+                        <div class="timeline-container @(isLeft ? "timeline-left" : "timeline-right") @(completeClass)">
+                            <div class="timeline-content quest-explore" data-data="@(JsonConvert.SerializeObject(quest))">
+                                <h2>@quest.Name</h2>
+                                <p>@HtmlHelpers.LimitString(quest.Description)</p>
+                            </div>
+                        </div>
+                        isLeft = !isLeft;
+                    }
+                </div>
+            </div>
+            <div id="quest-pane" class="fancy-tab-pane slide-right" style="overflow-y:auto">
+                <a onclick="backToMap()"><i class="fa fa-arrow-circle-left"></i> Back</a>
+                <h3 id="quest-name" class="red text-bold"></h3>
+                <p id="quest-description" class="text-large"></p>
+                <div id="quest-event-template" class="hidden">
+                    <div class="quest-event" style="margin-top:2em">
+                        <div class="flexbox-container justify-between no-padding">
+                            <label class="red text-large quest-event-name"></label>
+                            <div class="btn btn-sm btn-default quest-event-show"><i class="fa fa-minus"></i></div>
+                        </div>
+                        <hr style="margin: 0.5em 0px" />
+                        <p class="quest-event-description">
+
+                        </p>
+                    </div>
+                </div>
+                <div id="quest-events">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="dashboard-players items-end">
+    <a style="height:35px" class="btn btn-primary" href="@Url.Action("CreateCharacter", "Character", new { id = Model.CampaignKey, isPlayer = true })">Add Player</a>
+    @foreach (var item in Model.Players)
+    {
+        <div class='fancy-portrait'>
+            <a href="@Url.Action("EditCharacter", "Character", new { id = item.CharacterKey })">
+                <img class='img-xs img-responsive' src='@Url.CharacterPortrait((Guid)ViewBag.CampaignKey, item.CharacterKey, item.Portrait)' />
+            </a>
+            <div class="player-info">
+                <div class="name-level">
+                    <div class="name">@item.FirstName @item.LastName</div>
+                    <div class="level">@item.Level</div>
+                </div>
+                <div class="extra">@item.Race @item.Class</div>
+            </div>
+        </div>
+    }
+</div>
+
+<!-- NPC Modal -->
+<div id="NPCModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Select Arc NPCs</h4>
+            </div>
+            <div class="modal-body">
+                <div class="flexbox-container no-padding full-width">
+                    @foreach (var item in Model.NPCs)
+                    {
+                        <div class='fancy-portrait need-space npc-selectable @(item.IsSelected ? "selected" : "")' data-key="@item.CharacterKey">
+                            <a href="#">
+                                <img class='img-xs img-responsive' src='@Url.CharacterPortrait((Guid)ViewBag.CampaignKey, item.CharacterKey, item.Portrait)' />
+                            </a>
+                            <div class="player-info">
+                                <div class="name-level">
+                                    <div class="name">@item.FirstName @item.LastName</div>
+                                    <div class="level">@item.Level</div>
+                                </div>
+                                <div class="extra">@item.Race @item.Class</div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+
+    </div>
+</div>
 
 @section scripts {
     <script type="text/javascript">
-        var dashboardUrl = '@Url.Action("Dashboard")';
+        var setArcActiveAction = '@Url.Action("SetArcActive")';
+        var addArcCharacterAction = '@Url.Action("AddArcCharacter")';
 
-        $('.campaign-list-item').click(function () {
-            window.location.assign(`${dashboardUrl}/${$(this).data('id')}`)
-        });
+        /********************** Arcs ******************************/
+        var backTo = 'timeline';
+
+        $('#Arcs').change(function () {
+            var postData = {
+                ArcKey: $(this).val(),
+                IsActive: true
+            };
+
+            ajaxPost(postData, setArcActiveAction, function (data) {
+                if (data.success) {
+                    window.location.reload();
+                }
+            })
+        })
+
+        $('.quest-explore').click(function () {
+            var quest = $(this).data('data');
+            $('#quest-name').text(quest.Name);
+            $('#quest-description').text(quest.Description);
+            $('#quest-events').html('');
+
+            if (!isEmpty(quest.Events)) {
+                for (var i = 0; i < quest.Events.length; i++) {
+                    var event = quest.Events[i];
+                    var htmlQuest = $($('#quest-event-template').html());
+                    $('#quest-events').append(htmlQuest);
+
+                    $(htmlQuest).find('.quest-event-name').text(event.Name);
+                    $(htmlQuest).find('.quest-event-description').html(event.Description);
+                }
+            }
+
+            if ($(this).hasClass('timeline-content')) {
+                backTo = 'timeline';
+            }
+            else {
+                backTo = 'map';
+            }
+
+            $('#quest-tab').click();
+        })
+
+        $('body').on('click', '.quest-event-show', function () {
+            $(this).closest('.quest-event').find('.quest-event-description').slideToggle();
+
+            var btn = $(this).find('i');
+            if ($(btn).hasClass('fa-minus')) {
+                $(btn).removeClass('fa-minus');
+                $(btn).addClass('fa-plus');
+            }
+            else {
+                $(btn).removeClass('fa-plus');
+                $(btn).addClass('fa-minus');
+            }
+        })
+
+        function backToMap() {
+            switch (backTo) {
+                case 'timeline':
+                    $('#timeline-tab').click();
+                    break;
+                case 'map':
+                    $('#map-tab').click();
+                    break;
+            }
+        }
+
+        /********************** NPCs ******************************/
+        $('.npc-selectable').click(function () {
+            var id = $(this).data('key');
+            if ($(this).hasClass('selected')) {
+                $(this).removeClass('selected');
+                $(`#${id}`).hide();
+                addArcCharacter(id, false);
+            }
+            else {
+                $(this).addClass('selected');
+                $(`#${id}`).show();
+                addArcCharacter(id, true);
+            }
+        })
+
+        function addArcCharacter(id, add) {
+            var postData = {
+                ArcKey: '@(Model.Arc?.ArcKey)',
+                CharacterKey: id,
+                Add: add
+            }
+
+            ajaxPost(postData, addArcCharacterAction, function (data) {
+                if (!data.success) {
+                    Notiflix.NotifyContent.Failure(data.message);
+                }
+            });
+        }
+
+
+
+        /********************** Invite Player ******************************/
+        $('#invite-player').click(function () {
+            Notiflix.Report.Info(
+                'Invite Player',
+                'Username? ' + registerPlayerAction,
+                'Send',
+                function () {
+                    //TODO
+                }
+            )
+        })
     </script>
 }

@@ -1,6 +1,8 @@
 namespace DeneirsGate.Data
 {
+    using System;
     using System.Data.Entity;
+    using System.Linq;
 
     public partial class DataEntities : DbContext
     {
@@ -20,6 +22,12 @@ namespace DeneirsGate.Data
         
         public virtual DbSet<Campaign> Campaigns { get; set; }
         public virtual DbSet<UserCampaign> UserCampaigns { get; set; }
+        public virtual DbSet<Arc> Arcs { get; set; }
+        public virtual DbSet<ArcCharacterLinker> ArcCharacterLinkers { get; set; }
+        public virtual DbSet<ArcMapPin> ArcMapPins { get; set; }
+        public virtual DbSet<Quest> Quests { get; set; }
+        public virtual DbSet<QuestEvent> QuestEvents { get; set; }
+        public virtual DbSet<QuestEventEncounter> QuestEventEncounters { get; set; }
 
         #endregion
 
@@ -33,6 +41,56 @@ namespace DeneirsGate.Data
         public virtual DbSet<CharacterWeapon> CharacterWeapons { get; set; }
         public virtual DbSet<CharacterSpell> CharacterSpells { get; set; }
         public virtual DbSet<DamageType> DamageTypes { get; set; }
+
+        public virtual DbSet<RelationshipTree> RelationshipTrees { get; set; }
+        public virtual DbSet<RelationshipTreeTier> RelationshipTreeTiers { get; set; }
+        public virtual DbSet<RelationshipTreeCharacter> RelationshipTreeCharacters { get; set; }
+
+        #endregion
+
+        #region Monsters
+
+        public virtual DbSet<Monster> Monsters { get; set; }
+        public virtual DbSet<Environment> Environments { get; set; }
+        public virtual DbSet<MonsterSize> MonsterSizes { get; set; }
+        public virtual DbSet<MonsterType> MonsterTypes { get; set; }
+        public virtual DbSet<MonsterChallengeRating> MonsterChallengeRatings { get; set; }
+        public virtual DbSet<MonsterEnvironmentLinker> MonsterEnvironmentLinkers { get; set; }
+
+        #endregion
+
+        #region Magic Items
+
+        public virtual DbSet<MagicItem> MagicItems { get; set; }
+        public virtual DbSet<MagicItemType> MagicItemTypes { get; set; }
+        public virtual DbSet<MagicItemRarity> MagicItemRarities { get; set; }
+        public virtual DbSet<Gemstone> Gemstones { get; set; }
+        public virtual DbSet<ArtObject> ArtObjects { get; set; }
+        public virtual DbSet<Treasure> Treasures { get; set; }
+        public virtual DbSet<TreasureHoard> TreasureHoards { get; set; }
+
+        #endregion
+
+        #region Dungeons
+
+        public virtual DbSet<Dungeon> Dungeons { get; set; }
+        public virtual DbSet<DungeonTile> DungeonTiles { get; set; }
+        public virtual DbSet<DungeonTileTrap> DungeonTileTraps { get; set; }
+        public virtual DbSet<DungeonTileEncounter> DungeonTileEncounters { get; set; }
+        public virtual DbSet<CampaignDungeonLinker> CampaignDungeonLinkers { get; set; }
+        public virtual DbSet<Trap> Traps { get; set; }
+        public virtual DbSet<TrapNature> TrapNatures { get; set; }
+        public virtual DbSet<TrapType> TrapTypes { get; set; }
+        public virtual DbSet<TrapTypeDamage> TrapTypeDamages { get; set; }
+        public virtual DbSet<CampaignTrapLinker> CampaignTrapLinkers { get; set; }
+
+        #endregion
+
+        #region Encounters
+
+        public virtual DbSet<Encounter> Encounters { get; set; }
+        public virtual DbSet<EncounterMonster> EncounterMonsters { get; set; }
+        public virtual DbSet<EncounterItem> EncounterItems { get; set; }
 
         #endregion
 
@@ -69,6 +127,21 @@ namespace DeneirsGate.Data
             //modelBuilder.Entity<Role>()
             //    .Property(e => e.Name)
             //    .IsFixedLength();
+        }
+    }
+
+    public static class DataExtensions
+    {
+        public static void RemoveRange<TEntity>(
+            this DbSet<TEntity> entities,
+            System.Linq.Expressions.Expression<Func<TEntity, bool>> predicate)
+            where TEntity : class
+        {
+            var records = entities
+                .Where(predicate)
+                .ToList();
+            if (records.Count > 0)
+                entities.RemoveRange(records);
         }
     }
 }

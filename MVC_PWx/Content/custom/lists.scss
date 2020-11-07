@@ -1,0 +1,48 @@
+﻿.list-result {
+    .information {
+        width: 90%;
+        background-color: $white;
+        padding: 0.5em 1em;
+        border: 1px solid $lightGray;
+        border-radius: 5px;
+        text-wrap: normal;
+
+        .title {
+            font-size: large;
+            color: $red;
+            font-weight: bold;
+        }
+
+        .property {
+            font-size: medium;
+            color: $gray;
+        }
+
+        .detail {
+            font-size: small;
+            color: $gray;
+
+            &.relative {
+                position: relative;
+                top: -5px;
+            }
+        }
+
+        .show-more {
+            font-size: small;
+            font-weight: bold;
+            color: $gray;
+            cursor: pointer;
+        }
+
+        .body {
+            font-size: medium;
+            color: $darkGray;
+            width: 100%;
+        }
+    }
+
+    .btn-container {
+        width: 5%;
+    }
+}

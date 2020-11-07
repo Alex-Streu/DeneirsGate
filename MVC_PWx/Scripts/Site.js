@@ -9,6 +9,69 @@ $('.modal').on('shown.bs.modal', function () {
     $(this).find('[autofocus]').focus();
 });
 
+function promptDelete(callback) {
+    $('#deleteContentBtn').attr('onclick', callback);
+    $('#deleteContentModal').modal('show');
+}
+
+function loadEncounter(id) {
+    if (id == undefined) { id = null; }
+
+    if (!isEmpty(id) && id.IsEdited == true) {
+        $("#encounterBody").load(`/Event/_EncounterPost`, id,
+            function (response, status, xhr) {
+                $('#encounterModal').modal('show');
+            }
+        );
+    }
+    else {
+        $("#encounterBody").load(`/Event/_Encounter?id=${id}`,
+            function (response, status, xhr) {
+                $('#encounterModal').modal('show');
+            }
+        );
+    }
+}
+
+function ajaxPost(postData, url, successFunction, errorFunction) {
+    if (errorFunction == null) { errorFunction = defaultErrorFunction; }
+
+    $.ajax({
+        type: "POST",
+        url: url,
+        data: JSON.stringify(postData),
+        dataType: 'json',
+        contentType: 'application/json',
+        success: successFunction,
+        error: errorFunction
+    })
+}
+
+function defaultErrorFunction(error) {
+    Notiflix.NotifyContent.Failure(error.responseText);
+}
+
+jQuery.fn.removeClassExcept = function (val) {
+    return this.each(function () {
+        $(this).removeClass().addClass(val);
+    });
+};
+
+/**
+ * Returns a number whose value is limited to the given range.
+ *
+ * Example: limit the output of this computation to between 0 and 255
+ * (x * 255).clamp(0, 255)
+ *
+ * @param {Number} min The lower boundary of the output range
+ * @param {Number} max The upper boundary of the output range
+ * @returns A number in the range [min, max]
+ * @type Number
+ */
+Number.prototype.clamp = function (min, max) {
+    return Math.min(Math.max(this, min), max);
+};
+
 
 /* FANCY ITEMS */
 $('.fancy-textarea textarea').focus(function () {
@@ -27,7 +90,7 @@ $('.fancy-dropdown select').blur(function () {
     $(this).parent().find('label').removeClass('active');
 })
 
-$('.fancy-tab-item').click(function () {
+$('body').on('click', '.fancy-tab-item', function () {
     var tab = $(this).data('tab');
     var panes = $(this).parent().data('panes');
 
@@ -43,10 +106,19 @@ $('.fancy-tab-item').click(function () {
     $(this).addClass('active');
 })
 
+$(document).ready(function () {
+    $('.fancy-switch').each(function () {
+        if ($(this).data('val') == 'True') {
+            $(this).find('input').attr('checked', 'checked');
+        }
+    })
+})
+
 
 /* IMAGE UPLOADING */
 var uploadImageUtilityAction = '/Utility/UploadImage/';
 var deleteTempUtilityAction = '/Utility/DeleteTemp/';
+var saveTempImageUtilityAction = '/Utility/SaveTempImage/';
 var imageUploadCampaignKey = null;
 
 $('.upload-image .overlay').click(function () {
@@ -54,7 +126,14 @@ $('.upload-image .overlay').click(function () {
     input.click();
 })
 
+$('.image-upload').click(function () {
+    var input = $(this).parent().find('input[type="file"]');
+    input.click();
+})
+
 $('input[type="file"]').change(function () {
+    if ($(this).val() == null) { return; }
+
     uploadImage(this, null, null, true);
 });
 
@@ -66,6 +145,11 @@ $('input[type="file"]').change(function () {
  * @return {number}
  */
 function uploadImage(fileElement, folder, name, isTemp = false) {
+    var image = $(fileElement).parent().find('img');
+    uploadImageExternal(fileElement, folder, name, image, isTemp);
+}
+
+function uploadImageExternal(fileElement, folder, name, imageElement, isTemp = false) {
     var f = $(fileElement).prop('files')[0];
     if (f == undefined) { return; }
 
@@ -96,8 +180,9 @@ function uploadImage(fileElement, folder, name, isTemp = false) {
             processData: false,
             success: function (data) {
                 if (data.success) {
-                    parent.find('img').attr('src', data.imagePath.replace('~', ''));
-                    parent.find('.image-name').val(data.image);
+                    $(imageElement).attr('src', data.imagePath.replace('~', ''));
+                    $(parent).find('.image-name').val(data.image);
+                    $(parent).find('.image-name').change();
                 }
             },
             error: function (error) {

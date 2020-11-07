@@ -33,6 +33,7 @@ $transparent: rgba(0, 0, 0, 0.00);
     padding-top: 8px;
     font-size: inherit;
     color: $gray;
+    max-width: 100%;
 }
 
 .fancy-textbox input:focus {
@@ -77,24 +78,22 @@ $transparent: rgba(0, 0, 0, 0.00);
 }
 
 .fancy-textbox.short {
-    max-width: 10%;
+    max-width: 10% !important;
 }
 
 .fancy-textbox.medium {
-    max-width: 40%;
-    width: 100px
+    max-width: 40% !important;
+    width: 100px;
 }
 
 .fancy-textbox.long {
-    max-width: 90%;
+    max-width: 90% !important;
+    width: 90% !important;
 }
 
 .fancy-textbox.full {
-    max-width: 100%;
-
-    input {
-        max-width: 100%;
-    }
+    max-width: 100% !important;
+    width: 100%;
 }
 
 .fancy-textbox.center input {
@@ -126,6 +125,24 @@ $transparent: rgba(0, 0, 0, 0.00);
     label.active {
         color: $red;
     }
+
+    &.short {
+        textarea {
+            height: 7em;
+        }
+    }
+
+    &.medium {
+        textarea {
+            height: 15em;
+        }
+    }
+
+    &.tall {
+        textarea {
+            height: 20em;
+        }
+    }
 }
 
 .fancy-textarea.lg {
@@ -134,8 +151,9 @@ $transparent: rgba(0, 0, 0, 0.00);
     }
 }
 
-.fancy-textbox.full {
+.fancy-textarea.full {
     max-width: 100%;
+    width: 100%;
 
     textarea {
         max-width: 100%;
@@ -176,6 +194,10 @@ $transparent: rgba(0, 0, 0, 0.00);
 
     img {
         border-radius: 50%;
+        width: 75px;
+        height: 75px;
+        max-width: 75px;
+        max-height: 75px;
     }
 
     .overlay {
@@ -188,8 +210,6 @@ $transparent: rgba(0, 0, 0, 0.00);
         display: none;
         color: $white;
     }
-
-    
 }
 
 .fancy-portrait:hover {
@@ -273,4 +293,62 @@ $transparent: rgba(0, 0, 0, 0.00);
         right: 0;
         opacity: 1
     }
+}
+
+/* TOGGLE SWITCH */
+/* The switch - the box around the slider */
+.fancy-switch {
+    position: relative;
+    display: block;
+    width: 60px;
+    height: 34px;
+    margin: 0 auto;
+}
+
+/* Hide default HTML checkbox */
+.fancy-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+/* The slider */
+.fancy-slider {
+    position: absolute;
+    cursor: pointer;
+    border-radius: 34px;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: $gray;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+.fancy-slider:before {
+    position: absolute;
+    content: "";
+    border-radius: 50%;
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+input:checked + .fancy-slider {
+    background-color: $red;
+}
+
+input:focus + .fancy-slider {
+    box-shadow: 0 0 1px $red;
+}
+
+input:checked + .fancy-slider:before {
+    -webkit-transform: translateX(26px);
+    -ms-transform: translateX(26px);
+    transform: translateX(26px);
 }

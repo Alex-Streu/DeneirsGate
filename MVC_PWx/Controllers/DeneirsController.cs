@@ -3,6 +3,7 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
@@ -15,8 +16,16 @@ namespace MVC_PWx.Controllers
         private ApplicationRoleManager _roleManager;
 
         private AuthService authSvc;
+
         private CampaignService campaignSvc;
+        private CharacterService characterSvc;
+        private PresetService presetSvc;
         private UserService userSvc;
+        private RelationshipTreeService relationshipTreeSvc;
+        private MonsterService monsterSvc;
+        private MagicItemService magicItemSvc;
+        private EventService eventSvc;
+        private DungeonService dungeonSvc;
 
         public Dictionary<string, DateTime> OnlineUsers
         {
@@ -65,12 +74,30 @@ namespace MVC_PWx.Controllers
             }
         }
 
+        public PresetService PresetSvc
+        {
+            get
+            {
+                if (presetSvc == null) { presetSvc = new PresetService(); }
+                return presetSvc;
+            }
+        }
+
         public CampaignService CampaignSvc
         {
             get
             {
                 if (campaignSvc == null) { campaignSvc = new CampaignService(); }
                 return campaignSvc;
+            }
+        }
+
+        public CharacterService CharacterSvc
+        {
+            get
+            {
+                if (characterSvc == null) { characterSvc = new CharacterService(); }
+                return characterSvc;
             }
         }
 
@@ -83,13 +110,74 @@ namespace MVC_PWx.Controllers
             }
         }
 
+        public RelationshipTreeService RelationshipTreeSvc
+        {
+            get
+            {
+                if (relationshipTreeSvc == null) { relationshipTreeSvc = new RelationshipTreeService(); }
+                return relationshipTreeSvc;
+            }
+        }
+
+        public MonsterService MonsterSvc
+        {
+            get
+            {
+                if (monsterSvc == null) { monsterSvc = new MonsterService(); }
+                return monsterSvc;
+            }
+        }
+
+        public MagicItemService MagicItemSvc
+        {
+            get
+            {
+                if (magicItemSvc == null) { magicItemSvc = new MagicItemService(); }
+                return magicItemSvc;
+            }
+        }
+
+        public EventService EventSvc
+        {
+            get
+            {
+                if (eventSvc == null) { eventSvc = new EventService(); }
+                return eventSvc;
+            }
+        }
+
+        public DungeonService DungeonSvc
+        {
+            get
+            {
+                if (dungeonSvc == null) { dungeonSvc = new DungeonService(); }
+                return dungeonSvc;
+            }
+        }
+
+        protected string GetValidationError()
+        {
+            return ModelState.Values.FirstOrDefault(x => x.Errors.Count > 0).Errors.FirstOrDefault().ErrorMessage;
+        }
+
         protected ActionResult RedirectToLocal(string returnUrl)
         {
             if (Url.IsLocalUrl(returnUrl))
             {
                 return Redirect(returnUrl);
             }
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("/", "Campaign");
+        }
+
+        protected void SetActiveCampaign(Guid? campaign, bool updateUser = true)
+        {
+            System.Web.HttpContext.Current.Session["ActiveCampaign"] = campaign;
+
+            if (updateUser)
+            {
+                AppUser.ActiveCampaign = campaign;
+                UserManager.Update(AppUser);
+            }
         }
 
         protected override void OnActionExecuted(ActionExecutedContext filterContext)
@@ -99,6 +187,7 @@ namespace MVC_PWx.Controllers
                 ViewBag.User = AppUser;
                 ViewBag.Notifications = UserSvc.GetNotifications(AppUser.UserId);
                 ViewBag.Friends = UserSvc.GetFriends(AppUser.UserId, (Dictionary<string, DateTime>)HttpContext.Application["OnlineUsers"], true);
+                ViewBag.CampaignKey = AppUser.ActiveCampaign.Value;
             }
 
             base.OnActionExecuted(filterContext);

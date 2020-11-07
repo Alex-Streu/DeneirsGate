@@ -1,0 +1,58 @@
+﻿.edit-dungeon-tile {
+    width: 150px;
+    height: 150px;
+    border: 2px dashed $gray;
+    background-color: $white;
+
+    &:hover {
+        background-color: $lightRed;
+        cursor: pointer;
+    }
+}
+
+.print-dungeon-tile {
+    width: 150px;
+    height: 150px;
+    background-color: $white;
+}
+
+.dungeon-tile-container {
+    & > * {
+        margin: 0em !important;
+    }
+}
+
+#dungeon_DetailsContainer {
+    border-right: 2px solid $darkGray;
+}
+
+.tile-label {
+    position: absolute;
+    bottom: 2px;
+    left: 2px;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    padding: 4px;
+    background: $white;
+    border: 2px solid $darkGray;
+    color: $red;
+    text-align: center;
+    font-size: large;
+    font-weight: bold;
+}
+
+@media print {
+    .tile-label {
+        -webkit-print-color-adjust: exact;
+        background-color: $white !important;
+    }
+    /* presentation rules for the page on color printers */
+}
+
+.room-info {
+    border-bottom: 1px solid $darkGray;
+    display: none;
+    padding: 1em;
+    position: relative;
+}

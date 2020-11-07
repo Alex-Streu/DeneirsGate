@@ -1,0 +1,76 @@
+﻿
+#RelationshipTreePage {
+    .tier-box {
+        width: 100%;
+        padding: 0em 1em 1em 1em;
+        border-top: 2px dashed $gray;
+
+        .character-container {
+            width: 100%;
+            min-height: 8em;
+        }
+
+        .delete {
+            visibility: hidden;
+            cursor: pointer;
+            color: $red;
+        }
+    }
+
+    .tier-box:hover {
+        .delete {
+            visibility: visible;
+        }
+    }
+
+    .fancy-portrait {
+        .player-info {
+            text-align: center;
+            display: none;
+            position: absolute;
+            top: -30px;
+            left: -112px;
+            width: 300px;
+            height: 30px;
+            z-index: 10;
+            text-shadow: 2px 2px 4px #000000;
+
+            .name {
+                display: flex;
+                align-items: center;
+                justify-content: space-around;
+                font-size: large;
+                color: $red;
+            }
+        }
+    }
+
+    .fancy-portrait:hover .player-info {
+        display: block;
+        -webkit-animation: fadein-top 0.75s; /* Safari, Chrome and Opera > 12.1 */
+        -moz-animation: fadein-top 0.75s; /* Firefox < 16 */
+        -ms-animation: fadein-top 0.75s; /* Internet Explorer */
+        -o-animation: fadein-top 0.75s; /* Opera < 12.1 */
+        animation: fadein-top 0.75s;
+    }
+
+    .character-inventory {
+        min-height: 100px;
+        padding-top: 20px;
+        width: 100%;
+        border-left: 1px solid $lightGray;
+        border-right: 1px solid $lightGray;
+    }
+
+    #ShallowBackstory {
+        height: 150px
+    }
+
+    .upload-image, .shallow .fancy-portrait {
+        border-color: $pending;
+    }
+
+    #generator > * {
+        margin-bottom: 1em;
+    }
+}

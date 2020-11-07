@@ -4,6 +4,7 @@
 
 @{
     ViewBag.Title = "Player Sheet";
+    ViewBag.MenuOption = "Character";
 }
 
 <div class="user-header">
@@ -23,11 +24,10 @@
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
         @Html.HiddenFor(model => model.UserKey)
         @Html.HiddenFor(model => model.CharacterKey)
-        @Html.HiddenFor(model => model.CampaignKey)
 
 
         <div class="top-info">
-            @Url.RenderImageUpload("Portrait", Model.Portrait, Model.CampaignKey, Model.CharacterKey)
+            @Url.RenderPortraitUpload("Portrait", Model.Portrait, (Guid)ViewBag.CampaignKey, Model.CharacterKey)
 
             @HtmlHelpers.RenderFancyTextbox("lg", "FirstName", 50, Model.FirstName, "First Name", Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "text-danger" }))
 
@@ -453,18 +453,24 @@
 </div>
 
 <div class="submit-footer">
-    <a class="btn btn-lg btn-primary" href="@Url.Action("Dashboard", new { id = Model.CampaignKey })">Back To Campaign</a>
     <div class="btn btn-lg btn-default save-button" onclick="save()">Save</div>
+    <div id="delete" class="btn btn-lg btn-danger save-button" onclick="promptDelete('deleteCharacter()')">Delete</div>
 </div>
 
 @section scripts {
     <script src="https://cdn.ckeditor.com/ckeditor5/16.0.0/classic/ckeditor.js"></script>
     <script type="text/javascript">
         var updatePlayerAction = '@Url.Action("UpdatePlayer")';
+        var updateCharacterAction = '@Url.Action("UpdateCharacter")';
+        var deleteCharacterAction = '@Url.Action("DeleteCharacter")';
+        var indexAction = '@Url.Action("/")';
         var registerPlayerAction = '@Url.Action("RegisterPlayer", "Account", new { id = Model.UserCode }, this.Request.Url.Scheme)';
+        var isPlayer = ('@ViewBag.IsPlayer' == 'True');
         var backstory;
 
         $(document).ready(function () {
+            if ('@ViewBag.IsNew' == 'True') { $('#delete').hide(); }
+
             ClassicEditor
                 .create(document.querySelector('#backstory-editor'), {
                     toolbar: ['heading', '|', 'bold', 'italic', 'bulletedList', 'numberedList', '|', 'indent', 'outdent', '|', 'blockQuote', 'insertTable', 'undo', 'redo' ]
@@ -662,7 +668,6 @@
                 Fears: $('#Fears').val(),
                 Ideals: $('#Ideals').val(),
                 Backstory: backstory.getData(),
-                CampaignKey: $('#CampaignKey').val(),
                 Languages: $('#Languages').val(),
                 Alignment: $('#Alignment').val(),
                 Armor: $('#Armor').val(),
@@ -690,17 +695,43 @@
                 Weapons: weapons,
                 Spells: spells
             }
+            
+            var url = isPlayer ? updatePlayerAction : updateCharacterAction;
 
             $.ajax({
                 type: "POST",
-                url: updatePlayerAction,
+                url: url,
                 data: JSON.stringify(postData),
                 dataType: 'json',
                 contentType: 'application/json',
                 success: function (data) {
                     if (data.success) {
                         Notiflix.NotifyContent.Success(data.message);
+                        $('#delete').show();
                         uploadImage($('#Portrait').parent().find('.uploader'), 'Characters/' + $('#CharacterKey').val(), $('#Portrait').val());
+                    } else {
+                        Notiflix.NotifyContent.Failure(data.message);
+                    }
+                },
+                error: function (error) {
+                    Notiflix.NotifyContent.Failure(error.responseText);
+                }
+            })
+        }
+
+        function deleteCharacter() {
+            var postData = { id: '@Model.CharacterKey' };
+
+            $.ajax({
+                type: "POST",
+                url: deleteCharacterAction,
+                data: JSON.stringify(postData),
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data.success) {
+                        Notiflix.NotifyContent.Success(data.message);
+                        location.replace(indexAction);
                     } else {
                         Notiflix.NotifyContent.Failure(data.message);
                     }

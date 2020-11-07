@@ -2,17 +2,17 @@
 @model List<FriendViewModel>
 
 
-<div class="flex-container flex-wrap">
+<div class="flexbox-container">
     @foreach (var item in Model)
     {
-        <div id="@item.UserId" class="friend-list-item flex-container space-around align-center">
+        <div id="@item.UserId" class="friend-list-item flexbox-container justify-around items-center">
             <div class="friend">
                 <img class="picture lg" alt="avatar" src="@item.Picture">
                 <span class="text-large">
                     @item.Username
                 </span>
             </div>
-            <div class="flex-container flex-wrap">
+            <div class="flexbox-container">
                 <div class="btn btn-success full-width" onclick="updateStatus('@item.UserId', @((int)FriendStatus.Accepted))"><i class="fa fa-check"></i>&nbsp;Accept</div>
                 <div class="btn btn-warning full-width" onclick="updateStatus('@item.UserId', @((int)FriendStatus.None))"><i class="fa fa-times"></i>&nbsp;Reject</div>
                 <div class="btn btn-failure full-width" onclick="updateStatus('@item.UserId', @((int)FriendStatus.Blocked))"><i class="fa fa-ban"></i>&nbsp;Block</div>

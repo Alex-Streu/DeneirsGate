@@ -84,6 +84,7 @@
     <Folder Include="dbo\" />
     <Folder Include="dbo\Tables\" />
     <Folder Include="Security\" />
+    <Folder Include="Scripts" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="dbo\Tables\AspNetUserClaims.sql" />
@@ -105,6 +106,41 @@
     <Build Include="dbo\Tables\FriendRequests.sql" />
     <Build Include="dbo\Tables\Notifications.sql" />
     <Build Include="dbo\Tables\FriendBlocks.sql" />
+    <Build Include="dbo\Tables\RelationshipTrees.sql" />
+    <Build Include="dbo\Tables\RelationshipTreeTiers.sql" />
+    <Build Include="dbo\Tables\RelationshipTreeCharacters.sql" />
+    <Build Include="dbo\Tables\Environments.sql" />
+    <Build Include="dbo\Tables\MonsterSizes.sql" />
+    <Build Include="dbo\Tables\MonsterTypes.sql" />
+    <Build Include="dbo\Tables\MonsterChallengeRatings.sql" />
+    <Build Include="dbo\Tables\Monsters.sql" />
+    <Build Include="dbo\Tables\MonsterEnvironmentLinkers.sql" />
+    <Build Include="dbo\Tables\MagicItemTypes.sql" />
+    <Build Include="dbo\Tables\MagicItemRarities.sql" />
+    <Build Include="dbo\Tables\MagicItems.sql" />
+    <Build Include="dbo\Tables\Gemstones.sql" />
+    <Build Include="dbo\Tables\ArtObjects.sql" />
+    <Build Include="dbo\Tables\Treasures.sql" />
+    <Build Include="dbo\Tables\TreasureHoards.sql" />
+    <Build Include="dbo\Tables\EncounterItems.sql" />
+    <Build Include="dbo\Tables\EncounterMonsters.sql" />
+    <Build Include="dbo\Tables\Encounters.sql" />
+    <Build Include="dbo\Tables\Traps.sql" />
+    <Build Include="dbo\Tables\TrapNatures.sql" />
+    <Build Include="dbo\Tables\TrapTypes.sql" />
+    <Build Include="dbo\Tables\TrapTypeDamages.sql" />
+    <Build Include="dbo\Tables\CampaignTrapLinkers.sql" />
+    <Build Include="dbo\Tables\Dungeons.sql" />
+    <Build Include="dbo\Tables\CampaignDungeonLinkers.sql" />
+    <Build Include="dbo\Tables\DungeonTiles.sql" />
+    <Build Include="dbo\Tables\DungeonTileTraps.sql" />
+    <Build Include="dbo\Tables\DungeonTileEncounters.sql" />
+    <Build Include="dbo\Tables\Arcs.sql" />
+    <Build Include="dbo\Tables\Quests.sql" />
+    <Build Include="dbo\Tables\QuestEvents.sql" />
+    <Build Include="dbo\Tables\QuestEventEncounters.sql" />
+    <Build Include="dbo\Tables\ArcMapPins.sql" />
+    <Build Include="dbo\Tables\ArcCharacterLinkers.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="DeneirsGate.Database.LOCAL.publish.xml" />
@@ -113,5 +149,11 @@
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="DeneirsGate.Database.refactorlog" />
+  </ItemGroup>
+  <ItemGroup>
+    <PostDeploy Include="Scripts\Script.PostDeployment.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <PreDeploy Include="Scripts\Script.PreDeployment.sql" />
   </ItemGroup>
 </Project>

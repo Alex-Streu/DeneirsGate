@@ -1,0 +1,121 @@
+﻿@using DeneirsGate.Services
+@using CustomHtmlHelpers
+@model MagicItemEditModel
+
+@{
+    ViewBag.Title = "Edit Magic Item";
+    ViewBag.MenuOption = "MagicItem";
+}
+
+<style type="text/css">
+    #Description {
+        min-height: 200px;
+    }
+
+    .flexbox-container {
+        padding-bottom: 1em;
+    }
+</style>
+
+<h2>Edit Magic Item</h2>
+
+<div class="content-box">
+    <div class="flexbox-container full-width">
+        @HtmlHelpers.RenderFancyTextbox("lg full", "Name", 50, Model.Name, "Name", Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" }))
+    </div>
+    <div class="flexbox-container items-end justify-start">
+        <div class="fancy-dropdown">
+            @Html.LabelFor(model => model.Type, htmlAttributes: new { @class = "control-label" })
+            @Html.DropDownListFor(model => model.Type, (SelectList)ViewBag.Types, new { @class = "form-control responsive-text", style = "--size:0.75vw" })
+            @Html.ValidationMessageFor(model => model.Type, "", new { @class = "text-danger" })
+        </div>
+
+        <div class="fancy-dropdown">
+            @Html.LabelFor(model => model.Rarity, htmlAttributes: new { @class = "control-label" })
+            @Html.DropDownListFor(model => model.Rarity, (SelectList)ViewBag.Rarities, new { @class = "form-control responsive-text", style = "--size:0.75vw" })
+            @Html.ValidationMessageFor(model => model.Rarity, "", new { @class = "text-danger" })
+        </div>
+
+        <div>
+            @Html.LabelFor(model => model.HasAttunement, htmlAttributes: new { @class = "control-label" })
+            <label class="fancy-switch" data-val="@Model.HasAttunement">
+                <input id="HasAttunement" type="checkbox">
+                <span class="fancy-slider"></span>
+            </label>
+        </div>
+
+    </div>
+    <div class="flexbox-container">
+        @HtmlHelpers.RenderFancyTextarea("full lg", "Description", null, Model.Description, "Description")
+    </div>
+</div>
+
+<div class="submit-footer">
+    <div class="btn btn-lg btn-default save-button" onclick="save()">Save</div>
+    <div id="delete" class="btn btn-lg btn-danger save-button" onclick="promptDelete('deleteItem()')">Delete</div>
+</div>
+
+@section scripts {
+    <script type="text/javascript">
+        var updateAction = '@Url.Action("Update")';
+        var deleteAction = '@Url.Action("Delete")';
+        var indexAction = '@Url.Action("/")';
+
+        $(document).ready(function () {
+            if ('@ViewBag.IsNew' == 'True') { $('#delete').hide(); }
+        })
+
+        function save() {
+            var postData = {
+                ItemKey: '@Model.ItemKey',
+                Name: $('#Name').val(),
+                Type: $('#Type').val(),
+                Rarity: $('#Rarity').val(),
+                HasAttunement: $('#HasAttunement').is(':checked'),
+                Description: $('#Description').val()
+            }
+
+            $.ajax({
+                type: "POST",
+                url: updateAction,
+                data: JSON.stringify(postData),
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data.success) {
+                        Notiflix.NotifyContent.Success(data.message);
+                        $('#delete').show();
+                    } else {
+                        Notiflix.NotifyContent.Failure(data.message);
+                    }
+                },
+                error: function (error) {
+                    Notiflix.NotifyContent.Failure(error.responseText);
+                }
+            })
+        }
+
+        function deleteMonster() {
+            var postData = { id: '@Model.ItemKey' };
+
+            $.ajax({
+                type: "POST",
+                url: deleteAction,
+                data: JSON.stringify(postData),
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data.success) {
+                        Notiflix.NotifyContent.Success(data.message);
+                        location.replace(indexAction);
+                    } else {
+                        Notiflix.NotifyContent.Failure(data.message);
+                    }
+                },
+                error: function (error) {
+                    Notiflix.NotifyContent.Failure(error.responseText);
+                }
+            })
+        }
+    </script>
+}

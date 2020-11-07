@@ -1,0 +1,48 @@
+﻿@using DeneirsGate.Services
+@using CustomHtmlHelpers
+@model List<RelationshipTreeSearchModel>
+
+<div class="flexbox-container justify-between">
+    <div class="flexbox-container flex-item">
+        <div style="width:60%">
+            @HtmlHelpers.RenderFancyTextbox("lg full", "SearchTrees", null, "", "Search")
+        </div>
+        <div style="width:35%">
+            @Html.DropDownList("SearchBy", (SelectList)ViewBag.SearchBy, new { @class = "form-control responsive-text", style = "--size:0.75vw" })
+        </div>
+    </div>
+</div>
+
+<div class="flexbox-container justify-center">
+    @foreach (var item in Model)
+    {
+        <div id="@item.TreeKey" class="btn btn-lg btn-default tree-item menu-option menu-link" style="display:none" data-url="@Url.Action("_RelationshipTree", "ContentSearch", new { id = item.TreeKey })" data-dir="@item.Name">
+            <div class="name">@item.Name</div>
+            <div style="display:none" class="characters">@item.CharacterList</div>
+        </div>
+    }
+</div>
+
+<script type="text/javascript">
+    $('#SearchTrees').keyup(function () {
+        var type = $('#SearchBy').val();
+        var val = $(this).val().toLowerCase();
+
+        $('.tree-item').each(function () {
+            switch (type) {
+                case 'Character':
+                    if ($(this).find('.characters').text().toLowerCase().indexOf(val) >= 0) {
+                        $(this).show();
+                    }
+                    else { $(this).hide(); }
+                    break;
+                case 'Name':
+                    if ($(this).find('.name').text().toLowerCase().indexOf(val) >= 0) {
+                        $(this).show();
+                    }
+                    else { $(this).hide(); }
+                    break;
+            }
+        })
+    })
+</script>

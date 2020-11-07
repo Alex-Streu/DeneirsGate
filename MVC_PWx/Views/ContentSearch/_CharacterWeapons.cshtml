@@ -1,0 +1,91 @@
+﻿@using DeneirsGate.Services
+@model CharacterViewModel
+
+<h2 class="text-center">@Model.FirstName @Model.LastName</h2>
+<div class="flexbox-container full-width justify-between">
+    <label class="text-x-large">Armor: <b>@Model.Armor</b></label>
+    <label class="text-x-large">AC: <b>+@Model.ArmorClass</b></label>
+</div>
+<hr />
+<div style="margin:1em">
+    <label class="text-large text-bold red">Weapons</label>
+    @foreach (var weapon in Model.Weapons)
+    {
+        <div class="flexbox-container no-padding justify-between">
+            <label class="text-medium text-bold">@weapon.Name</label>
+            <label class="text-medium">Attack: <b>@(weapon.AttackMod >= 0 ? "+" : "")@weapon.AttackMod</b></label>
+            <label class="text-medium">Damage: <b>@weapon.DamageDice @(weapon.DamageMod >= 0 ? "+" : "")@weapon.DamageMod @weapon.DamageDisplay</b></label>
+        </div>
+    }
+</div>
+<hr />
+<div style="margin:1em">
+    <label class="text-large text-bold red">Spells</label>
+    <div class="flexbox-container justify-between">
+        <label class="text-medium">Ability: <b>@Model.SpellcastingAbility</b></label>
+        <label class="text-medium">DC: <b>@Model.SpellSaveDC</b></label>
+        <label class="text-medium">Attack: <b>@(Model.SpellcastingMod >= 0 ? "+" : "")@Model.SpellcastingMod</b></label>
+        <label class="text-medium">Per Day: <b>@Model.SpellsPerDay</b></label>
+    </div>
+</div>
+<hr />
+<div style="margin:1em">
+    <label class="text-medium text-bold"><span class="red" style="padding-right:1em">Cantrips</span>@Model.Cantrips</label>
+    <p>
+        @(string.Join(", ", Model.Spells.Where(x => x.Level == 0).Select(x => x.Name).ToList()))
+    </p>
+</div>
+<div style="margin:1em">
+    <label class="text-medium text-bold"><span class="red" style="padding-right:1em">Level 1</span>@Model.Level1Spells</label>
+    <p>
+        @(string.Join(", ", Model.Spells.Where(x => x.Level == 1).Select(x => x.Name).ToList()))
+    </p>
+</div>
+<div style="margin:1em">
+    <label class="text-medium text-bold"><span class="red" style="padding-right:1em">Level 2</span>@Model.Level2Spells</label>
+    <p>
+        @(string.Join(", ", Model.Spells.Where(x => x.Level == 2).Select(x => x.Name).ToList()))
+    </p>
+</div>
+<div style="margin:1em">
+    <label class="text-medium text-bold"><span class="red" style="padding-right:1em">Level 3</span>@Model.Level3Spells</label>
+    <p>
+        @(string.Join(", ", Model.Spells.Where(x => x.Level == 3).Select(x => x.Name).ToList()))
+    </p>
+</div>
+<div style="margin:1em">
+    <label class="text-medium text-bold"><span class="red" style="padding-right:1em">Level 4</span>@Model.Level4Spells</label>
+    <p>
+        @(string.Join(", ", Model.Spells.Where(x => x.Level == 4).Select(x => x.Name).ToList()))
+    </p>
+</div>
+<div style="margin:1em">
+    <label class="text-medium text-bold"><span class="red" style="padding-right:1em">Level 5</span>@Model.Level5Spells</label>
+    <p>
+        @(string.Join(", ", Model.Spells.Where(x => x.Level == 5).Select(x => x.Name).ToList()))
+    </p>
+</div>
+<div style="margin:1em">
+    <label class="text-medium text-bold"><span class="red" style="padding-right:1em">Level 6</span>@Model.Level6Spells</label>
+    <p>
+        @(string.Join(", ", Model.Spells.Where(x => x.Level == 6).Select(x => x.Name).ToList()))
+    </p>
+</div>
+<div style="margin:1em">
+    <label class="text-medium text-bold"><span class="red" style="padding-right:1em">Level 7</span>@Model.Level7Spells</label>
+    <p>
+        @(string.Join(", ", Model.Spells.Where(x => x.Level == 7).Select(x => x.Name).ToList()))
+    </p>
+</div>
+<div style="margin:1em">
+    <label class="text-medium text-bold"><span class="red" style="padding-right:1em">Level 8</span>@Model.Level8Spells</label>
+    <p>
+        @(string.Join(", ", Model.Spells.Where(x => x.Level == 8).Select(x => x.Name).ToList()))
+    </p>
+</div>
+<div style="margin:1em">
+    <label class="text-medium text-bold"><span class="red" style="padding-right:1em">Level 9</span>@Model.Level9Spells</label>
+    <p>
+        @(string.Join(", ", Model.Spells.Where(x => x.Level == 9).Select(x => x.Name).ToList()))
+    </p>
+</div>

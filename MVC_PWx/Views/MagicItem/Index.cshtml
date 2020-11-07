@@ -1,0 +1,100 @@
+﻿@using DeneirsGate.Services
+@using CustomHtmlHelpers
+@model List<MagicItemViewModel>
+
+@{
+    ViewBag.Title = "Magic Items";
+    ViewBag.MenuOption = "MagicItem";
+}
+
+<style type="text/css">
+    .name {
+        margin-top: 1em;
+        text-align: center;
+        font-size: large;
+        text-wrap: normal;
+        max-width: 85px;
+    }
+</style>
+
+<div id="MagicItemIndexPage">
+    <h2>Magic Items</h2>
+    <br />
+    <div class="flexbox-container justify-between">
+        @HtmlHelpers.RenderFancyTextbox("lg long", "SearchItems", null, "", "Search Items")
+        <a class="btn btn-default" href="@Url.Action("Create")">Create Magic Item</a>
+    </div>
+    <table class="table table-bordered table-striped">
+        <tbody>
+            <tr>
+                <th style="width:10%" class="text-center">Rarity</th>
+                <th style="width:30%">Name</th>
+                <th style="width:50%">Description</th>
+                <th style="width:10%" class="text-center">Actions</th>
+            </tr>
+            @foreach (var item in Model)
+            {
+                <tr id="@item.ItemKey" class="table-magic-item" data-name="@item.Name">
+                    <td class="text-center">@item.Rarity</td>
+                    <td>@item.Name</td>
+                    <td>@HtmlHelpers.LimitString(item.Description)</td>
+                    <td class="flexbox-container justify-center content-center">
+                        <a href="@Url.Action("Edit", new { id = item.ItemKey })">
+                            <div class="btn btn-sm btn-primary">
+                                <i class="fa fa-pencil"></i>
+                            </div>
+                        </a>
+                        <a onclick="promptDelete(`deleteItem('@item.ItemKey')`)">
+                            <div class="btn btn-sm btn-danger">
+                                <i class="fa fa-trash"></i>
+                            </div>
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@section scripts {
+    <script type="text/javascript">
+        var deleteAction = '@Url.Action("Delete")';
+
+        $('#SearchItems').keyup(function () {
+            var search = $(this).val().toLowerCase();
+            $('.table-magic-item').each(function () {
+                var name = $(this).data('name').toLowerCase();
+                if (name.indexOf(search) > -1) {
+                    $(this).show();
+                }
+                else {
+                    $(this).hide();
+                }
+            })
+        })
+
+        function deleteItem(id) {
+            var postData = { id: id };
+
+            $.ajax({
+                type: "POST",
+                url: deleteAction,
+                data: JSON.stringify(postData),
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data.success) {
+                        Notiflix.NotifyContent.Success(data.message);
+                        $(`#${id}`).remove();
+
+                    } else {
+                        Notiflix.NotifyContent.Failure(data.message);
+                    }
+                },
+                error: function (error) {
+                    Notiflix.NotifyContent.Failure(error.responseText);
+                }
+            })
+        }
+    </script>
+}

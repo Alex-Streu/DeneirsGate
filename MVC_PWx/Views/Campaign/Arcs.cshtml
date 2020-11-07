@@ -1,0 +1,88 @@
+﻿@using DeneirsGate.Services
+@using CustomHtmlHelpers
+@model List<ArcViewModel>
+
+@{
+    ViewBag.Title = "Story Arcs";
+    ViewBag.MenuOption = "Arc";
+}
+
+<div id="MagicItemIndexPage">
+    <h2>Story Arcs</h2>
+    <br />
+    <div class="flexbox-container justify-between">
+        @HtmlHelpers.RenderFancyTextbox("lg long", "Search", null, "", "Search Arc")
+        <a class="btn btn-default" href="@Url.Action("CreateArc")">Create Arc</a>
+    </div>
+    <table class="table table-bordered table-striped">
+        <tbody>
+            <tr>
+                <th style="width:40%">Name</th>
+                <th style="width:50%">Description</th>
+                <th style="width:10%" class="text-center">Actions</th>
+            </tr>
+            @foreach (var item in Model)
+            {
+                <tr id="@item.ArcKey" class="table-items" data-name="@item.Name">
+                    <td>@item.Name</td>
+                    <td>@HtmlHelpers.LimitString(item.Description)</td>
+                    <td class="flexbox-container justify-center content-center">
+                        <a href="@Url.Action("EditArc", new { id = item.ArcKey })">
+                            <div class="btn btn-sm btn-primary">
+                                <i class="fa fa-pencil"></i>
+                            </div>
+                        </a>
+                        <a onclick="promptDelete(`deleteItem('@item.ArcKey')`)">
+                            <div class="btn btn-sm btn-danger">
+                                <i class="fa fa-trash"></i>
+                            </div>
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@section scripts {
+    <script type="text/javascript">
+        var deleteAction = '@Url.Action("DeleteArc")';
+
+        $('#Search').keyup(function () {
+            var search = $(this).val().toLowerCase();
+            $('.table-items').each(function () {
+                var name = $(this).data('name').toLowerCase();
+                if (name.indexOf(search) > -1) {
+                    $(this).show();
+                }
+                else {
+                    $(this).hide();
+                }
+            })
+        })
+
+        function deleteItem(id) {
+            var postData = { id: id };
+
+            $.ajax({
+                type: "POST",
+                url: deleteAction,
+                data: JSON.stringify(postData),
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data.success) {
+                        Notiflix.NotifyContent.Success(data.message);
+                        $(`#${id}`).remove();
+
+                    } else {
+                        Notiflix.NotifyContent.Failure(data.message);
+                    }
+                },
+                error: function (error) {
+                    Notiflix.NotifyContent.Failure(error.responseText);
+                }
+            })
+        }
+    </script>
+}

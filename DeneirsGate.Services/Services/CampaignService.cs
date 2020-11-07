@@ -10,54 +10,40 @@ namespace DeneirsGate.Services
 
         private enum ContentType
         {
-            Campaign,
-            Character
+            Arc
         };
 
-        private void UserHasAccess(Guid userId, Guid contentKey, ContentType type)
+        private void UserHasArcAccess(Guid userId, Guid contentKey, ContentType type)
         {
-            var hasAccess = false;
             using (DBReset())
             {
                 switch (type)
                 {
-                    case ContentType.Campaign:
+                    case ContentType.Arc:
                         //Check if exists
-                        if (DB.Campaigns.FirstOrDefault(x => x.CampaignKey == contentKey) == null) { break; }
-
-                        if (DB.UserCampaigns.FirstOrDefault(x => x.UserKey == userId && x.CampaignKey == contentKey && x.IsOwner) != null)
-                        {
-                            hasAccess = true;
-                        }
-                        break;
-
-                    case ContentType.Character:
-                        //Check if exists
-                        if (DB.Characters.FirstOrDefault(x => x.CharacterKey == contentKey) == null) { break; }
-
-                        //Check user of player
-                        if (DB.CampaignCharacterLinkers.FirstOrDefault(x => x.IsRegistered && x.UserKey == userId && x.CharacterKey == contentKey) != null)
-                        {
-                            hasAccess = true;
-                            break;
-                        }
+                        if (DB.Arcs.FirstOrDefault(x => x.ArcKey == contentKey) == null) { return; }
 
                         //Check campaign owner
                         var campaignKeys = DB.UserCampaigns.Where(x => x.UserKey == userId && x.IsOwner).Select(x => x.CampaignKey).ToList();
-                        if (campaignKeys == null) { break; }
-                        if (DB.CampaignCharacterLinkers.FirstOrDefault(x => campaignKeys.Contains(x.CampaignKey) && x.CharacterKey == contentKey) != null)
+                        if (DB.Arcs.FirstOrDefault(x => campaignKeys.Contains(x.CampaignKey) && x.ArcKey == contentKey) != null)
                         {
-                            hasAccess = true;
-                            break;
+                            return;
                         }
                         break;
+
+
                 }
             }
 
-            if (!hasAccess)
-            {
-                throw new Exception("You do not have access to this content!");
-            }
+            throw new Exception("You do not have access to this content!");
+        }
+
+        public enum QuestStatus
+        {
+            Incomplete = 0,
+            InProgress,
+            Abandoned,
+            Completed
         }
 
         public List<CampaignViewModel> GetCampaigns(Guid userId, bool isOwner)
@@ -82,317 +68,332 @@ namespace DeneirsGate.Services
 
         public CampaignDashboardViewModel GetCampaignDashboard(Guid userId, Guid campaignId)
         {
-            UserHasAccess(userId, campaignId, ContentType.Campaign);
+            UserHasAccess(userId, campaignId);
 
             var dashboard = new CampaignDashboardViewModel();
             dashboard.CampaignKey = campaignId;
-            dashboard.Players = GetPlayerShorts(userId, campaignId);
+            dashboard.Arc = GetActiveArc(userId, campaignId);
+            dashboard.Players = new List<PlayerShortViewModel>();
+            dashboard.NPCs = new List<ArcCharacterViewModel>();
 
             return dashboard;
         }
 
-        public List<PlayerViewModel> GetPlayers(Guid userId, Guid campaignId)
+        public List<ArcViewModel> GetArcs(Guid userId, Guid campaignId)
         {
-            UserHasAccess(userId, campaignId, ContentType.Campaign);
+            UserHasAccess(userId, campaignId);
 
-            var players = new List<PlayerViewModel>();
+            var arcs = new List<ArcViewModel>();
             using (DBReset())
             {
-                var _players = DB.CampaignCharacterLinkers.Where(x => x.CampaignKey == campaignId && x.IsPlayer).ToList();
-                foreach (var _p in _players)
+                arcs = DB.Arcs.Where(x => x.CampaignKey == campaignId).Select(x => new ArcViewModel
                 {
-                    var addPlayer = GetPlayer(userId, campaignId, _p.CharacterKey, _p.UserKey);
+                    ArcKey = x.ArcKey,
+                    Name = x.Name,
+                    Description = x.Description,
+                    IsActive = x.IsActive
+                }).ToList();
+            }
 
-                    if (addPlayer != null) { players.Add(addPlayer); }
+            return arcs;
+        }
+
+        public ArcViewModel CreateArc(Guid campaignId, Guid arcId)
+        {
+            using (DBReset())
+            {
+                if (DB.Arcs.FirstOrDefault(x => x.CampaignKey == campaignId && x.ArcKey == arcId) != null)
+                {
+                    return null;
                 }
             }
 
-            return players;
+            return new ArcViewModel
+            {
+                ArcKey = arcId,
+                Quests = new List<QuestViewModel>()
+            };
         }
 
-        public List<PlayerShortViewModel> GetPlayerShorts(Guid userId, Guid campaignId)
+        public ArcViewModel GetArc(Guid userId, Guid campaignId, Guid arcId)
         {
-            UserHasAccess(userId, campaignId, ContentType.Campaign);
+            UserHasAccess(userId, campaignId);
+            UserHasArcAccess(userId, arcId, ContentType.Arc);
 
-            var players = new List<PlayerShortViewModel>();
-            using (DBReset())
+            var arc = CreateArc(campaignId, arcId);
+            if (arc == null)
             {
-                var _players = DB.CampaignCharacterLinkers.Where(x => x.IsPlayer && x.CampaignKey == campaignId).ToList();
-                foreach (var _p in _players)
-                {
-                    var addPlayer = GetPlayerShort(userId, campaignId, _p.CharacterKey, _p.UserKey);
-
-                    if (addPlayer != null) { players.Add(addPlayer); }
-                }
-            }
-
-            return players;
-        }
-
-        public PlayerViewModel GetPlayer(Guid userId, Guid campaignId, Guid characterId, Guid? userKey = null)
-        {
-            var player = CreatePlayer(campaignId, characterId);
-
-            if (player == null)
-            {
-                UserHasAccess(userId, characterId, ContentType.Character);
-
                 using (DBReset())
                 {
-                    if (userKey == null)
+                    arc = DB.Arcs.Where(x => x.CampaignKey == campaignId && x.ArcKey == arcId).Select(x => new ArcViewModel
                     {
-                        var linker = DB.CampaignCharacterLinkers.FirstOrDefault(x => x.CampaignKey == campaignId && x.CharacterKey == characterId);
-                        if (linker.IsRegistered) { userKey = linker.UserKey; }
-                    }
-
-                    player = DB.Characters.Where(x => x.CharacterKey == characterId).Select(x => new PlayerViewModel
-                    {
-                        Abilities = x.Abilities,
-                        Alignment = x.Alignment,
-                        BackgroundKey = x.BackgroundKey,
-                        Backstory = x.Backstory,
-                        CharacterKey = x.CharacterKey,
-                        Charisma = x.Charisma,
-                        ClassKey = x.ClassKey,
-                        Constitution = x.Constitution,
-                        Dexterity = x.Dexterity,
-                        Fears = x.Fears,
-                        FirstName = x.FirstName,
-                        Ideals = x.Ideals,
-                        Intelligence = x.Intelligence,
-                        Languages = x.Languages,
-                        LastName = x.LastName,
-                        Level = x.Level,
-                        MaxHP = x.MaxHP,
-                        Portrait = x.Portrait,
-                        RaceKey = x.RaceKey,
-                        Status = x.Status,
-                        Strength = x.Strength,
-                        Wisdom = x.Wisdom,
-                        CampaignKey = campaignId,
-                        Armor = x.Armor,
-                        ArmorClass = x.ArmorClass,
-                        Proficiency = x.Proficiency,
-                        SpellcastingAbility = x.SpellcastingAbility,
-                        SpellcastingMod = x.SpellcastingMod,
-                        SpellSaveDC = x.SpellSaveDC,
-                        Cantrips = x.Cantrips,
-                        Level1Spells = x.Level1Spells,
-                        Level2Spells = x.Level2Spells,
-                        Level3Spells = x.Level3Spells,
-                        Level4Spells = x.Level4Spells,
-                        Level5Spells = x.Level5Spells,
-                        Level6Spells = x.Level6Spells,
-                        Level7Spells = x.Level7Spells,
-                        Level8Spells = x.Level8Spells,
-                        Level9Spells = x.Level9Spells,
-                        Copper = x.Copper,
-                        Silver = x.Silver,
-                        Electrum = x.Electrum,
-                        Gold = x.Gold,
-                        Platinum = x.Platinum,
-                        Inventory = x.Inventory,
-                        Weapons = DB.CharacterWeapons.Where(y => y.CharacterKey == characterId).Select(y => new CharacterWeaponViewModel
-                        {
-                            AttackMod = y.AttackMod,
-                            DamageDice = y.DamageDice,
-                            DamageMod = y.DamageMod,
-                            DamageType = y.DamageType,
-                            Name = y.Name,
-                            WeaponKey = y.WeaponKey
-                        }).ToList(),
-                        Spells = DB.CharacterSpells.Where(y => y.CharacterKey == characterId).Select(y => new CharacterSpellViewModel
-                        {
-                            Level = y.Level,
-                            Name = y.Name,
-                            SpellKey = y.SpellKey
-                        }).ToList()
+                        ArcKey = arcId,
+                        Description = x.Description,
+                        IsActive = x.IsActive,
+                        Name = x.Name,
+                        Map = x.Map
                     }).FirstOrDefault();
 
-                    player.UserKey = userKey ?? Guid.Empty;
-                    player.UserCode = Convert.ToBase64String(characterId.ToByteArray()).Replace("=", "");
-
-                    if (player.UserKey != Guid.Empty)
+                    arc.Quests = DB.Quests.Where(x => x.ArcKey == arcId).Select(x => new QuestViewModel
                     {
-                        player.UserName = DB.AspNetUsers.Where(x => x.UserId == player.UserKey).Select(x => x.UserName).FirstOrDefault();
+                        QuestKey = x.QuestKey,
+                        Description = x.Description,
+                        Name = x.Name,
+                        SortOrder = x.SortOrder,
+                        Status = (QuestStatus)x.Status
+                    }).OrderBy(x => x.SortOrder).ToList();
+
+                    arc.Pins = DB.ArcMapPins.Where(x => x.ArcKey == arcId).Select(x => new ArcMapPinModel
+                    {
+                        Index = DB.Quests.FirstOrDefault(y => y.QuestKey == x.QuestKey).SortOrder,
+                        QuestKey = x.QuestKey,
+                        X = x.X,
+                        Y = x.Y
+                    }).ToList();
+
+                    foreach (var quest in arc.Quests)
+                    {
+                        quest.Events = DB.QuestEvents.Where(x => x.QuestKey == quest.QuestKey).Select(x => new QuestEventViewModel
+                        {
+                            EventKey = x.EventKey,
+                            Name = x.Name,
+                            Description = x.Description,
+                            SortOrder = x.SortOrder,
+                            IsComplete = x.IsComplete
+                        }).OrderBy(x => x.SortOrder).ToList();
+
+                        foreach (var questEvent in quest.Events)
+                        {
+                            questEvent.Encounter = DB.QuestEventEncounters.Where(x => x.EventKey == questEvent.EventKey).Select(x => new EncounterViewModel
+                            {
+                                EncounterKey = x.EncounterKey
+                            }).FirstOrDefault();
+                        }
                     }
                 }
             }
 
-            return player;
+            return arc;
         }
 
-        public PlayerShortViewModel GetPlayerShort(Guid userId, Guid campaignId, Guid characterId, Guid? userKey = null)
+        public QuestViewModel GetArcQuest(Guid questId)
         {
-            UserHasAccess(userId, characterId, ContentType.Character);
+            var quest = DB.Quests.Where(x => x.QuestKey == questId).Select(x => new QuestViewModel
+            {
+                QuestKey = x.QuestKey,
+                Description = x.Description,
+                Name = x.Name,
+                SortOrder = x.SortOrder,
+                Status = (QuestStatus)x.Status
+            }).FirstOrDefault();
 
-            var player = new PlayerShortViewModel();
+            quest.Events = DB.QuestEvents.Where(x => x.QuestKey == quest.QuestKey).Select(x => new QuestEventViewModel
+            {
+                EventKey = x.EventKey,
+                Name = x.Name,
+                Description = x.Description,
+                SortOrder = x.SortOrder,
+                IsComplete = x.IsComplete
+            }).OrderBy(x => x.SortOrder).ToList();
 
+            return quest;
+        }
+
+        public QuestEventViewModel GetArcQuestEvent(Guid eventId)
+        {
+            var _event = DB.QuestEvents.Where(x => x.EventKey == eventId).Select(x => new QuestEventViewModel
+            {
+                EventKey = x.EventKey,
+                Name = x.Name,
+                Description = x.Description,
+                SortOrder = x.SortOrder,
+                IsComplete = x.IsComplete
+            }).FirstOrDefault();
+
+            _event.Encounter = DB.QuestEventEncounters.Where(x => x.EventKey == eventId).Select(x => new EncounterViewModel
+            {
+                EncounterKey = x.EncounterKey
+            }).FirstOrDefault();
+
+            return _event;
+        }
+
+        public ArcViewModel GetActiveArc(Guid userId, Guid campaignId)
+        {
+            var arc = new ArcViewModel();
             using (DBReset())
             {
-                if (userKey == null) { userKey = DB.CampaignCharacterLinkers.FirstOrDefault(x => x.CampaignKey == campaignId && x.CharacterKey == characterId).UserKey; }
-                player = DB.Characters.Where(x => x.CharacterKey == characterId).Select(x => new PlayerShortViewModel
-                {
-                    FirstName = x.FirstName,
-                    LastName = x.LastName,
-                    Level = x.Level,
-                    Portrait = x.Portrait,
-                    CampaignKey = campaignId,
-                    CharacterKey = characterId,
-                    Race = DB.Races.FirstOrDefault(y => y.RaceKey == x.RaceKey).Name,
-                    Class = DB.Classes.FirstOrDefault(y => y.ClassKey == x.ClassKey).Name,
-                    UserKey = userKey.Value,
-                }).FirstOrDefault();
+                var arcKey = DB.Arcs.Where(x => x.IsActive).Select(x => x.ArcKey).FirstOrDefault();
+                arc = GetArc(userId, campaignId, arcKey);
             }
 
-            return player;
+            return arc;
         }
 
-        public CharacterViewModel CreateCharacter(Guid campaignId, Guid characterId)
+        public void UpdateArcActive(Guid userId, Guid campaignId, ArcActivePostModel model)
         {
-            var exists = false;
-            using (DBReset())
-            {
-                if (DB.CampaignCharacterLinkers.FirstOrDefault(x => x.CampaignKey == campaignId && x.CharacterKey == characterId) != null)
-                {
-                    exists = true;
-                }
-            }
-            
-            if (exists) { return null; }
-
-            return new CharacterViewModel
-            {
-                CampaignKey = campaignId,
-                CharacterKey = characterId
-            };
-        }
-
-        public PlayerViewModel CreatePlayer(Guid campaignId, Guid characterId)
-        {
-            var exists = false;
-            using (DBReset())
-            {
-                if (DB.CampaignCharacterLinkers.FirstOrDefault(x => x.CampaignKey == campaignId && x.CharacterKey == characterId) != null)
-                {
-                    exists = true;
-                }
-            }
-
-            if (exists) { return null; }
-
-            return new PlayerViewModel
-            {
-                CampaignKey = campaignId,
-                CharacterKey = characterId
-            };
-        }
-
-        public void UpdateCharacter(Guid userId, CharacterPostModel model, bool isPlayer = false, Guid? userKey = null)
-        {
-            UserHasAccess(userId, model.CharacterKey, ContentType.Character);
+            UserHasAccess(userId, campaignId);
+            UserHasArcAccess(userId, model.ArcKey, ContentType.Arc);
 
             using (DBReset())
             {
-                var add = false;
-                var character = DB.Characters.FirstOrDefault(x => x.CharacterKey == model.CharacterKey);
-
-                if (character == null)
+                foreach (var arc in DB.Arcs.Where(x => x.CampaignKey == campaignId).ToList())
                 {
-                    character = new Character();
-                    add = true;
-                }
-
-                character.Abilities = model.Abilities;
-                character.Charisma = model.Charisma;
-                character.Constitution = model.Constitution;
-                character.Dexterity = model.Dexterity;
-                character.Intelligence = model.Intelligence;
-                character.Level = model.Level;
-                character.MaxHP = model.MaxHP;
-                character.Status = model.Status;
-                character.Strength = model.Strength;
-                character.Wisdom = model.Wisdom;
-                character.Alignment = model.Alignment;
-                character.BackgroundKey = model.BackgroundKey;
-                character.Backstory = model.Backstory;
-                character.CharacterKey = model.CharacterKey;
-                character.ClassKey = model.ClassKey;
-                character.Fears = model.Fears;
-                character.FirstName = model.FirstName;
-                character.Ideals = model.Ideals;
-                character.Languages = model.Languages;
-                character.LastName = model.LastName;
-                character.Portrait = model.Portrait;
-                character.RaceKey = model.RaceKey;
-                character.ArmorClass = model.ArmorClass;
-                character.Armor = model.Armor;
-                character.Proficiency = model.Proficiency;
-                character.SpellcastingAbility = model.SpellcastingAbility;
-                character.SpellcastingMod = model.SpellcastingMod;
-                character.SpellSaveDC = model.SpellSaveDC;
-                character.Cantrips = model.Cantrips;
-                character.Level1Spells = model.Level1Spells;
-                character.Level2Spells = model.Level2Spells;
-                character.Level3Spells = model.Level3Spells;
-                character.Level4Spells = model.Level4Spells;
-                character.Level5Spells = model.Level5Spells;
-                character.Level6Spells = model.Level6Spells;
-                character.Level7Spells = model.Level7Spells;
-                character.Level8Spells = model.Level8Spells;
-                character.Level9Spells = model.Level9Spells;
-                character.Copper = model.Copper;
-                character.Silver = model.Silver;
-                character.Electrum = model.Electrum;
-                character.Gold = model.Gold;
-                character.Platinum = model.Platinum;
-                character.Inventory = model.Inventory;
-
-                //Weapons
-                DB.CharacterWeapons.RemoveRange(DB.CharacterWeapons.Where(x => x.CharacterKey == model.CharacterKey).ToList());
-                foreach (var item in model.Weapons)
-                {
-                    DB.CharacterWeapons.Add(new CharacterWeapon
-                    {
-                        AttackMod = item.AttackMod,
-                        CharacterKey = model.CharacterKey,
-                        DamageDice = item.DamageDice,
-                        DamageMod = item.DamageMod,
-                        DamageType = item.DamageType,
-                        Name = item.Name,
-                        WeaponKey = item.WeaponKey
-                    });
-                }
-
-                //Spells
-                DB.CharacterSpells.RemoveRange(DB.CharacterSpells.Where(x => x.CharacterKey == model.CharacterKey).ToList());
-                foreach (var item in model.Spells)
-                {
-                    DB.CharacterSpells.Add(new CharacterSpell
-                    {
-                        CharacterKey = model.CharacterKey,
-                        Level = item.Level,
-                        Name = item.Name,
-                        SpellKey = item.SpellKey
-                    });
-                }
-
-                if (add)
-                {
-                    DB.Characters.Add(character);
-
-                    //Add linkers
-                    DB.CampaignCharacterLinkers.Add(new CampaignCharacterLinker
-                    {
-                        CampaignKey = model.CampaignKey,
-                        CharacterKey = model.CharacterKey,
-                        IsPlayer = isPlayer,
-                        UserKey = userKey ?? Guid.Empty
-                    });
+                    if (arc.ArcKey == model.ArcKey) { arc.IsActive = model.IsActive; }
+                    else { arc.IsActive = false; }
                 }
 
                 DB.SaveChanges();
             }
+        }
+
+        public void UpdateArc(Guid userId, Guid campaignId, ArcPostModel model)
+        {
+            UserHasAccess(userId, campaignId);
+            UserHasArcAccess(userId, model.ArcKey, ContentType.Arc);
+
+            using (DBReset())
+            {
+                var arc = DB.Arcs.FirstOrDefault(x => x.ArcKey == model.ArcKey && x.CampaignKey == campaignId);
+
+                var add = false;
+                if (arc == null)
+                {
+                    arc = new Arc
+                    {
+                        ArcKey = model.ArcKey,
+                        CampaignKey = campaignId
+                    };
+                    add = true;
+                }
+
+                arc.Name = model.Name;
+                arc.Description = model.Description;
+                arc.Map = model.Map;
+
+                if (add) { DB.Arcs.Add(arc); }
+
+                //Quests
+                var questIds = DB.Quests.Where(x => x.ArcKey == model.ArcKey).Select(x => x.QuestKey).ToList();
+                var eventIds = DB.QuestEvents.Where(x => questIds.Contains(x.QuestKey)).Select(x => x.EventKey).ToList();
+                DB.Quests.RemoveRange(x => questIds.Contains(x.QuestKey));
+                DB.QuestEvents.RemoveRange(x => questIds.Contains(x.QuestKey));
+                DB.QuestEventEncounters.RemoveRange(x => eventIds.Contains(x.EventKey));
+                foreach (var quest in model.Quests)
+                {
+                    DB.Quests.Add(new Quest
+                    {
+                        ArcKey = model.ArcKey,
+                        QuestKey = quest.QuestKey,
+                        Name = quest.Name,
+                        Description = quest.Description,
+                        SortOrder = quest.SortOrder,
+                        Status = (int)quest.Status
+                    });
+
+                    var pin = model.Pins.FirstOrDefault(x => x.Index == quest.SortOrder);
+                    if (pin != null) { pin.QuestKey = quest.QuestKey; }
+
+                    //Events
+                    foreach (var questEvent in quest.Events)
+                    {
+
+                        var newEvent = new QuestEvent
+                        {
+                            EventKey = questEvent.EventKey,
+                            QuestKey = quest.QuestKey,
+                            Name = questEvent.Name,
+                            Description = questEvent.Description,
+                            SortOrder = questEvent.SortOrder,
+                            IsComplete = questEvent.IsComplete
+                        };
+                        DB.QuestEvents.Add(newEvent);
+
+                        if (questEvent.Encounter != null)
+                        {
+                            DB.QuestEventEncounters.Add(new QuestEventEncounter
+                            {
+                                EncounterKey = questEvent.Encounter.EncounterKey,
+                                EventKey = newEvent.EventKey
+                            });
+                        }
+                    }
+                }
+
+                //Map Pins
+                DB.ArcMapPins.RemoveRange(x => x.ArcKey == model.ArcKey);
+                foreach (var pin in model.Pins)
+                {
+                    DB.ArcMapPins.Add(new ArcMapPin
+                    {
+                        ArcKey = model.ArcKey,
+                        PinKey = Guid.NewGuid(),
+                        QuestKey = pin.QuestKey,
+                        X = pin.X,
+                        Y = pin.Y
+                    });
+                }
+
+                DB.SaveChanges();
+
+                UpdateArcActive(userId, campaignId, new ArcActivePostModel { ArcKey = model.ArcKey, IsActive = model.IsActive });
+            }
+        }
+
+        public List<Guid> DeleteArc(Guid userId, Guid campaignId, Guid arcId)
+        {
+            UserHasAccess(userId, campaignId);
+            UserHasArcAccess(userId, arcId, ContentType.Arc);
+
+            var encounterIds = new List<Guid>();
+            using (DBReset())
+            {
+                var questIds = DB.Quests.Where(x => x.ArcKey == arcId).Select(x => x.QuestKey).ToList();
+                var eventIds = DB.QuestEvents.Where(x => questIds.Contains(x.QuestKey)).Select(x => x.EventKey).ToList();
+                encounterIds = DB.QuestEventEncounters.Where(x => eventIds.Contains(x.EventKey)).Select(x => x.EncounterKey).ToList();
+
+                DB.Arcs.RemoveRange(x => x.ArcKey == arcId);
+                DB.Quests.RemoveRange(x => x.ArcKey == arcId);
+                DB.QuestEvents.RemoveRange(x => questIds.Contains(x.QuestKey));
+                DB.QuestEventEncounters.RemoveRange(x => eventIds.Contains(x.EventKey));
+
+                DB.SaveChanges();
+            }
+
+            return encounterIds;
+        }
+
+        public List<Guid> GetArcCharacters(Guid userId, Guid campaignId, Guid arcId)
+        {
+            UserHasAccess(userId, campaignId);
+            UserHasArcAccess(userId, arcId, ContentType.Arc);
+
+            DBReset();
+
+            var characterIds = DB.ArcCharacterLinkers.Where(x => x.ArcKey == arcId).Select(x => x.CharacterKey).ToList();
+
+            return characterIds;
+        }
+
+        public void AddArcCharacter(Guid arcId, Guid characterId, bool add)
+        {
+            DBReset();
+
+            var character = DB.ArcCharacterLinkers.FirstOrDefault(x => x.CharacterKey == characterId && x.ArcKey == arcId);
+            if (character == null && add)
+            {
+                DB.ArcCharacterLinkers.Add(new ArcCharacterLinker
+                {
+                    ArcKey = arcId,
+                    CharacterKey = characterId
+                });
+            }
+            else if (character != null && !add)
+            {
+                DB.ArcCharacterLinkers.Remove(character);
+            }
+
+            DB.SaveChanges();
         }
     }
 }

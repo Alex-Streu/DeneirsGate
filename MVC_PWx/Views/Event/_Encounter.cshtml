@@ -1,0 +1,858 @@
+﻿@using DeneirsGate.Services
+@using CustomHtmlHelpers
+@using System.Web.Script.Serialization
+@model EncounterViewModel
+
+<style type="text/css">
+    .summary-property {
+        font-size: large;
+    }
+
+    #enc_Description {
+        height: 20em;
+        resize: vertical;
+    }
+</style>
+
+@{ string requiresAttunement = "Requires Attunement"; }
+
+<div class="flexbox-container justify-between" style="height:100%">
+    <div class="flexbox-container" style="width:60%;height:100%">
+        <div class="flexbox-container fill justify-between">
+            <div style="width:90%">
+                @HtmlHelpers.RenderFancyTextbox("md full", "enc_Name", 150, Model.Name, "Name", Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" }))
+            </div>
+            <div class="btn btn-default" onclick="saveEncounter()">Save</div>
+        </div>
+        <div class="flexbox-container fill">
+            <div class="fancy-tabs" data-panes="encounter-panes" style="width:100%">
+                <div class="fancy-tab-item active" data-tab="description-pane">Description</div>
+                <div class="fancy-tab-item" data-tab="monsters-pane">Monsters</div>
+                <div class="fancy-tab-item" data-tab="items-pane">Magic Items</div>
+                <div class="fancy-tab-item" data-tab="treasure-pane">Treasure</div>
+            </div>
+            <div id="encounter-panes" style="width:100%">
+                <div id="description-pane" class="fancy-tab-pane slide-right active">
+                    @HtmlHelpers.RenderFancyTextarea("full md", "enc_Description", null, Model.Description, "Description")
+                </div>
+                <div id="monsters-pane" class="content-box fancy-tab-pane slide-right">
+                    <div class="flexbox-container fill">
+                        <button class="btn btn-large btn-default" onclick="suggestMonster()">Suggest Monster</button>
+                        <label class="text-large" style="margin:1em">OR</label>
+                        <button style="margin:0.5em 1em" class="btn btn-primary" type="button" onclick="hideSuggestionBox(true)" data-toggle="collapse" data-target="#enc_FilterMonsters" aria-expanded="false" aria-controls="collapseExample">
+                            Filter Monsters
+                        </button>
+                    </div>
+                    <div id="enc_SuggestionBox" style="display:none">
+                        <div class="flexbox-container fill">
+                            <button id="enc_Easier" class="btn btn-large btn-success" onclick="suggestMonster(-1)">Easier</button>
+                            <button id="enc_Harder" class="btn btn-large btn-failure" onclick="suggestMonster(1)">Harder</button>
+                        </div>
+                    </div>
+                    <div id="enc_FilterMonsters" class="box-area collapse">
+                        <div class="flexbox-container justify-between">
+                            <div style="width: 70%">
+                                @HtmlHelpers.RenderFancyTextbox("full", "enc_SearchMonsters", null, null, "Name")
+                            </div>
+                            <button style="margin-top:1em" class="btn btn-sm btn-default" onclick="searchMonster()">Search Monsters</button>
+                        </div>
+                        <div class="flexbox-container justify-between fill">
+                            <div class="fancy-dropdown">
+                                @Html.DropDownList("enc_ChallengeRatings", (SelectList)ViewBag.ChallengeRatings, "Any CR", new { @class = "form-control responsive-text", style = "--size:0.75vw" })
+                            </div>
+                            <div class="fancy-dropdown">
+                                @Html.DropDownList("enc_Sizes", (SelectList)ViewBag.Sizes, "Any Size", new { @class = "form-control responsive-text", style = "--size:0.75vw" })
+                            </div>
+                            <div class="fancy-dropdown">
+                                @Html.DropDownList("enc_Types", (SelectList)ViewBag.Types, "Any Type", new { @class = "form-control responsive-text", style = "--size:0.75vw" })
+                            </div>
+                            <div class="fancy-dropdown">
+                                @Html.DropDownList("enc_Environments", (SelectList)ViewBag.Environments, "Any Environment", new { @class = "form-control responsive-text", style = "--size:0.75vw" })
+                            </div>
+                            <div class="fancy-dropdown">
+                                @Html.DropDownList("enc_Alignments", HtmlHelpers.AlignmentDropdown(null), "Any Alignment", new { @class = "form-control responsive-text", style = "--size:0.75vw" })
+                            </div>
+                        </div>
+                    </div>
+                    <hr />
+                    <div id="enc_MonsterResults" style="height:25em;overflow-y:auto">
+                    </div>
+                </div>
+                <div id="items-pane" class="content-box fancy-tab-pane slide-right">
+                    <div class="flexbox-container fill">
+                        <button class="btn btn-large btn-default" onclick="suggestItem()">Suggest Magic Item</button>
+                        <label class="text-large" style="margin:1em">OR</label>
+                        <button style="margin:0.5em 1em" class="btn btn-primary" type="button" onclick="hideItemSuggestionBox(true)" data-toggle="collapse" data-target="#enc_FilterItems" aria-expanded="false" aria-controls="collapseExample">
+                            Filter Magic Items
+                        </button>
+                    </div>
+                    <div id="enc_ItemSuggestionBox" style="display:none">
+                        <div class="flexbox-container fill">
+                            <button id="enc_Easier" class="btn btn-large btn-success" onclick="suggestItem(-1)">Common-er</button>
+                            <button id="enc_Harder" class="btn btn-large btn-failure" onclick="suggestItem(1)">Rarer</button>
+                        </div>
+                    </div>
+                    <div id="enc_FilterItems" class="box-area collapse">
+                        <div class="flexbox-container justify-between">
+                            <div style="width: 70%">
+                                @HtmlHelpers.RenderFancyTextbox("full", "enc_SearchItems", null, null, "Name")
+                            </div>
+                            <button style="margin-top:1em" class="btn btn-sm btn-default" onclick="searchItem()">Search Items</button>
+                        </div>
+                        <div class="flexbox-container justify-between fill">
+                            <div class="fancy-dropdown">
+                                @Html.DropDownList("enc_ItemTypes", (SelectList)ViewBag.ItemTypes, "Any Type", new { @class = "form-control responsive-text", style = "--size:0.75vw" })
+                            </div>
+                            <div class="fancy-dropdown">
+                                @Html.DropDownList("enc_Rarities", (SelectList)ViewBag.Rarities, "Any Rarity", new { @class = "form-control responsive-text", style = "--size:0.75vw" })
+                            </div>
+                            <div class="fancy-dropdown">
+                                @Html.DropDownList("enc_Attunements", (SelectList)ViewBag.Attunements, "Any Attunement", new { @class = "form-control responsive-text", style = "--size:0.75vw" })
+                            </div>
+                        </div>
+                    </div>
+                    <hr />
+                    <div id="enc_ItemResults" style="height:25em;overflow-y:auto">
+                    </div>
+                </div>
+                <div id="treasure-pane" class="content-box fancy-tab-pane slide-right">
+                    <p class="text-small">
+                        *The treasure generator should be used after you select your monsters. The generated tresure will be based off the challenge level of the monsters.
+                    </p>
+                    <div class="flexbox-container fill">
+                        <button class="btn btn-large btn-default" onclick="suggestTreasure()">Random Treasure</button>
+                        <label class="text-large" style="margin:1em">OR</label>
+                        <button class="btn btn-large btn-danger" onclick="suggestTreasureHoard()">Random Treasure Hoard</button>
+                    </div>
+                    <hr />
+                    <div id="enc_TreasureResults" style="height:25em;overflow-y:auto">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="flexbox-container" style="width:35%">
+        <div class="content-box narrow full-width" style="height:35em;margin-bottom:1em">
+            <label>Encounter Summary</label>
+            <div class="flexbox-container fill justify-between">
+                <label class="summary-property">Total XP:</label>
+                <label id="enc_TotalXP" class="summary-property text-bold">@Model.TotalXP</label>
+            </div>
+            <div class="flexbox-container fill justify-between">
+                <label class="summary-property">Difficulty:</label>
+                <label id="enc_Difficulty" class="summary-property text-bold">Super Easy</label>
+            </div>
+            <div class="flexbox-container fill">
+                <div class="progress">
+                    <div id="enc_XPBar" class="progress-bar"></div>
+                </div>
+            </div>
+            <hr />
+            <div id="enc_SummaryMonsters" style="height:60%;overflow-y:auto;">
+                @foreach (var monster in Model.Monsters)
+                {
+                    <div class="list-result flexbox-container justify-between items-center enc-monster" data-data="@(new JavaScriptSerializer().Serialize(monster))">
+                        <div class="information">
+                            <div class="flexbox-container no-padding full-width justify-between">
+                                <div class="flexbox-container no-padding no-margin" style="max-width:75%">
+                                    <label class="title enc-monster-name full-width text-medium">@monster.Name</label>
+                                    <div class="flexbox-container full-width no-padding">
+                                        <label class="detail enc-monster-size">@monster.Size</label>
+                                        <label class="detail enc-monster-type">@monster.Type</label>
+                                    </div>
+                                </div>
+                                <div class="flexbox-container justify-end no-padding no-margin" style="max-width:20%">
+                                    <label class="property text-small">CR: <label class="enc-monster-cr text-bold">@monster.ChallengeRating</label></label>
+                                    <label class="property text-small">XP: <label class="enc-monster-xp text-bold">@monster.XP</label></label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="btn-container">
+                            <div class="flexbox-container no-padding no-margin full-width">
+                                <button class="btn btn-xs btn-primary full-width" onclick="addMonsterCount(this, 1)"><i class="fa fa-plus"></i></button>
+                                <label class="text-small full-width text-center enc-monster-count">@monster.Count</label>
+                                <button class="btn btn-xs btn-primary full-width" onclick="addMonsterCount(this, -1)"><i class="fa fa-minus"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+        <div class="content-box narrow full-width" style="height:25em">
+            <label>Reward Summary</label>
+            @HtmlHelpers.RenderFancyTextarea("full short", "enc_Rewards", null, Model.RewardSummary, null)
+            <hr />
+            <div id="enc_SummaryItems" style="height:40%;overflow-y:auto;">
+                @foreach (var item in Model.Items)
+                {
+                    <div class="list-result flexbox-container justify-between items-center enc-item" data-data="@(new JavaScriptSerializer().Serialize(item))">
+                        <div class="information">
+                            <div class="flexbox-container justify-between">
+                                <label class="title enc-item-name text-small">@item.Name</label>
+                                <div class="flexbox-container justify-end">
+                                    <label class="property enc-item-rarity text-small">@item.Rarity</label>
+                                    <label class="property enc-item-type text-small">@item.Type</label>
+                                </div>
+                            </div>
+                            <div class="flexbox-container">
+                                <label class="detail enc-item-attunement text-small">@(item.HasAttunement ? requiresAttunement : "")</label>
+                            </div>
+                            <div class="flexbox-container">
+                                <p class="body description text-small">@item.Description</p>
+                            </div>
+                        </div>
+                        <div class="btn-container">
+                            <div class="btn btn-sm btn-danger" onclick="removeItem(this)"><i class="fa fa-minus"></i></div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="monsterTemplate" class="enc-template" style="display:none">
+    <div id="[[id]]" class="list-result flexbox-container justify-between items-center">
+        <div class="information">
+            <div class="flexbox-container justify-between">
+                <label class="title enc-monster-name">[[name]]</label>
+                <div class="flexbox-container justify-end">
+                    <label class="property enc-monster-size">[[size]]</label>
+                    <label class="property enc-monster-type">[[type]]</label>
+                    <label class="property enc-monster-cr">[[cr]]</label>
+                </div>
+            </div>
+            <div class="flexbox-container">
+                <label class="detail relative">Alignment: <label class="text-bold enc-monster-alignment">[[alignment]]</label></label>
+                <label class="detail relative">Speed: <label class="text-bold enc-monster-speed">[[speed]]</label></label>
+                <label class="enc-monster-xp hidden">[[xp]]</label>
+            </div>
+            <div class="flexbox-container">
+                <p class="body description">[[description]]</p>
+            </div>
+            <div class="flexbox-container">
+                <div class="show-more" onclick="showMore('[[id]]')" style="display:none">Show More</div>
+            </div>
+        </div>
+        <div class="btn-container">
+            <div class="btn btn-sm btn-default" onclick="addMonster('[[id]]')"><i class="fa fa-plus"></i></div>
+        </div>
+    </div>
+</div>
+
+<div id="monsterEncounterTemplate" class="enc-template" style="display:none">
+    <div class="list-result flexbox-container justify-between items-center enc-monster">
+        <div class="information">
+            <div class="flexbox-container no-padding full-width justify-between">
+                <div class="flexbox-container no-padding no-margin" style="max-width:75%">
+                    <label class="title enc-monster-name full-width text-medium"></label>
+                    <div class="flexbox-container full-width no-padding">
+                        <label class="detail enc-monster-size"></label>
+                        <label class="detail enc-monster-type"></label>
+                    </div>
+                </div>
+                <div class="flexbox-container justify-end no-padding no-margin" style="max-width:20%">
+                    <label class="property text-small">CR: <label class="enc-monster-cr text-bold"></label></label>
+                    <label class="property text-small">XP: <label class="enc-monster-xp text-bold"></label></label>
+                </div>
+            </div>
+        </div>
+        <div class="btn-container">
+            <div class="flexbox-container no-padding no-margin full-width">
+                <button class="btn btn-xs btn-primary full-width" onclick="addMonsterCount(this, 1)"><i class="fa fa-plus"></i></button>
+                <label class="text-small full-width text-center enc-monster-count">1</label>
+                <button class="btn btn-xs btn-primary full-width" onclick="addMonsterCount(this, -1)"><i class="fa fa-minus"></i></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="itemTemplate" class="enc-template" style="display:none">
+    <div id="[[id]]" class="list-result flexbox-container justify-between items-center">
+        <div class="information">
+            <div class="flexbox-container justify-between">
+                <label class="title enc-item-name">[[name]]</label>
+                <div class="flexbox-container justify-end">
+                    <label class="property enc-item-rarity">[[rarity]]</label>
+                    <label class="property enc-item-type">[[type]]</label>
+                </div>
+            </div>
+            <div class="flexbox-container">
+                <label class="detail enc-item-attunement">[[attunement]]</label>
+            </div>
+            <div class="flexbox-container">
+                <p class="body description">[[description]]</p>
+            </div>
+            <div class="flexbox-container">
+                <div class="show-more" onclick="showMore('[[id]]')" style="display:none">Show More</div>
+            </div>
+        </div>
+        <div class="btn-container">
+            <div class="btn btn-sm btn-default" onclick="addItem('[[id]]')"><i class="fa fa-plus"></i></div>
+        </div>
+    </div>
+</div>
+
+<div id="itemEncounterTemplate" class="enc-template" style="display:none">
+    <div class="list-result flexbox-container justify-between items-center enc-item">
+        <div class="information">
+            <div class="flexbox-container justify-between">
+                <label class="title enc-item-name text-small"></label>
+                <div class="flexbox-container justify-end">
+                    <label class="property enc-item-rarity text-small"></label>
+                    <label class="property enc-item-type text-small"></label>
+                </div>
+            </div>
+            <div class="flexbox-container">
+                <label class="detail enc-item-attunement text-small"></label>
+            </div>
+            <div class="flexbox-container">
+                <p class="body description text-small"></p>
+            </div>
+        </div>
+        <div class="btn-container">
+            <div class="btn btn-sm btn-danger" onclick="removeItem(this)"><i class="fa fa-minus"></i></div>
+        </div>
+    </div>
+</div>
+
+<div id="treasureTemplate" class="enc-template" style="display:none">
+    <div class="list-result flexbox-container justify-between items-center">
+        <div class="information">
+            <div class="detail enc-treasure">
+                [[treasure]]
+            </div>
+        </div>
+        <div class="btn-container">
+            <div class="btn btn-sm btn-default" onclick="addTreasure(this, '[[treasure]]')"><i class="fa fa-plus"></i></div>
+        </div>
+    </div>
+</div>
+
+<div id="treasureItemTemplate" class="enc-template" style="display:none">
+    <div class="list-result flexbox-container justify-between items-center">
+        <div class="information">
+            <div class="detail enc-treasure-item text-bold">
+                [[display]]&nbsp;<i data-toggle="tooltip" title="[[info]]" class="fa fa-question-circle"></i>
+            </div>
+        </div>
+        <div class="btn-container">
+            <div class="btn btn-sm btn-default" onclick="addTreasure(this, '[[display]] ([[info]])')"><i class="fa fa-plus"></i></div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var suggestMonsterAction = '@Url.Action("SuggestMonster")';
+    var searchMonsterAction = '@Url.Action("SearchMonster")';
+    var getCalculatorsAction = '@Url.Action("GetCalculators")';
+    var suggestItemAction = '@Url.Action("SuggestItem")';
+    var searchItemAction = '@Url.Action("SearchItem")';
+    var generateTreasureAction = '@Url.Action("GenerateTreasure")';
+    var generateTreasureHoardAction = '@Url.Action("GenerateTreasureHoard")';
+    //var updateAction = '@Url.Action("UpdateEncounter")';
+
+    var descriptionMax = 100;
+    var difficulty = 0;
+    var excludeMonsters = [];
+    var rarity = 0;
+    var excludeItems = [];
+    var thresholds = [];
+    var multipliers = [];
+
+    $(document).ready(function () {
+        ajaxPost(null, getCalculatorsAction, function (data) {
+            if (data.success) {
+                thresholds = data.data.Thresholds;
+                multipliers = data.data.Multipliers;
+
+                updateDifficulty(@Model.TotalXP);
+            } else {
+                Notiflix.NotifyContent.Failure(data.message);
+            }
+        })
+    })
+
+    function hideSuggestionBox(hide) {
+        if (hide) {
+            $('#enc_SuggestionBox').hide();
+        }
+        else {
+            $('#enc_SuggestionBox').show();
+        }
+    }
+
+    function hideItemSuggestionBox(hide) {
+        if (hide) {
+            $('#enc_ItemSuggestionBox').hide();
+        }
+        else {
+            $('#enc_ItemSuggestionBox').show();
+        }
+    }
+
+    function truncateDescription(description) {
+        if (description.length > descriptionMax) {
+            return description.substr(0, descriptionMax - 3) + '...';
+        }
+
+        return description;
+    }
+
+    function showMore(id) {
+        var parent = $(`#${id}`);
+        var description = $(parent).data('data').Description;
+        var eDescription = $(parent).find('.description');
+        var showMore = $(parent).find('.show-more');
+
+        if ($(eDescription).text() != description) {
+            $(eDescription).text(description);
+            $(showMore).text('Show Less');
+        } else {
+            $(eDescription).text(truncateDescription(description));
+            $(showMore).text('Show More');
+        }
+    }
+
+    function suggestMonster(addDiff) {
+        if (addDiff != null) { difficulty += addDiff; }
+        else { difficulty = 0; }
+
+        hideSuggestionBox(false);
+        $('#enc_FilterMonsters').collapse('hide');
+
+        var postData = {
+            Difficulty: difficulty,
+            DifficultyChange: addDiff,
+            ExcludeMonsters: excludeMonsters
+        }
+
+        ajaxPost(postData, suggestMonsterAction, function (data) {
+            if (data.success) {
+                var monster = data.data;
+                difficulty = monster.Difficulty;
+
+                excludeMonsters = [];
+                excludeMonsters.push(monster.MonsterKey);
+
+                $('#enc_MonsterResults').html('');
+                addMonsterHtml(monster);
+            } else {
+                Notiflix.NotifyContent.Failure(data.message);
+            }
+        })
+    }
+
+    function searchMonster() {
+
+        var postData = {
+            Name: $('#enc_SearchMonsters').val(),
+            ChallengeRating: $('#enc_ChallengeRatings').val(),
+            Type: $('#enc_Types').val(),
+            Size: $('#enc_Sizes').val(),
+            Environment: $('#enc_Environments').val(),
+            Alignment: $('#enc_Alignments').val()
+        }
+
+        ajaxPost(postData, searchMonsterAction, function (data) {
+            if (data.success) {
+                var monsters = data.data;
+                difficulty = 0;
+                excludeMonsters = [];
+
+                $('#enc_MonsterResults').html('');
+
+                for (var i = 0; i < monsters.length; i++) {
+                    addMonsterHtml(monsters[i]);
+                }
+            } else {
+                Notiflix.NotifyContent.Failure(data.message);
+            }
+        })
+    }
+
+    function addMonsterHtml(monster) {
+        var description = truncateDescription(monster.Description);
+        var html = $('#monsterTemplate').html();
+        html = html.replace('[[name]]', monster.Name)
+            .replace('[[description]]', description)
+            .replace('[[size]]', monster.Size)
+            .replace('[[type]]', monster.Type)
+            .replace('[[alignment]]', monster.Alignment)
+            .replace('[[speed]]', monster.Speed)
+            .replace('[[xp]]', monster.XP)
+            .replace('[[cr]]', monster.ChallengeRating);
+
+        while (html.indexOf('[[id]]') > -1) {
+            html = html.replace('[[id]]', monster.MonsterKey);
+        }
+
+        $('#enc_MonsterResults').append(html);
+        $(`#${monster.MonsterKey}`).data('data', monster);
+        if (monster.Description.length > descriptionMax) {
+            $(`#${monster.MonsterKey}`).find('.show-more').show();
+        }
+    }
+
+    function addMonster(id) {
+        var monster = $(`#${id}`).data('data');
+
+        var found = false;
+        $('.enc-monster').each(function () {
+            var thisMonster = $(this).data('data');
+            if (thisMonster == null) { return; }
+
+            if (monster.MonsterKey == thisMonster.MonsterKey) {
+                found = true;
+                var count = parseIntDefault($(this).find('.enc-monster-count').text(), 1);
+                $(this).find('.enc-monster-count').text(count + 1);
+            }
+        })
+
+        if (!found) {
+            $('#monsterEncounterTemplate').find('.enc-monster').attr('id', `enc-${monster.MonsterKey}`);
+            $('#monsterEncounterTemplate').find('.enc-monster-name').text(monster.Name);
+            $('#monsterEncounterTemplate').find('.enc-monster-xp').text(monster.XP);
+            $('#monsterEncounterTemplate').find('.enc-monster-cr').text(monster.ChallengeRating);
+            $('#monsterEncounterTemplate').find('.enc-monster-size').text(monster.Size);
+            $('#monsterEncounterTemplate').find('.enc-monster-type').text(monster.Type);
+
+            var html = $('#monsterEncounterTemplate').html();
+            $('#enc_SummaryMonsters').append(html);
+
+            $(`#enc-${monster.MonsterKey}`).data('data', monster);
+        }
+
+        updateXp(monster.XP);
+    }
+
+    function addMonsterCount(btn, amount) {
+        var eMonster = $(btn).parentsUntil('.enc-monster').parent();
+        var monster = $(eMonster).data('data');
+
+        var count = parseIntDefault($(eMonster).find('.enc-monster-count').text());
+
+        count += amount;
+        $(eMonster).find('.enc-monster-count').text(count);
+
+        if (count == 0) { $(eMonster).remove(); }
+
+        updateXp(monster.XP * amount);
+    }
+
+    function updateXp(xp) {
+        var totalXp = parseIntDefault($('#enc_TotalXP').text());
+
+        totalXp += xp;
+        updateDifficulty(totalXp);
+
+        $('#enc_TotalXP').text(totalXp);
+    }
+
+    function updateDifficulty(totalXp) {
+        var numMonsters = -1;
+        $('.enc-monster').each(function () {
+            var count = parseIntDefault($(this).find('.enc-monster-count').text());
+            numMonsters += count;
+        })
+
+        numMonsters = numMonsters.clamp(1, multipliers.length) - 1;
+        var adjXp = totalXp * multipliers[numMonsters];
+
+        var txtDifficulty = "Deadly";
+        for (var i = 0; i < thresholds.length; i++) {
+            if (adjXp < thresholds[i]) {
+                switch (i - 1) {
+                    case -1: txtDifficulty = "Super Easy"; break;
+                    case 0: txtDifficulty = "Easy"; break;
+                    case 1: txtDifficulty = "Medium"; break;
+                    case 2: txtDifficulty = "Hard"; break;
+                }
+
+                break;
+            }
+        }
+
+        updateProgressBar(adjXp);
+        $('#enc_Difficulty').text(txtDifficulty);
+    }
+
+    function updateProgressBar(xp) {
+        $('#enc_XPBar').removeClassExcept('progress-bar');
+        if (xp < thresholds[0]) {
+            $('#enc_XPBar').addClass('gray');
+        }
+        else if (xp < thresholds[1]) {
+            $('#enc_XPBar').addClass('green');
+        }
+        else if (xp < thresholds[2]) {
+            $('#enc_XPBar').addClass('yellow');
+        }
+        else if (xp < thresholds[3]) {
+            $('#enc_XPBar').addClass('orange');
+        }
+        else {
+            $('#enc_XPBar').addClass('red');
+        }
+
+        var width = xp / thresholds[3] * 100;
+        if (width > 100) { width = 100; }
+
+        $('#enc_XPBar').attr('style', `width:${width}%`);
+    }
+
+    function suggestItem(addDiff) {
+        if (addDiff != null) { rarity += addDiff; }
+        else { rarity = 0; }
+
+        hideItemSuggestionBox(false);
+        $('#enc_FilterItems').collapse('hide');
+
+        var postData = {
+            Rarity: rarity,
+            RarityChange: addDiff,
+            ExcludeItems: excludeItems
+        }
+
+        ajaxPost(postData, suggestItemAction, function (data) {
+            if (data.success) {
+                var item = data.data;
+                rarity = item.RarityValue;
+
+                excludeItems = [];
+                excludeItems.push(item.ItemKey);
+
+                $('#enc_ItemResults').html('');
+                addItemHtml(item);
+            } else {
+                Notiflix.NotifyContent.Failure(data.message);
+            }
+        })
+    }
+
+    function searchItem() {
+
+        var postData = {
+            Name: $('#enc_SearchItems').val(),
+            Type: $('#enc_ItemTypes').val(),
+            Rarity: $('#enc_Rarities').val(),
+            HasAttunement: $('#enc_Attunements').val()
+        }
+
+        ajaxPost(postData, searchItemAction, function (data) {
+            if (data.success) {
+                var items = data.data;
+                rarity = 0;
+                excludeItems = [];
+
+                $('#enc_ItemResults').html('');
+
+                for (var i = 0; i < items.length; i++) {
+                    addItemHtml(items[i]);
+                }
+            } else {
+                Notiflix.NotifyContent.Failure(data.message);
+            }
+        })
+    }
+
+    function addItemHtml(item) {
+        var description = truncateDescription(item.Description);
+        var html = $('#itemTemplate').html();
+        html = html.replace('[[name]]', item.Name)
+            .replace('[[description]]', description)
+            .replace('[[type]]', item.Type)
+            .replace('[[rarity]]', item.Rarity)
+            .replace('[[attunement]]', item.HasAttunement == true ? "@requiresAttunement" : "");
+
+        while (html.indexOf('[[id]]') > -1) {
+            html = html.replace('[[id]]', item.ItemKey);
+        }
+
+        $('#enc_ItemResults').append(html);
+        $(`#${item.ItemKey}`).data('data', item);
+        if (item.Description.length > descriptionMax) {
+            $(`#${item.ItemKey}`).find('.show-more').show();
+        }
+    }
+
+    function addItem(id) {
+        var item = $(`#${id}`).data('data');
+
+        $('#itemEncounterTemplate').find('.enc-item').attr('id', `enc-${item.ItemKey}`);
+        $('#itemEncounterTemplate').find('.enc-item-name').text(item.Name);
+        $('#itemEncounterTemplate').find('.enc-item-rarity').text(item.Rarity);
+        $('#itemEncounterTemplate').find('.enc-item-type').text(item.Type);
+        $('#itemEncounterTemplate').find('.enc-item-attunement').text(item.Attunement);
+        $('#itemEncounterTemplate').find('.description').text(item.Description);
+
+        var html = $('#itemEncounterTemplate').html();
+        $('#enc_SummaryItems').append(html);
+
+        $(`#enc-${item.ItemKey}`).data('data', item);
+    }
+
+    function removeItem(element) {
+        $(element).parentsUntil('.enc-item').parent().remove();
+    }
+
+    function suggestTreasure() {
+        var challengeRatings = [];
+        $('.enc-monster').each(function () {
+            if ($(this).data('data') == null) { return; }
+            challengeRatings.push($(this).data('data').ChallengeRating);
+        })
+
+        if (challengeRatings.length == 0) {
+            Notiflix.NotifyContent.Failure('There are no monsters in your encounter!');
+            return;
+        }
+
+        var postData = {
+            ChallengeRatings: challengeRatings
+        }
+
+        ajaxPost(postData, generateTreasureAction, function (data) {
+            if (data.success) {
+                $('#enc_TreasureResults').html('');
+
+                for (var i = 0; i < data.data.Treasure.length; i++) {
+                    var html = $('#treasureTemplate').html();
+                    while (html.indexOf('[[treasure]]') > -1) {
+                        html = html.replace('[[treasure]]', data.data.Treasure[i]);
+                    }
+
+                    $('#enc_TreasureResults').append(html);
+                }
+            } else {
+                Notiflix.NotifyContent.Failure(data.message);
+            }
+        })
+    }
+
+    function addTreasure(element, treasure) {
+        var rewards = $('#enc_Rewards').val();
+        if (rewards.length > 0) {
+            treasure = `, ${treasure}`;
+        }
+        rewards += treasure;
+
+        $('#enc_Rewards').val(rewards);
+
+        $(element).parentsUntil('.list-result').parent().remove();
+    }
+
+    function suggestTreasureHoard() {
+        var challengeRating;
+        var difficulty = 0;
+        $('.enc-monster').each(function () {
+            var data = $(this).data('data');
+            if (data == null) { return; }
+            if (data.Difficulty > difficulty) {
+                difficulty = data.Difficulty;
+                challengeRating = data.ChallengeRating;
+            }
+        })
+
+        if (difficulty <= 0) {
+            Notiflix.NotifyContent.Failure('There are no monsters in your encounter!');
+            return;
+        }
+
+        var postData = {
+            ChallengeRating: challengeRating
+        }
+
+        ajaxPost(postData, generateTreasureHoardAction, function (data) {
+            if (data.success) {
+                $('#enc_TreasureResults').html('');
+
+                for (var i = 0; i < data.data.Treasure.length; i++) {
+                    var html = $('#treasureTemplate').html();
+                    while (html.indexOf('[[treasure]]') > -1) {
+                        html = html.replace('[[treasure]]', data.data.Treasure[i]);
+                    }
+
+                    $('#enc_TreasureResults').append(html);
+                }
+
+                for (var i = 0; i < data.data.Items.length; i++) {
+                    var item = data.data.Items[i];
+                    var html = $('#treasureItemTemplate').html();
+                    while (html.indexOf('[[display]]') > -1) {
+                        html = html.replace('[[display]]', item.Display);
+                    }
+                    while (html.indexOf('[[info]]') > -1) {
+                        html = html.replace('[[info]]', item.Info);
+                    }
+
+                    $('#enc_TreasureResults').append(html);
+                }
+                $('[data-toggle="tooltip"]').tooltip();
+            } else {
+                Notiflix.NotifyContent.Failure(data.message);
+            }
+        })
+    }
+
+    function saveEncounter() {
+        var monsters = [];
+        var items = [];
+
+        $('.enc-monster').each(function () {
+            if ($(this).data('data') == null) { return; }
+
+            monsters.push({
+                MonsterKey: $(this).data('data').MonsterKey,
+                Count: $(this).find('.enc-monster-count').text()
+            })
+        })
+
+        $('.enc-item').each(function () {
+            if ($(this).data('data') == null) { return; }
+
+            items.push({
+                ItemKey: $(this).data('data').ItemKey
+            });
+        })
+
+        var postData = {
+            EncounterKey: '@Model.EncounterKey',
+            Name: $('#enc_Name').val(),
+            Description: $('#enc_Description').val(),
+            Monsters: monsters,
+            RewardSummary: $('#enc_Rewards').val(),
+            Items: items,
+            IsEdited: true
+        }
+
+        if (isEmpty(postData.Name)) {
+            Notiflix.NotifyContent.Failure('Name is required!');
+            return;
+        }
+
+        if (postData.Name.length > 150) {
+            Notiflix.NotifyContent.Failure('Name is too long!');
+            return;
+        }
+        Notiflix.NotifyContent.Success('Updated successfully!');
+        returnEncounter(postData);
+
+        //ajaxPost(postData, updateAction, function (data) {
+        //    if (data.success) {
+        //        Notiflix.NotifyContent.Success(data.message);
+        //    } else {
+        //        Notiflix.NotifyContent.Failure(data.message);
+        //    }
+        //})
+    }
+
+    function parseIntDefault(str, def) {
+        if (def == undefined) { def = 0; }
+
+        var parsed = parseInt(str);
+        if (parsed == NaN) { parsed = def; }
+
+        return parsed;
+    }
+</script>

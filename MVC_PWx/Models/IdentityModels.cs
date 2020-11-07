@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using System.Web;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 
@@ -14,6 +15,7 @@ namespace MVC_PWx
     {
         //Custom fields
         public string Picture { get; set; }
+        public Guid? ActiveCampaign { get; set; }
         public DateTime? LastLoginDate { get; set; }
         public DateTime CreatedDate { get; set; }
         public Guid UserId { get; set; }

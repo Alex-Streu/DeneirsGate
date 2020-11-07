@@ -18,6 +18,13 @@ namespace CustomHtmlHelpers
             }
         }
 
+        private static string EscapeText(string value)
+        {
+            if (value.IsNullOrEmpty()) { return value; }
+
+            return value.Replace("'", "&#39;");
+        }
+
         public static SelectList RaceDropdown(Guid raceKey)
         {
             var list = new SelectList(PresetSvc.GetRaces(), "RaceKey", "Name", raceKey);
@@ -70,6 +77,24 @@ namespace CustomHtmlHelpers
             return urlHelper.Content(path);
         }
 
+        public static string ArcMap(this UrlHelper urlHelper, Guid campaignKey, Guid arcKey, string image)
+        {
+            var path = $"{AppLogic.GetArcMapContentDir(campaignKey, arcKey)}{image}";
+
+            if (image.IsNullOrEmpty()) { return ""; }
+            return urlHelper.Content(path);
+        }
+
+        public static string DefaultCharacterPortrait(this UrlHelper urlHelper)
+        {
+            return urlHelper.Content(AppLogic.GetDefaultPortrait());
+        }
+
+        public static string DefaultShallowPortrait(this UrlHelper urlHelper)
+        {
+            return urlHelper.Content(AppLogic.GetDefaultShallowPortrait());
+        }
+
         public static string LoadFavicon(this UrlHelper urlHelper, string file)
         {
             var path = AppLogic.GetIconDir();
@@ -85,7 +110,7 @@ namespace CustomHtmlHelpers
         public static MvcHtmlString RenderFancyPassword(string size, string id, int? limit, string value, string label, MvcHtmlString extra = null)
         {
             var str = $@"<div class='fancy-textbox {size ?? ""}'>
-                            <input type='password' {(!id.IsNullOrEmpty() ? $"id='{id}' name='{id}'" : "")} autocomplete='screw-autocomplete' required='' {(limit == null ? "" : $"maxlength='{limit}'")} value='{value}' />     
+                            <input type='password' {(!id.IsNullOrEmpty() ? $"id='{id}' name='{id}'" : "")} autocomplete='screw-autocomplete' required='' {(limit == null ? "" : $"maxlength='{limit}'")} value='{EscapeText(value)}' />     
                             {(String.IsNullOrEmpty(label) ? "" : $"<label for='{id}'>{label}</label>")}
                             {(extra == null ? "" : extra.ToString())}
                         </div>";
@@ -96,7 +121,7 @@ namespace CustomHtmlHelpers
         public static MvcHtmlString RenderFancyTextbox(string size, string id, int? limit, string value, string label, MvcHtmlString extra = null)
         {
             var str = $@"<div class='fancy-textbox {size ?? ""}'>
-                            <input type='text' {(!id.IsNullOrEmpty() ? $"id='{id}' name='{id}'" : "")} autocomplete='screw-autocomplete' required='' {(limit == null ? "" : $"maxlength='{limit}'")} value='{value}' />     
+                            <input type='text' {(!id.IsNullOrEmpty() ? $"id='{id}' name='{id}'" : "")} autocomplete='screw-autocomplete' required='' {(limit == null ? "" : $"maxlength='{limit}'")} value='{EscapeText(value)}' />     
                             {(String.IsNullOrEmpty(label) ? "" : $"<label for='{id}'>{label}</label>")}
                             {(extra == null ? "" : extra.ToString())}
                         </div>";
@@ -126,7 +151,7 @@ namespace CustomHtmlHelpers
             return new MvcHtmlString(str);
         }
 
-        public static MvcHtmlString RenderImageUpload(this UrlHelper urlHelper, string id, string value, Guid campaignKey, Guid contentKey)
+        public static MvcHtmlString RenderPortraitUpload(this UrlHelper urlHelper, string id, string value, Guid campaignKey, Guid contentKey)
         {
             var str = $@"<div class='upload-image' data-campaign='{campaignKey}'>
                             <input {(!id.IsNullOrEmpty() ? $"id='{id}' name='{id}'" : "")} type='text' class='image-name hidden' value='{value}' />
@@ -136,6 +161,25 @@ namespace CustomHtmlHelpers
                         </div>";
 
             return new MvcHtmlString(str);
+        }
+
+        public static MvcHtmlString RenderArcMapUpload(this UrlHelper urlHelper, string id, string value, Guid campaignKey, Guid contentKey)
+        {
+            var str = $@"<div data-campaign='{campaignKey}'>
+                            <div class='btn btn-warning image-upload'><i class='fa fa-upload'></i>&nbsp;Upload Image</div>
+                            <input {(!id.IsNullOrEmpty() ? $"id='{id}' name='{id}'" : "")} type='text' class='image-name hidden' value='{value}' />
+                            <input class='uploader hidden' type='file' name='file' accept='image/*' />
+                            <img class='hidden' src='{urlHelper.ArcMap(campaignKey, contentKey, value)}'/>
+                        </div>";
+
+            return new MvcHtmlString(str);
+        }
+
+        public static string LimitString(string value, int limit = 100)
+        {
+            if (value.IsNullOrEmpty() || value.Length <= limit) { return value; }
+
+            return String.Concat(value.Substring(0, Math.Min(value.Length, limit)), "...");
         }
     }
 }

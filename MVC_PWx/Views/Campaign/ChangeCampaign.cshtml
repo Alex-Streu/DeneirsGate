@@ -1,0 +1,31 @@
+﻿@using DeneirsGate.Services
+@using CustomHtmlHelpers
+@model List<CampaignViewModel>
+
+@{
+    ViewBag.Title = "Choose Campaign";
+    ViewBag.MenuOption = "Campaign";
+}
+
+@foreach (var item in Model)
+{
+    <div class="campaign-list-item" data-href="@Url.Action("ActivateCampaign", "Campaign", new { id = item.CampaignKey })">
+        <div class="campaign-info">
+            <div class="name">@item.Name</div>
+            <div class="description">@item.Description</div>
+        </div>
+        <div class="portrait">
+            <img class="img-responsive" src="@Url.CampaignPortrait(item.CampaignKey, item.Portrait)" />
+        </div>
+        <div class="flex-break"></div>
+        <div class="date">Last Updated: @HtmlHelpers.RenderDateTime(item.LastUpdated)</div>
+    </div>
+}
+
+@section scripts {
+    <script type="text/javascript">
+        $('.campaign-list-item').click(function () {
+            window.location.assign($(this).data('href'));
+        });
+    </script>
+}

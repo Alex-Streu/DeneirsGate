@@ -1,0 +1,19 @@
+﻿@using DeneirsGate.Services
+@model MagicItemViewModel
+
+<h2 class="text-center">@Model.Name</h2>
+<div class="flexbox-container full-width justify-center">
+    <label class="text-large"><b>@Model.Type</b></label>
+    <label class="text-large"><b>@Model.Rarity</b></label>
+</div>
+<div class="flexbox-container full-width justify-center">
+    @if (Model.HasAttunement)
+    {
+        <label class="text-md"><b>*Requires Attunement</b></label>
+    }
+</div>
+<hr />
+<div style="margin:1em">
+    <label class="text-large text-bold red">Description</label>
+    <p class="text-md">@Model.Description</p>
+</div>

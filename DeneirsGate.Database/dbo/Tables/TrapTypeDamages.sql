@@ -1,0 +1,9 @@
+﻿CREATE TABLE [dbo].[TrapTypeDamages]
+(
+	[DamageKey] UNIQUEIDENTIFIER NOT NULL,
+	[TypeKey] UNIQUEIDENTIFIER NOT NULL,
+	[MinLevel] INT NOT NULL,
+	[MaxLevel] INT NOT NULL,
+	[Damage] NVARCHAR(10),
+    PRIMARY KEY CLUSTERED ([DamageKey] ASC)
+)

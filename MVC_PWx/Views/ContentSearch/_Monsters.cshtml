@@ -1,0 +1,31 @@
+﻿@using DeneirsGate.Services
+@using CustomHtmlHelpers
+@model List<MonsterViewModel>
+
+<div class="flexbox-container full-width">
+    @HtmlHelpers.RenderFancyTextbox("lg long", "SearchMonsters", null, "", "Search")
+</div>
+
+<div id="monster-inventory" class="flexbox-container justify-center">
+    @foreach (var item in Model)
+    {
+        <div id="@item.MonsterKey" class="btn btn-lg btn-default menu-option menu-link" data-url="@Url.Action("_Monster", "ContentSearch", new { id = item.MonsterKey })" data-dir="@item.Name">
+            @item.Name
+        </div>
+    }
+</div>
+
+<script type="text/javascript">
+    $('#SearchMonsters').keyup(function () {
+        var search = $(this).val().toLowerCase();
+        $('#monster-inventory .menu-link').each(function () {
+            var name = $(this).text().toLowerCase();
+            if (name.indexOf(search) > -1) {
+                $(this).show();
+            }
+            else {
+                $(this).hide();
+            }
+        })
+    })
+</script>

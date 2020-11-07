@@ -1,0 +1,12 @@
+﻿@using DeneirsGate.Services
+@model QuestEventViewModel
+
+<h2 class="text-center">@Model.Name</h2>
+<div style="margin:1em">
+    <div class="text-md">@Html.Raw(Model.Description)</div>
+</div>
+@if (Model.Encounter != null)
+{
+    <label class="text-large text-bold">@Model.Encounter.Name</label>
+    <p>@Model.Encounter.Description</p>
+}

@@ -126,4 +126,32 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="UserKey" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="5d68dce4-730a-4479-aeb0-6c39309031f4" ChangeDateTime="09/08/2020 02:05:07">
+    <Property Name="ElementName" Value="[dbo].[MonsterSizes].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[MonsterSizes]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="SizeKey" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="0a6fd36c-a5ee-4d38-964a-579e44331a6a" ChangeDateTime="09/08/2020 02:17:45">
+    <Property Name="ElementName" Value="[dbo].[MonsterChallengeRatings].[Name]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[MonsterChallengeRatings]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="Challenge" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="931fafc6-6351-449d-a3bb-f478ba6d8009" ChangeDateTime="09/08/2020 05:30:39">
+    <Property Name="ElementName" Value="[dbo].[Monsters].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[Monsters]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="MonsterKey" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="2529cc43-7e88-4e02-a367-9691ea95e9cc" ChangeDateTime="09/10/2020 03:34:51">
+    <Property Name="ElementName" Value="[dbo].[MonsterEnvironmentLinkers].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[MonsterEnvironmentLinkers]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="MonsterKey" />
+  </Operation>
 </Operations>

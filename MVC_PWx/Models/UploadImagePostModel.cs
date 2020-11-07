@@ -12,6 +12,13 @@ namespace DeneirsGate.Services
         public bool IsTemp { get; set; }
     }
 
+    public class SaveTempImagePostModel
+    {
+        public Guid CampaignKey { get; set; }
+        public string Folder { get; set; }
+        public string Name { get; set; }
+    }
+
     public class DeleteTempPostModel
     {
         public Guid CampaignKey { get; set; }

@@ -1,0 +1,11 @@
+﻿CREATE TABLE [dbo].[DungeonTiles]
+(
+	[TileKey] UNIQUEIDENTIFIER NOT NULL,
+	[DungeonKey] UNIQUEIDENTIFIER NOT NULL,
+	[Row] INT NOT NULL,
+	[Column] INT NOT NULL,
+	[Description] NVARCHAR(MAX) NULL,
+	[Image] NVARCHAR(150) NOT NULL,
+	[Index] INT NULL,
+    PRIMARY KEY CLUSTERED ([TileKey] ASC)
+)

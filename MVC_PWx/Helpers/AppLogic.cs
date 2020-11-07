@@ -41,6 +41,11 @@ namespace MVC_PWx.Helpers
             return $"{GetCampaignContentDir(campaignKey)}\\Characters\\{characterKey.ToString()}\\";
         }
 
+        public static string GetArcMapContentDir(Guid campaignKey, Guid arcKey)
+        {
+            return $"{GetCampaignContentDir(campaignKey)}\\ArcMaps\\{arcKey.ToString()}\\";
+        }
+
         public static string GetIconDir()
         {
             return "~\\Content\\img\\icos\\";
@@ -49,6 +54,11 @@ namespace MVC_PWx.Helpers
         public static string GetDefaultPortrait()
         {
             return "~\\Content\\img\\avatars\\blank-portrait.png";
+        }
+
+        public static string GetDefaultShallowPortrait()
+        {
+            return "~\\Content\\img\\portraits\\gelatinous-cube.jpg";
         }
 
         public static string GetDefaultCampaignImage()

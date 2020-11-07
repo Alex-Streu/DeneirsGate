@@ -1,0 +1,24 @@
+﻿@using DeneirsGate.Services
+@model MonsterViewModel
+
+<h2 class="text-center">@Model.Name</h2>
+<div class="flexbox-container full-width justify-between">
+    <label class="text-x-large">CR: <b>@Model.ChallengeRating</b></label>
+    <label class="text-x-large"><b>@Model.Size</b></label>
+    <label class="text-x-large"><b>@Model.Type</b></label>
+</div>
+<hr />
+<div class="flexbox-container full-width justify-between">
+    <label class="text-large text-bold">@Model.Speed</label>
+    <label class="text-large text-bold">@Model.XP XP</label>
+    <label class="text-large text-bold">@Model.Alignment</label>
+</div>
+<hr />
+<div class="flexbox-container full-width justify-between">
+    <label class="attr text-md"><b>@String.Join(", ", Model.Environments)</b></label>
+</div>
+<hr />
+<div style="margin:1em">
+    <label class="text-large text-bold red">Description</label>
+    <p class="text-md">@Model.Description</p>
+</div>

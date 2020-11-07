@@ -1,0 +1,195 @@
+﻿@using DeneirsGate.Services
+@using System.Web.Script.Serialization
+@model DungeonViewModel
+@{
+    ViewBag.Title = "Print";
+    Layout = "~/Views/Shared/_Empty.cshtml";
+}
+<style type="text/css">
+    .print-dungeon-tile {
+        position: relative;
+    }
+
+        .print-dungeon-tile img {
+            width: 100%;
+            height: 100%;
+        }
+
+    #Description {
+        min-height: 100px;
+        resize: vertical;
+        margin-bottom: 1em;
+    }
+
+    #trap_Description {
+        resize: vertical;
+    }
+
+    #tileDescription {
+        min-height: 200px;
+        resize: vertical;
+    }
+
+    .pad-right {
+        padding-right: 5px;
+    }
+
+    @@media print {
+        @@page {
+            margin: 2em;
+        }
+    }
+</style>
+
+<h2>@Model.Name</h2>
+<p>@Model.Description</p>
+
+<table class="dungeon-tile-container">
+    @for (var i = 0; i < Model.Rows; i++)
+    {
+        <tr>
+            @for (var j = 0; j < Model.Columns; j++)
+            {
+                <td>
+                    @{ var tile = Model.Tiles.FirstOrDefault(x => x.Row == i && x.Column == j); }
+                    @if (tile != null)
+                    {
+                        <div class="print-dungeon-tile tile-filled" data-row="@i" data-column="@j" data-index="@tile.Index" data-data="@(new JavaScriptSerializer().Serialize(tile))">
+                            <img src="@tile.Image" />
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="print-dungeon-tile" data-row="@i" data-column="@j">
+                        </div>
+                    }
+                </td>
+            }
+        </tr>
+    }
+</table>
+
+
+<div id="roomInfoContainer" class="flexbox-container full-width">
+
+</div>
+<div id="optionsTemplate">
+    <div class="tile-label" style="display:none"></div>
+</div>
+
+<div id="roomInfoTemplate">
+    <div data-index="[[index]]" class="full-width room-info-item" style="padding-bottom:2em">
+        <label class="text-x-large red room-info-label"></label>
+        <div class="room-info room-info-description">
+            <p class="text-md"></p>
+        </div>
+        <div class="room-info room-info-trap">
+            <label class="room-trap-name text-bold text-large"></label>
+            <div class="flexbox-container no-padding">
+                <label class="room-trap-nature text-bold"></label>
+                <label class="room-trap-type text-bold"></label>
+            </div>
+            <div class="flexbox-container no-padding">
+                <label>Save DC: <span class="room-trap-savedc text-bold"></span></label>
+                <label>Attack Bonus: +<span class="room-trap-attackbonus text-bold"></span></label>
+                <label>Damage: <span class="room-trap-damage text-bold"></span></label>
+            </div>
+            <p class="room-trap-description"></p>
+        </div>
+        <div class="room-info room-info-encounter">
+            <label class="room-encounter-name text-large text-bold"></label>
+            <p class="room-encounter-description"></p>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script type="text/javascript">
+        var numRows = 5;
+        var numCols = 5;
+        var selectedTile = null;
+        var tileData = [];
+        var maxTileNumber = @(Model.Tiles.Select(x => x.Index).DefaultIfEmpty(0).Max() ?? 0);
+
+        var storeEncounter = {};
+
+        $(document).ready(function () {
+
+            numRows = $('#rows').val();
+            numCols = $('#columns').val();
+
+            $('.tile-filled').each(function () {
+                $(this).append($('#optionsTemplate').html());
+                if (!isNaN(parseInt($(this).data('index')))) {
+                    selectedTile = $(this);
+                    updateTileInfo();
+                }
+            })
+            $('#roomInfoContainer').each(function () {
+                var $this = $(this);
+                $this.append($this.find('.room-info-item').get().sort(function (a, b) {
+                    return $(a).data('index') - $(b).data('index');
+                }));
+            });
+
+            print();
+        })
+
+
+        // Update info functionality
+        function updateTileInfo() {
+
+            var data = $(selectedTile).data('data');
+            if (isEmpty(data)) { data = {}; }
+
+            var label = $(selectedTile).find('.tile-label');
+
+            if (!isEmpty(data)) {
+                if (isEmpty(data.Index)) {
+                    maxTileNumber++;
+                    data.Index = maxTileNumber;
+                }
+
+                if ($(label).is(':hidden')) {
+                    $(label).text(data.Index);
+                    $(label).show();
+                }
+
+                if ($(`.room-info-item[data-index="${data.Index}"]`).length <= 0) {
+                    var html = $('#roomInfoTemplate').html().replace('[[index]]', data.Index);
+                    $('#roomInfoContainer').append(html);
+                }
+
+                var index = data.Index;
+                var room = $(`.room-info-item[data-index="${index}"]`);
+                $(room).find('.room-info-label').text(index);
+
+                // Description
+                if (!isEmpty(data.Description)) {
+                    $(room).find('.room-info-description p').text(data.Description);
+                    (room).find('.room-info-description').show();
+                }
+
+                // Trap
+                if (!isEmpty(data.Trap)) {
+                    $(room).find('.room-trap-name').text(data.Trap.Name);
+                    $(room).find('.room-trap-description').text(data.Trap.Description);
+                    $(room).find('.room-trap-nature').text(data.Trap.Nature);
+                    $(room).find('.room-trap-type').text(data.Trap.Type);
+                    $(room).find('.room-trap-savedc').text(data.Trap.SaveDC);
+                    $(room).find('.room-trap-attackbonus').text(data.Trap.AttackBonus);
+                    $(room).find('.room-trap-damage').text(data.Trap.Damage);
+                    (room).find('.room-info-trap').show();
+                }
+
+                // Encounters
+                if (!isEmpty(data.Encounter)) {
+                    $(room).find('.room-encounter-name').text(data.Encounter.Name);
+                    $(room).find('.room-encounter-description').text(data.Encounter.Description);
+                    (room).find('.room-info-encounter').show();
+                }
+            }
+        }
+
+    </script>
+}

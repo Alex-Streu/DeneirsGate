@@ -1,0 +1,79 @@
+﻿@using DeneirsGate.Services
+@using CustomHtmlHelpers
+@model List<RelationshipTreeSearchModel>
+
+@{
+    ViewBag.Title = "Relationship Trees";
+    ViewBag.MenuOption = "RelationshipTree";
+}
+
+<style type="text/css">
+    #btnSearch {
+        cursor: pointer;
+    }
+
+    .tree {
+        cursor: pointer;
+        width: 250px;
+        padding: 1em;
+        font-size: large;
+        color: white;
+        border-radius: 10px;
+        border: 5px solid #960404;
+    }
+
+    a, a:hover, a:link {
+        text-decoration: inherit;
+        color: inherit;
+        cursor: pointer;
+    }
+</style>
+
+<h2>Relationship Trees</h2>
+<br />
+<div class="flexbox-container justify-between">
+    <div class="flexbox-container flex-item grow-4">
+        <div style="width:60%">
+            @HtmlHelpers.RenderFancyTextbox("lg full", "SearchTrees", null, "", "Search Relationship Trees")
+        </div>
+        @Html.DropDownList("SearchBy", (SelectList)ViewBag.SearchBy, new { @class = "form-control responsive-text", style = "--size:0.75vw" })
+        <i id="btnSearch" class="fa fa-2x fa-search"></i>
+    </div>
+    <a class="btn btn-default" href="@Url.Action("Create")">Create Tree</a>
+</div>
+
+<div class="flexbox-container">
+    @foreach (var item in Model)
+    {
+        <a href="@Url.Action("Edit", new { id = item.TreeKey })" class="tree-item" style="display:none">
+            <div class="background-red tree text-center need-space name">@item.Name</div>
+            <div style="display:none" class="characters">@item.CharacterList</div>
+        </a>
+    }
+</div>
+
+@section scripts {
+    <script type="text/javascript">
+        $('#btnSearch').click(function () {
+            var type = $('#SearchBy').val();
+            var val = $('#SearchTrees').val().toLowerCase();
+
+            $('.tree-item').each(function () {
+                switch (type) {
+                    case 'Character':
+                        if ($(this).find('.characters').text().toLowerCase().indexOf(val) >= 0) {
+                            $(this).show();
+                        }
+                        else { $(this).hide(); }
+                        break;
+                    case 'Name':
+                        if ($(this).find('.name').text().toLowerCase().indexOf(val) >= 0) {
+                            $(this).show();
+                        }
+                        else { $(this).hide(); }
+                        break;
+                }
+            })
+        })
+    </script>
+}

@@ -1,0 +1,403 @@
+﻿@using DeneirsGate.Services
+@using CustomHtmlHelpers
+@model RelationshipTreeViewModel
+
+@{
+    ViewBag.Title = "Edit Tree";
+    ViewBag.MenuOption = "RelationshipTree";
+}
+
+<div id="RelationshipTreePage">
+    <h2>Relationship Tree</h2>
+
+    <div class="flexbox-container items-start">
+        <div class="flexbox-container flex-item grow-1 need-space" style="min-width:30%;max-width:30%">
+            <div class="flexbox-container content-box">
+                @HtmlHelpers.RenderFancyTextbox("md full", "SearchCharacters", null, "", "Search Characters")
+                <div class="flexbox-container droppable need-space character-inventory">
+                    @foreach (var item in Model.AvailableCharacters)
+                    {
+                        <div class="flex-item character" data-key="@item.CharacterKey" data-toggle="modal" data-target="#backstoryModal" onclick="loadBackstory(this)">
+                            <div class='fancy-portrait'>
+                                <img class='img-xs img-responsive' src='@Url.CharacterPortrait(Model.CampaignKey, item.CharacterKey, item.Portrait)' />
+                                <div class="player-info">
+                                    <div class="name">@item.Name</div>
+                                    <div class="backstory" style="display:none">@Html.Raw(item.Backstory)</div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+            <div id="generator" class="flexbox-container content-box" style="margin-top:2em">
+                <label class="title">Shallow Character Generator</label>
+                @HtmlHelpers.RenderFancyTextbox("md full", "ShallowName", 50, null, "Name*")
+                @HtmlHelpers.RenderFancyTextarea("full", "ShallowBackstory", 500, null, "Backstory")
+                <div class="flexbox-container justify-start no-padding">
+                    <div class="btn btn-sm btn-default" onclick="addShallow()">Add To Tree</div>
+                </div>
+            </div>
+        </div>
+        <div id="tierList" class="content-box flexbox-container flex-item basis-two-thirds need-space">
+            <div style="width:100%; margin: 0 auto">
+                @HtmlHelpers.RenderFancyTextbox("center lg full", "Name", 50, Model.Name, "Tree Name", Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" }))
+            </div>
+            <div class="full-width flexbox-container">
+                <button class="btn btn-primary" onclick="addTier()">Add Tier</button>
+            </div>
+            @foreach (var tier in Model.Tiers)
+            {
+                <div class="tier-box" data-key="@tier.TierKey">
+                    <div class="flexbox-container full-width"><i class="fa fa-2x fa-remove delete"></i></div>
+                    <div class="character-container droppable flexbox-container justify-center">
+                        @foreach (var character in tier.Characters)
+                        {
+                            if (!character.IsShallow)
+                            {
+                                <div class="flex-item character" data-key="@character.CharacterKey" data-toggle="modal" data-target="#backstoryModal" onclick="loadBackstory(this)">
+                                    <div class='fancy-portrait'>
+                                        <img class='img-xs img-responsive' src='@Url.CharacterPortrait(Model.CampaignKey, character.CharacterKey, character.Portrait)' />
+                                        <div class="player-info">
+                                            <div class="name">@character.Name</div>
+                                            <div class="backstory" style="display:none">@Html.Raw(character.Backstory)</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="flex-item character shallow" data-key="@character.CharacterKey" data-toggle="modal" data-target="#shallowModal" onclick="loadShallow(this)">
+                                    <div class='fancy-portrait'>
+                                        <img class='img-xs img-responsive' src='@Url.DefaultShallowPortrait()' />
+                                        <div class="player-info">
+                                            <div class="name">@character.Name</div>
+                                            <div class="backstory" style="display:none">@Html.Raw(character.Backstory)</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="submit-footer">
+        <div class="btn btn-lg btn-default save-button" onclick="save()">Save</div>
+        <div id="delete" class="btn btn-lg btn-danger save-button" onclick="promptDelete('deleteTree()')">Delete</div>
+    </div>
+
+    @* Modals *@
+    <div id="backstoryModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-body text-large" style="padding:2em;overflow-y:scroll;background-color:#fcfcfc">
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div id="shallowModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div id="divShallowBody">
+                        <div class="backstory text-large"></div>
+                    </div>
+                    <div id="divShallowEdit" style="display:none">
+                        @HtmlHelpers.RenderFancyTextbox("md full", "EditShallowName", null, "", "Name*")
+                        <textarea class="edit-backstory" style="width:100%;height:100px;max-width:100%;margin-top:1em"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="btnEditBackstory" type="button" class="btn btn-primary" onclick="editShallow()">Edit Backstory</button>
+                    <button id="btnSaveBackstory" type="button" class="btn btn-default" onclick="saveShallow()" style="display:none">Save Backstory</button>
+                    <button type="button" class="btn btn-danger" onclick="deleteShallow()">Delete Character</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div id="deleteTierModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Delete Tier</h4>
+                </div>
+                <div class="modal-body">
+                    <p>
+                        If you delete a tier with a shallow character in it, then the shallow character will be deleted as well.
+                        <br />
+                        <br />
+                        Are you sure you would like to delete this tier?
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="deleteTier()">Delete</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    @* Templates *@
+    <div id="CharacterTemplate" style="display:none">
+        <div class="flex-item character shallow" data-key="@Guid.Empty" data-toggle="modal" data-target="#shallowModal" onclick="loadShallow(this)">
+            <div class='fancy-portrait'>
+                <img class='img-xs img-responsive' src='@Url.DefaultShallowPortrait()' />
+                <div class="player-info">
+                    <div class="name">[[name]]</div>
+                    <div class="backstory" style="display:none">[[backstory]]</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="TierTemplate" style="display:none">
+        <div class="tier-box" data-keyboard="@Guid.Empty">
+            <div class="flexbox-container full-width"><i class="fa fa-2x fa-remove delete"></i></div>
+            <div class="character-container droppable flexbox-container justify-center"></div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script type="text/javascript">
+        var updateTreeAction = '@Url.Action("UpdateTree")';
+        var deleteAction = '@Url.Action("Delete")';
+        var indexAction = '@Url.Action("/")';
+        var shallowElement = null;
+        var tierToDelete = null;
+
+        $(document).ready(function () {
+            resetSortable();
+        })
+
+        function resetSortable() {
+            if ('@ViewBag.IsNew' == 'True') { $('#delete').hide(); }
+
+            $('.droppable').sortable({
+                connectWith: '.droppable',
+                receive: function (ev, ui) {
+                    if ($(ui.item).hasClass('shallow') && !$(ev.target).hasClass('character-container')) {
+                        ui.sender.sortable("cancel");
+                    }
+                }
+            });
+        }
+
+        $('#SearchCharacters').keyup(function () {
+            var search = $(this).val().toLowerCase();
+            $('.character-inventory .character').each(function () {
+                var name = $(this).find('.name').text().toLowerCase();
+                if (name.indexOf(search) > -1) {
+                    $(this).show();
+                }
+                else {
+                    $(this).hide();
+                }
+            })
+        })
+
+        function addShallow() {
+            var name = $('#ShallowName').val();
+            if (name == null || name == '') {
+                Notiflix.NotifyContent.Failure('Name field is required!');
+                return;
+            }
+
+            var template = $('#CharacterTemplate').html();
+            template = template.replace('[[name]]', $('#ShallowName').val());
+            template = template.replace('[[backstory]]', $('#ShallowBackstory').val());
+
+            var tier = $('#tierList .tier-box').first();
+            if (tier.length == 0) {
+                addTier();
+                tier = $('#tierList .tier-box').first();
+            }
+            tier.find('.character-container').append(template);
+            
+            $('#ShallowName').val('');
+            $('#ShallowBackstory').val('');
+        }
+
+        function addTier() {
+            $('#tierList').append($('#TierTemplate').html());
+            resetSortable();
+        }
+
+        $(document).on('click', '.delete', function () {
+            var box = $(this).parentsUntil('.tier-box').parent();
+            tierToDelete = box;
+
+            var hasShallow = $(box).find('.shallow').first().length > 0;
+
+            if (hasShallow) {
+                $('#deleteTierModal').modal('toggle');
+            }
+            else {
+                deleteTier();
+            }
+        })
+
+        function deleteTier() {
+            var box = tierToDelete;
+
+            $(box).find('.character').each(function () {
+                if ($(this).hasClass('shallow')) {
+                    $(this).remove();
+                    return;
+                }
+
+                var html = $(this).wrap('<p/>').parent().html();
+                $('.character-inventory').append(html);
+                $(this).unwrap();
+                $(this).remove();
+            });
+
+            $(box).remove();
+
+            resetSortable();
+        }
+
+        function loadBackstory(element) {
+            var backstory = $(element).find('.backstory').html();
+            $('#backstoryModal').find('.modal-body').html(backstory);
+        }
+
+        function loadShallow(element) {
+            var backstory = $(element).find('.backstory').html();
+            $('#divShallowBody').find('.backstory').html(backstory);
+            $('#divShallowEdit').find('.edit-backstory').val(backstory);
+
+            $('#btnEditBackstory').show();
+            $('#btnSaveBackstory').hide();
+            $('#divShallowBody').show();
+            $('#divShallowEdit').hide();
+
+            shallowElement = element;
+        }
+
+        function editShallow() {
+            var backstory = $('#divShallowBody').find('.backstory').html();
+            $('#divShallowEdit').find('.edit-backstory').val(backstory);
+            $('#EditShallowName').val($(shallowElement).find('.name').html());
+
+            $('#btnEditBackstory').hide();
+            $('#btnSaveBackstory').show();
+            $('#divShallowBody').hide();
+            $('#divShallowEdit').show();
+        }
+
+        function saveShallow() {
+            var name = $('#EditShallowName').val();
+            if (name == null || name == '') {
+                Notiflix.NotifyContent.Failure('Name field is required!');
+                return;
+            }
+
+            var backstory = $('#divShallowEdit').find('.edit-backstory').val();
+            $('#divShallowBody').find('.backstory').html(backstory);
+            $(shallowElement).find('.backstory').html(backstory);
+            $(shallowElement).find('.name').html($('#EditShallowName').val());
+
+            $('#btnEditBackstory').show();
+            $('#btnSaveBackstory').hide();
+            $('#divShallowBody').show();
+            $('#divShallowEdit').hide();
+        }
+
+        function deleteShallow() {
+            $(shallowElement).remove();
+            $('#shallowModal').modal('toggle');
+        }
+
+        function gatherTiers() {
+            var tiers = [];
+            var sortOrder = 0;
+            $('#tierList').find('.tier-box').each(function () {
+                tiers.push({
+                    TierKey: $(this).data('key'),
+                    SortOrder: sortOrder++,
+                    Characters: gatherCharacters(this)
+                })
+            });
+
+            return tiers;
+        }
+
+        function gatherCharacters(tier) {
+            var characters = [];
+            $(tier).find('.character').each(function () {
+                characters.push({
+                    CharacterKey: $(this).data('key'),
+                    Name: $(this).find('.name').text(),
+                    Backstory: $(this).find('.backstory').text(),
+                    IsShallow: $(this).hasClass('shallow')
+                });
+            });
+
+            return characters;
+        }
+
+        function save() {
+            var postData = {
+                TreeKey: '@Model.TreeKey',
+                CampaignKey: '@Model.CampaignKey',
+                Name: $('#Name').val(),
+                Tiers: gatherTiers()
+            };
+
+            $.ajax({
+                type: "POST",
+                url: updateTreeAction,
+                data: JSON.stringify(postData),
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data.success) {
+                        Notiflix.NotifyContent.Success(data.message);
+                        $('#delete').show();
+                    } else {
+                        Notiflix.NotifyContent.Failure(data.message);
+                    }
+                },
+                error: function (error) {
+                    Notiflix.NotifyContent.Failure(error.responseText);
+                }
+            })
+        }
+
+        function deleteTree() {
+            var postData = { id: '@Model.TreeKey' };
+
+            $.ajax({
+                type: "POST",
+                url: deleteAction,
+                data: JSON.stringify(postData),
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data.success) {
+                        Notiflix.NotifyContent.Success(data.message);
+                        location.replace(indexAction);
+                    } else {
+                        Notiflix.NotifyContent.Failure(data.message);
+                    }
+                },
+                error: function (error) {
+                    Notiflix.NotifyContent.Failure(error.responseText);
+                }
+            })
+        }
+    </script>
+}

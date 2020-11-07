@@ -5,7 +5,7 @@ namespace MVC_PWx.Controllers
 {
     [Authorize]
     public class HomeController : DeneirsController
-    {
+    {   
         public ActionResult Index()
         {
             return View();

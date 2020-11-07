@@ -1,0 +1,14 @@
+﻿@using DeneirsGate.Services
+@model CharacterShortViewModel
+
+<h2 class="text-center">@Model.FirstName @Model.LastName</h2>
+<div class="flexbox-container full-width justify-center">
+    <div class="btn btn-lg btn-default menu-option menu-link" data-url="@Url.Action("_CharacterInfo", "ContentSearch", new { id = Model.CharacterKey })" data-dir="Info">Info</div>
+    <div class="btn btn-lg btn-default menu-option menu-link" data-url="@Url.Action("_CharacterWeapons", "ContentSearch", new { id = Model.CharacterKey })" data-dir="Weapons and Spells">Weapons and Spells</div>
+    <div class="btn btn-lg btn-default menu-option menu-link" data-url="@Url.Action("_CharacterInventory", "ContentSearch", new { id = Model.CharacterKey })" data-dir="Inventory">Inventory</div>
+    <div class="btn btn-lg btn-default menu-option menu-link" data-url="@Url.Action("_CharacterBackstory", "ContentSearch", new { id = Model.CharacterKey })" data-dir="Backstory">Backstory</div>
+    @if (!(bool)ViewBag.HideOptions)
+    {
+        <div class="btn btn-lg btn-default menu-option menu-link" data-url="@Url.Action("_CharacterTrees", "ContentSearch", new { id = Model.CharacterKey })" data-dir="Relationship Trees">Relationship Trees</div>
+    }
+</div>

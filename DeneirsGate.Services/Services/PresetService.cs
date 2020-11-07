@@ -82,7 +82,7 @@ namespace DeneirsGate.Services
             items.Add("NG","Neutral Good");
             items.Add("CG","Chaotic Good");
             items.Add("LN","Lawful Neutral");
-            items.Add("NN","Neutral");
+            items.Add("N","Neutral");
             items.Add("CN","Chaotic Neutral");
             items.Add("LE","Lawful Evil");
             items.Add("NE","Neutral Evil");
@@ -112,6 +112,25 @@ namespace DeneirsGate.Services
                     {
                         Name = x.Name,
                         TypeKey = x.TypeKey
+                    }).OrderBy(x => x.Name).ToList();
+                }
+            }
+            catch (Exception ex) { }
+
+            return types;
+        }
+
+        public List<EnvironmentViewModel> GetEnvironments()
+        {
+            var types = new List<EnvironmentViewModel>();
+            try
+            {
+                using (DBReset())
+                {
+                    types = DB.Environments.Select(x => new EnvironmentViewModel
+                    {
+                        Name = x.Name,
+                        EnvironmentKey = x.EnvironmentKey
                     }).OrderBy(x => x.Name).ToList();
                 }
             }
