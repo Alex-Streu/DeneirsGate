@@ -13,6 +13,14 @@ namespace DeneirsGate.Services
             Arc
         };
 
+        public enum ActivityLogType
+        {
+            Arc,
+            Character,
+            Event,
+            Dungeon
+        }
+
         private void UserHasArcAccess(Guid userId, Guid contentKey, ContentType type)
         {
             using (DBReset())
@@ -276,7 +284,7 @@ namespace DeneirsGate.Services
                 //Quests
                 var questIds = DB.Quests.Where(x => x.ArcKey == model.ArcKey).Select(x => x.QuestKey).ToList();
                 var eventIds = DB.QuestEvents.Where(x => questIds.Contains(x.QuestKey)).Select(x => x.EventKey).ToList();
-                DB.Quests.RemoveRange(x => questIds.Contains(x.QuestKey));
+                DB.Quests.RemoveRange(x => x.ArcKey == model.ArcKey);
                 DB.QuestEvents.RemoveRange(x => questIds.Contains(x.QuestKey));
                 DB.QuestEventEncounters.RemoveRange(x => eventIds.Contains(x.EventKey));
                 foreach (var quest in model.Quests)
@@ -394,6 +402,93 @@ namespace DeneirsGate.Services
             }
 
             DB.SaveChanges();
+        }
+
+        public void UpdateActivityLog(Guid userId, Guid campaignId, Guid arcId, Guid logId, string logDescription, ActivityLogType type = ActivityLogType.Arc, Guid? contentId = null)
+        {
+            UserHasArcAccess(userId, arcId, ContentType.Arc);
+
+            DBReset();
+            var add = false;
+            var log = DB.ActivityLogs.FirstOrDefault(x => x.LogKey == logId);
+            if (log == null)
+            {
+                log = new ActivityLog
+                {
+                    LogKey = logId,
+                    ArcKey = arcId
+                };
+                add = true;
+            }
+
+            log.DateLogged = DateTime.Now;
+            log.Log = logDescription;
+
+            DB.CharacterLogs.RemoveRange(x => x.LogKey == logId);
+            DB.QuestEventLogs.RemoveRange(x => x.LogKey == logId);
+            DB.DungeonLogs.RemoveRange(x => x.LogKey == logId);
+
+            if (contentId.HasValue)
+            {
+                switch (type)
+                {
+                    case ActivityLogType.Character:
+                        DB.CharacterLogs.Add(new CharacterLog
+                        {
+                            CampaignKey = campaignId,
+                            CharacterKey = contentId.Value,
+                            LogKey = logId
+                        });
+                        break;
+                    case ActivityLogType.Dungeon:
+                        DB.DungeonLogs.Add(new DungeonLog
+                        {
+                            CampaignKey = campaignId,
+                            DungeonKey = contentId.Value,
+                            LogKey = logId
+                        });
+                        break;
+                    case ActivityLogType.Event:
+                        DB.QuestEventLogs.Add(new QuestEventLog
+                        {
+                            CampaignKey = campaignId,
+                            EventKey = contentId.Value,
+                            LogKey = logId
+                        });
+                        break;
+                }
+            }
+
+            if (add)
+            {
+                DB.ActivityLogs.Add(log);
+            }
+
+            DB.SaveChanges();
+        }
+
+        public void DeleteActivityLog(Guid userId, Guid campaignId, Guid arcId, Guid logId)
+        {
+            UserHasAccess(userId, campaignId);
+            UserHasArcAccess(userId, arcId, ContentType.Arc);
+
+            DBReset();
+            DB.ActivityLogs.RemoveRange(x => x.LogKey == logId && x.ArcKey == arcId);
+            DB.CharacterLogs.RemoveRange(x => x.LogKey == logId && x.CampaignKey == campaignId);
+            DB.DungeonLogs.RemoveRange(x => x.LogKey == logId && x.CampaignKey == campaignId);
+            DB.QuestEventLogs.RemoveRange(x => x.LogKey == logId && x.CampaignKey == campaignId);
+            DB.SaveChanges();
+        }
+
+        public Dictionary<int, string> GetLogTypes()
+        {
+            var dictionary = new Dictionary<int, string>();
+            dictionary.Add((int)ActivityLogType.Arc, "Arc");
+            dictionary.Add((int)ActivityLogType.Character, "Character");
+            dictionary.Add((int)ActivityLogType.Event, "Quest Event");
+            dictionary.Add((int)ActivityLogType.Dungeon, "Dungeon");
+
+            return dictionary;
         }
     }
 }

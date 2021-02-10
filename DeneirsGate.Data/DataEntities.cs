@@ -29,9 +29,9 @@ namespace DeneirsGate.Data
         public virtual DbSet<QuestEvent> QuestEvents { get; set; }
         public virtual DbSet<QuestEventEncounter> QuestEventEncounters { get; set; }
         public virtual DbSet<ActivityLog> ActivityLogs { get; set; }
-        public virtual DbSet<CharacterLog> CharacterLog { get; set; }
-        public virtual DbSet<QuestEventLog> QuestEventLog { get; set; }
-        public virtual DbSet<DungeonLog> DungeonLog { get; set; }
+        public virtual DbSet<CharacterLog> CharacterLogs { get; set; }
+        public virtual DbSet<QuestEventLog> QuestEventLogs { get; set; }
+        public virtual DbSet<DungeonLog> DungeonLogs { get; set; }
 
         #endregion
 

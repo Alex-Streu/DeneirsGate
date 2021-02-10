@@ -33,6 +33,7 @@ namespace MVC_PWx.Controllers
                 model.Players = CharacterSvc.GetPlayerShorts(AppUser.UserId, AppUser.ActiveCampaign.Value);
 
                 ViewBag.Arcs = new SelectList(arcs, "ArcKey", "Name");
+                ViewBag.ActivityLogTypes = new SelectList(CampaignSvc.GetLogTypes(), "Key", "Value");
 
             }
             catch (Exception ex) { }
@@ -78,6 +79,22 @@ namespace MVC_PWx.Controllers
             }
 
             return Json(new { success = true, message = "Character added successfully!" });
+        }
+
+        [HttpPost]
+        [HasAccess(Priviledge = AppLogic.Priviledge.DM)]
+        public JsonResult UpdateAcitivtyLog(ActivityLogPostModel model)
+        {
+            try
+            {
+                CampaignSvc.UpdateActivityLog(AppUser.UserId, AppUser.ActiveCampaign.Value, model.ArcKey, model.LogKey, model.LogDecscription, model.Type, model.ContentKey);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+
+            return Json(new { success = true, message = "Log added successfully!" });
         }
 
         #endregion

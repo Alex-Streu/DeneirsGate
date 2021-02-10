@@ -86,7 +86,7 @@
                     }
                 </div>
             }
-            <div id="timeline-pane" class="fancy-tab-pane slide-right @(Model.Arc.Map != null ? null : "active")" style="overflow-y:auto">
+            <div id="timeline-pane" class="fancy-tab-pane slide-right @(Model.Arc.Map != null ? null : "active")" style="max-height:500px;overflow-y:auto">
                 <div class="timeline">
                     @{ var isLeft = true; }
                     @foreach (var quest in Model.Arc.Quests)
@@ -117,7 +117,7 @@
                     }
                 </div>
             </div>
-            <div id="quest-pane" class="fancy-tab-pane slide-right" style="overflow-y:auto">
+            <div id="quest-pane" class="fancy-tab-pane slide-right" style="max-height:500px;overflow-y:auto">
                 <a onclick="backToMap()"><i class="fa fa-arrow-circle-left"></i> Back</a>
                 <h3 id="quest-name" class="red text-bold"></h3>
                 <p id="quest-description" class="text-large"></p>
@@ -136,6 +136,14 @@
                 <div id="quest-events">
 
                 </div>
+            </div>
+        </div>
+    </div>
+    <div id="dashboard-right-panel" class="flexbox-container content-center">
+        <div id="log-panel" class="content-box">
+            <div class="flexbox-container no-padding full-width justify-between">
+                @HtmlHelpers.RenderFancyTextbox("md", "SearchLog", null, "", "Search")
+                <div onclick="addLog()" class="btn btn-sm btn-default"><i class="fa fa-plus"></i></div>
             </div>
         </div>
     </div>
@@ -197,10 +205,63 @@
     </div>
 </div>
 
+<!-- Activity Log Modal-->
+<div id="logModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Activity Log</h4>
+            </div>
+            <div class="modal-body">
+
+                <div class="flexbox-container fill">
+                    <div class="fancy-dropdown">
+                        @Html.DropDownList("log_Types", (SelectList)ViewBag.ActivityLogTypes, null, new { @class = "form-control responsive-text", style = "--size:0.75vw" })
+                    </div>
+                    @*<div class="fancy-dropdown">
+                        @Html.DropDownList("trap_Type", (SelectList)ViewBag.TrapTypes, null, new { @class = "form-control responsive-text", style = "--size:0.75vw" })
+                    </div>
+                    @HtmlHelpers.RenderFancyNumberbox(0, 50, "md", "trap_SaveDC", "", "DC")
+                    @HtmlHelpers.RenderFancyNumberbox(0, 50, "md", "trap_AttackBonus", "", "ATK")
+                    @HtmlHelpers.RenderFancyTextbox("md", "trap_Damage", 10, "", "Damage")*@
+                </div>
+                <div class="flexbox-container full-width">
+                    @HtmlHelpers.RenderFancyTextarea("md full", "log_Description", null, "", "Log")
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" onclick="saveTrap()">Save</button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
 @section scripts {
     <script type="text/javascript">
         var setArcActiveAction = '@Url.Action("SetArcActive")';
         var addArcCharacterAction = '@Url.Action("AddArcCharacter")';
+
+        /********************** Logs ******************************/
+        function addLog() {
+            $('#logModal').modal('show');
+        }
+
+        $('#log_Types').change(function () {
+            switch ($(this).val()) {
+                case @CampaignService.ActivityLogType.Arc:
+                    break;
+                case @CampaignService.ActivityLogType.Character:
+                    break;
+                case @CampaignService.ActivityLogType.Dungeon:
+                    break;
+                case @CampaignService.ActivityLogType.Event:
+                    break;
+            }
+        })
 
         /********************** Arcs ******************************/
         var backTo = 'timeline';

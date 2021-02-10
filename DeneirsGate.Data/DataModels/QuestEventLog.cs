@@ -8,8 +8,10 @@ namespace DeneirsGate.Data
     public class QuestEventLog
     {
         [Key, Column(Order = 1)]
-        public Guid LogKey { get; set; }
+        public Guid CampaignKey { get; set; }
         [Key, Column(Order = 2)]
+        public Guid LogKey { get; set; }
+        [Key, Column(Order = 3)]
         public Guid EventKey { get; set; }
     }
 }

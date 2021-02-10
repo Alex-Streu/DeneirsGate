@@ -115,4 +115,13 @@ namespace DeneirsGate.Services
         public Guid CharacterKey { get; set; }
         public bool Add { get; set; }
     }
+
+    public class ActivityLogPostModel
+    {
+        public Guid LogKey { get; set; } = new Guid();
+        public Guid ArcKey { get; set; }
+        public string LogDecscription { get; set; }
+        public ActivityLogType Type { get; set; }
+        public Guid? ContentKey { get; set; }
+    }
 }

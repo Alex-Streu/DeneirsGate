@@ -187,7 +187,7 @@ namespace MVC_PWx.Controllers
                 ViewBag.User = AppUser;
                 ViewBag.Notifications = UserSvc.GetNotifications(AppUser.UserId);
                 ViewBag.Friends = UserSvc.GetFriends(AppUser.UserId, (Dictionary<string, DateTime>)HttpContext.Application["OnlineUsers"], true);
-                ViewBag.CampaignKey = AppUser.ActiveCampaign.Value;
+                ViewBag.CampaignKey = AppUser.ActiveCampaign.GetValueOrDefault();
             }
 
             base.OnActionExecuted(filterContext);

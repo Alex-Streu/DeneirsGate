@@ -238,6 +238,15 @@
     }
 }
 
+#dashboard-right-panel {
+    width: 23%;
+
+    #log-panel {
+        height: 20em;
+        width: 100%;
+    }
+}
+
 .dashboard-players {
     display: flex;
     justify-content: flex-start;
@@ -264,6 +273,7 @@
             width: 200px;
             height: 100px;
             padding: 15px;
+            z-index: 10;
             background-image: url(/Content/img/campaigns/player-info-background.png);
             text-shadow: 2px 2px 4px #000000;
 
