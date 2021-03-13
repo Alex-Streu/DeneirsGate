@@ -32,13 +32,44 @@ namespace MVC_PWx.Controllers
                 model.NPCs = CharacterSvc.GetArcCharacters(AppUser.UserId, AppUser.ActiveCampaign.Value, characters);
                 model.Players = CharacterSvc.GetPlayerShorts(AppUser.UserId, AppUser.ActiveCampaign.Value);
 
+                //Generate Character Dropdown List
+                var characterList = model.NPCs.Where(x => x.IsSelected).Select(x => new { CharacterKey = x.CharacterKey, Name = x.FirstName + " " + x.LastName }).ToList();
+                characterList.AddRange(model.Players.Select(x => new { CharacterKey = x.CharacterKey, Name = x.FirstName + " " + x.LastName }).ToList());
+
+                //Generate Quest Events List
+                var eventsList = new Dictionary<string, string>();
+                foreach (var quest in model.Arc.Quests)
+                {
+                    foreach (var qEvent in quest.Events)
+                    {
+                        eventsList.Add($"{quest.QuestKey}_{qEvent.EventKey}", qEvent.Name);
+                    }
+                }
+
                 ViewBag.Arcs = new SelectList(arcs, "ArcKey", "Name");
                 ViewBag.ActivityLogTypes = new SelectList(CampaignSvc.GetLogTypes(), "Key", "Value");
-
+                ViewBag.ArcCharacters = new SelectList(characterList.OrderBy(x => x.Name), "CharacterKey", "Name");
+                ViewBag.ArcQuests = new SelectList(model.Arc.Quests, "QuestKey", "Name");
+                ViewBag.ArcEvents = new SelectList(eventsList, "Key", "Value");
             }
             catch (Exception ex) { }
 
             return View(model);
+        }
+
+        public PartialViewResult _ActivityLog(Guid? arcKey)
+        {
+            var model = new List<ActivityLogViewModel>();
+            try
+            {
+                if (arcKey.HasValue)
+                {
+                    model = CampaignSvc.GetActivityLog(arcKey.Value);
+                }
+            }
+            catch (Exception ex) { }
+
+            return PartialView(model);
         }
 
         [HasAccess(Priviledge = AppLogic.Priviledge.DM)]
@@ -83,11 +114,11 @@ namespace MVC_PWx.Controllers
 
         [HttpPost]
         [HasAccess(Priviledge = AppLogic.Priviledge.DM)]
-        public JsonResult UpdateAcitivtyLog(ActivityLogPostModel model)
+        public JsonResult UpdateActivityLog(ActivityLogPostModel model)
         {
             try
             {
-                CampaignSvc.UpdateActivityLog(AppUser.UserId, AppUser.ActiveCampaign.Value, model.ArcKey, model.LogKey, model.LogDecscription, model.Type, model.ContentKey);
+                CampaignSvc.UpdateActivityLog(AppUser.UserId, AppUser.ActiveCampaign.Value, model.ArcKey, model.LogKey, model.LogDescription, model.Type, model.ContentKey);
             }
             catch (Exception ex)
             {
@@ -95,6 +126,22 @@ namespace MVC_PWx.Controllers
             }
 
             return Json(new { success = true, message = "Log added successfully!" });
+        }
+
+        [HttpPost]
+        [HasAccess(Priviledge = AppLogic.Priviledge.DM)]
+        public JsonResult DeleteActivityLog(ActivityLogDeleteModel model)
+        {
+            try
+            {
+                CampaignSvc.DeleteActivityLog(AppUser.UserId, AppUser.ActiveCampaign.Value, model.ArcKey, model.LogKey);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+
+            return Json(new { success = true, message = "Deleted successfully!" });
         }
 
         #endregion

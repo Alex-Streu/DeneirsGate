@@ -785,7 +785,7 @@ hr {
 /******* SCROLLBAR *******/
 /* width */
 ::-webkit-scrollbar {
-  width: 20px; }
+  width: 12px; }
 
 /* Track */
 ::-webkit-scrollbar-track {
@@ -1573,10 +1573,23 @@ hr {
         left: 0%; } }
 
 #dashboard-right-panel {
-  width: 23%; }
+  width: 23%;
+  height: 50em; }
   #dashboard-right-panel #log-panel {
-    height: 20em;
-    width: 100%; }
+    height: 100%;
+    width: 100%;
+    padding: 1em 0.5em 0.5em 0.5em; }
+  #dashboard-right-panel #log-records {
+    height: 90%;
+    overflow-y: scroll;
+    padding-right: 0.5em; }
+
+.log-record {
+  border: 1px solid #d3d3d3;
+  box-shadow: 3px 2px 4px 1px rgba(0, 0, 0, 0.2);
+  margin: 0.5em 0em;
+  padding: 0.5em;
+  background-color: #fcfcfc; }
 
 .dashboard-players {
   display: flex;

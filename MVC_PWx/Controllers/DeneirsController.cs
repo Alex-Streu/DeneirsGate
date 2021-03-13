@@ -36,7 +36,15 @@ namespace MVC_PWx.Controllers
         {
             get
             {
-                if (appUser == null) { appUser = UserManager.FindByName(User.Identity.Name); }
+                if (appUser == null) 
+                {
+                    appUser = (ApplicationUser)HttpContext.Application["AppUser"];
+                    if (appUser == null)
+                    {
+                        appUser = UserManager.FindByName(User.Identity.Name);
+                        HttpContext.Application["AppUser"] = appUser;
+                    }
+                }
                 return appUser;
             }
         }
@@ -176,7 +184,11 @@ namespace MVC_PWx.Controllers
             if (updateUser)
             {
                 AppUser.ActiveCampaign = campaign;
-                UserManager.Update(AppUser);
+                HttpContext.Application["AppUser"] = AppUser;
+
+                var user = UserManager.FindByName(User.Identity.Name);
+                user.ActiveCampaign = campaign;
+                UserManager.Update(user);
             }
         }
 

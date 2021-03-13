@@ -689,7 +689,7 @@
         function storeQuest(allowEmpty = false) {
             var events = quests[questIndex] == null ? null : quests[questIndex].Events;
             var quest = {
-                QuestKey: '@Guid.NewGuid()',
+                QuestKey: createGuid(),
                 Name: $('#QuestName').val(),
                 Description: $('#QuestDescription').val(),
                 SortOrder: questIndex,

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using static DeneirsGate.Services.CampaignService;
 
 namespace DeneirsGate.Services
 {
@@ -408,6 +409,25 @@ namespace DeneirsGate.Services
 
                 DB.SaveChanges();
             }
+        }
+
+        public List<ActivityLogViewModel> GetCharacterLogs(Guid userId, Guid campaignId, Guid characterId)
+        {
+            UserHasAccess(userId, campaignId);
+            UserHasCharacterAccess(userId, characterId);
+
+            DBReset();
+            var logKeys = DB.CharacterLogs.Where(x => x.CharacterKey == characterId && x.CampaignKey == campaignId).Select(x => x.LogKey).ToList();
+            var logs = DB.ActivityLogs.Where(x => logKeys.Contains(x.LogKey)).Select(x => new ActivityLogViewModel
+            {
+                ArcKey = x.ArcKey,
+                LogDate = x.DateLogged,
+                LogDescription = x.Log,
+                LogKey = x.LogKey,
+                Type = (ActivityLogType)x.Type
+            }).OrderByDescending(x => x.LogDate).ToList();
+
+            return logs;
         }
     }
 }

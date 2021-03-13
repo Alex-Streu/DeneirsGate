@@ -69,6 +69,19 @@ namespace MVC_PWx.Controllers
             return PartialView(model);
         }
 
+        public ActionResult _QuestEventLogs(Guid id)
+        {
+            var model = new List<ActivityLogViewModel>();
+
+            try
+            {
+                model = CampaignSvc.GetQuestEventLogs(AppUser.UserId, AppUser.ActiveCampaign.Value, id);
+            }
+            catch (Exception ex) { }
+
+            return PartialView(model);
+        }
+
         #endregion
 
         #region Characters
@@ -165,6 +178,19 @@ namespace MVC_PWx.Controllers
             try
             {
                 model = RelationshipTreeSvc.GetCharacterTrees(AppUser.UserId, AppUser.ActiveCampaign.Value, id);
+            }
+            catch (Exception ex) { }
+
+            return PartialView(model);
+        }
+
+        public ActionResult _CharacterLogs(Guid id)
+        {
+            var model = new List<ActivityLogViewModel>();
+
+            try
+            {
+                model = CharacterSvc.GetCharacterLogs(AppUser.UserId, AppUser.ActiveCampaign.Value, id);
             }
             catch (Exception ex) { }
 

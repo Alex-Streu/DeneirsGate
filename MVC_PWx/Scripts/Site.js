@@ -5,6 +5,28 @@ function isEmpty(val) {
     return false;
 }
 
+function createGuid() {
+    function _p8(s) {
+        var p = (Math.random().toString(16) + "000000000").substr(2, 8);
+        return s ? "-" + p.substr(0, 4) + "-" + p.substr(4, 4) : p;
+    }
+    return _p8() + _p8(true) + _p8(true) + _p8();
+}
+
+function sortOptions(id) {
+    var options = $(`${id} option`);
+    var arr = options.map(function (_, o) { return { t: $(o).text(), v: o.value }; }).get();
+    arr.sort(function (o1, o2) {
+        var t1 = o1.t.toLowerCase(), t2 = o2.t.toLowerCase();
+
+        return t1 > t2 ? 1 : t1 < t2 ? -1 : 0;
+    });
+    options.each(function (i, o) {
+        o.value = arr[i].v;
+        $(o).text(arr[i].t);
+    });
+}
+
 $('.modal').on('shown.bs.modal', function () {
     $(this).find('[autofocus]').focus();
 });

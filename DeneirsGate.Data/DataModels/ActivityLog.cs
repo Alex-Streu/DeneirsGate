@@ -15,5 +15,7 @@ namespace DeneirsGate.Data
         public DateTime DateLogged { get; set; }
         [Required]
         public string Log { get; set; }
+        [Required]
+        public int Type { get; set; }
     }
 }

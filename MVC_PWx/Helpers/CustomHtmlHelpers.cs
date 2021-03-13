@@ -106,6 +106,11 @@ namespace CustomHtmlHelpers
             var str = date.ToString("M/d/yyyy H:mm tt");
             return new MvcHtmlString(str);
         }
+        public static MvcHtmlString RenderDate(DateTime date)
+        {
+            var str = date.ToString("M/d/yyyy");
+            return new MvcHtmlString(str);
+        }
 
         public static MvcHtmlString RenderFancyPassword(string size, string id, int? limit, string value, string label, MvcHtmlString extra = null)
         {

@@ -240,11 +240,27 @@
 
 #dashboard-right-panel {
     width: 23%;
+    height: 50em;
 
     #log-panel {
-        height: 20em;
+        height: 100%;
         width: 100%;
+        padding: 1em 0.5em 0.5em 0.5em;
     }
+
+    #log-records {
+        height: 90%;
+        overflow-y: scroll;
+        padding-right: 0.5em;
+    }
+}
+
+.log-record {
+    border: 1px solid $lightGray;
+    box-shadow: 3px 2px 4px 1px rgba(0, 0, 0, 0.2);
+    margin: 0.5em 0em;
+    padding: 0.5em;
+    background-color: $white;
 }
 
 .dashboard-players {

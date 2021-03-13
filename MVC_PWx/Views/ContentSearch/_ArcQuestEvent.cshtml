@@ -2,6 +2,9 @@
 @model QuestEventViewModel
 
 <h2 class="text-center">@Model.Name</h2>
+<div class="flexbox-container full-width justify-center">
+    <div class="btn btn-lg btn-default menu-option menu-link" data-url="@Url.Action("_QuestEventLogs", "ContentSearch", new { id = Model.EventKey })" data-dir="Logs">Logs</div>
+</div>
 <div style="margin:1em">
     <div class="text-md">@Html.Raw(Model.Description)</div>
 </div>

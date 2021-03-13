@@ -118,10 +118,27 @@ namespace DeneirsGate.Services
 
     public class ActivityLogPostModel
     {
-        public Guid LogKey { get; set; } = new Guid();
+        public Guid LogKey { get; set; } = Guid.NewGuid();
         public Guid ArcKey { get; set; }
-        public string LogDecscription { get; set; }
+        public string LogDescription { get; set; }
         public ActivityLogType Type { get; set; }
         public Guid? ContentKey { get; set; }
+    }
+
+    public class ActivityLogDeleteModel
+    {
+        public Guid LogKey { get; set; }
+        public Guid ArcKey { get; set; }
+    }
+
+    public class ActivityLogViewModel
+    {
+        public Guid LogKey { get; set; }
+        public Guid ArcKey { get; set; }
+        public Guid? ContentKey { get; set; }
+        public ActivityLogType Type { get; set; }
+        public string LogDescription { get; set; }
+        public string ContentName { get; set; }
+        public DateTime LogDate { get; set; }
     }
 }

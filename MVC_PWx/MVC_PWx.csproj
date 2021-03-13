@@ -620,6 +620,9 @@
     <Content Include="Views\ContentSearch\_ArcQuest.cshtml" />
     <Content Include="Views\ContentSearch\_ArcQuestEvent.cshtml" />
     <Content Include="Views\Campaign\Print.cshtml" />
+    <Content Include="Views\Campaign\_ActivityLog.cshtml" />
+    <Content Include="Views\ContentSearch\_CharacterLogs.cshtml" />
+    <Content Include="Views\ContentSearch\_QuestEventLogs.cshtml" />
     <None Include="Web.DEV.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
