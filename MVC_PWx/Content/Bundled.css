@@ -1469,6 +1469,20 @@ hr {
   /* Media queries - Responsive timeline on screens less than 600px wide */ }
   .dashboard-arc-panel * {
     box-sizing: border-box; }
+  .dashboard-arc-panel .status {
+    height: 25px;
+    width: 25px;
+    background-color: #000;
+    border-radius: 50%;
+    display: inline-block; }
+    .dashboard-arc-panel .status.quest-incomplete {
+      background-color: #797979 !important; }
+    .dashboard-arc-panel .status.quest-in-progress {
+      background-color: #dbe648 !important; }
+    .dashboard-arc-panel .status.quest-abandoned {
+      background-color: #ce0606 !important; }
+    .dashboard-arc-panel .status.quest-completed {
+      background-color: #08c23f !important; }
   .dashboard-arc-panel .timeline {
     position: relative;
     max-width: 1200px;
@@ -1656,11 +1670,13 @@ hr {
   font-size: 24px;
   text-align: center;
   cursor: pointer; }
-  .map-label.abandoned {
+  .map-label.quest-incomplete {
+    border-color: #797979; }
+  .map-label.quest-abandoned {
     border-color: #ce0606; }
-  .map-label.completed {
+  .map-label.quest-completed {
     border-color: #08c23f; }
-  .map-label.in-progress {
+  .map-label.quest-in-progress {
     border-color: #dbe648; }
   .map-label:hover .map-label-info {
     display: flex;

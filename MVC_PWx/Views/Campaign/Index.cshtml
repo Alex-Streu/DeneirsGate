@@ -66,20 +66,23 @@
                         switch (quest.Status)
                         {
                             case CampaignService.QuestStatus.Abandoned:
-                                completeClass = "abandoned";
+                                completeClass = "quest-abandoned";
                                 break;
                             case CampaignService.QuestStatus.Completed:
-                                completeClass = "completed";
+                                completeClass = "quest-completed";
                                 break;
                             case CampaignService.QuestStatus.InProgress:
-                                completeClass = "in-progress";
+                                completeClass = "quest-in-progress";
+                                break;
+                            case CampaignService.QuestStatus.Incomplete:
+                                completeClass = "quest-incomplete";
                                 break;
                         }
-                        <div class="map-label quest-explore @(completeClass)" style="top:@(pin.Y-20)px;left:@(pin.X-20)px" data-data="@(JsonConvert.SerializeObject(quest))">
+                        <div id="map-@quest.QuestKey" class="map-label quest-explore @(completeClass)" style="top:@(pin.Y-20)px;left:@(pin.X-20)px" data-data="@(JsonConvert.SerializeObject(quest))">
                             @(pin.Index + 1)
                             @if (quest.Status == CampaignService.QuestStatus.InProgress)
                             {
-                                <div style="position:absolute;top:-40px;left:10px"><i class="red fa fa-2x fa-flag" style="text-shadow:2px 2px 2px #000"></i></div>
+                                <div class="quest-flag" style="position:absolute;top:-40px;left:10px"><i class="red fa fa-2x fa-flag" style="text-shadow:2px 2px 2px #000"></i></div>
                             }
                             <div class="map-label-info">@quest.Name</div>
                         </div>
@@ -107,7 +110,7 @@
                                 completeClass = "quest-in-progress";
                                 break;
                         }
-                        <div class="timeline-container @(isLeft ? "timeline-left" : "timeline-right") @(completeClass)">
+                        <div id="timeline-@quest.QuestKey" class="timeline-container @(isLeft ? "timeline-left" : "timeline-right") @(completeClass)">
                             <div class="timeline-content quest-explore" data-data="@(JsonConvert.SerializeObject(quest))">
                                 <h2>@quest.Name</h2>
                                 <p>@HtmlHelpers.LimitString(quest.Description)</p>
@@ -117,8 +120,21 @@
                     }
                 </div>
             </div>
-            <div id="quest-pane" class="fancy-tab-pane slide-right" style="max-height:500px;overflow-y:auto">
-                <a onclick="backToMap()"><i class="fa fa-arrow-circle-left"></i> Back</a>
+            <div id="quest-pane" class="fancy-tab-pane slide-right content-box" style="max-height:500px;overflow-y:auto">
+                <div class="flexbox-container justify-between items-start no-padding">
+                    <a onclick="backToMap()"><i class="fa fa-arrow-circle-left"></i>&nbsp;Back</a>
+                    <div class="flexbox-container justify-end items-center">
+                        <span id="quest-status-icon" class="status quest-incomplete"></span>
+                        <div class="fancy-dropdown">
+                            <select id="quest-status" class="form-control responsive-text" style="--size:0.75vw">
+                                <option value="@((int)CampaignService.QuestStatus.Incomplete)">Incomplete</option>
+                                <option value="@((int)CampaignService.QuestStatus.InProgress)">In Progress</option>
+                                <option value="@((int)CampaignService.QuestStatus.Completed)">Complete</option>
+                                <option value="@((int)CampaignService.QuestStatus.Abandoned)">Abandoned</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
                 <h3 id="quest-name" class="red text-bold"></h3>
                 <p id="quest-description" class="text-large"></p>
                 <div id="quest-event-template" class="hidden">
@@ -246,12 +262,18 @@
     </div>
 </div>
 
+<!-- Templates -->
+<div id="flagTemplate" style="display:none">
+    <div class="quest-flag" style="position:absolute;top:-40px;left:10px"><i class="red fa fa-2x fa-flag" style="text-shadow:2px 2px 2px #000"></i></div>
+</div>
+
 @section scripts {
     <script type="text/javascript">
         var setArcActiveAction = '@Url.Action("SetArcActive")';
         var addArcCharacterAction = '@Url.Action("AddArcCharacter")';
         var updateActivityLogAction = '@Url.Action("UpdateActivityLog")';
         var deleteActivityLogAction = '@Url.Action("DeleteActivityLog")';
+        var updateQuestStatusAction = '@Url.Action("UpdateQuestStatus")';
         var activityLogAction = '@Url.Action("_ActivityLog")';
 
         var logEvents = $("#log_Events").html();
@@ -354,6 +376,8 @@
                     $('#log_Types').change();
                     $('#log_Description').val('');
                     $('#log_Key').val('');
+                } else {
+                    Notiflix.NotifyContent.Failure(data.message);
                 }
             })
         }
@@ -385,6 +409,7 @@
 
         /********************** Arcs ******************************/
         var backTo = 'timeline';
+        var loadedQuest = '';
 
         $('#Arcs').change(function () {
             var postData = {
@@ -401,9 +426,31 @@
 
         $('.quest-explore').click(function () {
             var quest = $(this).data('data');
+            loadedQuest = quest.QuestKey;
             $('#quest-name').text(quest.Name);
             $('#quest-description').text(quest.Description);
             $('#quest-events').html('');
+            $('#quest-status').val(quest.Status);
+
+            $('#quest-status-icon').removeClass('quest-incomplete');
+            $('#quest-status-icon').removeClass('quest-in-progress');
+            $('#quest-status-icon').removeClass('quest-completed');
+            $('#quest-status-icon').removeClass('quest-abandoned');
+
+            switch (quest.Status) {
+                case @((int)CampaignService.QuestStatus.Abandoned):
+                    $('#quest-status-icon').addClass('quest-abandoned');
+                    break;
+                case @((int)CampaignService.QuestStatus.Completed):
+                    $('#quest-status-icon').addClass('quest-completed');
+                    break;
+                case @((int)CampaignService.QuestStatus.Incomplete):
+                    $('#quest-status-icon').addClass('quest-incomplete');
+                    break;
+                case @((int)CampaignService.QuestStatus.InProgress):
+                    $('#quest-status-icon').addClass('quest-in-progress');
+                    break;
+            }
 
             if (!isEmpty(quest.Events)) {
                 for (var i = 0; i < quest.Events.length; i++) {
@@ -450,6 +497,65 @@
                     break;
             }
         }
+
+        $('#quest-status').change(function () {
+            $('#quest-status-icon').removeClass('quest-incomplete');
+            $('#quest-status-icon').removeClass('quest-in-progress');
+            $('#quest-status-icon').removeClass('quest-completed');
+            $('#quest-status-icon').removeClass('quest-abandoned');
+            $(`#timeline-${loadedQuest}`).removeClass('quest-incomplete');
+            $(`#timeline-${loadedQuest}`).removeClass('quest-in-progress');
+            $(`#timeline-${loadedQuest}`).removeClass('quest-completed');
+            $(`#timeline-${loadedQuest}`).removeClass('quest-abandoned');
+            $(`#map-${loadedQuest}`).removeClass('quest-incomplete');
+            $(`#map-${loadedQuest}`).removeClass('quest-in-progress');
+            $(`#map-${loadedQuest}`).removeClass('quest-completed');
+            $(`#map-${loadedQuest}`).removeClass('quest-abandoned');
+
+            $(`#map-${loadedQuest}`).find('.quest-flag').remove();
+
+            var val = parseInt($(this).val());
+            switch (val) {
+                case @((int)CampaignService.QuestStatus.Abandoned):
+                    $('#quest-status-icon').addClass('quest-abandoned');
+                    $(`#timeline-${loadedQuest}`).addClass('quest-abandoned');
+                    $(`#map-${loadedQuest}`).addClass('quest-abandoned');
+                    break;
+                case @((int)CampaignService.QuestStatus.Completed):
+                    $('#quest-status-icon').addClass('quest-completed');
+                    $(`#timeline-${loadedQuest}`).addClass('quest-completed');
+                    $(`#map-${loadedQuest}`).addClass('quest-completed');
+                    break;
+                case @((int)CampaignService.QuestStatus.Incomplete):
+                    $('#quest-status-icon').addClass('quest-incomplete');
+                    $(`#timeline-${loadedQuest}`).addClass('quest-incomplete');
+                    $(`#map-${loadedQuest}`).addClass('quest-incomplete');
+                    break;
+                case @((int)CampaignService.QuestStatus.InProgress):
+                    $('#quest-status-icon').addClass('quest-in-progress');
+                    $(`#timeline-${loadedQuest}`).addClass('quest-in-progress');
+                    $(`#map-${loadedQuest}`).addClass('quest-in-progress');
+                    $(`#map-${loadedQuest}`).prepend($('#flagTemplate').html());
+                    break;
+            }
+
+            var postData = {
+                ArcKey: $('#Arcs').val(),
+                QuestKey: loadedQuest,
+                Status: val
+            }
+
+            ajaxPost(postData, updateQuestStatusAction, function (data) {
+                if (data.success) {
+                    var quest = $(`#timeline-${loadedQuest}`).find('.quest-explore').data('data');
+                    quest.Status = val;
+                    $(`#timeline-${loadedQuest}`).find('.quest-explore').data('data', quest);
+                    $(`#map-${loadedQuest}`).data('data', quest);
+                } else {
+                    Notiflix.NotifyContent.Failure(data.message);
+                }
+            })
+        })
 
         /********************** NPCs ******************************/
         $('.npc-selectable').click(function () {

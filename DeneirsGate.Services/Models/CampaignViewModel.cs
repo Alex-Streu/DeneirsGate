@@ -104,6 +104,13 @@ namespace DeneirsGate.Services
         public EncounterPostModel Encounter { get; set; }
     }
 
+    public class QuestStatusPostModel
+    {
+        public Guid ArcKey { get; set; }
+        public Guid QuestKey { get; set; }
+        public QuestStatus Status { get; set; }
+    }
+
     public class ArcCharacterViewModel : CharacterShortViewModel
     {
         public bool IsSelected { get; set; }

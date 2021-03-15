@@ -130,6 +130,22 @@ namespace MVC_PWx.Controllers
 
         [HttpPost]
         [HasAccess(Priviledge = AppLogic.Priviledge.DM)]
+        public JsonResult UpdateQuestStatus(QuestStatusPostModel model)
+        {
+            try
+            {
+                CampaignSvc.UpdateQuestStatus(AppUser.UserId, model.ArcKey, model.QuestKey, model.Status);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+
+            return Json(new { success = true, message = "Quest status updated successfully!" });
+        }
+
+        [HttpPost]
+        [HasAccess(Priviledge = AppLogic.Priviledge.DM)]
         public JsonResult DeleteActivityLog(ActivityLogDeleteModel model)
         {
             try

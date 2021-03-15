@@ -516,6 +516,17 @@ namespace DeneirsGate.Services
             DB.SaveChanges();
         }
 
+        public void UpdateQuestStatus(Guid userId, Guid arcId, Guid questId, QuestStatus status)
+        {
+            UserHasArcAccess(userId, arcId, ContentType.Arc);
+
+            DBReset();
+            var quest = DB.Quests.FirstOrDefault(x => x.ArcKey == arcId && x.QuestKey == questId);
+            quest.Status = (int)status;
+
+            DB.SaveChanges();
+        }
+
         public void DeleteActivityLog(Guid userId, Guid campaignId, Guid arcId, Guid logId)
         {
             UserHasArcAccess(userId, arcId, ContentType.Arc);
