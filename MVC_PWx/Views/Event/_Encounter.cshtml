@@ -392,6 +392,8 @@
     }
 
     function truncateDescription(description) {
+        if (description == null) { return ''; }
+
         if (description.length > descriptionMax) {
             return description.substr(0, descriptionMax - 3) + '...';
         }
@@ -489,7 +491,7 @@
 
         $('#enc_MonsterResults').append(html);
         $(`#${monster.MonsterKey}`).data('data', monster);
-        if (monster.Description.length > descriptionMax) {
+        if (monster.Description != null && monster.Description.length > descriptionMax) {
             $(`#${monster.MonsterKey}`).find('.show-more').show();
         }
     }

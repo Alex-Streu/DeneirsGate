@@ -160,7 +160,7 @@ namespace CustomHtmlHelpers
         {
             var str = $@"<div class='upload-image' data-campaign='{campaignKey}'>
                             <input {(!id.IsNullOrEmpty() ? $"id='{id}' name='{id}'" : "")} type='text' class='image-name hidden' value='{value}' />
-                            <input class='uploader hidden' type='file' name='file' accept='image/*' />
+                            <input class='uploader hidden user-image' type='file' name='file' accept='image/*' />
                             <img class='img-xs img-responsive' src='{urlHelper.CharacterPortrait(campaignKey, contentKey, value)}' />
                             <div class='overlay'></div>
                         </div>";
@@ -173,7 +173,7 @@ namespace CustomHtmlHelpers
             var str = $@"<div data-campaign='{campaignKey}'>
                             <div class='btn btn-warning image-upload'><i class='fa fa-upload'></i>&nbsp;Upload Image</div>
                             <input {(!id.IsNullOrEmpty() ? $"id='{id}' name='{id}'" : "")} type='text' class='image-name hidden' value='{value}' />
-                            <input class='uploader hidden' type='file' name='file' accept='image/*' />
+                            <input class='uploader hidden user-image' type='file' name='file' accept='image/*' />
                             <img class='hidden' src='{urlHelper.ArcMap(campaignKey, contentKey, value)}'/>
                         </div>";
 

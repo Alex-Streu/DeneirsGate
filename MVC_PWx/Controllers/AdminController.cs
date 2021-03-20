@@ -113,5 +113,11 @@ namespace MVC_PWx.Controllers
 
             return RedirectToAction("Roles");
         }
+
+        public ActionResult Monsters()
+        {
+            var users = UserManager.Users.OrderBy(x => x.UserName).ToList();
+            return View(users);
+        }
     }
 }

@@ -153,7 +153,7 @@ $('.image-upload').click(function () {
     input.click();
 })
 
-$('input[type="file"]').change(function () {
+$('input.user-image[type="file"]').change(function () {
     if ($(this).val() == null) { return; }
 
     uploadImage(this, null, null, true);

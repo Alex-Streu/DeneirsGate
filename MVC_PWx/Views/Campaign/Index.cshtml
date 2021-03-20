@@ -8,9 +8,8 @@
     ViewBag.MenuOption = "Dashboard";
 }
 
-<h2>Campaign Dashboard</h2>
-
-<div class="flexbox-container full-width justify-end">
+<div class="flexbox-container full-width justify-between">
+    <h2>Campaign Dashboard</h2>
     @Html.DropDownListFor(model => model.Arc.ArcKey, (SelectList)ViewBag.Arcs, "No Active Arc", new { @id = "Arcs", @class = "form-control responsive-text" })
 </div>
 <div class="flexbox-container no-padding items-start">
