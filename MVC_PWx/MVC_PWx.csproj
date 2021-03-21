@@ -636,6 +636,7 @@
     <Content Include="Views\ContentSearch\_CharacterLogs.cshtml" />
     <Content Include="Views\ContentSearch\_QuestEventLogs.cshtml" />
     <Content Include="Views\Admin\Monsters.cshtml" />
+    <Content Include="Views\Admin\MagicItems.cshtml" />
     <None Include="Web.DEV.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

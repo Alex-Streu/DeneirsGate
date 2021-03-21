@@ -4,18 +4,14 @@
     ViewBag.MenuOption = "menu_Monsters";
 }
 
-<h2>Monsters</h2>
+<h2>Magic Items</h2>
 
 <div class="content-box">
-    <form id="monsterForm" enctype="multipart/form-data">
+    <form id="magicItemForm" enctype="multipart/form-data">
         <div class="flexbox-container items-end">
             <div class="form-group">
-                <label>Monsters List</label>
-                <input type="file" id="Monsters" name="Monsters" />
-            </div>
-            <div class="form-group">
-                <label>Monsters by Environment</label>
-                <input type="file" id="Environments" name="Environments" />
+                <label>Magic Items List</label>
+                <input type="file" id="MagicItems" name="MagicItems" />
             </div>
             <input class="btn btn-default" type="submit" name="Submit" value="Submit" />
         </div>
@@ -24,13 +20,12 @@
 
 @section scripts {
     <script type="text/javascript">
-        $('#monsterForm').submit(function () {
+        $('#magicItemForm').submit(function () {
             var formdata = new FormData(); //FormData object
-            formdata.append($('#Monsters').attr('name'), $('#Monsters')[0].files[0]);
-            formdata.append($('#Environments').attr('name'), $('#Environments')[0].files[0]);
+            formdata.append($('#MagicItems').attr('name'), $('#MagicItems')[0].files[0]);
             //Creating an XMLHttpRequest and sending
             var xhr = new XMLHttpRequest();
-            xhr.open('POST', '@Url.Action("UploadMonsterList")');
+            xhr.open('POST', '@Url.Action("UploadMagicItemList")');
             xhr.responseType = 'json';
             xhr.send(formdata);
             xhr.onreadystatechange = function () {

@@ -96,6 +96,7 @@ BEGIN
 	INSERT INTO MagicItemTypes VALUES (NEWID(), 'Armor')
 	INSERT INTO MagicItemTypes VALUES (NEWID(), 'Potion')
 	INSERT INTO MagicItemTypes VALUES (NEWID(), 'Rod')
+	INSERT INTO MagicItemTypes VALUES (NEWID(), 'Ring')
 	INSERT INTO MagicItemTypes VALUES (NEWID(), 'Scroll')
 	INSERT INTO MagicItemTypes VALUES (NEWID(), 'Staff')
 	INSERT INTO MagicItemTypes VALUES (NEWID(), 'Wand')

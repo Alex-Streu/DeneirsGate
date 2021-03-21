@@ -212,5 +212,30 @@ namespace DeneirsGate.Services
                 model.Items = items;
             }
         }
+
+        public void UploadMagicItem(Guid userId, string name, string description, string rarity, string type, string attunement)
+        {
+            DBReset();
+
+            // Do not upload monster if it already exists by name
+            if (DB.MagicItems.Where(x => x.Name == name).FirstOrDefault() != null) { return; }
+
+            var rarityKey = DB.MagicItemRarities.Where(x => x.Name.ToLower() == rarity.ToLower()).Select(x => x.RarityKey).FirstOrDefault();
+            var typeKey = DB.MagicItemTypes.Where(x => x.Name.ToLower() == type.ToLower()).Select(x => x.TypeKey).FirstOrDefault();
+            var requiresAttunement = String.IsNullOrEmpty(attunement) ? false : true;
+
+            var magicItem = new MagicItemPostModel
+            {
+                Description = description,
+                HasAttunement = requiresAttunement,
+                IsCustom = false,
+                ItemKey = Guid.NewGuid(),
+                Name = name,
+                Rarity = rarityKey,
+                Type = typeKey
+            };
+
+            Update(userId, magicItem);
+        }
     }
 }

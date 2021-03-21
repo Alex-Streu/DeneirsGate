@@ -1,5 +1,8 @@
-﻿using System.Linq;
+﻿using OfficeOpenXml;
+using System;
+using System.Linq;
 using System.Threading.Tasks;
+using System.Web;
 using System.Web.Mvc;
 
 namespace MVC_PWx.Controllers
@@ -116,8 +119,104 @@ namespace MVC_PWx.Controllers
 
         public ActionResult Monsters()
         {
-            var users = UserManager.Users.OrderBy(x => x.UserName).ToList();
-            return View(users);
+            return View();
+        }
+
+        [HttpPost]
+        public JsonResult UploadMonsterList()
+        {
+            try
+            {
+                if (Request != null)
+                {
+                    HttpPostedFileBase monstersfile = Request.Files["Monsters"];
+                    if ((monstersfile != null) && (monstersfile.ContentLength > 0) && !string.IsNullOrEmpty(monstersfile.FileName))
+                    {
+                        byte[] fileBytes = new byte[monstersfile.ContentLength];
+                        //var data = monstersfile.InputStream.Read(fileBytes, 0, Convert.ToInt32(monstersfile.ContentLength));
+                        ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+                        using (var package = new ExcelPackage(monstersfile.InputStream))
+                        {
+                            var currentSheet = package.Workbook.Worksheets;
+                            var workSheet = currentSheet.First();
+                            var noOfRow = workSheet.Dimension.End.Row;
+                            for (var i = 1; i <= noOfRow; i++)
+                            {
+                                MonsterSvc.UploadMonster(AppUser.UserId, workSheet.Cells[i, 1].Value.ToString(), null, workSheet.Cells[i, 2].Value.ToString(), workSheet.Cells[i, 3].Value.ToString(), workSheet.Cells[i, 4].Value.ToString(), workSheet.Cells[i, 7].Value.ToString(), workSheet.Cells[i, 19].Value.ToString());
+                            }
+                        }
+                    }
+
+                    HttpPostedFileBase environmentsFile = Request.Files["Environments"];
+                    if ((environmentsFile != null) && (environmentsFile.ContentLength > 0) && !string.IsNullOrEmpty(environmentsFile.FileName))
+                    {
+                        byte[] fileBytes = new byte[environmentsFile.ContentLength];
+                        //var data = environmentsFile.InputStream.Read(fileBytes, 0, Convert.ToInt32(environmentsFile.ContentLength));
+                        ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+                        using (var package = new ExcelPackage(environmentsFile.InputStream))
+                        {
+                            var currentSheet = package.Workbook.Worksheets;
+                            var workSheet = currentSheet.First();
+                            var noOfCol = workSheet.Dimension.End.Column;
+                            var noOfRow = workSheet.Dimension.End.Row;
+                            for (var i = 1; i <= noOfRow; i++)
+                            {
+                                var monsters = workSheet.Cells[i, 1].Value.ToString().Split(',');
+                                var environment = workSheet.Cells[i, 2].Value.ToString();
+                                foreach (var monster in monsters)
+                                {
+                                    MonsterSvc.UploadMonsterEnvironments(monster.Trim(), environment);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+
+            return Json(new { success = true, message = "Uploaded successfully!" });
+        }
+
+        public ActionResult MagicItems()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public JsonResult UploadMagicItemList()
+        {
+            try
+            {
+                if (Request != null)
+                {
+                    HttpPostedFileBase magicItemsFile = Request.Files["MagicItems"];
+                    if ((magicItemsFile != null) && (magicItemsFile.ContentLength > 0) && !string.IsNullOrEmpty(magicItemsFile.FileName))
+                    {
+                        byte[] fileBytes = new byte[magicItemsFile.ContentLength];
+                        //var data = monstersfile.InputStream.Read(fileBytes, 0, Convert.ToInt32(monstersfile.ContentLength));
+                        ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+                        using (var package = new ExcelPackage(magicItemsFile.InputStream))
+                        {
+                            var currentSheet = package.Workbook.Worksheets;
+                            var workSheet = currentSheet.First();
+                            var noOfRow = workSheet.Dimension.End.Row;
+                            for (var i = 2; i <= noOfRow; i++)
+                            {
+                                MagicItemSvc.UploadMagicItem(AppUser.UserId, workSheet.Cells[i, 1].Value?.ToString(), workSheet.Cells[i, 5].Value?.ToString(), workSheet.Cells[i, 2].Value?.ToString(), workSheet.Cells[i, 3].Value?.ToString(), workSheet.Cells[i, 4].Value?.ToString());
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+
+            return Json(new { success = true, message = "Uploaded successfully!" });
         }
     }
 }
