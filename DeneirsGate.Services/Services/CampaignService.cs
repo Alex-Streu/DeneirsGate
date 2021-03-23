@@ -54,6 +54,147 @@ namespace DeneirsGate.Services
             Completed
         }
 
+        public string GetCampaignName(Guid campaignId)
+        {
+            DBReset();
+            return DB.Campaigns.FirstOrDefault(x => x.CampaignKey == campaignId)?.Name;
+        }
+
+        public CampaignViewModel CreateCampaign(Guid campaignId)
+        {
+            DBReset();
+            if (DB.Campaigns.FirstOrDefault(x => x.CampaignKey == campaignId) != null)
+            {
+                return null;
+            }
+
+            return new CampaignViewModel
+            {
+                CampaignKey = campaignId
+            };
+        }
+
+        public CampaignViewModel GetCampaign(Guid userId, Guid campaignId)
+        {
+            UserHasAccess(userId, campaignId);
+
+            DBReset();
+            var campaign = CreateCampaign(campaignId);
+            if (campaign == null)
+            {
+                campaign = DB.Campaigns.Where(x => x.CampaignKey == campaignId).Select(x => new CampaignViewModel
+                {
+                    CampaignKey = x.CampaignKey,
+                    Description = x.Description,
+                    Name = x.Name,
+                    Portrait = x.Portrait,
+                    LastUpdated = x.LastUpdated
+                }).FirstOrDefault();
+            }
+
+            return campaign;
+        }
+
+        public void UpdateCampaign(Guid userId, CampaignPostModel model)
+        {
+            UserHasAccess(userId, model.CampaignKey);
+
+            DBReset();
+            var campaign = DB.Campaigns.FirstOrDefault(x => x.CampaignKey == model.CampaignKey);
+
+            var add = false;
+            if (campaign == null)
+            {
+                campaign = new Campaign
+                {
+                    CampaignKey = model.CampaignKey
+                };
+                add = true;
+            }
+
+            campaign.Name = model.Name;
+            campaign.Description = model.Description;
+            campaign.Portrait = model.Portrait;
+            campaign.LastUpdated = DateTime.Now;
+
+            if (add)
+            {
+                DB.Campaigns.Add(campaign);
+                DB.UserCampaigns.Add(new UserCampaign
+                {
+                    CampaignKey = model.CampaignKey,
+                    UserKey = userId,
+                    IsOwner = true
+                });
+            }
+
+            DB.SaveChanges();
+        }
+
+        public void DeleteCampaign(Guid userId, Guid campaignId)
+        {
+            UserHasAccess(userId, campaignId);
+
+            DBReset();
+
+            var arcs = DB.Arcs.Where(x => x.CampaignKey == campaignId).Select(x => x.ArcKey).ToList();
+            var characters = DB.CampaignCharacterLinkers.Where(x => x.CampaignKey == campaignId).Select(x => x.CharacterKey).ToList();
+            var dungeons = DB.CampaignDungeonLinkers.Where(x => x.CampaignKey == campaignId).Select(x => x.DungeonKey).ToList();
+            var traps = DB.CampaignTrapLinkers.Where(x => x.CampaignKey == campaignId).Select(x => x.TrapKey).ToList();
+            var trees = DB.RelationshipTrees.Where(x => x.CampaignKey == campaignId).Select(x => x.TreeKey).ToList();
+
+            //Arcs
+            var quests = DB.Quests.Where(x => arcs.Contains(x.ArcKey)).Select(x => x.QuestKey);
+            var questEvents = DB.QuestEvents.Where(x => quests.Contains(x.QuestKey)).Select(x => x.EventKey).ToList();
+            var eventEncounters = DB.QuestEventEncounters.Where(x => questEvents.Contains(x.EventKey)).Select(x => x.EncounterKey).ToList();
+            DB.ActivityLogs.RemoveRange(x => arcs.Contains(x.ArcKey));
+            DB.ArcCharacterLinkers.RemoveRange(x => arcs.Contains(x.ArcKey));
+            DB.ArcMapPins.RemoveRange(x => arcs.Contains(x.ArcKey));
+            DB.Quests.RemoveRange(x => arcs.Contains(x.ArcKey));
+            DB.QuestEvents.RemoveRange(x => quests.Contains(x.QuestKey));
+            DB.QuestEventEncounters.RemoveRange(x => eventEncounters.Contains(x.EventKey));
+            DB.Encounters.RemoveRange(x => eventEncounters.Contains(x.EncounterKey));
+            DB.EncounterItems.RemoveRange(x => eventEncounters.Contains(x.EncounterKey));
+            DB.EncounterMonsters.RemoveRange(x => eventEncounters.Contains(x.EncounterKey));
+
+            //Characters
+            DB.Characters.RemoveRange(x => characters.Contains(x.CharacterKey));
+            DB.CharacterSpells.RemoveRange(x => characters.Contains(x.CharacterKey));
+            DB.CharacterWeapons.RemoveRange(x => characters.Contains(x.CharacterKey));
+
+            //Dungeons
+            var tiles = DB.DungeonTiles.Where(x => dungeons.Contains(x.DungeonKey)).Select(x => x.TileKey).ToList();
+            var tileEncounters = DB.DungeonTileEncounters.Where(x => tiles.Contains(x.TileKey)).Select(x => x.EncounterKey).ToList();
+            DB.Dungeons.RemoveRange(x => dungeons.Contains(x.DungeonKey));
+            DB.DungeonTiles.RemoveRange(x => dungeons.Contains(x.DungeonKey));
+            DB.DungeonTileEncounters.RemoveRange(x => tiles.Contains(x.TileKey));
+            DB.DungeonTileTraps.RemoveRange(x => tiles.Contains(x.TileKey));
+            DB.Encounters.RemoveRange(x => tileEncounters.Contains(x.EncounterKey));
+            DB.EncounterItems.RemoveRange(x => tileEncounters.Contains(x.EncounterKey));
+            DB.EncounterMonsters.RemoveRange(x => tileEncounters.Contains(x.EncounterKey));
+
+            //Traps
+            DB.Traps.RemoveRange(x => traps.Contains(x.TrapKey));
+
+            //Relationship Trees
+            DB.RelationshipTreeCharacters.RemoveRange(x => trees.Contains(x.TreeKey));
+            DB.RelationshipTreeTiers.RemoveRange(x => trees.Contains(x.TreeKey));
+
+            DB.Campaigns.RemoveRange(x => x.CampaignKey == campaignId);
+            DB.Arcs.RemoveRange(x => x.CampaignKey == campaignId);
+            DB.CampaignCharacterLinkers.RemoveRange(x => x.CampaignKey == campaignId);
+            DB.CampaignDungeonLinkers.RemoveRange(x => x.CampaignKey == campaignId);
+            //DB.CampaignPlayerLinkers.RemoveRange(x => x.CampaignKey == campaignId);
+            DB.CampaignTrapLinkers.RemoveRange(x => x.CampaignKey == campaignId);
+            DB.CharacterLogs.RemoveRange(x => x.CampaignKey == campaignId);
+            //DB.DungeonLogs.RemoveRange(x => x.CampaignKey == campaignId);
+            DB.QuestEventLogs.RemoveRange(x => x.CampaignKey == campaignId);
+            DB.RelationshipTrees.RemoveRange(x => x.CampaignKey == campaignId);
+            DB.UserCampaigns.RemoveRange(x => x.CampaignKey == campaignId);
+
+            DB.SaveChanges();
+        }
+
         public List<CampaignViewModel> GetCampaigns(Guid userId, bool isOwner)
         {
             var campaigns = new List<CampaignViewModel>();
@@ -279,7 +420,7 @@ namespace DeneirsGate.Services
             var arc = new ArcViewModel();
             using (DBReset())
             {
-                var arcKey = DB.Arcs.Where(x => x.IsActive).Select(x => x.ArcKey).FirstOrDefault();
+                var arcKey = DB.Arcs.Where(x => x.IsActive && x.CampaignKey == campaignId).Select(x => x.ArcKey).FirstOrDefault();
                 arc = GetArc(userId, campaignId, arcKey);
             }
 

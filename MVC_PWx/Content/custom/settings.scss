@@ -20,6 +20,10 @@ $orange: #b94706;
     color: $red;
 }
 
+.white {
+    color: $white;
+}
+
 .background-red {
     background-color: $red;
 }
@@ -59,6 +63,12 @@ a {
     &:active {
         cursor: grabbing;
     }
+}
+
+.dropdown-menu.dropdown-right {
+    left: 0%;
+    right: auto;
+    transform: translateX(-75%)
 }
 
 

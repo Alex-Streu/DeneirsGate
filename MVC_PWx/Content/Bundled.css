@@ -2,6 +2,9 @@
 .red {
   color: #ce0606; }
 
+.white {
+  color: #fcfcfc; }
+
 .background-red {
   background-color: #ce0606; }
 
@@ -32,6 +35,11 @@ a {
   cursor: grab; }
   .handle:active {
     cursor: grabbing; }
+
+.dropdown-menu.dropdown-right {
+  left: 0%;
+  right: auto;
+  transform: translateX(-75%); }
 
 /* ANIMATIONS */
 @-webkit-keyframes glow {

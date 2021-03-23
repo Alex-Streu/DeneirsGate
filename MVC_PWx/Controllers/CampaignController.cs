@@ -2,6 +2,7 @@
 using MVC_PWx.Helpers;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
@@ -83,6 +84,67 @@ namespace MVC_PWx.Controllers
             catch (Exception ex) { }
 
             return View(campaigns);
+        }
+
+        [HasAccess(Priviledge = AppLogic.Priviledge.DM)]
+        public ActionResult Create()
+        {
+            return RedirectToAction("Edit", new { id = Guid.NewGuid(), isNew = true });
+        }
+
+        [HasAccess(Priviledge = AppLogic.Priviledge.DM)]
+        public ActionResult Edit(Guid id, bool isNew = false)
+        {
+            var model = new CampaignViewModel();
+            try
+            {
+                model = CampaignSvc.GetCampaign(AppUser.UserId, id);
+
+                ViewBag.IsNew = isNew;
+            }
+            catch (Exception ex) { }
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public JsonResult Update(CampaignPostModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    CampaignSvc.UpdateCampaign(AppUser.UserId, model);
+                }
+                catch (Exception ex)
+                {
+                    return Json(new { success = false, message = ex.Message });
+                }
+
+                return Json(new { success = true, message = "Updated successfully!" });
+            }
+            return Json(new { success = false, message = GetValidationError() });
+        }
+
+        [HttpPost]
+        [HasAccess(Priviledge = AppLogic.Priviledge.DM)]
+        public JsonResult Delete(Guid id)
+        {
+            try
+            {
+                CampaignSvc.DeleteCampaign(AppUser.UserId, id);
+
+                var path = AppLogic.GetCampaignContentDir(id);
+                var fullPath = Server.MapPath(path);
+                var dirInfo = new DirectoryInfo(fullPath);
+                dirInfo.Delete(true);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+
+            return Json(new { success = true, message = "Deleted successfully!" });
         }
 
         [HasAccess(Priviledge = AppLogic.Priviledge.DM)]
@@ -290,6 +352,11 @@ namespace MVC_PWx.Controllers
                 {
                     EventSvc.DeleteEncounter(encounter);
                 }
+
+                var path = AppLogic.GetArcMapContentDir(AppUser.ActiveCampaign.Value, id);
+                var fullPath = Server.MapPath(path);
+                var dirInfo = new DirectoryInfo(fullPath);
+                dirInfo.Delete(true);
             }
             catch (Exception ex)
             {

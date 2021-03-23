@@ -32,6 +32,25 @@ namespace MVC_PWx.Controllers
             get { return (Dictionary<string, DateTime>)HttpContext.Application["OnlineUsers"]; }
         }
 
+        public string CampaignName
+        {
+            get
+            {
+                var name = (string)HttpContext.Application["CampaignName"];
+                if (name == null && AppUser.ActiveCampaign != null)
+                {
+                    name = CampaignSvc.GetCampaignName(AppUser.ActiveCampaign.GetValueOrDefault());
+                }
+
+                return name;
+            }
+
+            set
+            {
+                HttpContext.Application["CampaignName"] = value;
+            }
+        }
+
         public ApplicationUser AppUser
         {
             get
@@ -200,6 +219,7 @@ namespace MVC_PWx.Controllers
                 ViewBag.Notifications = UserSvc.GetNotifications(AppUser.UserId);
                 ViewBag.Friends = UserSvc.GetFriends(AppUser.UserId, (Dictionary<string, DateTime>)HttpContext.Application["OnlineUsers"], true);
                 ViewBag.CampaignKey = AppUser.ActiveCampaign.GetValueOrDefault();
+                ViewBag.CampaignName = CampaignName;
             }
 
             base.OnActionExecuted(filterContext);

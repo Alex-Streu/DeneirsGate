@@ -2,6 +2,7 @@
 using MVC_PWx.Helpers;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Web.Mvc;
 
 namespace MVC_PWx.Controllers
@@ -94,6 +95,11 @@ namespace MVC_PWx.Controllers
             try
             {
                 CharacterSvc.DeleteCharacter(AppUser.UserId, AppUser.ActiveCampaign.Value, id);
+
+                var path = AppLogic.GetCharacterContentDir(AppUser.ActiveCampaign.Value, id);
+                var fullPath = Server.MapPath(path);
+                var dirInfo = new DirectoryInfo(fullPath);
+                dirInfo.Delete(true);
             }
             catch (Exception ex)
             {

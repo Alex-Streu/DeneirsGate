@@ -61,11 +61,21 @@ namespace CustomHtmlHelpers
             return list;
         }
 
-        public static string CampaignPortrait(this UrlHelper urlHelper, Guid campaignKey, string image)
+        public static string CampaignPortrait(this UrlHelper urlHelper, Guid campaignKey, string image, bool useDefault = true)
         {
             var path = AppLogic.GetCampaignContentDir(campaignKey);
 
-            if (image.IsNullOrEmpty()) { return urlHelper.Content(AppLogic.GetDefaultCampaignImage()); }
+            if (image.IsNullOrEmpty()) 
+            {
+                if (useDefault)
+                {
+                    return urlHelper.Content(AppLogic.GetDefaultCampaignImage());
+                }
+                else
+                {
+                    return "";
+                }
+            }
             return urlHelper.Content(path + image);
         }
 
@@ -175,6 +185,18 @@ namespace CustomHtmlHelpers
                             <input {(!id.IsNullOrEmpty() ? $"id='{id}' name='{id}'" : "")} type='text' class='image-name hidden' value='{value}' />
                             <input class='uploader hidden user-image' type='file' name='file' accept='image/*' />
                             <img class='hidden' src='{urlHelper.ArcMap(campaignKey, contentKey, value)}'/>
+                        </div>";
+
+            return new MvcHtmlString(str);
+        }
+
+        public static MvcHtmlString RenderCampaignPortraitUpload(this UrlHelper urlHelper, string id, string value, Guid campaignKey)
+        {
+            var str = $@"<div data-campaign='{campaignKey}'>
+                            <div class='btn btn-warning image-upload'><i class='fa fa-upload'></i>&nbsp;Upload Image</div>
+                            <input {(!id.IsNullOrEmpty() ? $"id='{id}' name='{id}'" : "")} type='text' class='image-name hidden' value='{value}' />
+                            <input class='uploader hidden user-image' type='file' name='file' accept='image/*' />
+                            <div class='mt'><img class='img-responsive' src='{urlHelper.CampaignPortrait(campaignKey, value, false)}'/></div>
                         </div>";
 
             return new MvcHtmlString(str);

@@ -29,7 +29,7 @@ namespace DeneirsGate.Services
 
             using (DBReset())
             {
-                if (DB.UserCampaigns.FirstOrDefault(x => x.UserKey == userId && x.CampaignKey == campaignId && x.IsOwner) != null)
+                if (DB.UserCampaigns.FirstOrDefault(x => x.UserKey == userId && x.CampaignKey == campaignId && x.IsOwner) != null || DB.Campaigns.FirstOrDefault(x => x.CampaignKey == campaignId) == null)
                 {
                     hasAccess = true;
                 }
