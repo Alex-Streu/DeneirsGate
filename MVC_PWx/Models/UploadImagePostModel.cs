@@ -23,4 +23,10 @@ namespace DeneirsGate.Services
     {
         public Guid CampaignKey { get; set; }
     }
+
+    public class UploadFilePostModel
+    {
+        public string Name { get; set; }
+        public string File { get; set; }
+    }
 }

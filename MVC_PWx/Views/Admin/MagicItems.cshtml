@@ -1,0 +1,44 @@
+﻿
+@{
+    ViewBag.Title = "Monsters";
+    ViewBag.MenuOption = "menu_Monsters";
+}
+
+<h2>Magic Items</h2>
+
+<div class="content-box">
+    <form id="magicItemForm" enctype="multipart/form-data">
+        <div class="flexbox-container items-end">
+            <div class="form-group">
+                <label>Magic Items List</label>
+                <input type="file" id="MagicItems" name="MagicItems" />
+            </div>
+            <input class="btn btn-default" type="submit" name="Submit" value="Submit" />
+        </div>
+    </form>
+</div>
+
+@section scripts {
+    <script type="text/javascript">
+        $('#magicItemForm').submit(function () {
+            var formdata = new FormData(); //FormData object
+            formdata.append($('#MagicItems').attr('name'), $('#MagicItems')[0].files[0]);
+            //Creating an XMLHttpRequest and sending
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', '@Url.Action("UploadMagicItemList")');
+            xhr.responseType = 'json';
+            xhr.send(formdata);
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    var data = xhr.response;
+                    if (data.success) {
+                        Notiflix.NotifyContent.Success(data.message);
+                    } else {
+                        Notiflix.NotifyContent.Failure(data.message);
+                    }
+                }
+            }
+            return false;
+        })
+    </script>
+}

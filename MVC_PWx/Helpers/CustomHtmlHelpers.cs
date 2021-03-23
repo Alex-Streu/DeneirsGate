@@ -61,11 +61,21 @@ namespace CustomHtmlHelpers
             return list;
         }
 
-        public static string CampaignPortrait(this UrlHelper urlHelper, Guid campaignKey, string image)
+        public static string CampaignPortrait(this UrlHelper urlHelper, Guid campaignKey, string image, bool useDefault = true)
         {
             var path = AppLogic.GetCampaignContentDir(campaignKey);
 
-            if (image.IsNullOrEmpty()) { return urlHelper.Content(AppLogic.GetDefaultCampaignImage()); }
+            if (image.IsNullOrEmpty()) 
+            {
+                if (useDefault)
+                {
+                    return urlHelper.Content(AppLogic.GetDefaultCampaignImage());
+                }
+                else
+                {
+                    return "";
+                }
+            }
             return urlHelper.Content(path + image);
         }
 
@@ -104,6 +114,11 @@ namespace CustomHtmlHelpers
         public static MvcHtmlString RenderDateTime(DateTime date)
         {
             var str = date.ToString("M/d/yyyy H:mm tt");
+            return new MvcHtmlString(str);
+        }
+        public static MvcHtmlString RenderDate(DateTime date)
+        {
+            var str = date.ToString("M/d/yyyy");
             return new MvcHtmlString(str);
         }
 
@@ -155,7 +170,7 @@ namespace CustomHtmlHelpers
         {
             var str = $@"<div class='upload-image' data-campaign='{campaignKey}'>
                             <input {(!id.IsNullOrEmpty() ? $"id='{id}' name='{id}'" : "")} type='text' class='image-name hidden' value='{value}' />
-                            <input class='uploader hidden' type='file' name='file' accept='image/*' />
+                            <input class='uploader hidden user-image' type='file' name='file' accept='image/*' />
                             <img class='img-xs img-responsive' src='{urlHelper.CharacterPortrait(campaignKey, contentKey, value)}' />
                             <div class='overlay'></div>
                         </div>";
@@ -168,8 +183,20 @@ namespace CustomHtmlHelpers
             var str = $@"<div data-campaign='{campaignKey}'>
                             <div class='btn btn-warning image-upload'><i class='fa fa-upload'></i>&nbsp;Upload Image</div>
                             <input {(!id.IsNullOrEmpty() ? $"id='{id}' name='{id}'" : "")} type='text' class='image-name hidden' value='{value}' />
-                            <input class='uploader hidden' type='file' name='file' accept='image/*' />
+                            <input class='uploader hidden user-image' type='file' name='file' accept='image/*' />
                             <img class='hidden' src='{urlHelper.ArcMap(campaignKey, contentKey, value)}'/>
+                        </div>";
+
+            return new MvcHtmlString(str);
+        }
+
+        public static MvcHtmlString RenderCampaignPortraitUpload(this UrlHelper urlHelper, string id, string value, Guid campaignKey)
+        {
+            var str = $@"<div data-campaign='{campaignKey}'>
+                            <div class='btn btn-warning image-upload'><i class='fa fa-upload'></i>&nbsp;Upload Image</div>
+                            <input {(!id.IsNullOrEmpty() ? $"id='{id}' name='{id}'" : "")} type='text' class='image-name hidden' value='{value}' />
+                            <input class='uploader hidden user-image' type='file' name='file' accept='image/*' />
+                            <div class='mt'><img class='img-responsive' src='{urlHelper.CampaignPortrait(campaignKey, value, false)}'/></div>
                         </div>";
 
             return new MvcHtmlString(str);

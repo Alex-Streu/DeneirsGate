@@ -7,9 +7,25 @@
     ViewBag.MenuOption = "Campaign";
 }
 
+@section Css {
+    <style type="text/css">
+        .campaign-options {
+            position: absolute;
+            top: 2px;
+            right: 2px;
+        }
+    </style>
+}
+
+<h2>Campaigns</h2>
+<br />
+<div class="flexbox-container justify-between">
+    @HtmlHelpers.RenderFancyTextbox("lg long", "SearchCampaigns", null, "", "Search Campaigns")
+    <a class="btn btn-default" href="@Url.Action("Create")">Create Campaign</a>
+</div>
 @foreach (var item in Model)
 {
-    <div class="campaign-list-item" data-href="@Url.Action("ActivateCampaign", "Campaign", new { id = item.CampaignKey })">
+    <div id="@item.CampaignKey" class="campaign-list-item" data-href="@Url.Action("ActivateCampaign", "Campaign", new { id = item.CampaignKey })" style="position:relative">
         <div class="campaign-info">
             <div class="name">@item.Name</div>
             <div class="description">@item.Description</div>
@@ -19,13 +35,75 @@
         </div>
         <div class="flex-break"></div>
         <div class="date">Last Updated: @HtmlHelpers.RenderDateTime(item.LastUpdated)</div>
+        <div class="campaign-options" style="display:none">
+            <div class="btn-group btn-group-sm dropleft">
+                <a class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown" href="#">
+                    <i class="fa fa-pencil pad-right"></i>
+                    <span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu dropdown-right">
+                    <!-- dropdown menu links -->
+                    <li><a href="@Url.Action("Edit", new { id = item.CampaignKey })"><i class="fa fa-font pad-right"></i>&nbsp;Edit</a></li>
+                    <li class="divider"></li>
+                    <li><a href="#" onclick="promptDelete(`deleteItem('@item.CampaignKey')`)" class="tile-delete red"><i class="fa fa-trash pad-right"></i>&nbsp;Delete</a></li>
+                </ul>
+            </div>
+        </div>
     </div>
 }
 
 @section scripts {
     <script type="text/javascript">
+        var deleteAction = '@Url.Action("Delete")';
+
         $('.campaign-list-item').click(function () {
             window.location.assign($(this).data('href'));
         });
+        $('.campaign-list-item').mouseenter(function () {
+            $(this).find('.campaign-options').show();
+        });
+        $('.campaign-list-item').mouseleave(function () {
+            $(this).find('.campaign-options').hide();
+        });
+        $(".campaign-options").click(function (e) {
+            e.stopPropagation();
+            $(this).find('.dropdown-menu').toggle();
+        });
+        $('#SearchCampaigns').keyup(function () {
+            var search = $(this).val().toLowerCase();
+            $('.campaign-list-item').each(function () {
+                var name = $(this).find('.name').text().toLowerCase();
+                if (name.indexOf(search) > -1) {
+                    $(this).show();
+                }
+                else {
+                    $(this).hide();
+                }
+            })
+        })
+
+        function deleteItem(id) {
+            var postData = { id: id };
+
+            $.ajax({
+                type: "POST",
+                url: deleteAction,
+                data: JSON.stringify(postData),
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data.success) {
+                        Notiflix.NotifyContent.Success(data.message);
+                        $(`#${id}`).remove();
+
+                    } else {
+                        Notiflix.NotifyContent.Failure(data.message);
+                    }
+                },
+                error: function (error) {
+                    Notiflix.NotifyContent.Failure(error.responseText);
+                }
+            })
+        }
     </script>
 }

@@ -14,6 +14,20 @@ namespace DeneirsGate.Services
         public DateTime LastUpdated { get; set; }
     }
 
+    public class CampaignPostModel
+    {
+        public Guid CampaignKey { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public string Portrait { get; set; }
+        public DateTime LastUpdated { get; set; }
+    }
+
+    public class CampaignDeleteModel
+    {
+        public Guid CampaignKey { get; set; }
+    }
+
     public class CampaignDashboardViewModel
     {
         public Guid CampaignKey { get; set; }
@@ -104,6 +118,13 @@ namespace DeneirsGate.Services
         public EncounterPostModel Encounter { get; set; }
     }
 
+    public class QuestStatusPostModel
+    {
+        public Guid ArcKey { get; set; }
+        public Guid QuestKey { get; set; }
+        public QuestStatus Status { get; set; }
+    }
+
     public class ArcCharacterViewModel : CharacterShortViewModel
     {
         public bool IsSelected { get; set; }
@@ -114,5 +135,31 @@ namespace DeneirsGate.Services
         public Guid ArcKey { get; set; }
         public Guid CharacterKey { get; set; }
         public bool Add { get; set; }
+    }
+
+    public class ActivityLogPostModel
+    {
+        public Guid LogKey { get; set; } = Guid.NewGuid();
+        public Guid ArcKey { get; set; }
+        public string LogDescription { get; set; }
+        public ActivityLogType Type { get; set; }
+        public Guid? ContentKey { get; set; }
+    }
+
+    public class ActivityLogDeleteModel
+    {
+        public Guid LogKey { get; set; }
+        public Guid ArcKey { get; set; }
+    }
+
+    public class ActivityLogViewModel
+    {
+        public Guid LogKey { get; set; }
+        public Guid ArcKey { get; set; }
+        public Guid? ContentKey { get; set; }
+        public ActivityLogType Type { get; set; }
+        public string LogDescription { get; set; }
+        public string ContentName { get; set; }
+        public DateTime LogDate { get; set; }
     }
 }

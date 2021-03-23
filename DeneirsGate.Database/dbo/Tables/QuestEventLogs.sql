@@ -1,0 +1,7 @@
+﻿CREATE TABLE [dbo].[QuestEventLogs]
+(
+	[CampaignKey] UNIQUEIDENTIFIER NOT NULL, 
+	[LogKey] UNIQUEIDENTIFIER NOT NULL, 
+    [EventKey] UNIQUEIDENTIFIER NOT NULL
+	CONSTRAINT [PK_QuestEventLogs] PRIMARY KEY NONCLUSTERED ([CampaignKey], [LogKey], [EventKey])
+)

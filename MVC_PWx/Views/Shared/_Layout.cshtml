@@ -232,10 +232,18 @@
                                 <ul class="sub">
                                     <li><a id="menu_Users" href="@Url.Action("Users", "Admin")">Users</a></li>
                                     <li><a id="menu_Roles" href="@Url.Action("Roles", "Admin")">Roles</a></li>
+                                    <li><a id="menu_Monsters" href="@Url.Action("Monsters", "Admin")">Monster Upload</a></li>
+                                    <li><a id="menu_Monsters" href="@Url.Action("MagicItems", "Admin")">Magic Item Upload</a></li>
                                 </ul>
                             </li>
                         }
-                        <li class="mt">
+                        @if (ViewBag.CampaignName != null)
+                        {
+                            <li class="mt" style="border-bottom:1px solid">
+                                <label class="text-md white">@ViewBag.CampaignName</label>
+                            </li>
+                        }
+                        <li class="@(ViewBag.CampaignName != null ? "" : "mt")">
                             <a id="menu_Dashboard" data-alt="/" href="@Url.Action("/", "Campaign")">
                                 <i class="fa fa-dashboard"></i>
                                 <span>Dashboard</span>
@@ -513,6 +521,8 @@
     </div>
 
     @Scripts.Render("~/bundles/jquery")
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script>$.widget.bridge('uitooltip', $.ui.tooltip);</script>
     @Scripts.Render("~/bundles/bootstrap")
     @Scripts.Render("~/bundles/extensions")
     @Scripts.Render("~/bundles/charts")

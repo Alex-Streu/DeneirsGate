@@ -1,0 +1,40 @@
+﻿@using DeneirsGate.Services
+@model List<ActivityLogViewModel>
+
+<style type="text/css">
+    .log-options {
+        position: absolute;
+        top: 2px;
+        right: 2px;
+    }
+</style>
+
+
+@foreach (var log in Model)
+{
+    <div id="@log.LogKey" class="log-record" style="position:relative">
+        <input class="log-type" type="hidden" value="@((int)log.Type)" />
+        <input class="log-contentKey" type="hidden" value="@log.ContentKey" />
+        @if (!log.ContentName.IsNullOrEmpty())
+        {
+            <label class="text-medium text-bold red log-content">@log.ContentName</label>
+            <br />
+        }
+        <label class="red">@HtmlHelpers.RenderDate(log.LogDate)</label>
+        <p class="log-description">@log.LogDescription</p>
+        <div class="log-options" style="display:none">
+            <div class="btn-group btn-group-sm dropleft">
+                <a class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown" href="#">
+                    <i class="fa fa-pencil pad-right"></i>
+                    <span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu dropdown-right">
+                    <!-- dropdown menu links -->
+                    <li><a href="#" onclick="editLog('@log.LogKey')"><i class="fa fa-font pad-right"></i>&nbsp;Edit</a></li>
+                    <li class="divider"></li>
+                    <li><a href="#" onclick="promptDelete(`deleteLog('@log.LogKey')`)" class="tile-delete red"><i class="fa fa-trash pad-right"></i>&nbsp;Delete</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+}

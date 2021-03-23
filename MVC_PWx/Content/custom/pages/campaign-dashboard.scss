@@ -100,6 +100,30 @@
     * {
         box-sizing: border-box;
     }
+
+    .status {
+        height: 25px;
+        width: 25px;
+        background-color: #000;
+        border-radius: 50%;
+        display: inline-block;
+
+        &.quest-incomplete {
+            background-color: $gray !important;
+        }
+
+        &.quest-in-progress {
+            background-color: $pending !important;
+        }
+
+        &.quest-abandoned {
+            background-color: $red !important;
+        }
+
+        &.quest-completed {
+            background-color: $green !important;
+        }
+    }
     /* The actual timeline (the vertical ruler) */
     .timeline {
         position: relative;
@@ -238,6 +262,31 @@
     }
 }
 
+#dashboard-right-panel {
+    width: 23%;
+    height: 50em;
+
+    #log-panel {
+        height: 100%;
+        width: 100%;
+        padding: 1em 0.5em 0.5em 0.5em;
+    }
+
+    #log-records {
+        height: 90%;
+        overflow-y: scroll;
+        padding-right: 0.5em;
+    }
+}
+
+.log-record {
+    border: 1px solid $lightGray;
+    box-shadow: 3px 2px 4px 1px rgba(0, 0, 0, 0.2);
+    margin: 0.5em 0em;
+    padding: 0.5em;
+    background-color: $white;
+}
+
 .dashboard-players {
     display: flex;
     justify-content: flex-start;
@@ -264,6 +313,7 @@
             width: 200px;
             height: 100px;
             padding: 15px;
+            z-index: 10;
             background-image: url(/Content/img/campaigns/player-info-background.png);
             text-shadow: 2px 2px 4px #000000;
 
@@ -318,15 +368,19 @@
     text-align: center;
     cursor: pointer;
 
-    &.abandoned {
+    &.quest-incomplete {
+        border-color: $gray;
+    }
+
+    &.quest-abandoned {
         border-color: $red;
     }
 
-    &.completed {
+    &.quest-completed {
         border-color: $green;
     }
 
-    &.in-progress {
+    &.quest-in-progress {
         border-color: $pending;
     }
 

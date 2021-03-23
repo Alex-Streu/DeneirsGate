@@ -145,6 +145,76 @@ namespace DeneirsGate.Services
             }
         }
 
+        public void UploadMonster(Guid userId, string name, string description, string size, string type, string alignment, string speed, string cr)
+        {
+            DBReset();
+
+            if (name.Contains(","))
+            {
+                var nameList = name.Split(',');
+                var tempName = "";
+                for (var i = nameList.Count() - 1; i >= 0; i--)
+                {
+                    tempName += nameList[i].Trim() + " ";
+                }
+                name = tempName.Trim();
+            }
+
+            // Do not upload monster if it already exists by name
+            if (DB.Monsters.Where(x => x.Name == name).FirstOrDefault() != null) { return; }
+
+            var sizeKey = DB.MonsterSizes.Where(x => x.Name == size).Select(x => x.SizeKey).FirstOrDefault();
+            var typeKey = DB.MonsterTypes.Where(x => x.Name == type).Select(x => x.TypeKey).FirstOrDefault();
+            var strCR = "";
+            var floatCR = 0f;
+            float.TryParse(cr, out floatCR);
+            if (floatCR < 1f && floatCR > 0f)
+            {
+                var div = 1f / floatCR;
+                strCR = $"1/{div}";
+            }
+            else { strCR = cr; }
+            var crKey = DB.MonsterChallengeRatings.Where(x => x.Challenge == strCR).Select(x => x.RatingKey).FirstOrDefault();
+
+            speed = speed.Replace("0", "0ft");
+            speed = speed.Replace("50", "~");
+            speed = speed.Replace("5", "5ft");
+            speed = speed.Replace("~", "50");
+
+            var monster = new MonsterPostModel
+            {
+                Alignment = alignment,
+                ChallengeRating = crKey,
+                MonsterKey = Guid.NewGuid(),
+                Name = name,
+                Size = sizeKey,
+                Speed = speed,
+                Type = typeKey,
+                IsCustom = false
+            };
+
+            UpdateMonster(userId, monster);
+        }
+
+        public void UploadMonsterEnvironments(string monster, string environment)
+        {
+            DBReset();
+
+            var envKey = DB.Environments.Where(x => x.Name.ToLower() == environment.ToLower()).Select(x => x.EnvironmentKey).FirstOrDefault();
+            var monsterKey = DB.Monsters.Where(x => x.Name.ToLower() == monster.ToLower()).Select(x => x.MonsterKey).FirstOrDefault();
+
+            if (envKey != Guid.Empty && monsterKey != Guid.Empty && DB.MonsterEnvironmentLinkers.FirstOrDefault(x => x.MonsterKey == monsterKey && x.EnvironmentKey == envKey) == null)
+            {
+                DB.MonsterEnvironmentLinkers.Add(new MonsterEnvironmentLinker
+                {
+                    MonsterKey = monsterKey,
+                    EnvironmentKey = envKey
+                });
+
+                DB.SaveChanges();
+            }
+        }
+
         public void Delete(Guid userId, Guid monsterId, bool isAdmin = false)
         {
             //Add user access for custom

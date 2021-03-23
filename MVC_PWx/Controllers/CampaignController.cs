@@ -2,6 +2,7 @@
 using MVC_PWx.Helpers;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
@@ -32,12 +33,44 @@ namespace MVC_PWx.Controllers
                 model.NPCs = CharacterSvc.GetArcCharacters(AppUser.UserId, AppUser.ActiveCampaign.Value, characters);
                 model.Players = CharacterSvc.GetPlayerShorts(AppUser.UserId, AppUser.ActiveCampaign.Value);
 
-                ViewBag.Arcs = new SelectList(arcs, "ArcKey", "Name");
+                //Generate Character Dropdown List
+                var characterList = model.NPCs.Where(x => x.IsSelected).Select(x => new { CharacterKey = x.CharacterKey, Name = x.FirstName + " " + x.LastName }).ToList();
+                characterList.AddRange(model.Players.Select(x => new { CharacterKey = x.CharacterKey, Name = x.FirstName + " " + x.LastName }).ToList());
 
+                //Generate Quest Events List
+                var eventsList = new Dictionary<string, string>();
+                foreach (var quest in model.Arc.Quests)
+                {
+                    foreach (var qEvent in quest.Events)
+                    {
+                        eventsList.Add($"{quest.QuestKey}_{qEvent.EventKey}", qEvent.Name);
+                    }
+                }
+
+                ViewBag.Arcs = new SelectList(arcs, "ArcKey", "Name");
+                ViewBag.ActivityLogTypes = new SelectList(CampaignSvc.GetLogTypes(), "Key", "Value");
+                ViewBag.ArcCharacters = new SelectList(characterList.OrderBy(x => x.Name), "CharacterKey", "Name");
+                ViewBag.ArcQuests = new SelectList(model.Arc.Quests, "QuestKey", "Name");
+                ViewBag.ArcEvents = new SelectList(eventsList, "Key", "Value");
             }
             catch (Exception ex) { }
 
             return View(model);
+        }
+
+        public PartialViewResult _ActivityLog(Guid? arcKey)
+        {
+            var model = new List<ActivityLogViewModel>();
+            try
+            {
+                if (arcKey.HasValue)
+                {
+                    model = CampaignSvc.GetActivityLog(arcKey.Value);
+                }
+            }
+            catch (Exception ex) { }
+
+            return PartialView(model);
         }
 
         [HasAccess(Priviledge = AppLogic.Priviledge.DM)]
@@ -51,6 +84,67 @@ namespace MVC_PWx.Controllers
             catch (Exception ex) { }
 
             return View(campaigns);
+        }
+
+        [HasAccess(Priviledge = AppLogic.Priviledge.DM)]
+        public ActionResult Create()
+        {
+            return RedirectToAction("Edit", new { id = Guid.NewGuid(), isNew = true });
+        }
+
+        [HasAccess(Priviledge = AppLogic.Priviledge.DM)]
+        public ActionResult Edit(Guid id, bool isNew = false)
+        {
+            var model = new CampaignViewModel();
+            try
+            {
+                model = CampaignSvc.GetCampaign(AppUser.UserId, id);
+
+                ViewBag.IsNew = isNew;
+            }
+            catch (Exception ex) { }
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public JsonResult Update(CampaignPostModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    CampaignSvc.UpdateCampaign(AppUser.UserId, model);
+                }
+                catch (Exception ex)
+                {
+                    return Json(new { success = false, message = ex.Message });
+                }
+
+                return Json(new { success = true, message = "Updated successfully!" });
+            }
+            return Json(new { success = false, message = GetValidationError() });
+        }
+
+        [HttpPost]
+        [HasAccess(Priviledge = AppLogic.Priviledge.DM)]
+        public JsonResult Delete(Guid id)
+        {
+            try
+            {
+                CampaignSvc.DeleteCampaign(AppUser.UserId, id);
+
+                var path = AppLogic.GetCampaignContentDir(id);
+                var fullPath = Server.MapPath(path);
+                var dirInfo = new DirectoryInfo(fullPath);
+                dirInfo.Delete(true);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+
+            return Json(new { success = true, message = "Deleted successfully!" });
         }
 
         [HasAccess(Priviledge = AppLogic.Priviledge.DM)]
@@ -78,6 +172,54 @@ namespace MVC_PWx.Controllers
             }
 
             return Json(new { success = true, message = "Character added successfully!" });
+        }
+
+        [HttpPost]
+        [HasAccess(Priviledge = AppLogic.Priviledge.DM)]
+        public JsonResult UpdateActivityLog(ActivityLogPostModel model)
+        {
+            try
+            {
+                CampaignSvc.UpdateActivityLog(AppUser.UserId, AppUser.ActiveCampaign.Value, model.ArcKey, model.LogKey, model.LogDescription, model.Type, model.ContentKey);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+
+            return Json(new { success = true, message = "Log added successfully!" });
+        }
+
+        [HttpPost]
+        [HasAccess(Priviledge = AppLogic.Priviledge.DM)]
+        public JsonResult UpdateQuestStatus(QuestStatusPostModel model)
+        {
+            try
+            {
+                CampaignSvc.UpdateQuestStatus(AppUser.UserId, model.ArcKey, model.QuestKey, model.Status);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+
+            return Json(new { success = true, message = "Quest status updated successfully!" });
+        }
+
+        [HttpPost]
+        [HasAccess(Priviledge = AppLogic.Priviledge.DM)]
+        public JsonResult DeleteActivityLog(ActivityLogDeleteModel model)
+        {
+            try
+            {
+                CampaignSvc.DeleteActivityLog(AppUser.UserId, AppUser.ActiveCampaign.Value, model.ArcKey, model.LogKey);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+
+            return Json(new { success = true, message = "Deleted successfully!" });
         }
 
         #endregion
@@ -210,6 +352,11 @@ namespace MVC_PWx.Controllers
                 {
                     EventSvc.DeleteEncounter(encounter);
                 }
+
+                var path = AppLogic.GetArcMapContentDir(AppUser.ActiveCampaign.Value, id);
+                var fullPath = Server.MapPath(path);
+                var dirInfo = new DirectoryInfo(fullPath);
+                dirInfo.Delete(true);
             }
             catch (Exception ex)
             {

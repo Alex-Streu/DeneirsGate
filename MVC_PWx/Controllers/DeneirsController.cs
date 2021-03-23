@@ -32,11 +32,38 @@ namespace MVC_PWx.Controllers
             get { return (Dictionary<string, DateTime>)HttpContext.Application["OnlineUsers"]; }
         }
 
+        public string CampaignName
+        {
+            get
+            {
+                var name = (string)HttpContext.Application["CampaignName"];
+                if (name == null && AppUser.ActiveCampaign != null)
+                {
+                    name = CampaignSvc.GetCampaignName(AppUser.ActiveCampaign.GetValueOrDefault());
+                }
+
+                return name;
+            }
+
+            set
+            {
+                HttpContext.Application["CampaignName"] = value;
+            }
+        }
+
         public ApplicationUser AppUser
         {
             get
             {
-                if (appUser == null) { appUser = UserManager.FindByName(User.Identity.Name); }
+                if (appUser == null) 
+                {
+                    appUser = (ApplicationUser)HttpContext.Application["AppUser"];
+                    if (appUser == null)
+                    {
+                        appUser = UserManager.FindByName(User.Identity.Name);
+                        HttpContext.Application["AppUser"] = appUser;
+                    }
+                }
                 return appUser;
             }
         }
@@ -176,7 +203,11 @@ namespace MVC_PWx.Controllers
             if (updateUser)
             {
                 AppUser.ActiveCampaign = campaign;
-                UserManager.Update(AppUser);
+                HttpContext.Application["AppUser"] = AppUser;
+
+                var user = UserManager.FindByName(User.Identity.Name);
+                user.ActiveCampaign = campaign;
+                UserManager.Update(user);
             }
         }
 
@@ -187,7 +218,8 @@ namespace MVC_PWx.Controllers
                 ViewBag.User = AppUser;
                 ViewBag.Notifications = UserSvc.GetNotifications(AppUser.UserId);
                 ViewBag.Friends = UserSvc.GetFriends(AppUser.UserId, (Dictionary<string, DateTime>)HttpContext.Application["OnlineUsers"], true);
-                ViewBag.CampaignKey = AppUser.ActiveCampaign.Value;
+                ViewBag.CampaignKey = AppUser.ActiveCampaign.GetValueOrDefault();
+                ViewBag.CampaignName = CampaignName;
             }
 
             base.OnActionExecuted(filterContext);
