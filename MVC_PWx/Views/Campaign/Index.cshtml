@@ -57,35 +57,37 @@
             @if (Model.Arc.Map != null)
             {
                 <div id="arc-pane" class="fancy-tab-pane slide-right active">
-                    <img src="@Url.ArcMap((Guid)ViewBag.CampaignKey, Model.Arc.ArcKey, Model.Arc.Map)" style="width:auto;max-height:600px" />
-                    @foreach (var pin in Model.Arc.Pins)
-                    {
-                        var quest = Model.Arc.Quests.FirstOrDefault(x => x.QuestKey == pin.QuestKey);
-                        var completeClass = "";
-                        switch (quest.Status)
+                    <div style="position:relative;width:100%;height:100%">
+                        <img class="img-responsive" src="@Url.ArcMap((Guid)ViewBag.CampaignKey, Model.Arc.ArcKey, Model.Arc.Map)" style="width:auto;max-height:600px" />
+                        @foreach (var pin in Model.Arc.Pins)
                         {
-                            case CampaignService.QuestStatus.Abandoned:
-                                completeClass = "quest-abandoned";
-                                break;
-                            case CampaignService.QuestStatus.Completed:
-                                completeClass = "quest-completed";
-                                break;
-                            case CampaignService.QuestStatus.InProgress:
-                                completeClass = "quest-in-progress";
-                                break;
-                            case CampaignService.QuestStatus.Incomplete:
-                                completeClass = "quest-incomplete";
-                                break;
-                        }
-                        <div id="map-@quest.QuestKey" class="map-label quest-explore @(completeClass)" style="top:@(pin.Y-20)px;left:@(pin.X-20)px" data-data="@(JsonConvert.SerializeObject(quest))">
-                            @(pin.Index + 1)
-                            @if (quest.Status == CampaignService.QuestStatus.InProgress)
+                            var quest = Model.Arc.Quests.FirstOrDefault(x => x.QuestKey == pin.QuestKey);
+                            var completeClass = "";
+                            switch (quest.Status)
                             {
-                                <div class="quest-flag" style="position:absolute;top:-40px;left:10px"><i class="red fa fa-2x fa-flag" style="text-shadow:2px 2px 2px #000"></i></div>
+                                case CampaignService.QuestStatus.Abandoned:
+                                    completeClass = "quest-abandoned";
+                                    break;
+                                case CampaignService.QuestStatus.Completed:
+                                    completeClass = "quest-completed";
+                                    break;
+                                case CampaignService.QuestStatus.InProgress:
+                                    completeClass = "quest-in-progress";
+                                    break;
+                                case CampaignService.QuestStatus.Incomplete:
+                                    completeClass = "quest-incomplete";
+                                    break;
                             }
-                            <div class="map-label-info">@quest.Name</div>
-                        </div>
-                    }
+                            <div id="map-@quest.QuestKey" class="map-label quest-explore @(completeClass)" style="top:@((pin.Y-20)/6)%;left:@((pin.X-20)/8)%" data-data="@(JsonConvert.SerializeObject(quest))">
+                                @(pin.Index + 1)
+                                @if (quest.Status == CampaignService.QuestStatus.InProgress)
+                                {
+                                    <div class="quest-flag" style="position:absolute;top:-40px;left:10px"><i class="red fa fa-2x fa-flag" style="text-shadow:2px 2px 2px #000"></i></div>
+                                }
+                                <div class="map-label-info">@quest.Name</div>
+                            </div>
+                        }
+                    </div>
                 </div>
             }
             <div id="timeline-pane" class="fancy-tab-pane slide-right @(Model.Arc.Map != null ? null : "active")" style="max-height:500px;overflow-y:auto">

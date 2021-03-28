@@ -206,6 +206,7 @@
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\MonsterController.cs" />
     <Compile Include="Controllers\RelationshipTreeController.cs" />
+    <Compile Include="Controllers\SettlementController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="Controllers\UtilityController.cs" />
     <Compile Include="Global.asax.cs">
@@ -639,6 +640,11 @@
     <Content Include="Views\Admin\Monsters.cshtml" />
     <Content Include="Views\Admin\MagicItems.cshtml" />
     <Content Include="Views\Campaign\Edit.cshtml" />
+    <Content Include="Views\Settlement\Index.cshtml" />
+    <Content Include="Views\Settlement\Edit.cshtml" />
+    <Content Include="Views\ContentSearch\_Settlements.cshtml" />
+    <Content Include="Views\ContentSearch\_Settlement.cshtml" />
+    <Content Include="Views\Settlement\Print.cshtml" />
     <None Include="Web.DEV.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

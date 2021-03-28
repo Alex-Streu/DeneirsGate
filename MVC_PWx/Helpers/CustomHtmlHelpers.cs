@@ -95,6 +95,14 @@ namespace CustomHtmlHelpers
             return urlHelper.Content(path);
         }
 
+        public static string SettlementMap(this UrlHelper urlHelper, Guid campaignKey, Guid settlementKey, string image)
+        {
+            var path = $"{AppLogic.GetSettlementMapContentDir(campaignKey, settlementKey)}{image}";
+
+            if (image.IsNullOrEmpty()) { return ""; }
+            return urlHelper.Content(path);
+        }
+
         public static string DefaultCharacterPortrait(this UrlHelper urlHelper)
         {
             return urlHelper.Content(AppLogic.GetDefaultPortrait());
@@ -197,6 +205,18 @@ namespace CustomHtmlHelpers
                             <input {(!id.IsNullOrEmpty() ? $"id='{id}' name='{id}'" : "")} type='text' class='image-name hidden' value='{value}' />
                             <input class='uploader hidden user-image' type='file' name='file' accept='image/*' />
                             <div class='mt'><img class='img-responsive' src='{urlHelper.CampaignPortrait(campaignKey, value, false)}'/></div>
+                        </div>";
+
+            return new MvcHtmlString(str);
+        }
+
+        public static MvcHtmlString RenderSettlementMapUpload(this UrlHelper urlHelper, string id, string value, Guid campaignKey, Guid contentKey)
+        {
+            var str = $@"<div data-campaign='{campaignKey}'>
+                            <div class='btn btn-warning image-upload'><i class='fa fa-upload'></i>&nbsp;Upload Image</div>
+                            <input {(!id.IsNullOrEmpty() ? $"id='{id}' name='{id}'" : "")} type='text' class='image-name hidden' value='{value}' />
+                            <input class='uploader hidden user-image' type='file' name='file' accept='image/*' />
+                            <img class='hidden' src='{urlHelper.SettlementMap(campaignKey, contentKey, value)}'/>
                         </div>";
 
             return new MvcHtmlString(str);

@@ -1,0 +1,69 @@
+﻿@using DeneirsGate.Services
+@model SettlementViewModel
+@{
+    ViewBag.Title = "Print";
+    Layout = "~/Views/Shared/_Empty.cshtml";
+}
+<style type="text/css">
+    @@media print {
+        @@page {
+            margin: 2em;
+        }
+        body {
+            -webkit-print-color-adjust: exact;
+        }
+
+        .map-label {
+            cursor: default;
+            background-color: #fcfcfc !important;
+        }
+    }
+</style>
+
+<h2>@Model.Name</h2>
+<p>@Model.Description</p>
+
+@if (Model.Map != null)
+{
+    <div style="position:relative">
+        <img id="SettlementMap" src="@Url.SettlementMap((Guid)ViewBag.CampaignKey, Model.SettlementKey, Model.Map)" style="width:auto" />
+        @foreach (var pin in Model.SettlementLocations)
+        {
+            <div class="map-label" data-x="@(pin.X-20)" data-y="@(pin.Y-20)">
+                @(pin.SortOrder + 1)
+            </div>
+        }
+    </div>
+}
+
+<div class="flexbox-container full-width">
+    @foreach (var location in Model.SettlementLocations)
+    {
+        if (location.SortOrder > 0)
+        {<hr /> }
+        <div style="margin:1em">
+            <label class="text-large text-bold red">@(location.SortOrder + 1) - @location.Name</label>
+            <p>@location.Description</p>
+        </div>
+    }
+</div>
+
+@section scripts {
+    <script type="text/javascript">
+        $('#SettlementMap').on('load', function () {
+            var width = this.naturalWidth / 100;
+            var height = this.naturalHeight / 100;
+            console.log(width);
+            console.log(height);
+            $('#SettlementMap').parent().find('.map-label').each(function () {
+                console.log($(this).data('y') / height)
+                console.log($(this).data('x') / width)
+                $(this).attr('style', `top:${$(this).data('y') / height}%;left:${$(this).data('x') / width}%;cursor:default`);
+            })
+        })
+
+        $(document).ready(function () {
+            print();
+        })
+    </script>
+}

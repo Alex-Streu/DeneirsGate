@@ -26,6 +26,7 @@ namespace MVC_PWx.Controllers
         private MagicItemService magicItemSvc;
         private EventService eventSvc;
         private DungeonService dungeonSvc;
+        private SettlementService settlementSvc;
 
         public Dictionary<string, DateTime> OnlineUsers
         {
@@ -179,6 +180,15 @@ namespace MVC_PWx.Controllers
             {
                 if (dungeonSvc == null) { dungeonSvc = new DungeonService(); }
                 return dungeonSvc;
+            }
+        }
+
+        public SettlementService SettlementSvc
+        {
+            get
+            {
+                if (settlementSvc == null) { settlementSvc = new SettlementService(); }
+                return settlementSvc;
             }
         }
 

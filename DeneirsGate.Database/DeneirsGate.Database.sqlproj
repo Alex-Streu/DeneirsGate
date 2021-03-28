@@ -145,6 +145,8 @@
     <Build Include="dbo\Tables\CharacterLogs.sql" />
     <Build Include="dbo\Tables\QuestEventLogs.sql" />
     <Build Include="dbo\Tables\DungeonLogs.sql" />
+    <Build Include="dbo\Tables\Settlements.sql" />
+    <Build Include="dbo\Tables\SettlementLocations.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="DeneirsGate.Database.LOCAL.publish.xml" />

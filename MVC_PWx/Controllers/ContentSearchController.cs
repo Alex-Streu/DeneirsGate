@@ -369,5 +369,33 @@ namespace MVC_PWx.Controllers
         }
 
         #endregion
+
+        #region Settlements
+
+        public ActionResult _Settlements()
+        {
+            var model = new List<SettlementViewModel>();
+            try
+            {
+                model = SettlementSvc.GetSettlements(AppUser.UserId, AppUser.ActiveCampaign.Value);
+            }
+            catch (Exception ex) { }
+
+            return PartialView(model);
+        }
+
+        public ActionResult _Settlement(Guid id)
+        {
+            var model = new SettlementViewModel();
+            try
+            {
+                model = SettlementSvc.GetSettlement(AppUser.UserId, AppUser.ActiveCampaign.Value, id);
+            }
+            catch (Exception ex) { }
+
+            return PartialView(model);
+        }
+
+        #endregion
     }
 }

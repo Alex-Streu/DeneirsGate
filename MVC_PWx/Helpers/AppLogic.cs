@@ -46,6 +46,11 @@ namespace MVC_PWx.Helpers
             return $"{GetCampaignContentDir(campaignKey)}\\ArcMaps\\{arcKey.ToString()}\\";
         }
 
+        public static string GetSettlementMapContentDir(Guid campaignKey, Guid settlementKey)
+        {
+            return $"{GetCampaignContentDir(campaignKey)}\\Settlements\\{settlementKey.ToString()}\\";
+        }
+
         public static string GetIconDir()
         {
             return "~\\Content\\img\\icos\\";

@@ -1,0 +1,563 @@
+﻿@using DeneirsGate.Services
+@using CustomHtmlHelpers
+@using Newtonsoft.Json
+@model SettlementViewModel
+
+@{
+    ViewBag.Title = "Edit Settlement";
+    ViewBag.MenuOption = "Settlement";
+}
+
+<style type="text/css">
+    .flexbox-container {
+        padding-bottom: 1em;
+    }
+</style>
+
+<h2>Settlement</h2>
+
+<div class="fancy-tabs" data-panes="settlement-panes" style="display:none">
+    <div id="home-tab" class="fancy-tab-item active" data-tab="home-pane">Home</div>
+    <div id="location-tab" class="fancy-tab-item" data-tab="location-pane">Location</div>
+    <div id="map-tab" class="fancy-tab-item" data-tab="map-pane">Map</div>
+</div>
+
+<div id="settlement-panes">
+    <div id="home-pane" class="fancy-tab-pane slide-right active">
+        <div class="content-box">
+            <div class="flexbox-container full-width no-padding justify-between">
+                <div style="width:85%">
+                    @HtmlHelpers.RenderFancyTextbox("lg full", "Name", 150, Model.Name, "Name", Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" }))
+                </div>
+                <div style="width:10%">
+                    <div onclick="$('#map-tab').click()" class="btn btn-warning">Area Map</div>
+                </div>
+            </div>
+            <div class="flexbox-container">
+                @HtmlHelpers.RenderFancyTextarea("full lg medium", "Description", null, Model.Description, "Description")
+            </div>
+            <div class="flexbox-container full-width justify-between" style="padding-top:2em">
+                <label class="text-x-large text-bold red">Locations</label>
+                <div class="btn btn-default" onclick="loadLocation()">Create Location</div>
+            </div>
+            <div id="location-template" class="template">
+                <div>
+                    <div class="location-item separate-item" data-index="0">
+                        <div class="flexbox-container no-padding justify-between">
+                            <div>
+                                <i class="fa fa-2x fa-ellipsis-v handle"></i>
+                                <label class="text-large text-bold red location-name"></label>
+                            </div>
+                            <div class="flexbox-container justify-center content-center">
+                                <div class="btn btn-sm btn-primary" onclick="showLocation(this)"><i class="fa fa-info"></i></div>
+                                <div class="settlement-loader btn btn-sm btn-default" onclick="loadLocation()"><i class="fa fa-pencil"></i></div>
+                                <div class="settlement-delete btn btn-sm btn-danger" onclick="promptDelete(`deleteLocation()`)"><i class="fa fa-trash"></i></div>
+                            </div>
+                        </div>
+                        <p class="text-md location-description" style="display:none"></p>
+                    </div>
+                </div>
+            </div>
+            <div id="locations" class="droppable">
+                @{ var index = 0; }
+                @foreach (var location in Model.SettlementLocations)
+                {
+                    <div class="location-item separate-item" data-index="@index">
+                        <div class="flexbox-container no-padding justify-between">
+                            <div>
+                                <i class="fa fa-2x fa-ellipsis-v handle"></i>
+                                <label class="text-large text-bold red location-name">@location.Name</label>
+                            </div>
+                            <div class="flexbox-container justify-center content-center">
+                                <div class="btn btn-sm btn-primary" onclick="showLocation(this)"><i class="fa fa-info"></i></div>
+                                <div class="settlement-loader btn btn-sm btn-default" onclick="loadLocation(@(index))"><i class="fa fa-pencil"></i></div>
+                                <div class="settlement-delete btn btn-sm btn-danger" onclick="promptDelete(`deleteLocation(@(index++))`)"><i class="fa fa-trash"></i></div>
+                            </div>
+                        </div>
+                        <p class="text-md location-description" style="display:none">@location.Description</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+    <div id="location-pane" class="fancy-tab-pane slide-right">
+        <div class="content-box">
+            <a onclick="backToSettlement()"><i class="fa fa-arrow-circle-left"></i> Back to Settlement</a>
+            <div class="flexbox-container full-width" style="margin-top:1em">
+                @HtmlHelpers.RenderFancyTextbox("lg full", "LocationName", 150, null, "Name")
+            </div>
+            <div class="flexbox-container">
+                @HtmlHelpers.RenderFancyTextarea("full lg medium", "LocationDescription", null, null, "Description")
+            </div>
+        </div>
+    </div>
+    <div id="map-pane" class="fancy-tab-pane slide-right">
+        <div class="content-box">
+            <div class="flexbox-container justify-between no-padding">
+                <a onclick="loadSettlement()"><i class="fa fa-arrow-circle-left"></i> Back to Settlement</a>
+                <div class="flexbox-container justify-end no-padding">
+                    <div id="btnAttachLocations" class="btn btn-default" onclick="loadMapLocations()" style="display:none"><i class="fa fa-map-marker"></i>&nbsp;Attach Location</div>
+                    @Url.RenderSettlementMapUpload("SettlementMap", Model.Map, (Guid)ViewBag.CampaignKey, Model.SettlementKey)
+                </div>
+            </div>
+            <div>
+                <canvas id="mapCanvas" width="1000" height="1000">
+                    <p>
+                        Your browser does not support Canvas API.
+                    </p>
+                </canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="flexbox-container justify-between">
+    <div class="submit-footer">
+        <div class="btn btn-lg btn-default save-button" onclick="save()">Save</div>
+        <div id="delete" class="btn btn-lg btn-danger save-button" onclick="promptDelete('deleteSettlement()')">Delete</div>
+    </div>
+    <a id="print" class="btn btn-lg btn-warning save-button" target="_blank" href="@Url.Action("Print", new { id = Model.SettlementKey })"><i class="fa fa-print"></i>&nbsp;Print</a>
+</div>
+
+<!-- MAP LOCATION MODAL -->
+<div id="mapLocationModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Attach Locations</h4>
+            </div>
+            <div class="modal-body">
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@section scripts {
+    <script type="text/javascript">
+        var updateAction = '@Url.Action("Update")';
+        var deleteAction = '@Url.Action("Delete")';
+        var indexAction = '@Url.Action("/")';
+
+        var locations = [];
+        var locationIndex = 0;
+        var sortIndex = 0;
+
+        $(document).ready(function () {
+            if ('@ViewBag.IsNew' == 'True') {
+                $('#delete').hide();
+                $('#print').hide();
+            }
+            setupSortable();
+
+            //Store locations
+            @foreach (var location in Model.SettlementLocations)
+            {
+                <text>
+                    locations.push(@Html.Raw(JsonConvert.SerializeObject(location)));
+                </text>
+            }
+
+            //Setup Map
+            @if (Model.Map != null)
+            {
+                <text>
+                    loadSettlementMap();
+                </text>
+
+                foreach (var pin in Model.SettlementLocations.Where(x => x.X != null).ToList())
+                {
+                    <text>
+                        $('#mapCanvas').drawArc({
+                            layer: true,
+                            fillStyle: '#fff',
+                            strokeStyle: '#000',
+                            strokeWidth: 3,
+                            x: @pin.X, y: @pin.Y,
+                            radius: 20,
+                            name: 'location' + @pin.SortOrder,
+                            groups: ['locations', 'location' + @pin.SortOrder, 'location'],
+                            data: {
+                                coordinates: [@pin.X, @pin.Y],
+                                key: '@pin.LocationKey',
+                                index: @pin.SortOrder
+                            }
+                        })
+                            .drawText({
+                                layer: true,
+                                fillStyle: '#ce0606',
+                                x: @pin.X, y: @pin.Y,
+                                fontSize: 24,
+                                text: parseInt(@pin.SortOrder) + 1,
+                                groups: ['locations', 'location' + @pin.SortOrder, 'label']
+                            })
+                    </text>
+                }
+                <text>$('#mapCanvas').drawLayers();</text>
+            }
+        })
+
+        function setupSortable() {
+            $('.droppable').sortable({
+                connectWith: '.droppable',
+                handle: '.handle',
+                start: function (event, ui) {
+                    sortIndex = ui.item.index();
+                },
+                update: function (event, ui) {
+                    var id = $('.fancy-tab-item.active').attr('id');
+                    switch (id) {
+                        case 'location-tab':
+                            locations[locationIndex].Events.splice(ui.item.index(), 0, locations[locationIndex].Events.splice(sortIndex, 1)[0]);
+                            loadLocation(locationIndex);
+                            break;
+                        case 'home-tab':
+                            locations.splice(ui.item.index(), 0, locations.splice(sortIndex, 1)[0]);
+
+                            for (var i = 0; i < locations.length; i++) {
+                                locations[i].SortOrder = i;
+                            }
+
+                            loadArc();
+
+                            //Update canvas
+                            $('#mapCanvas').removeLayerGroup('label');
+                            var layers = $('#mapCanvas').getLayerGroup('location');
+                            if (!isEmpty(layers)) {
+                                for (var i = 0; i < layers.length; i++) {
+                                    var sortOrder = locations.findIndex(x => x.LocationKey == layers[i].data.key);
+                                    $('#mapCanvas').setLayer(layers[i].name, {
+                                        data: {
+                                            coordinates: [layers[i].data.coordinates[0], layers[i].data.coordinates[1]],
+                                            key: layers[i].data.key,
+                                            index: sortOrder
+                                        }
+                                    })
+                                    $('#mapCanvas').drawText({
+                                        layer: true,
+                                        fillStyle: '#ce0606',
+                                        x: layers[i].data.coordinates[0],
+                                        y: layers[i].data.coordinates[1],
+                                        fontSize: 24,
+                                        text: parseInt(sortOrder) + 1,
+                                        groups: ['locations', 'location' + sortOrder, 'label']
+                                    })
+                                }
+                                $('#mapCanvas').drawLayers();
+                            }
+                            break;
+                    }
+                }
+            });
+        }
+
+
+        // --------------------------- MAP ----------------------------
+        var clickBoundaries = [0, 0];
+        var locationLayerIndex = 0;
+        var canvasLocationKey = '';
+        var isSaving = false;
+
+        function resetCanvas() {
+            $('#mapCanvas').attr('width', 800);
+            $('#mapCanvas').attr('height', 600);
+            $('#mapCanvas').removeLayers();
+            $('#mapCanvas').clearCanvas();
+        }
+
+        function loadSettlementMap() {
+            var img = $('#SettlementMap').parent().find('img').attr('src');
+            var fullImage = new Image();
+            fullImage.onload = function () {
+                $('body').append(fullImage);
+                var wrh = fullImage.width / fullImage.height;
+                var newWidth = $('#mapCanvas').attr('width');
+                var newHeight = newWidth / wrh;
+                if (newHeight > $('#mapCanvas').attr('height')) {
+                    newHeight = $('#mapCanvas').attr('height');
+                    newWidth = newHeight * wrh;
+                }
+                clickBoundaries = [newWidth, newHeight];
+                $('#mapCanvas').drawImage({
+                    source: img,
+                    fromCenter: false,
+                    width: newWidth,
+                    height: newHeight,
+                    layer: true,
+                    name: 'map',
+                    index: 0
+                })
+
+                $('#mapCanvas').attr('width', newWidth);
+                $('#mapCanvas').attr('height', newHeight);
+                $('#mapCanvas').drawLayers();
+
+                $(fullImage).remove();
+                $('#btnAttachLocations').show();
+            }
+            fullImage.src = img;
+        }
+
+        $('#SettlementMap').change(function () {
+            if (isSaving) { return; }
+            resetCanvas();
+            loadSettlementMap();
+        })
+
+        $('#mapCanvas').mousemove(function (e) {
+            if (!$(this).hasClass('clickable')) { return; }
+            $(this).removeLayer('mouse');
+            var rect = $(this)[0].getBoundingClientRect()
+            var x = e.clientX - rect.left
+            var y = e.clientY - rect.top
+
+            $(this).drawArc({
+                layer: true,
+                fillStyle: '#fff',
+                strokeStyle: '#000',
+                strokeWidth: 3,
+                x: x, y: y,
+                radius: 20,
+                name: 'mouse'
+            })
+                .drawLayers();
+        })
+
+        $('#mapCanvas').click(function (e) {
+            if (!$(this).hasClass('clickable')) { return; }
+
+            $(this).removeLayer('mouse');
+
+            var rect = $(this)[0].getBoundingClientRect()
+            var x = e.clientX - rect.left
+            var y = e.clientY - rect.top
+            if (x < clickBoundaries[0] && y < clickBoundaries[1]) {
+                $(this).removeClass('clickable');
+                $(this).drawArc({
+                    layer: true,
+                    fillStyle: '#fff',
+                    strokeStyle: '#000',
+                    strokeWidth: 3,
+                    x: x, y: y,
+                    radius: 20,
+                    name: 'location' + locationLayerIndex,
+                    groups: ['locations', 'location' + locationLayerIndex, 'location'],
+                    data: {
+                        coordinates: [x, y],
+                        key: canvasLocationKey,
+                        index: locationLayerIndex
+                    }
+                })
+                    .drawText({
+                        layer: true,
+                        fillStyle: '#ce0606',
+                        x: x, y: y,
+                        fontSize: 24,
+                        text: parseInt(locationLayerIndex) + 1,
+                        groups: ['locations', 'location' + locationLayerIndex, 'label']
+                    })
+                    .drawLayers();
+            }
+        })
+
+        function loadMapLocations() {
+            $('#mapLocationModal').find('.modal-body').html('');
+
+            var layers = $('#mapCanvas').getLayers();
+
+            locations = locations.sort(function (a, b) { return a.SortOrder - b.SortOrder })
+            for (var i = 0; i < locations.length; i++) {
+                var location = locations[i];
+                var add = true;
+
+                for (var j = 0; j < layers.length; j++) {
+                    if ('location' + location.SortOrder == layers[j].name) { add = false; break; }
+                }
+
+                $('#mapLocationModal').find('.modal-body').append(`
+                    <div class="flexbox-container justify-between no-padding">
+                        <div class="flexbox-container no-padding">
+                            <label class="text-large text-bold">${parseInt(location.SortOrder) + 1}.</label>
+                            <label class="text-large text-bold red location-name">${location.Name}</label>
+                        </div>`
+                    + (add ? `<div class="btn btn-default" onclick="addMapLocation(${location.SortOrder}, '${location.LocationKey}')"><i class="fa fa-plus"></i></div>`
+                    : `<div class="btn btn-danger" onclick="removeMapLocation(${location.SortOrder})"><i class="fa fa-times"></i></div>`) +
+                    `</div>
+                `)
+            }
+            $('#mapLocationModal').modal('show');
+        }
+
+        function addMapLocation(index, key) {
+            $('#mapLocationModal').modal('hide');
+            $('#mapCanvas').addClass('clickable');
+            locationLayerIndex = index;
+            canvasLocationKey = key;
+        }
+
+        function removeMapLocation(index) {
+            $('#mapLocationModal').modal('hide');
+            $('#mapCanvas').removeLayerGroup('location' + index).drawLayers();
+        }
+
+        /******************** LOAD TABS *****************/
+        // --------------------------- SETTLEMENT ----------------------------
+        function loadSettlement() {
+            if (locations != null) {
+                $('#locations').html('');
+
+                for (var i = 0; i < locations.length; i++) {
+                    var location = locations[i];
+
+                    var htmlLocation = $($('#location-template').html());
+                    $('#locations').append(htmlLocation);
+
+                    $(htmlLocation).find('.location-name').text(location.Name);
+                    $(htmlLocation).find('.location-description').text(location.Description);
+                    $(htmlLocation).find('.settlement-loader').attr('onclick', `loadLocation(${i})`);
+                    $(htmlLocation).find('.settlement-delete').attr('onclick', `promptDelete('deleteLocation(${i})')`);
+                }
+            }
+
+            $('#home-tab').click();
+        }
+
+        function backToSettlement() {
+            if (storeLocation(true)) {
+                loadSettlement();
+            }
+        }
+
+        // --------------------------- LOCATIONS ----------------------------
+        function showLocation(element) {
+            $(element).closest('.location-item').find('.location-description').toggle(500);
+        }
+
+        function loadLocation(index) {
+            if (index != null) {
+                locationIndex = index;
+                var location = locations[index];
+                $('#LocationName').val(location.Name);
+                $('#LocationDescription').val(location.Description);
+            }
+            else {
+                locationIndex = locations.length;
+
+                $('#LocationName').val('');
+                $('#LocationDescription').val('');
+            }
+
+            $('#location-tab').click();
+        }
+
+        function storeLocation(allowEmpty = false) {
+            if (!$('#location-tab').hasClass('active')) { return; }
+
+            var location = {
+                LocationKey: createGuid(),
+                Name: $('#LocationName').val(),
+                Description: $('#LocationDescription').val(),
+                SortOrder: locationIndex
+            }
+
+            if (isEmpty(location.Name) && isEmpty(location.Description)) {
+                if (allowEmpty == true) {
+                    return true;
+                }
+
+                Notiflix.NotifyContent.Failure('Location name is required!');
+                return false;
+            }
+
+            if (isEmpty(location.Name) && !isEmpty(location.Description)) {
+                Notiflix.NotifyContent.Failure('Location name is required!');
+                return false;
+            }
+
+            if (locations.length <= locationIndex) { locations.push(location); }
+            else { locations[locationIndex] = location; }
+
+            return true;
+        }
+
+        function deleteLocation(index) {
+            locations.splice(index, 1);
+            loadSettlement();
+            removeMapLocation(index);
+        }
+
+        function save() {
+            storeLocation();
+            getLocationPins();
+
+            var postData = {
+                SettlementKey: '@Model.SettlementKey',
+                Name: $('#Name').val(),
+                Description: $('#Description').val(),
+                Map: $('#SettlementMap').val(),
+                SettlementLocations: locations
+            }
+
+            $.ajax({
+                type: "POST",
+                url: updateAction,
+                data: JSON.stringify(postData),
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data.success) {
+                        Notiflix.NotifyContent.Success(data.message);
+                        $('#delete').show();
+                        $('#print').show();
+                        uploadImage($('#SettlementMap').parent().find('.uploader'), 'Settlements/@Model.SettlementKey', $('#SettlementMap').val());
+                    } else {
+                        Notiflix.NotifyContent.Failure(data.message);
+                    }
+                },
+                error: function (error) {
+                    Notiflix.NotifyContent.Failure(error.responseText);
+                }
+            })
+        }
+
+        function getLocationPins() {
+            var layers = $('#mapCanvas').getLayerGroup('location');
+            if (!isEmpty(layers)) {
+                for (var i = 0; i < layers.length; i++) {
+                    var index = locations.findIndex(x => x.LocationKey == layers[i].data.key)
+                    locations[index].X = layers[i].data.coordinates[0];
+                    locations[index].Y = layers[i].data.coordinates[1];
+                }
+            }
+        }
+
+        function deleteSettlement() {
+            var postData = { id: '@Model.SettlementKey' };
+
+            $.ajax({
+                type: "POST",
+                url: deleteAction,
+                data: JSON.stringify(postData),
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data.success) {
+                        Notiflix.NotifyContent.Success(data.message);
+                        location.replace(indexAction);
+                    } else {
+                        Notiflix.NotifyContent.Failure(data.message);
+                    }
+                },
+                error: function (error) {
+                    Notiflix.NotifyContent.Failure(error.responseText);
+                }
+            })
+        }
+    </script>
+}

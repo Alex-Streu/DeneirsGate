@@ -84,6 +84,7 @@
     <Compile Include="Models\RaceViewModel.cs" />
     <Compile Include="Models\RelationshipTreeViewModel.cs" />
     <Compile Include="Models\RoleViewModel.cs" />
+    <Compile Include="Models\SettlementViewModel.cs" />
     <Compile Include="Models\UserDataModel.cs" />
     <Compile Include="Models\UserViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -97,6 +98,7 @@
     <Compile Include="Services\MonsterService.cs" />
     <Compile Include="Services\PresetService.cs" />
     <Compile Include="Services\RelationshipTreeService.cs" />
+    <Compile Include="Services\SettlementService.cs" />
     <Compile Include="Services\UserService.cs" />
   </ItemGroup>
   <ItemGroup>

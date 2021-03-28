@@ -90,6 +90,13 @@ namespace DeneirsGate.Data
 
         #endregion
 
+        #region Settlements
+
+        public virtual DbSet<Settlement> Settlements { get; set; }
+        public virtual DbSet<SettlementLocation> SettlementLocations { get; set; }
+
+        #endregion
+
         #region Encounters
 
         public virtual DbSet<Encounter> Encounters { get; set; }
