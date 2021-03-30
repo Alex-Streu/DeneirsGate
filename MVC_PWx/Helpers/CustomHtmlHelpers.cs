@@ -152,6 +152,18 @@ namespace CustomHtmlHelpers
             return new MvcHtmlString(str);
         }
 
+        public static MvcHtmlString RenderFancyTextbox(string size, string id, int? limit, string value, string label, SuggestionService.SuggestionType type, MvcHtmlString extra = null)
+        {
+            var str = $@"<div class='fancy-textbox {size ?? ""}' style='position:relative'>
+                            <div style='display:none' class='btn btn-sm btn-default btn-suggestion' onclick='suggest(`{id}`, `{(int)type}`)'><i class='fa fa-magic'></i></div>
+                            <input type='text' {(!id.IsNullOrEmpty() ? $"id='{id}' name='{id}'" : "")} autocomplete='screw-autocomplete' required='' {(limit == null ? "" : $"maxlength='{limit}'")} value='{EscapeText(value)}' />     
+                            {(String.IsNullOrEmpty(label) ? "" : $"<label for='{id}'>{label}</label>")}
+                            {(extra == null ? "" : extra.ToString())}
+                        </div>";
+
+            return new MvcHtmlString(str);
+        }
+
         public static MvcHtmlString RenderFancyNumberbox(int min, int max, string size, string id, string value, string label, MvcHtmlString extra = null)
         {
             var str = $@"<div class='fancy-textbox {size ?? ""}'>
@@ -166,6 +178,18 @@ namespace CustomHtmlHelpers
         public static MvcHtmlString RenderFancyTextarea(string size, string id, int? limit, string value, string label, MvcHtmlString extra = null)
         {
             var str = $@"<div class='fancy-textarea {size ?? ""}'>
+                            {(String.IsNullOrEmpty(label) ? "" : $"<label for='{id}'>{label}</label>")}
+                            <textarea class='form-control' {(!id.IsNullOrEmpty() ? $"id='{id}' name='{id}'" : "")} {(limit == null ? "" : $"maxlength='{limit}'")}>{value}</textarea>
+                            {(extra == null ? "" : extra.ToString())}
+                        </div>";
+
+            return new MvcHtmlString(str);
+        }
+
+        public static MvcHtmlString RenderFancyTextarea(string size, string id, int? limit, string value, string label, SuggestionService.SuggestionType type, MvcHtmlString extra = null)
+        {
+            var str = $@"<div class='fancy-textarea {size ?? ""}' style='position:relative'>
+                            <div style='display:none' class='btn btn-sm btn-default btn-suggestion btn-suggestion-textarea' onclick='suggest(`{id}`, `{(int)type}`)'><i class='fa fa-magic'></i></div>
                             {(String.IsNullOrEmpty(label) ? "" : $"<label for='{id}'>{label}</label>")}
                             <textarea class='form-control' {(!id.IsNullOrEmpty() ? $"id='{id}' name='{id}'" : "")} {(limit == null ? "" : $"maxlength='{limit}'")}>{value}</textarea>
                             {(extra == null ? "" : extra.ToString())}
@@ -218,6 +242,27 @@ namespace CustomHtmlHelpers
                             <input class='uploader hidden user-image' type='file' name='file' accept='image/*' />
                             <img class='hidden' src='{urlHelper.SettlementMap(campaignKey, contentKey, value)}'/>
                         </div>";
+
+            return new MvcHtmlString(str);
+        }
+
+        public static MvcHtmlString RenderSuggestionButton(string fieldId, SuggestionService.SuggestionType type)
+        {
+            var str = $@"<div style='display:none' class='btn btn-sm btn-default btn-suggestion' onclick='suggest(`{fieldId}`, `{(int)type}`)'><i class='fa fa-magic'></i></div>";
+
+            return new MvcHtmlString(str);
+        }
+
+        public static MvcHtmlString RenderSuggestionButtonTextArea(string fieldId, SuggestionService.SuggestionType type)
+        {
+            var str = $@"<div style='display:none' class='btn btn-sm btn-default btn-suggestion btn-suggestion-textarea' onclick='suggest(`{fieldId}`, `{(int)type}`)'><i class='fa fa-magic'></i></div>";
+
+            return new MvcHtmlString(str);
+        }
+
+        public static MvcHtmlString RenderSuggestionButtonEditor(SuggestionService.SuggestionType type, string editor)
+        {
+            var str = $@"<div style='display:none' class='btn btn-sm btn-default btn-suggestion btn-suggestion-editor' onclick='suggest(null, `{(int)type}`, {editor})'><i class='fa fa-magic'></i></div>";
 
             return new MvcHtmlString(str);
         }

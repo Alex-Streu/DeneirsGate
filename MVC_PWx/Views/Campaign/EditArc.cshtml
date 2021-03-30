@@ -40,7 +40,7 @@
                 </div>
             </div>
             <div class="flexbox-container">
-                @HtmlHelpers.RenderFancyTextarea("full lg", "Description", null, Model.Description, "Description")
+                @HtmlHelpers.RenderFancyTextarea("full lg", "Description", null, Model.Description, "Description", SuggestionService.SuggestionType.Arc)
             </div>
             <div class="flexbox-container full-width justify-between" style="padding-top:2em">
                 <label class="text-x-large text-bold red">Quests</label>
@@ -106,7 +106,7 @@
                 @HtmlHelpers.RenderFancyTextbox("lg full", "QuestName", 150, null, "Name")
             </div>
             <div class="flexbox-container">
-                @HtmlHelpers.RenderFancyTextarea("full lg", "QuestDescription", null, null, "Description")
+                @HtmlHelpers.RenderFancyTextarea("full lg", "QuestDescription", null, null, "Description", SuggestionService.SuggestionType.Quest)
             </div>
             <div class="flexbox-container full-width justify-between" style="padding-top:2em">
                 <label class="text-x-large text-bold red">Events</label>
@@ -141,8 +141,10 @@
             <div class="flexbox-container full-width" style="margin-top:1em">
                 @HtmlHelpers.RenderFancyTextbox("lg full", "EventName", 150, null, "Name")
             </div>
-            <div id="event-editor">
-
+            <div id="event-suggestor" style="position:relative">
+                @HtmlHelpers.RenderSuggestionButtonEditor(SuggestionService.SuggestionType.Event, "eventEditor")
+                <div id="event-editor">
+                </div>
             </div>
             <div class="flexbox-container full-width justify-between" style="padding-top:2em">
                 <label class="text-x-large text-bold red">Encounter</label>

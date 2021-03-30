@@ -1,5 +1,7 @@
-﻿using OfficeOpenXml;
+﻿using DeneirsGate.Services;
+using OfficeOpenXml;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
@@ -217,6 +219,37 @@ namespace MVC_PWx.Controllers
             }
 
             return Json(new { success = true, message = "Uploaded successfully!" });
+        }
+
+        public ActionResult Suggestions()
+        {
+            var model = new List<SuggestionViewModel>();
+            try
+            {
+                model = SuggestionSvc.GetPendingSuggestions(AppUser.UserId, true);
+            }
+            catch (Exception ex) { }
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public JsonResult ReviewSuggestion(SuggestionReviewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    SuggestionSvc.ReviewSuggestion(model);
+                }
+                catch (Exception ex)
+                {
+                    return Json(new { success = false, message = ex.Message });
+                }
+
+                return Json(new { success = true, message = "Reviewed successfully!" });
+            }
+            return Json(new { success = false, message = GetValidationError() });
         }
     }
 }

@@ -1,0 +1,69 @@
+﻿@using DeneirsGate.Services
+@using CustomHtmlHelpers
+@model List<SuggestionViewModel>
+
+@{
+    ViewBag.Title = "Review Suggestion Box";
+    ViewBag.MenuOption = "AdminSuggestion";
+}
+
+@section Css {
+    <style type="text/css">
+        .content-box {
+            padding-top: 1em !important;
+        }
+    </style>
+}
+
+<h2>Review Suggestion Box</h2>
+
+<div class="content-box">
+    <div class="flexbox-container no-padding justify-between items-center">
+        <h4 class="red">Pending Suggestions</h4>
+    </div>
+    <div class="list-group list-group-flash">
+        @foreach (var item in Model)
+        {
+            <div id="@item.SuggestionKey" class="list-group-item">
+                <div class="flexbox-container justify-between no-padding items-center">
+                    <div class="flexbox-container no-padding">
+                        <label class="mb-1 text-bold text-large red">@(SuggestionService.GetSuggestionTypeDisplay(item.Type))</label>
+                        <label class="text-bold text-md">(@item.UserName)</label>
+                    </div>
+                    <div class="flexbox-container justify-end no-padding">
+                        <small>@HtmlHelpers.RenderDateTime(item.DateSubmitted) </small>
+                        <div class="btn btn-sm btn-success" onclick="review('@item.SuggestionKey', '@item.UserKey', true)"><i class="fa fa-check"></i></div>
+                        <div class="btn btn-sm btn-danger" onclick="review('@item.SuggestionKey', '@item.UserKey', false)"><i class="fa fa-times"></i></div>
+                    </div>
+                </div>
+                <p class="mb-1 data-suggestion">@item.Suggestion</p>
+            </div>
+        }
+    </div>
+</div>
+
+@section scripts {
+    <script type="text/javascript">
+        var reviewSuggestionAction = '@Url.Action("ReviewSuggestion")';
+
+        function review(id, user, approved) {
+            var postData = {
+                SuggestionKey: id,
+                UserKey: user,
+                IsApproved: approved
+            }
+
+            ajaxPost(postData, reviewSuggestionAction, function (data) {
+                if (data.success) {
+                    Notiflix.NotifyContent.Success(data.message);
+                    $(`#${id}`).remove();
+                } else {
+                    Notiflix.NotifyContent.Failure(data.message);
+                }
+            },
+            function (error) {
+                Notiflix.NotifyContent.Failure(error.responseText);
+            })
+        }
+    </script>
+}

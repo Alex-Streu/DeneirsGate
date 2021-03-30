@@ -232,11 +232,18 @@
                                 <ul class="sub">
                                     <li><a id="menu_Users" href="@Url.Action("Users", "Admin")">Users</a></li>
                                     <li><a id="menu_Roles" href="@Url.Action("Roles", "Admin")">Roles</a></li>
-                                    <li><a id="menu_Monsters" href="@Url.Action("Monsters", "Admin")">Monster Upload</a></li>
-                                    <li><a id="menu_Monsters" href="@Url.Action("MagicItems", "Admin")">Magic Item Upload</a></li>
+                                    <li><a id="menu_AdminMonster" href="@Url.Action("Monsters", "Admin")">Monster Upload</a></li>
+                                    <li><a id="menu_AdminMagicItem" href="@Url.Action("MagicItems", "Admin")">Magic Item Upload</a></li>
+                                    <li><a id="menu_AdminSuggestion" href="@Url.Action("Suggestions", "Admin")">Review Suggestion Box</a></li>
                                 </ul>
                             </li>
                         }
+                        <li>
+                            <a id="menu_Suggestion" href="@Url.Action("/", "Suggestion")">
+                                <i class="fa fa-archive"></i>
+                                <span>Suggestion Box</span>
+                            </a>
+                        </li>
                         @if (ViewBag.CampaignName != null)
                         {
                             <li class="mt" style="border-bottom:1px solid">

@@ -57,7 +57,7 @@
         @HtmlHelpers.RenderFancyTextbox("md", "Speed", 50, Model.Speed, "Speed", Html.ValidationMessageFor(model => model.Speed, "", new { @class = "text-danger" }))
     </div>
     <div class="flexbox-container">
-        @HtmlHelpers.RenderFancyTextarea("full lg", "Description", null, Model.Description, "Description")
+        @HtmlHelpers.RenderFancyTextarea("full lg", "Description", null, Model.Description, "Description", SuggestionService.SuggestionType.Monster)
     </div>
 </div>
 

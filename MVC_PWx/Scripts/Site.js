@@ -79,6 +79,33 @@ jQuery.fn.removeClassExcept = function (val) {
     });
 };
 
+$('.btn-suggestion').parent().mouseenter(function () {
+    $(this).find('.btn-suggestion').show();
+})
+
+$('.btn-suggestion').parent().mouseleave(function () {
+    $(this).find('.btn-suggestion').hide();
+})
+
+function suggest(fieldId, type, editor) {
+    var postData = {
+        Type: type
+    }
+
+    ajaxPost(postData, '/Suggestion/GenerateSuggestion', function (data) {
+        if (data.success) {
+            if (editor == null) {
+                $(`#${fieldId}`).val(data.data);
+            } else {
+                editor.setData(data.data);
+            }
+        }
+        else {
+            Notiflix.NotifyContent.Failure(data.message);
+        }
+    })
+}
+
 /**
  * Returns a number whose value is limited to the given range.
  *

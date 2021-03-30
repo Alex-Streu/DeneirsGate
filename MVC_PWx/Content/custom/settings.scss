@@ -71,6 +71,23 @@ a {
     transform: translateX(-75%)
 }
 
+.btn-suggestion {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+
+    &.btn-suggestion-textarea {
+        top: 30px !important;
+        right: 6px !important;
+    }
+
+    &.btn-suggestion-editor {
+        top: 5px !important;
+        right: 6px !important;
+        z-index: 100;
+    }
+}
+
 
 /* ANIMATIONS */
 @-webkit-keyframes glow {

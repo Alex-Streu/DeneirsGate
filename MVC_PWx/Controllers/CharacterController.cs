@@ -3,6 +3,7 @@ using MVC_PWx.Helpers;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Web.Mvc;
 
 namespace MVC_PWx.Controllers
@@ -107,6 +108,28 @@ namespace MVC_PWx.Controllers
             }
 
             return Json(new { success = true, message = "Deleted successfully!" });
+        }
+
+        [HttpPost]
+        [HasCampaign, HasAccess(Priviledge = AppLogic.Priviledge.DM)]
+        public JsonResult SuggestCharacter()
+        {
+            var character = new CharacterViewModel();
+            try
+            {
+                character = SuggestionSvc.GenerateCharacter();
+
+                var rand = new Random();
+                var alignments = PresetSvc.GetAlignments();
+                var toSkip = rand.Next(0, alignments.Count);
+                character.Alignment = alignments.OrderBy(x => Guid.NewGuid()).Skip(toSkip).Take(1).FirstOrDefault().Key;
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+
+            return Json(new { success = true, message = "Deleted successfully!", data = character });
         }
     }
 }

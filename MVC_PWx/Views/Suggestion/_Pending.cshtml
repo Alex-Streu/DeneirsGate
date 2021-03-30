@@ -1,0 +1,19 @@
+﻿@using DeneirsGate.Services
+@using CustomHtmlHelpers
+@model List<SuggestionViewModel>
+
+@foreach (var item in Model)
+{
+    <div id="@item.SuggestionKey" class="list-group-item">
+        <div class="flexbox-container justify-between no-padding items-center">
+            <label class="mb-1 text-bold text-large red">@(SuggestionService.GetSuggestionTypeDisplay(item.Type))</label>
+            <div class="flexbox-container justify-end no-padding">
+                <small>@HtmlHelpers.RenderDateTime(item.DateSubmitted) </small>
+                <div class="btn btn-sm btn-primary" onclick="editSuggestion('@item.SuggestionKey')"><i class="fa fa-pencil"></i></div>
+                <div class="btn btn-sm btn-danger"  onclick="promptDelete('deleteSuggestion(`@item.SuggestionKey`)')"><i class="fa fa-trash"></i></div>
+            </div>
+        </div>
+        <input type="hidden" class="data-type" value="@((int)item.Type)" />
+        <p class="mb-1 data-suggestion">@item.Suggestion</p>
+    </div>
+}

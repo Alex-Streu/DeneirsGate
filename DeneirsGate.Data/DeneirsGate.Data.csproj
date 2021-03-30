@@ -124,6 +124,7 @@
     <Compile Include="DataModels\RelationshipTreeTier.cs" />
     <Compile Include="DataModels\Settlement.cs" />
     <Compile Include="DataModels\SettlementLocation.cs" />
+    <Compile Include="DataModels\Suggestion.cs" />
     <Compile Include="DataModels\Trap.cs" />
     <Compile Include="DataModels\TrapNature.cs" />
     <Compile Include="DataModels\TrapType.cs" />

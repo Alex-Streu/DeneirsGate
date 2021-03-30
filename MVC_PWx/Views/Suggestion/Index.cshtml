@@ -1,0 +1,159 @@
+﻿@using DeneirsGate.Services
+@using CustomHtmlHelpers
+@model List<SuggestionViewModel>
+
+@{
+    ViewBag.Title = "Suggestion Box";
+    ViewBag.MenuOption = "Suggestion";
+}
+
+@section Css {
+    <style type="text/css">
+        .content-box {
+            padding-top: 1em !important;
+        }
+
+        .approved {
+            background-color: #cbffa2;
+        }
+
+        .rejected {
+            background-color: #ffc9c9;
+        }
+    </style>
+}
+
+<h2>My Suggestions</h2>
+
+<div class="content-box">
+    <div class="flexbox-container no-padding justify-between items-center">
+        <h4 class="red">Pending Suggestions</h4>
+        <div class="btn btn-default" onclick="addSuggestion()">Add Suggestion</div>
+    </div>
+    <div id="pending-suggestions" class="list-group list-group-flash">
+    </div>
+</div>
+
+<div class="content-box">
+    <h4 class="red"><i class="fa fa-history"></i>&nbsp;History</h4>
+    <div class="list-group list-group-flash">
+        @foreach (var item in Model.Where(x => x.Status != SuggestionService.SuggestionStatus.Pending).OrderByDescending(x => x.DateSubmitted).ToList())
+        {
+            var status = "";
+            switch (item.Status)
+            {
+                case SuggestionService.SuggestionStatus.Approved:
+                    status = "approved";
+                    break;
+                case SuggestionService.SuggestionStatus.Rejected:
+                    status = "rejected";
+                    break;
+            }
+            <div class="list-group-item @status">
+                <div class="flexbox-container justify-between no-padding">
+                    <label class="mb-1 text-bold text-medium red">@(SuggestionService.GetSuggestionTypeDisplay(item.Type))</label>
+                    <small>@HtmlHelpers.RenderDateTime(item.DateSubmitted) </small>
+                </div>
+                <p class="mb-1">@item.Suggestion</p>
+            </div>
+        }
+    </div>
+</div>
+
+<!-- Suggestion Modal-->
+<div id="suggestionModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Suggestion</h4>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="SuggestionKey" />
+                <div class="flexbox-container fill">
+                    <div class="fancy-dropdown">
+                        @Html.DropDownList("Types", (SelectList)ViewBag.Types, null, new { @class = "form-control responsive-text", style = "--size:0.75vw" })
+                    </div>
+                </div>
+                <div class="flexbox-container full-width">
+                    @HtmlHelpers.RenderFancyTextarea("md tall full", "Suggestion", 250, "", "Suggestion", new MvcHtmlString("<small><span id='SuggestionCount'>0</span> / 250</small>"))
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" onclick="submit()">Submit</button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@section scripts {
+    <script type="text/javascript">
+        var updateAction = '@Url.Action("Update")';
+                    var deleteAction = '@Url.Action("Delete")';
+                    var pendingAction = '@Url.Action("_Pending")';
+
+        $(document).ready(function () {
+                        loadPending();
+                    })
+
+        function loadPending() {
+            $('#pending-suggestions').load(pendingAction);
+                    }
+
+                    function addSuggestion() {
+            $('#SuggestionKey').val(createGuid());
+            $('#Suggestion').val('').keyup();
+            $('#Types').val($("#Types option:first").val());
+            $('#suggestionModal').modal('show');
+                    }
+
+                    function editSuggestion(id) {
+            $('#SuggestionKey').val(id);
+            $('#Suggestion').val($(`#${id}`).find('.data-suggestion').text()).keyup();
+            $('#Types').val($(`#${id}`).find('.data-type').val());
+            $('#suggestionModal').modal('show');
+                    }
+
+                    function deleteSuggestion(id) {
+                        var postData = {
+                id: id
+            }
+
+                ajaxPost(postData, deleteAction, function (data) {
+                    if (data.success) {
+                        Notiflix.NotifyContent.Success(data.message);
+                    $(`#${id}`).remove();
+                } else {
+                        Notiflix.NotifyContent.Failure(data.message);
+                    }
+                })
+        }
+
+        $('#Suggestion').keyup(function () {
+            $('#SuggestionCount').text($(this).val().length);
+        })
+
+        function submit() {
+            var postData = {
+                SuggestionKey: $('#SuggestionKey').val(),
+                Suggestion: $('#Suggestion').val(),
+                Type: $('#Types').val()
+            }
+
+            ajaxPost(postData, updateAction, function (data) {
+                if (data.success) {
+                    Notiflix.NotifyContent.Success(data.message);
+                    loadPending();
+                } else {
+                    Notiflix.NotifyContent.Failure(data.message);
+                }
+            },
+            function (error) {
+                Notiflix.NotifyContent.Failure(error.responseText);
+            })
+        }
+    </script>
+}

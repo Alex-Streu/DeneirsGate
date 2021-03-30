@@ -112,6 +112,12 @@ namespace DeneirsGate.Data
 
         #endregion
 
+        #region Suggestion Box
+
+        public virtual DbSet<Suggestion> Suggestions { get; set; }
+
+        #endregion
+
         #region
 
         public virtual DbSet<Notification> Notifications { get; set; }

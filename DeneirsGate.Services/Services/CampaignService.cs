@@ -38,8 +38,6 @@ namespace DeneirsGate.Services
                             return;
                         }
                         break;
-
-
                 }
             }
 

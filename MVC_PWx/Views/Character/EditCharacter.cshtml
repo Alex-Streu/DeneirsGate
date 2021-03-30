@@ -29,9 +29,9 @@
         <div class="top-info">
             @Url.RenderPortraitUpload("Portrait", Model.Portrait, (Guid)ViewBag.CampaignKey, Model.CharacterKey)
 
-            @HtmlHelpers.RenderFancyTextbox("lg", "FirstName", 50, Model.FirstName, "First Name", Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "text-danger" }))
+            @HtmlHelpers.RenderFancyTextbox("lg", "FirstName", 50, Model.FirstName, "First Name", SuggestionService.SuggestionType.FirstName, Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "text-danger" }))
 
-            @HtmlHelpers.RenderFancyTextbox("lg", "LastName", 50, Model.LastName, "Last Name", Html.ValidationMessageFor(model => model.LastName, "", new { @class = "text-danger" }))
+            @HtmlHelpers.RenderFancyTextbox("lg", "LastName", 50, Model.LastName, "Last Name", SuggestionService.SuggestionType.LastName, Html.ValidationMessageFor(model => model.LastName, "", new { @class = "text-danger" }))
 
             @HtmlHelpers.RenderFancyNumberbox(1, 20, "xlg short center force-num", "Level", Model.Level.ToString(), "Level", Html.ValidationMessageFor(model => model.Level, "", new { @class = "text-danger" }))
 
@@ -74,25 +74,25 @@
                 <div class="background">
                     <div class="fancy-dropdown">
                         @Html.LabelFor(model => model.RaceKey, htmlAttributes: new { @class = "control-label" })
-                        @Html.DropDownListFor(model => model.RaceKey, HtmlHelpers.RaceDropdown(Model.RaceKey), new { @class = "form-control responsive-text", style="--size:0.75vw" })
+                        @Html.DropDownListFor(model => model.RaceKey, HtmlHelpers.RaceDropdown(Model.RaceKey), new { @class = "form-control responsive-text", style = "--size:0.75vw" })
                         @Html.ValidationMessageFor(model => model.RaceKey, "", new { @class = "text-danger" })
                     </div>
 
                     <div class="fancy-dropdown">
                         @Html.LabelFor(model => model.ClassKey, htmlAttributes: new { @class = "control-label" })
-                        @Html.DropDownListFor(model => model.ClassKey, HtmlHelpers.ClassDropdown(Model.ClassKey), new { @class = "form-control responsive-text", style="--size:0.75vw" })
+                        @Html.DropDownListFor(model => model.ClassKey, HtmlHelpers.ClassDropdown(Model.ClassKey), new { @class = "form-control responsive-text", style = "--size:0.75vw" })
                         @Html.ValidationMessageFor(model => model.ClassKey, "", new { @class = "text-danger" })
                     </div>
 
                     <div class="fancy-dropdown">
                         @Html.LabelFor(model => model.BackgroundKey, htmlAttributes: new { @class = "control-label" })
-                        @Html.DropDownListFor(model => model.BackgroundKey, HtmlHelpers.BackgroundDropdown(Model.BackgroundKey), new { @class = "form-control responsive-text", style="--size:0.75vw" })
+                        @Html.DropDownListFor(model => model.BackgroundKey, HtmlHelpers.BackgroundDropdown(Model.BackgroundKey), new { @class = "form-control responsive-text", style = "--size:0.75vw" })
                         @Html.ValidationMessageFor(model => model.BackgroundKey, "", new { @class = "text-danger" })
                     </div>
 
                     <div class="fancy-dropdown">
                         @Html.LabelFor(model => model.Alignment, htmlAttributes: new { @class = "control-label" })
-                        @Html.DropDownListFor(model => model.Alignment, HtmlHelpers.AlignmentDropdown(Model.Alignment), new { @class = "form-control responsive-text", style="--size:0.75vw" })
+                        @Html.DropDownListFor(model => model.Alignment, HtmlHelpers.AlignmentDropdown(Model.Alignment), new { @class = "form-control responsive-text", style = "--size:0.75vw" })
                         @Html.ValidationMessageFor(model => model.Alignment, "", new { @class = "text-danger" })
                     </div>
 
@@ -109,9 +109,9 @@
                     </div>
 
                     <div class="fear-ideal">
-                        @HtmlHelpers.RenderFancyTextarea(null, "Fears", 500, Model.Fears, "Fears", Html.ValidationMessageFor(model => model.Fears, "", new { @class = "text-danger" }))
+                        @HtmlHelpers.RenderFancyTextarea(null, "Fears", 500, Model.Fears, "Fears", SuggestionService.SuggestionType.Fear, Html.ValidationMessageFor(model => model.Fears, "", new { @class = "text-danger" }))
 
-                        @HtmlHelpers.RenderFancyTextarea(null, "Ideals", 500, Model.Ideals, "Ideals", Html.ValidationMessageFor(model => model.Ideals, "", new { @class = "text-danger" }))
+                        @HtmlHelpers.RenderFancyTextarea(null, "Ideals", 500, Model.Ideals, "Ideals", SuggestionService.SuggestionType.Ideal, Html.ValidationMessageFor(model => model.Ideals, "", new { @class = "text-danger" }))
 
                         @HtmlHelpers.RenderFancyTextarea(null, "Languages", 500, Model.Languages, "Languages", Html.ValidationMessageFor(model => model.Languages, "", new { @class = "text-danger" }))
                     </div>
@@ -143,7 +143,7 @@
                                     @HtmlHelpers.RenderFancyTextbox("damage-dice", null, 10, null, "Damage")
                                     @HtmlHelpers.RenderFancyNumberbox(-10, 20, "damage-mod center", null, null, "DMG")
                                     <div class="fancy-dropdown damage-type">
-                                        @Html.DropDownList($"DamageType{i}", HtmlHelpers.DamageTypeDropdown(Guid.Empty), new { @class = "form-control responsive-text", style="--size:0.75vw" })
+                                        @Html.DropDownList($"DamageType{i}", HtmlHelpers.DamageTypeDropdown(Guid.Empty), new { @class = "form-control responsive-text", style = "--size:0.75vw" })
                                     </div>
                                     <i class="fa fa-eraser delete"></i>
                                 }
@@ -156,7 +156,7 @@
                                     @HtmlHelpers.RenderFancyTextbox("damage-dice", null, 10, item.DamageDice, "Damage")
                                     @HtmlHelpers.RenderFancyNumberbox(-10, 20, "damage-mod center", null, item.DamageMod.ToString(), "DMG")
                                     <div class="fancy-dropdown damage-type">
-                                        @Html.DropDownList($"DamageType{i}", HtmlHelpers.DamageTypeDropdown(item.DamageType), new { @class = "form-control responsive-text", style="--size:0.75vw" })
+                                        @Html.DropDownList($"DamageType{i}", HtmlHelpers.DamageTypeDropdown(item.DamageType), new { @class = "form-control responsive-text", style = "--size:0.75vw" })
                                     </div>
                                     <i class="fa fa-eraser delete"></i>
                                 }
@@ -446,15 +446,21 @@
         </div>
     </div>
     <div id="backstory-pane" class="fancy-tab-pane slide-right">
-        <div id="backstory-editor">
-            @Html.Raw(Model.Backstory)
+        <div id="backstory-suggestor">
+            @HtmlHelpers.RenderSuggestionButtonEditor(SuggestionService.SuggestionType.Backstory, "backstory")
+            <div id="backstory-editor">
+                @Html.Raw(Model.Backstory)
+            </div>
         </div>
     </div>
 </div>
 
-<div class="submit-footer">
-    <div class="btn btn-lg btn-default save-button" onclick="save()">Save</div>
-    <div id="delete" class="btn btn-lg btn-danger save-button" onclick="promptDelete('deleteCharacter()')">Delete</div>
+<div class="flexbox-container justify-between no-padding">
+    <div class="submit-footer">
+        <div class="btn btn-lg btn-default save-button" onclick="save()">Save</div>
+        <div id="delete" class="btn btn-lg btn-danger save-button" onclick="promptDelete('deleteCharacter()')">Delete</div>
+    </div>
+    <div class="btn btn-lg btn-success" onclick="suggestCharacter()"><i class="fa fa-magic"></i>&nbsp;Suggest Character</div>
 </div>
 
 @section scripts {
@@ -463,6 +469,7 @@
         var updatePlayerAction = '@Url.Action("UpdatePlayer")';
         var updateCharacterAction = '@Url.Action("UpdateCharacter")';
         var deleteCharacterAction = '@Url.Action("DeleteCharacter")';
+        var suggestCharacterAction = '@Url.Action("SuggestCharacter")';
         var indexAction = '@Url.Action("/")';
         var registerPlayerAction = '@Url.Action("RegisterPlayer", "Account", new { id = Model.UserCode }, this.Request.Url.Scheme)';
         var isPlayer = ('@ViewBag.IsPlayer' == 'True');
@@ -695,7 +702,7 @@
                 Weapons: weapons,
                 Spells: spells
             }
-            
+
             var url = isPlayer ? updatePlayerAction : updateCharacterAction;
 
             $.ajax({
@@ -738,6 +745,31 @@
                 },
                 error: function (error) {
                     Notiflix.NotifyContent.Failure(error.responseText);
+                }
+            })
+        }
+
+        function suggestCharacter() {
+            ajaxPost(null, suggestCharacterAction, function (data) {
+                if (data.success) {
+                    var character = data.data;
+                    $('#Strength').val(character.Strength).blur();
+                    $('#Dexterity').val(character.Dexterity).blur();
+                    $('#Constitution').val(character.Constitution).blur();
+                    $('#Intelligence').val(character.Intelligence).blur();
+                    $('#Wisdom').val(character.Wisdom).blur();
+                    $('#Charisma').val(character.Charisma).blur();
+                    $('#FirstName').val(character.FirstName);
+                    $('#LastName').val(character.LastName);
+                    $('#RaceKey').val(character.RaceKey);
+                    $('#ClassKey').val(character.ClassKey);
+                    $('#BackgroundKey').val(character.BackgroundKey);
+                    $('#Fears').val(character.Fears);
+                    $('#Ideals').val(character.Ideals);
+                    backstory.setData(character.Backstory);
+                    $('#Alignment').val(character.Alignment);
+                } else {
+                    Notiflix.NotifyContent.Failure(data.message);
                 }
             })
         }

@@ -27,6 +27,7 @@ namespace MVC_PWx.Controllers
         private EventService eventSvc;
         private DungeonService dungeonSvc;
         private SettlementService settlementSvc;
+        private SuggestionService suggestionSvc;
 
         public Dictionary<string, DateTime> OnlineUsers
         {
@@ -189,6 +190,15 @@ namespace MVC_PWx.Controllers
             {
                 if (settlementSvc == null) { settlementSvc = new SettlementService(); }
                 return settlementSvc;
+            }
+        }
+
+        public SuggestionService SuggestionSvc
+        {
+            get
+            {
+                if (suggestionSvc == null) { suggestionSvc = new SuggestionService(); }
+                return suggestionSvc;
             }
         }
 
