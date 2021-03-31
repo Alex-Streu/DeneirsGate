@@ -38,7 +38,7 @@ namespace MVC_PWx.Controllers
         {
             get
             {
-                var name = (string)HttpContext.Application["CampaignName"];
+                var name = (string)HttpContext.Session["CampaignName"];
                 if (name == null && AppUser.ActiveCampaign != null)
                 {
                     name = CampaignSvc.GetCampaignName(AppUser.ActiveCampaign.GetValueOrDefault());
@@ -49,7 +49,7 @@ namespace MVC_PWx.Controllers
 
             set
             {
-                HttpContext.Application["CampaignName"] = value;
+                HttpContext.Session["CampaignName"] = value;
             }
         }
 
@@ -59,14 +59,19 @@ namespace MVC_PWx.Controllers
             {
                 if (appUser == null) 
                 {
-                    appUser = (ApplicationUser)HttpContext.Application["AppUser"];
+                    appUser = (ApplicationUser)HttpContext.Session["AppUser"];
                     if (appUser == null)
                     {
                         appUser = UserManager.FindByName(User.Identity.Name);
-                        HttpContext.Application["AppUser"] = appUser;
+                        HttpContext.Session["AppUser"] = appUser;
                     }
                 }
                 return appUser;
+            }
+
+            set
+            {
+                HttpContext.Session["AppUser"] = value;
             }
         }
 
@@ -223,7 +228,7 @@ namespace MVC_PWx.Controllers
             if (updateUser)
             {
                 AppUser.ActiveCampaign = campaign;
-                HttpContext.Application["AppUser"] = AppUser;
+                HttpContext.Session["AppUser"] = AppUser;
 
                 var user = UserManager.FindByName(User.Identity.Name);
                 user.ActiveCampaign = campaign;
@@ -237,7 +242,7 @@ namespace MVC_PWx.Controllers
             {
                 ViewBag.User = AppUser;
                 ViewBag.Notifications = UserSvc.GetNotifications(AppUser.UserId);
-                ViewBag.Friends = UserSvc.GetFriends(AppUser.UserId, (Dictionary<string, DateTime>)HttpContext.Application["OnlineUsers"], true);
+                ViewBag.Friends = UserSvc.GetFriends(AppUser.UserId, OnlineUsers, true);
                 ViewBag.CampaignKey = AppUser.ActiveCampaign.GetValueOrDefault();
                 ViewBag.CampaignName = CampaignName;
             }

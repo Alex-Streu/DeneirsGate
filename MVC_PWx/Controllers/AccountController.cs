@@ -89,6 +89,7 @@ namespace MVC_PWx.Controllers
                             user.LastLoginDate = DateTime.UtcNow;
                             SetActiveCampaign(user.ActiveCampaign, false);
                             await UserManager.UpdateAsync(user);
+                            AppUser = user;
                             return RedirectToLocal(returnUrl);
                         //case SignInStatus.LockedOut:
                         //    return View("Lockout");
@@ -409,6 +410,7 @@ namespace MVC_PWx.Controllers
         {
             OnlineUsers.Remove(User.Identity.Name);
             AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
+            Session.Abandon();
             return RedirectToAction("Login");
         }
 

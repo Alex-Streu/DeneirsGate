@@ -60,6 +60,7 @@ namespace DeneirsGate.Data
         public virtual DbSet<MonsterType> MonsterTypes { get; set; }
         public virtual DbSet<MonsterChallengeRating> MonsterChallengeRatings { get; set; }
         public virtual DbSet<MonsterEnvironmentLinker> MonsterEnvironmentLinkers { get; set; }
+        public virtual DbSet<UserMonster> UserMonsters { get; set; }
 
         #endregion
 
@@ -72,6 +73,7 @@ namespace DeneirsGate.Data
         public virtual DbSet<ArtObject> ArtObjects { get; set; }
         public virtual DbSet<Treasure> Treasures { get; set; }
         public virtual DbSet<TreasureHoard> TreasureHoards { get; set; }
+        public virtual DbSet<UserMagicItem> UserMagicItems { get; set; }
 
         #endregion
 

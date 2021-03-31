@@ -30,7 +30,7 @@ namespace MVC_PWx.Controllers
             var model = new MagicItemEditModel();
             try
             {
-                model = MagicItemSvc.GetEditMagicItem(AppUser.UserId, id, AppUser.ActiveCampaign.Value);
+                model = MagicItemSvc.GetEditMagicItem(AppUser.UserId, id, AppUser.ActiveCampaign.Value, User.IsInRole("Admin"));
 
                 ViewBag.IsNew = isNew;
                 ViewBag.Rarities = new SelectList(MagicItemSvc.GetRarities(), "RarityKey", "Name");
@@ -48,7 +48,7 @@ namespace MVC_PWx.Controllers
             {
                 try
                 {
-                    MagicItemSvc.Update(AppUser.UserId, model);
+                    MagicItemSvc.Update(AppUser.UserId, model, User.IsInRole("Admin"));
                 }
                 catch (Exception ex)
                 {

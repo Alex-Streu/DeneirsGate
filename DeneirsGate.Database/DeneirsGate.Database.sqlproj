@@ -148,6 +148,8 @@
     <Build Include="dbo\Tables\Settlements.sql" />
     <Build Include="dbo\Tables\SettlementLocations.sql" />
     <Build Include="dbo\Tables\Suggestions.sql" />
+    <Build Include="dbo\Tables\UserMonsters.sql" />
+    <Build Include="dbo\Tables\UserMagicItems.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="DeneirsGate.Database.LOCAL.publish.xml" />

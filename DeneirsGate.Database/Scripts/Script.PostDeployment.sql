@@ -401,3 +401,13 @@ BEGIN
 	INSERT INTO TrapTypeDamages VALUES (NEWID(), (SELECT TOP 1 [TypeKey] FROM TrapTypes WHERE [Name] = 'Deadly'), 11, 16, '18d10')
 	INSERT INTO TrapTypeDamages VALUES (NEWID(), (SELECT TOP 1 [TypeKey] FROM TrapTypes WHERE [Name] = 'Deadly'), 17, 20, '24d10')
 END
+
+IF NOT EXISTS (SELECT TOP 1 1 FROM UserMonsters)
+BEGIN
+	INSERT INTO UserMonsters (UserKey, MonsterKey, IsPublic) SELECT CAST(CAST(0 AS BINARY) AS UNIQUEIDENTIFIER), MonsterKey, 1 FROM Monsters
+END
+
+IF NOT EXISTS (SELECT TOP 1 1 FROM UserMagicItems)
+BEGIN
+	INSERT INTO UserMagicItems (UserKey, MagicItemKey, IsPublic) SELECT CAST(CAST(0 AS BINARY) AS UNIQUEIDENTIFIER), ItemKey, 1 FROM MagicItems
+END

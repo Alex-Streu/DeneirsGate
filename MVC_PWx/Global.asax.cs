@@ -23,6 +23,7 @@ namespace MVC_PWx
         {
             //Get list
             var onlineUsers = (Dictionary<string, DateTime>)Application["OnlineUsers"];
+            if (onlineUsers == null) { return; }
 
             //Update current user
             if (User.Identity.IsAuthenticated)

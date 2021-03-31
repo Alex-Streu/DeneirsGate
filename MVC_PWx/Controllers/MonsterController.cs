@@ -30,7 +30,7 @@ namespace MVC_PWx.Controllers
             var model = new MonsterEditModel();
             try
             {
-                model = MonsterSvc.GetEditMonster(AppUser.UserId, id, AppUser.ActiveCampaign.Value);
+                model = MonsterSvc.GetEditMonster(AppUser.UserId, id, AppUser.ActiveCampaign.Value, User.IsInRole("Admin"));
 
                 ViewBag.IsNew = isNew;
                 ViewBag.Sizes = new SelectList(MonsterSvc.GetSizes(), "SizeKey", "Name");
@@ -50,7 +50,7 @@ namespace MVC_PWx.Controllers
             {
                 try
                 {
-                        MonsterSvc.UpdateMonster(AppUser.UserId, model);
+                        MonsterSvc.UpdateMonster(AppUser.UserId, model, User.IsInRole("Admin"));
                 }
                 catch (Exception ex)
                 {

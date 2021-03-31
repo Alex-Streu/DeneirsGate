@@ -38,7 +38,7 @@ namespace DeneirsGate.Services
 
     public class MonsterPostModel : MonsterEditModel
     {
-        public bool IsCustom { get; set; }
+        //public bool IsPublic { get; set; }
     }
 
     public class MonsterSizeViewModel

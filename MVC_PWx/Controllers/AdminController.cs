@@ -135,7 +135,6 @@ namespace MVC_PWx.Controllers
                     if ((monstersfile != null) && (monstersfile.ContentLength > 0) && !string.IsNullOrEmpty(monstersfile.FileName))
                     {
                         byte[] fileBytes = new byte[monstersfile.ContentLength];
-                        //var data = monstersfile.InputStream.Read(fileBytes, 0, Convert.ToInt32(monstersfile.ContentLength));
                         ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
                         using (var package = new ExcelPackage(monstersfile.InputStream))
                         {
@@ -153,7 +152,6 @@ namespace MVC_PWx.Controllers
                     if ((environmentsFile != null) && (environmentsFile.ContentLength > 0) && !string.IsNullOrEmpty(environmentsFile.FileName))
                     {
                         byte[] fileBytes = new byte[environmentsFile.ContentLength];
-                        //var data = environmentsFile.InputStream.Read(fileBytes, 0, Convert.ToInt32(environmentsFile.ContentLength));
                         ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
                         using (var package = new ExcelPackage(environmentsFile.InputStream))
                         {
@@ -198,7 +196,6 @@ namespace MVC_PWx.Controllers
                     if ((magicItemsFile != null) && (magicItemsFile.ContentLength > 0) && !string.IsNullOrEmpty(magicItemsFile.FileName))
                     {
                         byte[] fileBytes = new byte[magicItemsFile.ContentLength];
-                        //var data = monstersfile.InputStream.Read(fileBytes, 0, Convert.ToInt32(monstersfile.ContentLength));
                         ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
                         using (var package = new ExcelPackage(magicItemsFile.InputStream))
                         {
