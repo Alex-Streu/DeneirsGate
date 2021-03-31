@@ -11,8 +11,9 @@
         <img id="SettlementMap" class="img-responsive" src="@Url.SettlementMap((Guid)ViewBag.CampaignKey, Model.SettlementKey, Model.Map)" style="width:auto;max-height:1000px" />
         @foreach (var pin in Model.SettlementLocations)
         {
-            <div class="map-label" style="cursor:default" data-x="@(pin.X-20)" data-y="@(pin.Y-20)">
+            <div class="map-label" data-x="@(pin.X-20)" data-y="@(pin.Y-20)" data-location="@pin.LocationKey">
                 @(pin.SortOrder + 1)
+                <div class="map-label-info">@pin.Name</div>
             </div>
         }
     </div>
@@ -22,8 +23,8 @@
     @foreach (var location in Model.SettlementLocations)
     {
         if (location.SortOrder > 0)
-        { <hr /> }
-        <div style="margin:1em">
+        {<hr /> }
+        <div id="@location.LocationKey" style="margin:0em 1em 1em;position:relative;top:1em">
             <label class="text-large text-bold red">@(location.SortOrder + 1) - @location.Name</label>
             <p>@location.Description</p>
         </div>
@@ -35,7 +36,17 @@
         var width = this.naturalWidth / 100;
         var height = this.naturalHeight / 100;
         $('#SettlementMap').parent().find('.map-label').each(function () {
-            $(this).attr('style', `top:${$(this).data('y') / height}%;left:${$(this).data('x') / width}%;cursor:default`);
+            $(this).attr('style', `top:${$(this).data('y') / height}%;left:${$(this).data('x') / width}%`);
         })
     })
+
+    $(document).ready(function () {
+        $(".map-label").click(function () {
+            var location = $(this).data('location');
+            var scrollTo = $(`#${location}`).position().top;
+            $('#content-pane').animate({
+                scrollTop: scrollTo
+            }, 1000);
+        });
+    });
 </script>
