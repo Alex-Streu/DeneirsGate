@@ -72,6 +72,7 @@ namespace MVC_PWx.Controllers
             if (user != null)
             {
                 await UserManager.DeleteAsync(user);
+                CampaignSvc.DeleteUserCampaigns(user.UserId);
             }
 
             return RedirectToAction("Users");

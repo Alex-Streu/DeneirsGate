@@ -129,6 +129,14 @@ namespace DeneirsGate.Services
             DB.SaveChanges();
         }
 
+        public void DeleteUserCampaigns(Guid userId)
+        {
+            foreach (var id in DB.UserCampaigns.Where(x => x.UserKey == userId).Select(x => x.CampaignKey).ToList())
+            {
+                DeleteCampaign(userId, id);
+            }
+        }
+
         public void DeleteCampaign(Guid userId, Guid campaignId)
         {
             UserHasAccess(userId, campaignId);
