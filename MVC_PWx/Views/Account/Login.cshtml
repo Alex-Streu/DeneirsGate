@@ -202,6 +202,7 @@
                 dataType: 'json',
                 contentType: 'application/json',
                 success: function (data) {
+                    console.log(data)
                     if (data.success) {
                         $('#information-pane .form-login-heading').text(data.title);
                         $('#information-pane .login-wrap').text(data.message);

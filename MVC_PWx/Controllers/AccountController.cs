@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Configuration;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
@@ -160,8 +161,15 @@ namespace MVC_PWx.Controllers
         [AnonymousOnly]
         public async Task<JsonResult> Register(RegisterViewModel model)
         {
+            string response;
             try
             {
+                var allowRegistration = Boolean.Parse(ConfigurationManager.AppSettings["allowRegistration"] ?? "false");
+                if (!allowRegistration)
+                {
+                    throw new Exception("We're sorry. Registration has been temporarily disabled.");
+                }
+
                 if (ModelState.IsValid)
                 {
                     var user = new ApplicationUser { UserName = model.Username, Picture = model.Picture, Email = model.Email, CreatedDate = DateTime.UtcNow };
@@ -180,15 +188,22 @@ namespace MVC_PWx.Controllers
 
                         return Json(new { success = true, title = "Welcome adventurer!", message = "Check your email for a confirmation link, then enjoy your time in the gates!" });
                     }
-                    AddErrors(result);
+                    else
+                    {
+                        throw new Exception(result.Errors.FirstOrDefault());
+                    }
+                }
+                else
+                {
+                    throw new Exception(GetValidationError());
                 }
             }
             catch (Exception ex)
             {
-                ModelState.AddModelError("", ex);
+                response = ex.Message;
             }
 
-            return Json(new { success = false, message = ModelState.Values.FirstOrDefault(x => x.Errors.Count > 0).Errors.FirstOrDefault().ErrorMessage });
+            return Json(new { success = false, message = response ?? "We're sorry. There seems to be an obstacle in our path. Please try again later." });
         }
 
         //
