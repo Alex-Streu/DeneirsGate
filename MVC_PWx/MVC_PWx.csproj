@@ -495,6 +495,7 @@
     <Content Include="Content\custom\pages\dungeon-creator.scss" />
     <Content Include="Content\custom\lists.scss" />
     <Content Include="Content\custom\pages\arc-editor.scss" />
+    <Content Include="Content\custom\global.scss" />
     <None Include="gulpfile.js" />
     <Content Include="Scripts\bootstrap-select.min.js" />
     <Content Include="Scripts\bootstrap.js" />
@@ -535,6 +536,7 @@
     <Content Include="Scripts\jquery-3.3.1.slim.js" />
     <Content Include="Scripts\jquery-3.3.1.slim.min.js" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
+    <Content Include="Scripts\jquery.redirect.js" />
     <Content Include="Scripts\jquery.signalR-2.2.2.js" />
     <Content Include="Scripts\jquery.signalR-2.2.2.min.js" />
     <Content Include="Scripts\jquery.validate.js" />

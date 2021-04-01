@@ -21,6 +21,15 @@ namespace MVC_PWx.Controllers
             var model = new CampaignDashboardViewModel();
             try
             {
+                model = CampaignSvc.GetCampaignDashboard(AppUser.UserId, AppUser.ActiveCampaign.Value);
+
+                //Handle a no longer existing campaign
+                if (model == null)
+                {
+                    SetActiveCampaign(null);
+                    return RedirectToAction("ChangeCampaign");
+                }
+
                 var arcs = CampaignSvc.GetArcs(AppUser.UserId, AppUser.ActiveCampaign.Value);
                 var activeArc = arcs.FirstOrDefault(x => x.IsActive);
                 var characters = new List<Guid>();
@@ -29,7 +38,6 @@ namespace MVC_PWx.Controllers
                     characters = CampaignSvc.GetArcCharacters(AppUser.UserId, AppUser.ActiveCampaign.Value, activeArc.ArcKey);
                 }
 
-                model = CampaignSvc.GetCampaignDashboard(AppUser.UserId, AppUser.ActiveCampaign.Value);
                 model.NPCs = CharacterSvc.GetArcCharacters(AppUser.UserId, AppUser.ActiveCampaign.Value, characters);
                 model.Players = CharacterSvc.GetPlayerShorts(AppUser.UserId, AppUser.ActiveCampaign.Value);
 
@@ -53,7 +61,10 @@ namespace MVC_PWx.Controllers
                 ViewBag.ArcQuests = new SelectList(model.Arc.Quests, "QuestKey", "Name");
                 ViewBag.ArcEvents = new SelectList(eventsList, "Key", "Value");
             }
-            catch (Exception ex) { }
+            catch (Exception ex) 
+            {
+                return RedirectError(ex.InnerException?.Message ?? ex.Message);
+            }
 
             return View(model);
         }
@@ -76,6 +87,13 @@ namespace MVC_PWx.Controllers
         [HasAccess(Priviledge = AppLogic.Priviledge.DM)]
         public ActionResult ChangeCampaign()
         {
+            //If ActiveCampaign exists but isn't in session yet, set it and redirect back to dashboard
+            if (Session["ActiveCampaign"] == null && AppUser.ActiveCampaign != null)
+            {
+                Session["ActiveCampaign"] = AppUser.ActiveCampaign.Value;
+                return RedirectToAction("/");
+            }
+
             var campaigns = new List<CampaignViewModel>();
             try
             {
@@ -136,8 +154,16 @@ namespace MVC_PWx.Controllers
 
                 var path = AppLogic.GetCampaignContentDir(id);
                 var fullPath = Server.MapPath(path);
-                var dirInfo = new DirectoryInfo(fullPath);
-                dirInfo.Delete(true);
+                if (Directory.Exists(fullPath))
+                {
+                    var dirInfo = new DirectoryInfo(fullPath);
+                    dirInfo.Delete(true);
+                }
+
+                if (AppUser.ActiveCampaign != null && AppUser.ActiveCampaign.Value == id)
+                {
+                    SetActiveCampaign(null);
+                }
             }
             catch (Exception ex)
             {

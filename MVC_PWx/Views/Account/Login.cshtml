@@ -25,12 +25,10 @@
 
         <div id="login-panes">
             <div id="login-pane" class="fancy-tab-pane slide-left active">
-                @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { id = "login-form", @class = "form-login first", role = "form" }))
-                {
-                    @Html.AntiForgeryToken()
+                <div id="login-form" class="form-login first">
                     <h2 class="form-login-heading">Enter The Gate</h2>
                     <div class="login-wrap">
-                        @Html.ValidationSummary(true, "", new { @class = "error-text" })
+                        <div id="login-error" class="error-text mb"></div>
                         @HtmlHelpers.RenderFancyTextbox("md", "Username", null, null, Html.DisplayNameFor(m => m.Username).ToString(), Html.ValidationMessageFor(m => m.Username, "", new { @class = "text-danger" }))
                         <br>
                         @HtmlHelpers.RenderFancyPassword("md", "Password", null, null, Html.DisplayNameFor(m => m.Password).ToString(), Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" }))
@@ -43,7 +41,7 @@
                                 <a class="link red" data-toggle="modal" href="#forgotPasswordModal"> Forgot Password?</a>
                             </label>
                         </div>
-                        <button class="btn btn-default btn-block" type="submit"><i class="fa fa-lock"></i> SIGN IN</button>
+                        <div class="btn btn-default btn-block" onclick="login()"><i class="fa fa-lock"></i> SIGN IN</div>
                         <hr>
                         @*<div class="login-social-link centered">
                             <p>or you can sign in via your social network</p>
@@ -57,7 +55,7 @@
                             </a>
                         </div>
                     </div>
-                }
+                </div>
             </div>
 
             <div id="register-pane" class="fancy-tab-pane slide-right">
@@ -84,9 +82,7 @@
                         <div class="registration">
                             <br />
                             Already have an account?<br />
-                            <a class="link red login-link" href="#">
-                                Log In
-                            </a>
+                            <a class="link red login-link" href="#">Log In</a>
                         </div>
                     </div>
                 </div>
@@ -159,6 +155,7 @@
     <script type="text/javascript">
         var forgotPasswordAction = '@Url.Action("ForgotPassword")';
         var registerAction = '@Url.Action("Register")';
+        var attemptLoginAction = '@Url.Action("AttemptLogin")';
 
         $(document).ready(function () {
             $('.backstretch').addClass('fadein');
@@ -175,13 +172,39 @@
             }
         );
 
-        $('#login-form').submit(function () {
-            Notiflix.Block.Pulse('#login-form');
-        })
+        //$('#login-form').submit(function () {
+        //    Notiflix.Block.Pulse('#login-form');
+        //})
 
-        $("#login-form").bind('ajax:complete', function () {
-            Notiflix.Block.Remove('#login-form');
-        });
+        //$("#login-form").bind('ajax:complete', function () {
+        //    Notiflix.Block.Remove('#login-form');
+        //});
+
+        function login() {
+            Notiflix.Block.Pulse('#login-form');
+
+            var postData = {
+                Username: $('#Username').val(),
+                Password: $('#Password').val(),
+                RememberMe: $('#RememberMe').val(),
+                ReturnUrl: '@ViewBag.ReturnUrl'
+            }
+
+            ajaxPost(postData, attemptLoginAction, function (data) {
+                if (data.success) {
+                    window.location = data.data;
+                } else {
+                    if (data.error != null) {
+                        $.redirect(customErrorAction, data.error);
+                        return;
+                    }
+                    $('#login-error').text(data.message);
+                }
+            }, null,
+            function () {
+                Notiflix.Block.Remove('#login-form');
+            })
+        }
 
         $('#registerSubmit').click(function () {
             Notiflix.Block.Pulse('#register-form');
@@ -195,29 +218,44 @@
                 ConfirmPassword: $('#RegisterConfirmPassword').val()
             }
 
-            $.ajax({
-                type: "POST",
-                url: registerAction,
-                data: JSON.stringify(postData),
-                dataType: 'json',
-                contentType: 'application/json',
-                success: function (data) {
-                    console.log(data)
-                    if (data.success) {
-                        $('#information-pane .form-login-heading').text(data.title);
-                        $('#information-pane .login-wrap').text(data.message);
-                        $('#information-tab-item').click();
-                    } else {
-                        $('#registerResponse').text(data.message);
-                    }
-                },
-                error: function (error) {
-                    $('#registerResponse').text(error.responseText);
-                },
-                complete: function () {
-                    Notiflix.Block.Remove('#register-form');
+            ajaxPost(postData, registerAction, function (data) {
+                if (data.success) {
+                    $('#information-pane .form-login-heading').text(data.title);
+                    $('#information-pane .login-wrap').text(data.message);
+                    $('#information-tab-item').click();
+                } else {
+                    $('#registerResponse').text(data.message);
                 }
-            })
+            },
+            function (error) {
+                $('#registerResponse').text(error.responseText);
+            },
+            function () {
+                Notiflix.Block.Remove('#register-form');
+            });
+
+            //$.ajax({
+            //    type: "POST",
+            //    url: registerAction,
+            //    data: JSON.stringify(postData),
+            //    dataType: 'json',
+            //    contentType: 'application/json',
+            //    success: function (data) {
+            //        if (data.success) {
+            //            $('#information-pane .form-login-heading').text(data.title);
+            //            $('#information-pane .login-wrap').text(data.message);
+            //            $('#information-tab-item').click();
+            //        } else {
+            //            $('#registerResponse').text(data.message);
+            //        }
+            //    },
+            //    error: function (error) {
+            //        $('#registerResponse').text(error.responseText);
+            //    },
+            //    complete: function () {
+            //        Notiflix.Block.Remove('#register-form');
+            //    }
+            //})
         })
 
         $('#forgotSubmit').click(function () {

@@ -225,6 +225,12 @@ namespace DeneirsGate.Services
         {
             UserHasAccess(userId, campaignId);
 
+            DBReset();
+            if (DB.UserCampaigns.Where(x => x.CampaignKey == campaignId && x.UserKey == userId).FirstOrDefault() == null)
+            {
+                return null;
+            }
+
             var dashboard = new CampaignDashboardViewModel();
             dashboard.CampaignKey = campaignId;
             dashboard.Arc = GetActiveArc(userId, campaignId);

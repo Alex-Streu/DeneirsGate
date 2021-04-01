@@ -18,7 +18,8 @@ gulp.task('copy:css', () => {
 
 gulp.task('copy:js', () => {
     const javascriptToCopy = [
-        `${paths.nodeModules}bootstrap-select/dist/js/bootstrap-select.min.js`
+        `${paths.nodeModules}bootstrap-select/dist/js/bootstrap-select.min.js`,
+        `${paths.nodeModules}jquery.redirect/jquery.redirect.js`
     ];
 
     return gulp.src(javascriptToCopy)

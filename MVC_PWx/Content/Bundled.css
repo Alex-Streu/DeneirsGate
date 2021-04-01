@@ -1,59 +1,5 @@
-﻿@import url(Site.css);
-.red {
-  color: #ce0606; }
-
-.white {
-  color: #fcfcfc; }
-
-.background-red {
-  background-color: #ce0606; }
-
-h2 {
-  font-weight: bold;
-  color: #ce0606; }
-
-a {
-  font-size: medium;
-  font-weight: bold;
-  color: #ce0606;
-  cursor: pointer; }
-  a:hover {
-    color: #a90404; }
-
-.ck-editor .ck-editor__editable {
-  min-height: 200px;
-  height: 500px;
-  max-height: 600px;
-  color: #000;
-  resize: vertical; }
-
-.template {
-  display: none; }
-
-.handle {
-  padding-right: 0.5em;
-  cursor: grab; }
-  .handle:active {
-    cursor: grabbing; }
-
-.dropdown-menu.dropdown-right {
-  left: 0%;
-  right: auto;
-  transform: translateX(-75%); }
-
-.btn-suggestion {
-  position: absolute;
-  top: 2px;
-  right: 2px; }
-  .btn-suggestion.btn-suggestion-textarea {
-    top: 30px !important;
-    right: 6px !important; }
-  .btn-suggestion.btn-suggestion-editor {
-    top: 5px !important;
-    right: 6px !important;
-    z-index: 100; }
-
-/* ANIMATIONS */
+﻿/* ANIMATIONS */
+@import url(Site.css);
 @-webkit-keyframes glow {
   from {
     opacity: 0.4; }
@@ -198,6 +144,63 @@ a {
     left: 110px; } }
 
 /*#endregion */
+.red {
+  color: #ce0606; }
+
+.white {
+  color: #fcfcfc; }
+
+.background-red {
+  background-color: #ce0606; }
+
+h2 {
+  font-weight: bold;
+  color: #ce0606; }
+
+a {
+  font-size: medium;
+  font-weight: bold;
+  color: #ce0606;
+  cursor: pointer; }
+  a:hover {
+    color: #a90404; }
+
+.ck-editor .ck-editor__editable {
+  min-height: 200px;
+  height: 500px;
+  max-height: 600px;
+  color: #000;
+  resize: vertical; }
+
+.template {
+  display: none; }
+
+.handle {
+  padding-right: 0.5em;
+  cursor: grab; }
+  .handle:active {
+    cursor: grabbing; }
+
+.dropdown-menu.dropdown-right {
+  left: 0%;
+  right: auto;
+  transform: translateX(-75%); }
+
+.btn-suggestion {
+  position: absolute;
+  top: 2px;
+  right: 2px; }
+  .btn-suggestion.btn-suggestion-textarea {
+    top: 30px !important;
+    right: 6px !important; }
+  .btn-suggestion.btn-suggestion-editor {
+    top: 5px !important;
+    right: 6px !important;
+    z-index: 100; }
+
+.transparent {
+  background-color: rgba(255, 255, 255, 0.75) !important; }
+
 .fancy-textbox {
   position: relative;
   /*margin-bottom: 25px;*/

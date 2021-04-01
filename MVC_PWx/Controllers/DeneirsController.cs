@@ -212,6 +212,21 @@ namespace MVC_PWx.Controllers
             return ModelState.Values.FirstOrDefault(x => x.Errors.Count > 0).Errors.FirstOrDefault().ErrorMessage;
         }
 
+        protected JsonResult GetJson(bool success, string message = null, object data = null, ErrorPostModel error = null)
+        {
+            return Json(new { success = success, message = message, data = data, error = error });
+        }
+
+        protected JsonResult GetJson(ErrorPostModel error)
+        {
+            return GetJson(false, null, null, error);
+        }
+
+        protected ActionResult RedirectError(string error)
+        {
+            return RedirectToAction("Error500", "Errors", new { error = error });
+        }
+
         protected ActionResult RedirectToLocal(string returnUrl)
         {
             if (Url.IsLocalUrl(returnUrl))

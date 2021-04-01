@@ -58,10 +58,8 @@ namespace MVC_PWx.Controllers
         //
         // POST: /Account/Login
         [HttpPost]
-        [AllowAnonymous]
-        [AnonymousOnly]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Login(LoginViewModel model, string returnUrl)
+        [AllowAnonymous, AnonymousOnly]
+        public async Task<JsonResult> AttemptLogin(LoginPostModel model)
         {
             try
             {
@@ -74,10 +72,12 @@ namespace MVC_PWx.Controllers
                         if (!await UserManager.IsEmailConfirmedAsync(user.Id))
                         {
                             //string callbackUrl = await SendEmailConfirmationTokenAsync(user.Id, "Confirm your account - Resend");
-
-                            ViewBag.Header = "Slow down, traveler!";
-                            ViewBag.Message = "You must have a confirmed email to log on. Would you like to resend the confirmation email?";
-                            return View("Error");
+                            
+                            return GetJson(false, null, null, new ErrorPostModel
+                            {
+                                Header = "Slow down, traveler!",
+                                Message = "You must have a confirmed email to log on. Would you like to resend the confirmation email?"
+                            });
                         }
                     }
 
@@ -91,7 +91,7 @@ namespace MVC_PWx.Controllers
                             SetActiveCampaign(user.ActiveCampaign, false);
                             await UserManager.UpdateAsync(user);
                             AppUser = user;
-                            return RedirectToLocal(returnUrl);
+                            return GetJson(true, null, model.ReturnUrl);
                         //case SignInStatus.LockedOut:
                         //    return View("Lockout");
                         //case SignInStatus.RequiresVerification:
@@ -102,13 +102,20 @@ namespace MVC_PWx.Controllers
                             break;
                     }
                 }
+
+                return GetJson(false, GetValidationError());
             }            
             catch (Exception ex)
             {
-                ModelState.AddModelError("", ex);
+                GetJson(new ErrorPostModel
+                {
+                    Header = "Oops! Looks like something went wrong!",
+                    Message = "We apologize for the inconvenience. Our team has been notified and will work on resolving this issue as soon as possible.",
+                    ReturnUrl = Url.Action("Login")
+                });
             }
 
-            return Json(new { success = false, message = ModelState.Values.FirstOrDefault(x => x.Errors.Count > 0).Errors.FirstOrDefault().ErrorMessage });
+            return GetJson(false, "Oops! Something went wrong. Please try again later!");
 
         }
 

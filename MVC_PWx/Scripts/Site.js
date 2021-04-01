@@ -1,4 +1,9 @@
-﻿/* HELPERS */
+﻿/* GLOBAL VARIABLES */
+var customErrorAction = "/Errors/CustomError";
+var error500Action = "/Errors/Error500";
+var error400Action = "/Errors/Error400";
+
+/* HELPERS */
 function isEmpty(val) {
     if (val == undefined || val == null || val == '') { return true; }
 
@@ -55,8 +60,15 @@ function loadEncounter(id) {
     }
 }
 
-function ajaxPost(postData, url, successFunction, errorFunction) {
+AddAntiForgeryToken = function (data) {
+    data.__RequestVerificationToken = $('#__AjaxAntiForgeryForm input[name=__RequestVerificationToken]').val();
+    return data;
+};
+
+function ajaxPost(postData, url, successFunction, errorFunction, completeFunction) {
+    if (successFunction == null) { successFunction = defaultCompleteFunction; }
     if (errorFunction == null) { errorFunction = defaultErrorFunction; }
+    if (completeFunction == null) { completeFunction = defaultCompleteFunction; }
 
     $.ajax({
         type: "POST",
@@ -65,12 +77,20 @@ function ajaxPost(postData, url, successFunction, errorFunction) {
         dataType: 'json',
         contentType: 'application/json',
         success: successFunction,
-        error: errorFunction
+        error: errorFunction,
+        complete: completeFunction
     })
 }
 
 function defaultErrorFunction(error) {
+    if (error.responseText.indexOf('<!DOCTYPE html>') > -1) {
+        window.location = error500Action;
+    }
     Notiflix.NotifyContent.Failure(error.responseText);
+}
+
+function defaultCompleteFunction() {
+    //Prevent errors
 }
 
 jQuery.fn.removeClassExcept = function (val) {

@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "devDependencies": {
     "bootstrap-select": "^1.9.4",
-    "gulp": "^4.0.2"
+    "gulp": "^4.0.2",
+    "jquery.redirect": "^1.1.4"
   }
 }

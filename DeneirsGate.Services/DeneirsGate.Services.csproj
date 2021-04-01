@@ -77,6 +77,7 @@
     <Compile Include="Models\CharacterViewModel.cs" />
     <Compile Include="Models\DungeonViewModel.cs" />
     <Compile Include="Models\EncounterViewModel.cs" />
+    <Compile Include="Models\ErrorViewModel.cs" />
     <Compile Include="Models\MagicItemViewModel.cs" />
     <Compile Include="Models\MonsterViewModel.cs" />
     <Compile Include="Models\NotificationViewModel.cs" />

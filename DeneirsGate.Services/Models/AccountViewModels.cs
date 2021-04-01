@@ -62,6 +62,11 @@ namespace DeneirsGate.Services
         public bool RememberMe { get; set; }
     }
 
+    public class LoginPostModel : LoginViewModel
+    {
+        public string ReturnUrl { get; set; }
+    }
+
     public class RegisterViewModel
     {
         [Required]

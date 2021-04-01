@@ -41,7 +41,8 @@ namespace MVC_PWx
                         "~/Content/lib/gritter-conf.js",
                         "~/Content/lib/notiflix-2.0.0.js",
                         "~/Content/lib/jcanvas.min.js",
-                        "~/Scripts/bootstrap-select.min.js"));
+                        "~/Scripts/bootstrap-select.min.js",
+                        "~/Scripts/jquery.redirect.js"));
 
             bundles.Add(new StyleBundle("~/bundles/charts").Include(
                       "~/Content/lib/sparkline-chart.js",
