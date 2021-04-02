@@ -91,7 +91,7 @@ namespace MVC_PWx.Controllers
                             SetActiveCampaign(user.ActiveCampaign, false);
                             await UserManager.UpdateAsync(user);
                             AppUser = user;
-                            return GetJson(true, null, model.ReturnUrl);
+                            return GetJson(true, "Login successful!<br/>Opening the gate...", model.ReturnUrl ?? Url.Action("/", "Campaign"));
                         //case SignInStatus.LockedOut:
                         //    return View("Lockout");
                         //case SignInStatus.RequiresVerification:
@@ -104,7 +104,7 @@ namespace MVC_PWx.Controllers
                 }
 
                 return HandleValidationJsonErrorResponse();
-            }            
+            }
             catch (Exception ex)
             {
                 GetJson(new ErrorPostModel
