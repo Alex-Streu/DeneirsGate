@@ -220,7 +220,7 @@
 
             ajaxPost(postData, registerAction, function (data) {
                 if (data.success) {
-                    $('#information-pane .form-login-heading').text(data.title);
+                    $('#information-pane .form-login-heading').text(data.data);
                     $('#information-pane .login-wrap').text(data.message);
                     $('#information-tab-item').click();
                 } else {
@@ -233,29 +233,6 @@
             function () {
                 Notiflix.Block.Remove('#register-form');
             });
-
-            //$.ajax({
-            //    type: "POST",
-            //    url: registerAction,
-            //    data: JSON.stringify(postData),
-            //    dataType: 'json',
-            //    contentType: 'application/json',
-            //    success: function (data) {
-            //        if (data.success) {
-            //            $('#information-pane .form-login-heading').text(data.title);
-            //            $('#information-pane .login-wrap').text(data.message);
-            //            $('#information-tab-item').click();
-            //        } else {
-            //            $('#registerResponse').text(data.message);
-            //        }
-            //    },
-            //    error: function (error) {
-            //        $('#registerResponse').text(error.responseText);
-            //    },
-            //    complete: function () {
-            //        Notiflix.Block.Remove('#register-form');
-            //    }
-            //})
         })
 
         $('#forgotSubmit').click(function () {

@@ -16,7 +16,10 @@ namespace MVC_PWx.Controllers
 
                 ViewBag.Types = new SelectList(SuggestionSvc.GetSuggestionTypeList(), "Key", "Value");
             }
-            catch (Exception ex) { }
+            catch (Exception ex)
+            {
+                return HandleExceptionRedirectError(ex);
+            }
 
             return View(model);
         }
@@ -28,7 +31,10 @@ namespace MVC_PWx.Controllers
             {
                 model = SuggestionSvc.GetPendingSuggestions(AppUser.UserId);
             }
-            catch (Exception ex) { }
+            catch (Exception ex)
+            {
+                return HandleExceptionRedirectErrorPartial(ex);
+            }
 
             return PartialView(model);
         }
@@ -44,53 +50,45 @@ namespace MVC_PWx.Controllers
                 }
                 catch (Exception ex)
                 {
-                    return Json(new { success = false, message = ex.Message });
+                    return HandleExceptionJsonErrorResponse(ex);
                 }
 
-                return Json(new { success = true, message = "Submitted successfully!" });
+                return GetJson(true, "Submitted successfully!");
             }
-            return Json(new { success = false, message = GetValidationError() });
+            return HandleValidationJsonErrorResponse();
         }
 
         [HttpPost]
         public JsonResult Delete(Guid id)
         {
-            if (ModelState.IsValid)
+            try
             {
-                try
-                {
-                    SuggestionSvc.DeleteSuggestion(AppUser.UserId, id);
-                }
-                catch (Exception ex)
-                {
-                    return Json(new { success = false, message = ex.Message });
-                }
-
-                return Json(new { success = true, message = "Deleted successfully!" });
+                SuggestionSvc.DeleteSuggestion(AppUser.UserId, id);
             }
-            return Json(new { success = false, message = GetValidationError() });
+            catch (Exception ex)
+            {
+                return HandleExceptionJsonErrorResponse(ex);
+            }
+
+            return GetJson(true, "Deleted successfully!");
         }
 
         [HttpPost]
         public JsonResult GenerateSuggestion(SuggestionService.SuggestionType type)
         {
-            if (ModelState.IsValid)
+            var suggestion = "";
+            try
             {
-                var suggestion = "";
-                try
-                {
-                    suggestion = SuggestionSvc.GenerateSuggestion(type);
-                }
-                catch (Exception ex)
-                {
-                    return Json(new { success = false, message = ex.Message });
-                }
-
-                if  (suggestion == null) { return Json(new { success = false, message = "No suggestions available." }); }
-
-                return Json(new { success = true, message = "Generated successfully!", data = suggestion });
+                suggestion = SuggestionSvc.GenerateSuggestion(type);
             }
-            return Json(new { success = false, message = GetValidationError() });
+            catch (Exception ex)
+            {
+                return HandleExceptionJsonErrorResponse(ex);
+            }
+
+            if (suggestion == null) { return GetJson(false, "No suggestions available."); }
+
+            return GetJson(true, "Generated successfully!", suggestion);
         }
     }
 }

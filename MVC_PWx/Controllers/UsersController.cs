@@ -1,4 +1,5 @@
 ﻿using DeneirsGate.Services;
+using Sentry;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -19,7 +20,10 @@ namespace MVC_PWx.Controllers
                 if (!toList.Contains(to)) { to = "friends"; }
                 ViewBag.To = to;
             }
-            catch (Exception ex) { }
+            catch (Exception ex)
+            {
+                return HandleExceptionRedirectError(ex);
+            }
 
             return View(friends);
         }
@@ -32,7 +36,10 @@ namespace MVC_PWx.Controllers
                 if (list != null) { friends = list; }
                 else { friends = UserSvc.GetFriends(AppUser.UserId, OnlineUsers); }
             }
-            catch (Exception ex) { }
+            catch (Exception ex)
+            {
+                return HandleExceptionRedirectErrorPartial(ex);
+            }
 
             return PartialView(friends);
         }
@@ -45,7 +52,10 @@ namespace MVC_PWx.Controllers
                 if (list != null) { friends = list; }
                 else { friends = UserSvc.GetRequests(AppUser.UserId); }
             }
-            catch (Exception ex) { }
+            catch (Exception ex)
+            {
+                return HandleExceptionRedirectErrorPartial(ex);
+            }
 
             return PartialView(friends);
         }
@@ -58,7 +68,10 @@ namespace MVC_PWx.Controllers
                 if (list != null) { friends = list; }
                 else { friends = UserSvc.GetPending(AppUser.UserId); }
             }
-            catch (Exception ex) { }
+            catch (Exception ex)
+            {
+                return HandleExceptionRedirectErrorPartial(ex);
+            }
 
             return PartialView(friends);
         }
@@ -71,7 +84,10 @@ namespace MVC_PWx.Controllers
                 if (list != null) { friends = list; }
                 else { friends = UserSvc.GetBlocked(AppUser.UserId); }
             }
-            catch (Exception ex) { }
+            catch (Exception ex)
+            {
+                return HandleExceptionRedirectErrorPartial(ex);
+            }
 
             return PartialView(friends);
         }
@@ -82,7 +98,17 @@ namespace MVC_PWx.Controllers
             {
                 UserSvc.ReadNotification(id);
             }
-            catch (Exception ex) { }
+            catch (Exception ex)
+            {
+                SentrySdk.WithScope(scope =>
+                {
+                    scope.User = new User
+                    {
+                        Username = AppUser.UserName
+                    };
+                    SentrySdk.CaptureException(ex);
+                });
+            }
 
             return RedirectToLocal(returnUrl);
         }
@@ -127,10 +153,10 @@ namespace MVC_PWx.Controllers
             }
             catch (Exception ex)
             {
-                return Json(new { success = false, message = ex.Message });
+                return HandleExceptionJsonErrorResponse(ex);
             }
 
-            return Json(new { success = true, message = "Got user successfully!", data = user });
+            return GetJson(true, "Got user successfully!", user);
         }
 
         [HttpPost]
@@ -146,10 +172,10 @@ namespace MVC_PWx.Controllers
             }
             catch (Exception ex)
             {
-                return Json(new { success = false, message = ex.Message });
+                return HandleExceptionJsonErrorResponse(ex);
             }
 
-            return Json(new { success = true, message = "Request sent!" });
+            return GetJson(true, "Request sent!");
         }
 
         [HttpPost]
@@ -161,10 +187,10 @@ namespace MVC_PWx.Controllers
             }
             catch (Exception ex)
             {
-                return Json(new { success = false, message = ex.Message });
+                return HandleExceptionJsonErrorResponse(ex);
             }
 
-            return Json(new { success = true, message = "Updated successfully!" });
+            return GetJson(true, "Updated successfully!");
         }
 
         public ActionResult RegisterPlayer(string id)
@@ -174,7 +200,10 @@ namespace MVC_PWx.Controllers
             {
                 model = AuthSvc.GetPlayerRegistry(id);
             }
-            catch (Exception ex) { }
+            catch (Exception ex)
+            {
+                return HandleExceptionRedirectError(ex);
+            }
 
             return View(model);
         }
@@ -188,10 +217,10 @@ namespace MVC_PWx.Controllers
             }
             catch (Exception ex)
             {
-                return Json(new { success = false, message = ex.Message });
+                return HandleExceptionJsonErrorResponse(ex);
             }
 
-            return Json(new { success = true, message = "Character Registration Successful!" });
+            return GetJson(true, "Character registration successful!");
         }
     }
 }

@@ -1,5 +1,8 @@
-﻿using System;
+﻿using Sentry;
+using Sentry.AspNet;
+using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Web.Mvc;
 using System.Web.Optimization;
@@ -9,6 +12,8 @@ namespace MVC_PWx
 {
     public class MvcApplication : System.Web.HttpApplication
     {
+        private IDisposable _sentry;
+
         protected void Application_Start()
         {
             AreaRegistration.RegisterAllAreas();
@@ -17,6 +22,33 @@ namespace MVC_PWx
             BundleConfig.RegisterBundles(BundleTable.Bundles);
 
             if (Application["OnlineUsers"] == null) { Application["OnlineUsers"] = new Dictionary<string, DateTime>(); }
+
+            _sentry = SentrySdk.Init(o =>
+            {
+                o.AddEntityFramework();
+                o.Dsn = ConfigurationManager.AppSettings["sentryDSN"].ToString();
+                o.Environment = ConfigurationManager.AppSettings["environment"].ToString();
+            });
+        }
+
+        protected void Application_Error()
+        {
+            var exception = Server.GetLastError();
+            if (User.Identity.IsAuthenticated)
+            {
+                SentrySdk.WithScope(scope =>
+                {
+                    scope.User = new User
+                    {
+                        Username = User.Identity.Name
+                    };
+                    SentrySdk.CaptureException(exception);
+                });
+            }
+            else
+            {
+                SentrySdk.CaptureException(exception);
+            }
         }
 
         protected void Application_EndRequest()
@@ -40,6 +72,11 @@ namespace MVC_PWx
 
             //Set list
             Application["OnlineUsers"] = onlineUsers;
+        }
+
+        protected void Application_End()
+        {
+            _sentry?.Dispose();
         }
     }
 }

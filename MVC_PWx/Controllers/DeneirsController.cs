@@ -1,6 +1,7 @@
 ﻿using DeneirsGate.Services;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
+using Sentry;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -217,14 +218,74 @@ namespace MVC_PWx.Controllers
             return Json(new { success = success, message = message, data = data, error = error });
         }
 
-        protected JsonResult GetJson(ErrorPostModel error)
+        protected JsonResult GetJson(ErrorPostModel error, Exception ex = null)
         {
+            if (ex != null)
+            {
+                SentrySdk.WithScope(scope =>
+                {
+                    scope.User = new User
+                    {
+                        Username = AppUser.UserName
+                    };
+                    SentrySdk.CaptureException(ex);
+                });
+            }
             return GetJson(false, null, null, error);
         }
 
         protected ActionResult RedirectError(string error)
         {
             return RedirectToAction("Error500", "Errors", new { error = error });
+        }
+
+        protected ActionResult RedirectError(Exception ex)
+        {
+            return RedirectError(ex.InnerException?.Message ?? ex.Message);
+        }
+
+        protected ActionResult HandleExceptionRedirectError(Exception ex)
+        {
+            SentrySdk.WithScope(scope =>
+            {
+                scope.User = new User
+                {
+                    Username = AppUser.UserName
+                };
+                SentrySdk.CaptureException(ex);
+            });
+            return RedirectError(ex);
+        }
+
+        protected PartialViewResult HandleExceptionRedirectErrorPartial(Exception ex)
+        {
+            SentrySdk.WithScope(scope =>
+            {
+                scope.User = new User
+                {
+                    Username = AppUser.UserName
+                };
+                SentrySdk.CaptureException(ex);
+            });
+            return PartialView("ErrorPartial");
+        }
+
+        protected JsonResult HandleExceptionJsonErrorResponse(Exception ex, object data = null)
+        {
+            SentrySdk.WithScope(scope =>
+            {
+                scope.User = new User
+                {
+                    Username = AppUser.UserName
+                };
+                SentrySdk.CaptureException(ex);
+            });
+            return GetJson(false, ex.InnerException?.Message ?? ex.Message, data);
+        }
+
+        protected JsonResult HandleValidationJsonErrorResponse(object data = null)
+        {
+            return GetJson(false, GetValidationError(), data);
         }
 
         protected ActionResult RedirectToLocal(string returnUrl)

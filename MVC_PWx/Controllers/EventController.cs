@@ -30,7 +30,10 @@ namespace MVC_PWx.Controllers
                 ViewBag.Rarities = new SelectList(MagicItemSvc.GetRarities(), "RarityKey", "Name");
                 ViewBag.Attunements = new SelectList(MagicItemSvc.GetAttunements(), "Attunement", "Name");
             }
-            catch (Exception ex) { }
+            catch (Exception ex)
+            {
+                return HandleExceptionRedirectErrorPartial(ex);
+            }
 
             return PartialView(model);
         }
@@ -64,7 +67,10 @@ namespace MVC_PWx.Controllers
                 ViewBag.Rarities = new SelectList(MagicItemSvc.GetRarities(), "RarityKey", "Name");
                 ViewBag.Attunements = new SelectList(MagicItemSvc.GetAttunements(), "Attunement", "Name");
             }
-            catch (Exception ex) { }
+            catch (Exception ex)
+            {
+                return HandleExceptionRedirectErrorPartial(ex);
+            }
 
             return PartialView("_Encounter", model);
         }
@@ -80,12 +86,12 @@ namespace MVC_PWx.Controllers
                 }
                 catch (Exception ex)
                 {
-                    return Json(new { success = false, message = ex.Message });
+                    return HandleExceptionJsonErrorResponse(ex);
                 }
 
-                return Json(new { success = true, message = "Updated successfully!" });
+                return GetJson(true, "Updated successfully!");
             }
-            return Json(new { success = false, message = GetValidationError() });
+            return HandleValidationJsonErrorResponse();
         }
 
         [HttpPost, HasCampaign]
@@ -103,12 +109,12 @@ namespace MVC_PWx.Controllers
                 }
                 catch (Exception ex)
                 {
-                    return Json(new { success = false, message = ex.Message });
+                    return HandleExceptionJsonErrorResponse(ex);
                 }
 
-                return Json(new { success = true, message = "Retrieved successfully!", data = monster });
+                return GetJson(true, "Retrieved successfully!", monster);
             }
-            return Json(new { success = false, message = GetValidationError() });
+            return HandleValidationJsonErrorResponse();
         }
 
         [HttpPost, HasCampaign]
@@ -126,10 +132,10 @@ namespace MVC_PWx.Controllers
             }
             catch (Exception ex)
             {
-                return Json(new { success = false, message = ex.Message });
+                return HandleExceptionJsonErrorResponse(ex);
             }
 
-            return Json(new { success = true, message = "Retrieved successfully!", data = monsters });
+            return GetJson(true, "Retrieved successfully!", monsters);
         }
 
         [HttpPost, HasCampaign]
@@ -143,10 +149,10 @@ namespace MVC_PWx.Controllers
             }
             catch (Exception ex)
             {
-                return Json(new { success = false, message = ex.Message });
+                return HandleExceptionJsonErrorResponse(ex);
             }
 
-            return Json(new { success = true, message = "Retrieved successfully!", data = model });
+            return GetJson(true, "Retrieved successfully!", model);
         }
 
         [HttpPost, HasCampaign]
@@ -164,12 +170,12 @@ namespace MVC_PWx.Controllers
                 }
                 catch (Exception ex)
                 {
-                    return Json(new { success = false, message = ex.Message });
+                    return HandleExceptionJsonErrorResponse(ex);
                 }
 
-                return Json(new { success = true, message = "Retrieved successfully!", data = item });
+                return GetJson(true, "Retrieved successfully!", item);
             }
-            return Json(new { success = false, message = GetValidationError() });
+            return HandleValidationJsonErrorResponse();
         }
 
         [HttpPost, HasCampaign]
@@ -187,10 +193,10 @@ namespace MVC_PWx.Controllers
             }
             catch (Exception ex)
             {
-                return Json(new { success = false, message = ex.Message });
+                return HandleExceptionJsonErrorResponse(ex);
             }
 
-            return Json(new { success = true, message = "Retrieved successfully!", data = items });
+            return GetJson(true, "Retrieved successfully!", items);
         }
 
         [HttpPost, HasCampaign]
@@ -203,10 +209,10 @@ namespace MVC_PWx.Controllers
             }
             catch (Exception ex)
             {
-                return Json(new { success = false, message = ex.Message });
+                return HandleExceptionJsonErrorResponse(ex);
             }
 
-            return Json(new { success = true, message = "Retrieved successfully!", data = treasure });
+            return GetJson(true, "Retrieved successfully!", treasure);
         }
 
         [HttpPost, HasCampaign]
@@ -219,10 +225,10 @@ namespace MVC_PWx.Controllers
             }
             catch (Exception ex)
             {
-                return Json(new { success = false, message = ex.Message });
+                return HandleExceptionJsonErrorResponse(ex);
             }
 
-            return Json(new { success = true, message = "Retrieved successfully!", data = treasure });
+            return GetJson(true, "Retrieved successfully!", treasure);
         }
     }
 }

@@ -4,27 +4,24 @@
 }
 
 <div class="content-box text-center transparent">
-    <h1 class="red text-bold">@ViewBag.Header</h1>
-    <h3>@ViewBag.Message</h3>
+    <h1 class="red text-bold">@(ViewBag.Header ?? "Our Bad!")</h1>
+    <h3>@(ViewBag.Message ?? "Looks like something went wrong with your request. No worries! We have been notified of the issue and will look right into it!")</h3>
     <div class="flex-container center">
         @Html.Raw(ViewBag.Html)
     </div>
-    @if (ViewBag.ReturnUrl != null)
-    {
-        <div class="text-center">
-            <h3 class="text-bold">Do you wish to return to your adventure?</h3>
-            <div class="flexbox-container justify-center">
-                <div class="btn btn-default text-capitalize" onclick="revivify()">RETURN</div>
-                @if (ViewBag.Error != null)
-                {
-                    <div class="btn btn-danger text-capitalize" onclick="$('#error').toggle('fast')">VIEW ERROR</div>
-                }
-            </div>
+    <div class="text-center">
+        <h3 class="text-bold">Do you wish to return to your adventure?</h3>
+        <div class="flexbox-container justify-center">
+            <div class="btn btn-default text-capitalize" onclick="revivify()">RETURN</div>
+            @if (ViewBag.Error != null)
+            {
+                <div class="btn btn-danger text-capitalize" onclick="$('#error').toggle('fast')">VIEW ERROR</div>
+            }
         </div>
-        if (ViewBag.Error != null)
-        {
-            <p id="error" class="mt text-md" style="display:none">@ViewBag.Error</p>
-        }
+    </div>
+    @if (ViewBag.Error != null)
+    {
+        <p id="error" class="mt text-md" style="display:none">@ViewBag.Error</p>
     }
 </div>
 
@@ -35,7 +32,7 @@
         });
 
         function revivify() {
-            window.location = '@ViewBag.ReturnUrl';
+            window.location = '@(ViewBag.ReturnUrl ?? Url.Action("/", "Campaign"))';
         }
     </script>
 }

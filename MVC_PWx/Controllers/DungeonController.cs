@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 
 namespace MVC_PWx.Controllers
@@ -20,7 +19,10 @@ namespace MVC_PWx.Controllers
             {
                 model = DungeonSvc.GetDungeons(AppUser.UserId, AppUser.ActiveCampaign.Value);
             }
-            catch (Exception ex) { }
+            catch (Exception ex)
+            {
+                return HandleExceptionRedirectError(ex);
+            }
 
             return View(model);
         }
@@ -57,7 +59,10 @@ namespace MVC_PWx.Controllers
                 ViewBag.TileImages4 = Directory.EnumerateFiles(Server.MapPath("~/Content/img/dungeon tiles/4/"))
                     .Select(x => "/Content/img/dungeon tiles/4/" + Path.GetFileName(x)).ToList();
             }
-            catch (Exception ex) { }
+            catch (Exception ex)
+            {
+                return HandleExceptionRedirectError(ex);
+            }
 
             return View(model);
         }
@@ -78,7 +83,10 @@ namespace MVC_PWx.Controllers
                     }
                 }
             }
-            catch (Exception ex) { }
+            catch (Exception ex)
+            {
+                return HandleExceptionRedirectError(ex);
+            }
 
             return View(model);
         }
@@ -103,12 +111,12 @@ namespace MVC_PWx.Controllers
                 }
                 catch (Exception ex)
                 {
-                    return Json(new { success = false, message = ex.Message });
+                    return HandleExceptionJsonErrorResponse(ex);
                 }
 
-                return Json(new { success = true, message = "Updated successfully!" });
+                return GetJson(true, "Updated successfully!");
             }
-            return Json(new { success = false, message = GetValidationError() });
+            return HandleValidationJsonErrorResponse();
         }
 
         [HttpPost]
@@ -124,10 +132,10 @@ namespace MVC_PWx.Controllers
             }
             catch (Exception ex)
             {
-                return Json(new { success = false, message = ex.Message });
+                return HandleExceptionJsonErrorResponse(ex);
             }
 
-            return Json(new { success = true, message = "Deleted successfully!" });
+            return GetJson(true, "Deleted successfully!");
         }
         #endregion
 
@@ -140,7 +148,10 @@ namespace MVC_PWx.Controllers
             {
                 model = DungeonSvc.GetTraps(AppUser.UserId, AppUser.ActiveCampaign.Value);
             }
-            catch (Exception ex) { }
+            catch (Exception ex)
+            {
+                return HandleExceptionRedirectError(ex);
+            }
 
             return View(model);
         }
@@ -161,7 +172,10 @@ namespace MVC_PWx.Controllers
                 ViewBag.Natures = new SelectList(DungeonSvc.GetTrapNatures(), "NatureKey", "Name", model.NatureKey);
                 ViewBag.Types = new SelectList(DungeonSvc.GetTrapTypes(), "TypeKey", "Name", model.TypeKey);
             }
-            catch (Exception ex) { }
+            catch (Exception ex)
+            {
+                return HandleExceptionRedirectError(ex);
+            }
 
             return View(model);
         }
@@ -177,12 +191,12 @@ namespace MVC_PWx.Controllers
                 }
                 catch (Exception ex)
                 {
-                    return Json(new { success = false, message = ex.Message });
+                    return HandleExceptionJsonErrorResponse(ex);
                 }
 
-                return Json(new { success = true, message = "Updated successfully!" });
+                return GetJson(true, "Updated successfully!");
             }
-            return Json(new { success = false, message = GetValidationError() });
+            return HandleValidationJsonErrorResponse();
         }
 
         [HttpPost]
@@ -194,10 +208,10 @@ namespace MVC_PWx.Controllers
             }
             catch (Exception ex)
             {
-                return Json(new { success = false, message = ex.Message });
+                return HandleExceptionJsonErrorResponse(ex);
             }
 
-            return Json(new { success = true, message = "Deleted successfully!" });
+            return GetJson(true, "Deleted successfully!");
         }
 
         [HttpPost]
@@ -211,15 +225,15 @@ namespace MVC_PWx.Controllers
 
                 if (trap == null)
                 {
-                    return Json(new { success = false, message = "No traps were found!" });
+                    return GetJson(false, "No traps were found!");
                 }
             }
             catch (Exception ex)
             {
-                return Json(new { success = false, message = ex.Message });
+                return HandleExceptionJsonErrorResponse(ex);
             }
 
-            return Json(new { success = true, message = "Retrieved successfully!", data = trap });
+            return GetJson(true, "Retrieved successfully", trap);
         }
 
         [HttpPost]
@@ -233,10 +247,10 @@ namespace MVC_PWx.Controllers
             }
             catch (Exception ex)
             {
-                return Json(new { success = false, message = ex.Message });
+                return HandleExceptionJsonErrorResponse(ex);
             }
 
-            return Json(new { success = true, message = "Retrieved successfully!", data = stats });
+            return GetJson(true, "Retrieved successfully", stats);
         }
         #endregion
     }

@@ -16,7 +16,10 @@ namespace MVC_PWx.Controllers
             {
                 model = SettlementSvc.GetSettlements(AppUser.UserId, AppUser.ActiveCampaign.Value);
             }
-            catch (Exception ex) { }
+            catch (Exception ex)
+            {
+                return HandleExceptionRedirectError(ex);
+            }
             return View(model);
         }
 
@@ -34,7 +37,10 @@ namespace MVC_PWx.Controllers
 
                 ViewBag.IsNew = isNew;
             }
-            catch (Exception ex) { }
+            catch (Exception ex)
+            {
+                return HandleExceptionRedirectError(ex);
+            }
 
             return View(model);
         }
@@ -48,7 +54,10 @@ namespace MVC_PWx.Controllers
 
                 ViewBag.IsNew = isNew;
             }
-            catch (Exception ex) { }
+            catch (Exception ex)
+            {
+                return HandleExceptionRedirectError(ex);
+            }
 
             return View(model);
         }
@@ -64,12 +73,12 @@ namespace MVC_PWx.Controllers
                 }
                 catch (Exception ex)
                 {
-                    return Json(new { success = false, message = ex.Message });
+                    return HandleExceptionJsonErrorResponse(ex);
                 }
 
-                return Json(new { success = true, message = "Updated successfully!" });
+                return GetJson(true, "Updated successfully!");
             }
-            return Json(new { success = false, message = GetValidationError() });
+            return HandleValidationJsonErrorResponse();
         }
 
         [HttpPost]
@@ -81,10 +90,10 @@ namespace MVC_PWx.Controllers
             }
             catch (Exception ex)
             {
-                return Json(new { success = false, message = ex.Message });
+                return HandleExceptionJsonErrorResponse(ex);
             }
 
-            return Json(new { success = true, message = "Deleted successfully!" });
+            return GetJson(true, "Deleted successfully!");
         }
     }
 }

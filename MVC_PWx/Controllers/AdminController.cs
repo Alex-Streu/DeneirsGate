@@ -175,10 +175,10 @@ namespace MVC_PWx.Controllers
             }
             catch (Exception ex)
             {
-                return Json(new { success = false, message = ex.Message });
+                return HandleExceptionJsonErrorResponse(ex);
             }
 
-            return Json(new { success = true, message = "Uploaded successfully!" });
+            return GetJson(true, "Uploaded successfully!");
         }
 
         public ActionResult MagicItems()
@@ -213,10 +213,10 @@ namespace MVC_PWx.Controllers
             }
             catch (Exception ex)
             {
-                return Json(new { success = false, message = ex.Message });
+                return HandleExceptionJsonErrorResponse(ex);
             }
 
-            return Json(new { success = true, message = "Uploaded successfully!" });
+            return GetJson(true, "Uploaded successfully!");
         }
 
         public ActionResult Suggestions()
@@ -226,7 +226,10 @@ namespace MVC_PWx.Controllers
             {
                 model = SuggestionSvc.GetPendingSuggestions(AppUser.UserId, true);
             }
-            catch (Exception ex) { }
+            catch (Exception ex)
+            {
+                return HandleExceptionJsonErrorResponse(ex);
+            }
 
             return View(model);
         }
@@ -242,12 +245,12 @@ namespace MVC_PWx.Controllers
                 }
                 catch (Exception ex)
                 {
-                    return Json(new { success = false, message = ex.Message });
+                    return HandleExceptionJsonErrorResponse(ex);
                 }
 
-                return Json(new { success = true, message = "Reviewed successfully!" });
+                return GetJson(true, "Reviewed successfully!");
             }
-            return Json(new { success = false, message = GetValidationError() });
+            return HandleValidationJsonErrorResponse();
         }
     }
 }

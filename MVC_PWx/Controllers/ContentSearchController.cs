@@ -1,8 +1,6 @@
 ﻿using DeneirsGate.Services;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 
 namespace MVC_PWx.Controllers
@@ -24,7 +22,10 @@ namespace MVC_PWx.Controllers
             {
                 model = CampaignSvc.GetArcs(AppUser.UserId, AppUser.ActiveCampaign.Value);
             }
-            catch (Exception ex) { }
+            catch (Exception ex)
+            {
+                return HandleExceptionRedirectErrorPartial(ex);
+            }
 
             return PartialView(model);
         }
@@ -36,7 +37,10 @@ namespace MVC_PWx.Controllers
             {
                 model = CampaignSvc.GetArc(AppUser.UserId, AppUser.ActiveCampaign.Value, id);
             }
-            catch (Exception ex) { }
+            catch (Exception ex)
+            {
+                return HandleExceptionRedirectErrorPartial(ex);
+            }
 
             return PartialView(model);
         }
@@ -48,7 +52,10 @@ namespace MVC_PWx.Controllers
             {
                 model = CampaignSvc.GetArcQuest(id);
             }
-            catch (Exception ex) { }
+            catch (Exception ex)
+            {
+                return HandleExceptionRedirectErrorPartial(ex);
+            }
 
             return PartialView(model);
         }
@@ -64,7 +71,10 @@ namespace MVC_PWx.Controllers
                     model.Encounter = EventSvc.GetEncounter(model.Encounter.EncounterKey);
                 }
             }
-            catch (Exception ex) { }
+            catch (Exception ex)
+            {
+                return HandleExceptionRedirectErrorPartial(ex);
+            }
 
             return PartialView(model);
         }
@@ -77,7 +87,10 @@ namespace MVC_PWx.Controllers
             {
                 model = CampaignSvc.GetQuestEventLogs(AppUser.UserId, AppUser.ActiveCampaign.Value, id);
             }
-            catch (Exception ex) { }
+            catch (Exception ex)
+            {
+                return HandleExceptionRedirectErrorPartial(ex);
+            }
 
             return PartialView(model);
         }
@@ -95,7 +108,10 @@ namespace MVC_PWx.Controllers
 
                 ViewBag.CampaignKey = AppUser.ActiveCampaign.Value;
             }
-            catch (Exception ex) { }
+            catch (Exception ex)
+            {
+                return HandleExceptionRedirectErrorPartial(ex);
+            }
 
             return PartialView(model);
         }
@@ -110,7 +126,10 @@ namespace MVC_PWx.Controllers
                 ViewBag.CampaignKey = AppUser.ActiveCampaign.Value;
                 ViewBag.HideOptions = hideOptions;
             }
-            catch (Exception ex) { }
+            catch (Exception ex)
+            {
+                return HandleExceptionRedirectErrorPartial(ex);
+            }
 
             return PartialView(model);
         }
@@ -124,7 +143,10 @@ namespace MVC_PWx.Controllers
 
                 ViewBag.CampaignKey = AppUser.ActiveCampaign.Value;
             }
-            catch (Exception ex) { }
+            catch (Exception ex)
+            {
+                return HandleExceptionRedirectErrorPartial(ex);
+            }
 
             return PartialView(model);
         }
@@ -138,7 +160,10 @@ namespace MVC_PWx.Controllers
 
                 ViewBag.CampaignKey = AppUser.ActiveCampaign.Value;
             }
-            catch (Exception ex) { }
+            catch (Exception ex)
+            {
+                return HandleExceptionRedirectErrorPartial(ex);
+            }
 
             return PartialView(model);
         }
@@ -152,7 +177,10 @@ namespace MVC_PWx.Controllers
 
                 ViewBag.CampaignKey = AppUser.ActiveCampaign.Value;
             }
-            catch (Exception ex) { }
+            catch (Exception ex)
+            {
+                return HandleExceptionRedirectErrorPartial(ex);
+            }
 
             return PartialView(model);
         }
@@ -166,7 +194,10 @@ namespace MVC_PWx.Controllers
 
                 ViewBag.CampaignKey = AppUser.ActiveCampaign.Value;
             }
-            catch (Exception ex) { }
+            catch (Exception ex)
+            {
+                return HandleExceptionRedirectErrorPartial(ex);
+            }
 
             return PartialView(model);
         }
@@ -179,7 +210,10 @@ namespace MVC_PWx.Controllers
             {
                 model = RelationshipTreeSvc.GetCharacterTrees(AppUser.UserId, AppUser.ActiveCampaign.Value, id);
             }
-            catch (Exception ex) { }
+            catch (Exception ex)
+            {
+                return HandleExceptionRedirectErrorPartial(ex);
+            }
 
             return PartialView(model);
         }
@@ -192,7 +226,10 @@ namespace MVC_PWx.Controllers
             {
                 model = CharacterSvc.GetCharacterLogs(AppUser.UserId, AppUser.ActiveCampaign.Value, id);
             }
-            catch (Exception ex) { }
+            catch (Exception ex)
+            {
+                return HandleExceptionRedirectErrorPartial(ex);
+            }
 
             return PartialView(model);
         }
@@ -211,7 +248,10 @@ namespace MVC_PWx.Controllers
 
                 ViewBag.SearchBy = new SelectList(RelationshipTreeSvc.GetSearchDropdown(), "Key", "Value");
             }
-            catch (Exception ex) { }
+            catch (Exception ex)
+            {
+                return HandleExceptionRedirectErrorPartial(ex);
+            }
 
             return PartialView(model);
         }
@@ -224,7 +264,10 @@ namespace MVC_PWx.Controllers
             {
                 model = RelationshipTreeSvc.GetRelationshipTree(id, AppUser.ActiveCampaign.Value);
             }
-            catch (Exception ex) { }
+            catch (Exception ex)
+            {
+                return HandleExceptionRedirectErrorPartial(ex);
+            }
 
             return PartialView(model);
         }
@@ -242,7 +285,10 @@ namespace MVC_PWx.Controllers
 
                 ViewBag.CampaignKey = AppUser.ActiveCampaign.Value;
             }
-            catch (Exception ex) { }
+            catch (Exception ex)
+            {
+                return HandleExceptionRedirectErrorPartial(ex);
+            }
 
             return PartialView(model);
         }
@@ -258,7 +304,10 @@ namespace MVC_PWx.Controllers
             {
                 model = MonsterSvc.GetMonsters(AppUser.UserId, AppUser.ActiveCampaign.Value, !User.IsInRole("Admin"));
             }
-            catch (Exception ex) { }
+            catch (Exception ex)
+            {
+                return HandleExceptionRedirectErrorPartial(ex);
+            }
 
             return PartialView(model);
         }
@@ -270,7 +319,10 @@ namespace MVC_PWx.Controllers
             {
                 model = MonsterSvc.GetMonster(AppUser.UserId, id);
             }
-            catch (Exception ex) { }
+            catch (Exception ex)
+            {
+                return HandleExceptionRedirectErrorPartial(ex);
+            }
 
             return PartialView(model);
         }
@@ -286,7 +338,10 @@ namespace MVC_PWx.Controllers
             {
                 model = MagicItemSvc.GetMagicItems(AppUser.UserId, AppUser.ActiveCampaign.Value, false);
             }
-            catch (Exception ex) { }
+            catch (Exception ex)
+            {
+                return HandleExceptionRedirectErrorPartial(ex);
+            }
 
             return PartialView(model);
         }
@@ -298,7 +353,10 @@ namespace MVC_PWx.Controllers
             {
                 model = MagicItemSvc.GetMagicItem(AppUser.UserId, id);
             }
-            catch (Exception ex) { }
+            catch (Exception ex)
+            {
+                return HandleExceptionRedirectErrorPartial(ex);
+            }
 
             return PartialView(model);
         }
@@ -314,7 +372,10 @@ namespace MVC_PWx.Controllers
             {
                 model = DungeonSvc.GetDungeons(AppUser.UserId, AppUser.ActiveCampaign.Value);
             }
-            catch (Exception ex) { }
+            catch (Exception ex)
+            {
+                return HandleExceptionRedirectErrorPartial(ex);
+            }
 
             return PartialView(model);
         }
@@ -335,7 +396,10 @@ namespace MVC_PWx.Controllers
                     }
                 }
             }
-            catch (Exception ex) { }
+            catch (Exception ex)
+            {
+                return HandleExceptionRedirectErrorPartial(ex);
+            }
 
             return PartialView(model);
         }
@@ -351,7 +415,10 @@ namespace MVC_PWx.Controllers
             {
                 model = DungeonSvc.GetTraps(AppUser.UserId, AppUser.ActiveCampaign.Value);
             }
-            catch (Exception ex) { }
+            catch (Exception ex)
+            {
+                return HandleExceptionRedirectErrorPartial(ex);
+            }
 
             return PartialView(model);
         }
@@ -363,7 +430,10 @@ namespace MVC_PWx.Controllers
             {
                 model = DungeonSvc.GetTrap(AppUser.UserId, AppUser.ActiveCampaign.Value, id);
             }
-            catch (Exception ex) { }
+            catch (Exception ex)
+            {
+                return HandleExceptionRedirectErrorPartial(ex);
+            }
 
             return PartialView(model);
         }
@@ -379,7 +449,10 @@ namespace MVC_PWx.Controllers
             {
                 model = SettlementSvc.GetSettlements(AppUser.UserId, AppUser.ActiveCampaign.Value);
             }
-            catch (Exception ex) { }
+            catch (Exception ex)
+            {
+                return HandleExceptionRedirectErrorPartial(ex);
+            }
 
             return PartialView(model);
         }
@@ -391,7 +464,10 @@ namespace MVC_PWx.Controllers
             {
                 model = SettlementSvc.GetSettlement(AppUser.UserId, AppUser.ActiveCampaign.Value, id);
             }
-            catch (Exception ex) { }
+            catch (Exception ex)
+            {
+                return HandleExceptionRedirectErrorPartial(ex);
+            }
 
             return PartialView(model);
         }

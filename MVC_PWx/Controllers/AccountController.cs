@@ -103,7 +103,7 @@ namespace MVC_PWx.Controllers
                     }
                 }
 
-                return GetJson(false, GetValidationError());
+                return HandleValidationJsonErrorResponse();
             }            
             catch (Exception ex)
             {
@@ -112,7 +112,7 @@ namespace MVC_PWx.Controllers
                     Header = "Oops! Looks like something went wrong!",
                     Message = "We apologize for the inconvenience. Our team has been notified and will work on resolving this issue as soon as possible.",
                     ReturnUrl = Url.Action("Login")
-                });
+                }, ex);
             }
 
             return GetJson(false, "Oops! Something went wrong. Please try again later!");
@@ -193,7 +193,7 @@ namespace MVC_PWx.Controllers
 
                         string callbackUrl = await SendEmailConfirmationTokenAsync(user.Id, "Confirm your account");
 
-                        return Json(new { success = true, title = "Welcome adventurer!", message = "Check your email for a confirmation link, then enjoy your time in the gates!" });
+                        return GetJson(true, "Check your email for a confirmation link, the enjoy your time in the gates!", "Welcome adventurer!");
                     }
                     else
                     {
@@ -247,7 +247,7 @@ namespace MVC_PWx.Controllers
                 if (user == null || !(await UserManager.IsEmailConfirmedAsync(user.Id)))
                 {
                     // Don't reveal that the user does not exist or is not confirmed
-                    return Json(new { success = true, message = "Please check your email to reset your password." });
+                    return GetJson(true, "Please check your email to reset your password.");
                 }
 
                 // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=320771
@@ -255,11 +255,11 @@ namespace MVC_PWx.Controllers
                  string code = await UserManager.GeneratePasswordResetTokenAsync(user.Id);
                  var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code }, protocol: Request.Url.Scheme);
                  await UserManager.SendEmailAsync(user.Id, "Reset Password", AppLogic.GetEmailBody("Did you request a password change?", "If this was you, I get it. Happens all the time.<br/><br/>You can reset your password by clicking <a href=\"" + callbackUrl + "\">here</a>."));
-                 return Json(new { success = true, message = "Please check your email to reset your password." });
+                 return GetJson(true, "Please check your email to reset your password.");
             }
 
             // If we got this far, something failed, redisplay form
-            return Json(new { success = false, message = ModelState?.Values?.FirstOrDefault()?.Errors?.FirstOrDefault().ErrorMessage ?? "Oops! Something went wrong." });
+            return HandleValidationJsonErrorResponse();
         }
 
         //

@@ -1,5 +1,6 @@
 ﻿using DeneirsGate.Services;
 using MVC_PWx.Helpers;
+using Sentry;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -63,7 +64,7 @@ namespace MVC_PWx.Controllers
             }
             catch (Exception ex) 
             {
-                return RedirectError(ex.InnerException?.Message ?? ex.Message);
+                return HandleExceptionRedirectError(ex);
             }
 
             return View(model);
@@ -79,7 +80,10 @@ namespace MVC_PWx.Controllers
                     model = CampaignSvc.GetActivityLog(arcKey.Value);
                 }
             }
-            catch (Exception ex) { }
+            catch (Exception ex)
+            {
+                return HandleExceptionRedirectErrorPartial(ex);
+            }
 
             return PartialView(model);
         }
@@ -99,7 +103,10 @@ namespace MVC_PWx.Controllers
             {
                 campaigns = CampaignSvc.GetCampaigns(AppUser.UserId, true);
             }
-            catch (Exception ex) { }
+            catch (Exception ex)
+            {
+                return HandleExceptionRedirectError(ex);
+            }
 
             return View(campaigns);
         }
@@ -120,7 +127,10 @@ namespace MVC_PWx.Controllers
 
                 ViewBag.IsNew = isNew;
             }
-            catch (Exception ex) { }
+            catch (Exception ex)
+            {
+                return HandleExceptionRedirectError(ex);
+            }
 
             return View(model);
         }
@@ -136,12 +146,12 @@ namespace MVC_PWx.Controllers
                 }
                 catch (Exception ex)
                 {
-                    return Json(new { success = false, message = ex.Message });
+                    return HandleExceptionJsonErrorResponse(ex);
                 }
 
-                return Json(new { success = true, message = "Updated successfully!" });
+                return GetJson(true, "Updated successfully!");
             }
-            return Json(new { success = false, message = GetValidationError() });
+            return HandleValidationJsonErrorResponse();
         }
 
         [HttpPost]
@@ -167,10 +177,10 @@ namespace MVC_PWx.Controllers
             }
             catch (Exception ex)
             {
-                return Json(new { success = false, message = ex.Message });
+                return HandleExceptionJsonErrorResponse(ex);
             }
 
-            return Json(new { success = true, message = "Deleted successfully!" });
+            return GetJson(true, "Deleted successfully!");
         }
 
         [HasAccess(Priviledge = AppLogic.Priviledge.DM)]
@@ -194,10 +204,10 @@ namespace MVC_PWx.Controllers
             }
             catch (Exception ex)
             {
-                return Json(new { success = false, message = ex.Message });
+                return HandleExceptionJsonErrorResponse(ex);
             }
 
-            return Json(new { success = true, message = "Character added successfully!" });
+            return GetJson(true, "Character added successfully!");
         }
 
         [HttpPost]
@@ -210,10 +220,10 @@ namespace MVC_PWx.Controllers
             }
             catch (Exception ex)
             {
-                return Json(new { success = false, message = ex.Message });
+                return HandleExceptionJsonErrorResponse(ex);
             }
 
-            return Json(new { success = true, message = "Log added successfully!" });
+            return GetJson(true, "Log added successfully!");
         }
 
         [HttpPost]
@@ -226,10 +236,10 @@ namespace MVC_PWx.Controllers
             }
             catch (Exception ex)
             {
-                return Json(new { success = false, message = ex.Message });
+                return HandleExceptionJsonErrorResponse(ex);
             }
 
-            return Json(new { success = true, message = "Quest status updated successfully!" });
+            return GetJson(true, "Quest status updated successfully!");
         }
 
         [HttpPost]
@@ -242,10 +252,10 @@ namespace MVC_PWx.Controllers
             }
             catch (Exception ex)
             {
-                return Json(new { success = false, message = ex.Message });
+                return HandleExceptionJsonErrorResponse(ex);
             }
 
-            return Json(new { success = true, message = "Deleted successfully!" });
+            return GetJson(true, "Deleted successfully!");
         }
 
         #endregion
@@ -260,7 +270,10 @@ namespace MVC_PWx.Controllers
             {
                 model = CampaignSvc.GetArcs(AppUser.UserId, AppUser.ActiveCampaign.Value);
             }
-            catch (Exception ex) { }
+            catch (Exception ex)
+            {
+                return HandleExceptionRedirectError(ex);
+            }
 
             return View(model);
         }
@@ -290,7 +303,10 @@ namespace MVC_PWx.Controllers
 
                 ViewBag.IsNew = isNew;
             }
-            catch (Exception ex) { }
+            catch (Exception ex)
+            {
+                return HandleExceptionRedirectError(ex);
+            }
 
             return View(model);
         }
@@ -314,7 +330,10 @@ namespace MVC_PWx.Controllers
                     }
                 }
             }
-            catch (Exception ex) { }
+            catch (Exception ex)
+            {
+                return HandleExceptionRedirectError(ex);
+            }
 
             return View(model);
         }
@@ -328,10 +347,10 @@ namespace MVC_PWx.Controllers
             }
             catch (Exception ex)
             {
-                return Json(new { success = false, message = ex.Message });
+                return HandleExceptionJsonErrorResponse(ex);
             }
 
-            return Json(new { success = true, message = "Updated successfully!" });
+            return GetJson(true, "Updated successfully!");
         }
 
         [HttpPost]
@@ -360,12 +379,12 @@ namespace MVC_PWx.Controllers
                 }
                 catch (Exception ex)
                 {
-                    return Json(new { success = false, message = ex.Message });
+                    return HandleExceptionJsonErrorResponse(ex);
                 }
 
-                return Json(new { success = true, message = "Updated successfully!" });
+                return GetJson(true, "Updated successfully!");
             }
-            return Json(new { success = false, message = GetValidationError() });
+            return HandleValidationJsonErrorResponse();
         }
 
         [HttpPost]
@@ -386,10 +405,10 @@ namespace MVC_PWx.Controllers
             }
             catch (Exception ex)
             {
-                return Json(new { success = false, message = ex.Message });
+                return HandleExceptionJsonErrorResponse(ex);
             }
 
-            return Json(new { success = true, message = "Deleted successfully!" });
+            return GetJson(true, "Deleted successfully!");
         }
 
         #endregion

@@ -11,7 +11,7 @@ namespace MVC_PWx.Controllers
         public JsonResult UploadImage(UploadImagePostModel model)
         {
             var name = model.IsTemp ? Guid.NewGuid().ToString() + model.FileType : model.Name;
-            var path = $"~/Content/CampaignImages/campaign-{model.CampaignKey.ToString()}/";
+            var path = $"~/Content/CampaignImages/campaign-{model.CampaignKey}/";
             if (model.IsTemp) { path += "temp/"; }
             if (!model.Folder.IsNullOrEmpty()) { path += model.Folder + "/"; }
 
@@ -32,7 +32,7 @@ namespace MVC_PWx.Controllers
             }
             catch (Exception ex)
             {
-                return Json(new { success = false, message = ex.Message });
+                return HandleExceptionJsonErrorResponse(ex);
             }
 
             return Json(new { success = true, message = "Uploaded successfully!", image = name, imagePath = path + name });
@@ -40,7 +40,7 @@ namespace MVC_PWx.Controllers
         
         public JsonResult DeleteTemp(Guid campaignKey)
         {
-            var path = $"~/Content/CampaignImages/campaign-{campaignKey.ToString()}/temp";
+            var path = $"~/Content/CampaignImages/campaign-{campaignKey}/temp";
             try
             {
                 var fullPath = Server.MapPath(path);
@@ -49,10 +49,10 @@ namespace MVC_PWx.Controllers
             }
             catch (Exception ex)
             {
-                return Json(new { success = false, message = ex.Message });
+                return HandleExceptionJsonErrorResponse(ex);
             }
 
-            return Json(new { success = true, message = "Deleted temp successfully!" });
+            return GetJson(true, "Deleted temp successfully!");
         }
     }
 }
