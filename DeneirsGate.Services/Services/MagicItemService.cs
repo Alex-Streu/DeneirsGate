@@ -209,16 +209,14 @@ namespace DeneirsGate.Services
 
         public void GetEncounterItems(Guid userId, EncounterViewModel model)
         {
-            using (DBReset())
+            DBReset();
+            var items = new List<MagicItemViewModel>();
+            foreach (var item in model.Items)
             {
-                var items = new List<MagicItemViewModel>();
-                foreach (var item in model.Items)
-                {
-                    items.Add(GetMagicItem(userId, item.ItemKey));
-                }
-
-                model.Items = items;
+                items.Add(GetMagicItem(userId, item.ItemKey));
             }
+
+            model.Items = items;
         }
 
         public void UploadMagicItem(Guid userId, string name, string description, string rarity, string type, string attunement)

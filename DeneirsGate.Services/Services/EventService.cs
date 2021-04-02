@@ -418,7 +418,7 @@ namespace DeneirsGate.Services
                         var gemstone = gemstones.FirstOrDefault(x => x.GemstoneKey == entry.Key);
                         hoardModel.Items.Add(new TreasureItemViewModel
                         {
-                            Display = $"{entry.Value.ToString()} {gemstone.Name}",
+                            Display = $"{entry.Value} {gemstone.Name}",
                             Info = $"{gemstone.Value} GP - {gemstone.Description}"
                         });
                     }
@@ -441,7 +441,7 @@ namespace DeneirsGate.Services
                         var artObject = artObjects.FirstOrDefault(x => x.ArtObjectKey == entry.Key);
                         hoardModel.Items.Add(new TreasureItemViewModel
                         {
-                            Display = $"{entry.Value.ToString()} {artObject.Name}",
+                            Display = $"{entry.Value} {artObject.Name}",
                             Info = $"{artObject.Value} GP"
                         });
                     }
@@ -456,18 +456,21 @@ namespace DeneirsGate.Services
             var encounter = CreateEncounter(encounterId);
             if (encounter == null)
             {
-                using (DBReset())
+                DBReset();
+                DB.EncounterMonsters.RemoveRange(x => x.EncounterKey == encounterId && (DB.Monsters.FirstOrDefault(y => y.MonsterKey == x.MonsterKey) == null));
+                DB.EncounterItems.RemoveRange(x => x.EncounterKey == encounterId && (DB.MagicItems.FirstOrDefault(y => y.ItemKey == x.ItemKey) == null));
+
+                encounter = DB.Encounters.Where(x => x.EncounterKey == encounterId).Select(x => new EncounterViewModel
                 {
-                    encounter = DB.Encounters.Where(x => x.EncounterKey == encounterId).Select(x => new EncounterViewModel
-                    {
-                        Description = x.Description,
-                        EncounterKey = x.EncounterKey,
-                        Items = DB.EncounterItems.Where(y => y.EncounterKey == encounterId).Select(y => new MagicItemViewModel { ItemKey = y.ItemKey}).ToList(),
-                        Monsters = DB.EncounterMonsters.Where(y => y.EncounterKey == encounterId).Select(y => new EncounterMonsterViewModel { MonsterKey = y.MonsterKey, Count = y.Count }).ToList(),
-                        Name = x.Name,
-                        RewardSummary = x.RewardSummary
-                    }).FirstOrDefault();
-                }
+                    Description = x.Description,
+                    EncounterKey = x.EncounterKey,
+                    Items = DB.EncounterItems.Where(y => y.EncounterKey == encounterId).Select(y => new MagicItemViewModel { ItemKey = y.ItemKey}).ToList(),
+                    Monsters = DB.EncounterMonsters.Where(y => y.EncounterKey == encounterId).Select(y => new EncounterMonsterViewModel { MonsterKey = y.MonsterKey, Count = y.Count }).ToList(),
+                    Name = x.Name,
+                    RewardSummary = x.RewardSummary
+                }).FirstOrDefault();
+
+                DB.SaveChanges();
             }
 
             return encounter;

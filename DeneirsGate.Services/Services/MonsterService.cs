@@ -295,31 +295,29 @@ namespace DeneirsGate.Services
 
         public void GetEncounterMonsters(Guid userId, EncounterViewModel model)
         {
-            using (DBReset())
+            DBReset();
+            var totalXp = 0;
+            foreach (var monster in model.Monsters)
             {
-                var totalXp = 0;
-                foreach (var monster in model.Monsters)
-                {
-                    var _monster = GetMonster(userId, monster.MonsterKey);
-                    var monsterItem = model.Monsters.FirstOrDefault(x => x.MonsterKey == monster.MonsterKey);
-                    monsterItem.Alignment = _monster.Alignment;
-                    monsterItem.ChallengeRating = _monster.ChallengeRating;
-                    monsterItem.Description = _monster.Description;
-                    monsterItem.Difficulty = _monster.Difficulty;
-                    monsterItem.Environments = _monster.Environments;
-                    monsterItem.MonsterKey = _monster.MonsterKey;
-                    monsterItem.Name = _monster.Name;
-                    monsterItem.Size = _monster.Size;
-                    monsterItem.Speed = _monster.Speed;
-                    monsterItem.Type = _monster.Type;
-                    monsterItem.XP = _monster.XP;
-                    monsterItem.Count = monster.Count;
+                var _monster = GetMonster(userId, monster.MonsterKey);
+                var monsterItem = model.Monsters.FirstOrDefault(x => x.MonsterKey == monster.MonsterKey);
+                monsterItem.Alignment = _monster.Alignment;
+                monsterItem.ChallengeRating = _monster.ChallengeRating;
+                monsterItem.Description = _monster.Description;
+                monsterItem.Difficulty = _monster.Difficulty;
+                monsterItem.Environments = _monster.Environments;
+                monsterItem.MonsterKey = _monster.MonsterKey;
+                monsterItem.Name = _monster.Name;
+                monsterItem.Size = _monster.Size;
+                monsterItem.Speed = _monster.Speed;
+                monsterItem.Type = _monster.Type;
+                monsterItem.XP = _monster.XP;
+                monsterItem.Count = monster.Count;
 
-                    totalXp += monsterItem.XP * monster.Count;
-                }
-
-                model.TotalXP = totalXp;
+                totalXp += monsterItem.XP * monster.Count;
             }
+
+            model.TotalXP = totalXp;
         }
     }
 }

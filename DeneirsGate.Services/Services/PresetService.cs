@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Sentry;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -24,7 +25,10 @@ namespace DeneirsGate.Services
                     races.Insert(0, none);
                 }
             }
-            catch (Exception ex) { }
+            catch (Exception ex) 
+            { 
+                SentrySdk.CaptureException(ex);
+            }
 
             return races;
         }
@@ -47,7 +51,10 @@ namespace DeneirsGate.Services
                     classes.Insert(0, none);
                 }
             }
-            catch (Exception ex) { }
+            catch (Exception ex)
+            {
+                SentrySdk.CaptureException(ex);
+            }
 
             return classes;
         }
@@ -70,7 +77,10 @@ namespace DeneirsGate.Services
                     backgrounds.Insert(0, none);
                 }
             }
-            catch (Exception ex) { }
+            catch (Exception ex)
+            {
+                SentrySdk.CaptureException(ex);
+            }
 
             return backgrounds;
         }
@@ -106,16 +116,17 @@ namespace DeneirsGate.Services
             var types = new List<DamageTypeViewModel>();
             try
             {
-                using (DBReset())
+                DBReset();
+                types = DB.DamageTypes.Select(x => new DamageTypeViewModel
                 {
-                    types = DB.DamageTypes.Select(x => new DamageTypeViewModel
-                    {
-                        Name = x.Name,
-                        TypeKey = x.TypeKey
-                    }).OrderBy(x => x.Name).ToList();
-                }
+                    Name = x.Name,
+                    TypeKey = x.TypeKey
+                }).OrderBy(x => x.Name).ToList();
             }
-            catch (Exception ex) { }
+            catch (Exception ex)
+            {
+                SentrySdk.CaptureException(ex);
+            }
 
             return types;
         }
@@ -125,16 +136,17 @@ namespace DeneirsGate.Services
             var types = new List<EnvironmentViewModel>();
             try
             {
-                using (DBReset())
+                DBReset();
+                types = DB.Environments.Select(x => new EnvironmentViewModel
                 {
-                    types = DB.Environments.Select(x => new EnvironmentViewModel
-                    {
-                        Name = x.Name,
-                        EnvironmentKey = x.EnvironmentKey
-                    }).OrderBy(x => x.Name).ToList();
-                }
+                    Name = x.Name,
+                    EnvironmentKey = x.EnvironmentKey
+                }).OrderBy(x => x.Name).ToList();
             }
-            catch (Exception ex) { }
+            catch (Exception ex)
+            {
+                SentrySdk.CaptureException(ex);
+            }
 
             return types;
         }
