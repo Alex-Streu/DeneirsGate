@@ -107,6 +107,13 @@ namespace DeneirsGate.Data
 
         #endregion
 
+        #region Tutorials
+
+        public virtual DbSet<Tutorial> Tutorials { get; set; }
+        public virtual DbSet<UserTutorial> UserTutorials { get; set; }
+
+        #endregion
+
         #region Social
 
         public virtual DbSet<FriendRequest> FriendRequests { get; set; }

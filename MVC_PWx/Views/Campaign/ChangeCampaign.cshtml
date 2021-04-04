@@ -21,7 +21,7 @@
 <br />
 <div class="flexbox-container justify-between">
     @HtmlHelpers.RenderFancyTextbox("lg long", "SearchCampaigns", null, "", "Search Campaigns")
-    <a class="btn btn-default" href="@Url.Action("Create")">Create Campaign</a>
+    <a id="createCampaign" class="btn btn-default" href="@Url.Action("Create")">Create Campaign</a>
 </div>
 @foreach (var item in Model)
 {
@@ -55,6 +55,49 @@
 @section scripts {
     <script type="text/javascript">
         var deleteAction = '@Url.Action("Delete")';
+        var tutorialEngine = {};
+
+        $(document).ready(function () {
+            initializeTutorial();
+            setupGetStartedTutorial();
+            getUserTutorial('Get Started', setupActivateCampaignTutorial);
+        })
+
+        function setupGetStartedTutorial() {
+            var tutorial_GetStarted_steps = [
+                {
+                    'next #tutorialTitle': `<span style='font-size:xx-large'>Welcome to Deneir's Gate!</span><br/>
+                            <br/>
+                            Please allow us to guide you along your journey!`,
+                    arrowColor: '#0000',
+                    margin: 0
+                },
+                {
+                    'next #helpBtn': `If you ever need to see a tutorial again, this help button will appear on any page with an available tutorial.`,
+                },
+                {
+                    'next .enjoyhint_close_btn': `If you wish to dismiss a tour now and forever, just click the close button at any point!`,
+                    shape: 'circle',
+                },
+                {
+                    'click #createCampaign': `Let's get you started. First, you'll need to create a new campaign.<br/><br/>
+                                                Click the "Create Campaign" button to begin!`,
+                    showSkip: false,
+                    showPrev: false
+                }
+            ];
+            setTutorialSteps(tutorial_GetStarted_steps);
+        }
+
+        function setupActivateCampaignTutorial() {
+            var tutorial_ActivateCampaign_steps = [
+                {
+                    'click .campaign-list-item:first': `Now that your campaign is ready, click on it to activate it and the real fun can begin!`,
+                }
+            ];
+            setTutorialSteps(tutorial_ActivateCampaign_steps);
+            getUserTutorial('Activate Campaign', setupGetStartedTutorial);
+        }
 
         $('.campaign-list-item').click(function () {
             window.location.assign($(this).data('href'));

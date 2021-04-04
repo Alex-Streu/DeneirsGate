@@ -213,6 +213,7 @@
                 </div>
                 <div class="top-menu">
                     <ul class="nav pull-right top-menu">
+                        <li><a id="helpBtn" class="btn btn-sm btn-default" style="margin-top:15px;display:none"><i class="fa fa-question-circle-o"></i></a></li>
                         <li><a class="logout btn btn-sm btn-theme" href="@Url.Action("Logoff", "Account")">Logout</a></li>
                     </ul>
                 </div>
@@ -245,179 +246,77 @@
                             </li>
                         }
                         <li>
-                            <a id="menu_Suggestion" href="@Url.Action("/", "Suggestion")">
-                                <i class="fa fa-archive"></i>
-                                <span>Suggestion Box</span>
-                            </a>
-                        </li>
-                        @if (ViewBag.CampaignName != null)
-                        {
-                            <li class="mt" style="border-bottom:1px solid">
-                                <label class="text-md white">@ViewBag.CampaignName</label>
-                            </li>
-                        }
-                        <li class="@(ViewBag.CampaignName != null ? "" : "mt")">
-                            <a id="menu_Dashboard" data-alt="/" href="@Url.Action("/", "Campaign")">
-                                <i class="fa fa-dashboard"></i>
-                                <span>Dashboard</span>
-                            </a>
-                        </li>
-                        <li>
                             <a id="menu_Campaign" href="@Url.Action("ChangeCampaign", "Campaign")">
                                 <i class="fa fa-compass"></i>
                                 <span>Campaigns</span>
                             </a>
                         </li>
                         <li>
-                            <a id="menu_Arc" data-alt="/" href="@Url.Action("Arcs", "Campaign")">
-                                <i class="fa fa-pencil-square-o"></i>
-                                <span>Story Arcs</span>
+                            <a id="menu_Suggestion" href="@Url.Action("/", "Suggestion")">
+                                <i class="fa fa-archive"></i>
+                                <span>Suggestion Box</span>
                             </a>
                         </li>
-                        <li>
-                            <a id="menu_Character" href="@Url.Action("/", "Character")">
-                                <i class="fa fa-user-circle"></i>
-                                <span>Characters</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a id="menu_RelationshipTree" href="@Url.Action("/", "RelationshipTree")">
-                                <i class="fa fa-sitemap"></i>
-                                <span>Relationship Trees</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a id="menu_Monster" href="@Url.Action("/", "Monster")">
-                                <i class="fa fa-optin-monster"></i>
-                                <span>Monsters</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a id="menu_MagicItem" href="@Url.Action("/", "MagicItem")">
-                                <i class="fa fa-trophy"></i>
-                                <span>Magic Items</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a id="menu_Dungeon" href="@Url.Action("/", "Dungeon")">
-                                <i class="fa fa-arrows"></i>
-                                <span>Dungeons</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a id="menu_Trap" href="@Url.Action("Traps", "Dungeon")">
-                                <i class="fa fa-bomb"></i>
-                                <span>Traps</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a id="menu_Settlement" href="@Url.Action("/", "Settlement")">
-                                <i class="fa fa-map-marker"></i>
-                                <span>Settlements</span>
-                            </a>
-                        </li>
-                        @*<li class="sub-menu">
-                                <a href="javascript:;">
-                                    <i class="fa fa-desktop"></i>
-                                    <span>UI Elements</span>
-                                </a>
-                                <ul class="sub">
-                                    <li><a href="general.html">General</a></li>
-                                    <li><a href="buttons.html">Buttons</a></li>
-                                    <li><a href="panels.html">Panels</a></li>
-                                    <li><a href="font_awesome.html">Font Awesome</a></li>
-                                </ul>
-                            </li>
-                            <li class="sub-menu">
-                                <a href="javascript:;">
-                                    <i class="fa fa-cogs"></i>
-                                    <span>Components</span>
-                                </a>
-                                <ul class="sub">
-                                    <li><a href="grids.html">Grids</a></li>
-                                    <li><a href="calendar.html">Calendar</a></li>
-                                    <li><a href="gallery.html">Gallery</a></li>
-                                    <li><a href="todo_list.html">Todo List</a></li>
-                                    <li><a href="dropzone.html">Dropzone File Upload</a></li>
-                                    <li><a href="inline_editor.html">Inline Editor</a></li>
-                                    <li><a href="file_upload.html">Multiple File Upload</a></li>
-                                </ul>
-                            </li>
-                            <li class="sub-menu">
-                                <a href="javascript:;">
-                                    <i class="fa fa-book"></i>
-                                    <span>Extra Pages</span>
-                                </a>
-                                <ul class="sub">
-                                    <li><a href="blank.html">Blank Page</a></li>
-                                    <li><a href="login.html">Login</a></li>
-                                    <li><a href="lock_screen.html">Lock Screen</a></li>
-                                    <li><a href="profile.html">Profile</a></li>
-                                    <li><a href="invoice.html">Invoice</a></li>
-                                    <li><a href="pricing_table.html">Pricing Table</a></li>
-                                    <li><a href="faq.html">FAQ</a></li>
-                                    <li><a href="404.html">404 Error</a></li>
-                                    <li><a href="500.html">500 Error</a></li>
-                                </ul>
-                            </li>
-                            <li class="sub-menu">
-                                <a href="javascript:;">
-                                    <i class="fa fa-tasks"></i>
-                                    <span>Forms</span>
-                                </a>
-                                <ul class="sub">
-                                    <li><a href="form_component.html">Form Components</a></li>
-                                    <li><a href="advanced_form_components.html">Advanced Components</a></li>
-                                    <li><a href="form_validation.html">Form Validation</a></li>
-                                    <li><a href="contactform.html">Contact Form</a></li>
-                                </ul>
-                            </li>
-                            <li class="sub-menu">
-                                <a href="javascript:;">
-                                    <i class="fa fa-th"></i>
-                                    <span>Data Tables</span>
-                                </a>
-                                <ul class="sub">
-                                    <li><a href="basic_table.html">Basic Table</a></li>
-                                    <li><a href="responsive_table.html">Responsive Table</a></li>
-                                    <li><a href="advanced_table.html">Advanced Table</a></li>
-                                </ul>
+                        @if (UserData.ActiveCampaign != null)
+                        {
+                            <li class="mt" style="border-bottom:1px solid">
+                                <label id="menu_ActiveCampaign" class="text-md white">@ViewBag.CampaignName</label>
                             </li>
                             <li>
-                                <a href="inbox.html">
-                                    <i class="fa fa-envelope"></i>
-                                    <span>Mail </span>
-                                    <span class="label label-theme pull-right mail-info">2</span>
+                                <a id="menu_Dashboard" data-alt="/" href="@Url.Action("/", "Campaign")">
+                                    <i class="fa fa-dashboard"></i>
+                                    <span>Dashboard</span>
                                 </a>
-                            </li>
-                            <li class="sub-menu">
-                                <a href="javascript:;">
-                                    <i class=" fa fa-bar-chart-o"></i>
-                                    <span>Charts</span>
-                                </a>
-                                <ul class="sub">
-                                    <li><a href="morris.html">Morris</a></li>
-                                    <li><a href="chartjs.html">Chartjs</a></li>
-                                    <li><a href="flot_chart.html">Flot Charts</a></li>
-                                    <li><a href="xchart.html">xChart</a></li>
-                                </ul>
-                            </li>
-                            <li class="sub-menu">
-                                <a href="javascript:;">
-                                    <i class="fa fa-comments-o"></i>
-                                    <span>Chat Room</span>
-                                </a>
-                                <ul class="sub">
-                                    <li><a href="lobby.html">Lobby</a></li>
-                                    <li><a href="chat_room.html"> Chat Room</a></li>
-                                </ul>
                             </li>
                             <li>
-                                <a href="google_maps.html">
+                                <a id="menu_Arc" data-alt="/" href="@Url.Action("Arcs", "Campaign")">
+                                    <i class="fa fa-pencil-square-o"></i>
+                                    <span>Story Arcs</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a id="menu_Character" href="@Url.Action("/", "Character")">
+                                    <i class="fa fa-user-circle"></i>
+                                    <span>Characters</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a id="menu_RelationshipTree" href="@Url.Action("/", "RelationshipTree")">
+                                    <i class="fa fa-sitemap"></i>
+                                    <span>Relationship Trees</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a id="menu_Monster" href="@Url.Action("/", "Monster")">
+                                    <i class="fa fa-optin-monster"></i>
+                                    <span>Monsters</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a id="menu_MagicItem" href="@Url.Action("/", "MagicItem")">
+                                    <i class="fa fa-trophy"></i>
+                                    <span>Magic Items</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a id="menu_Dungeon" href="@Url.Action("/", "Dungeon")">
+                                    <i class="fa fa-arrows"></i>
+                                    <span>Dungeons</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a id="menu_Trap" href="@Url.Action("Traps", "Dungeon")">
+                                    <i class="fa fa-bomb"></i>
+                                    <span>Traps</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a id="menu_Settlement" href="@Url.Action("/", "Settlement")">
                                     <i class="fa fa-map-marker"></i>
-                                    <span>Google Maps </span>
+                                    <span>Settlements</span>
                                 </a>
-                            </li>*@
+                            </li>
+                        }
                     </ul>
                     <!-- sidebar menu end-->
                 </div>
@@ -430,6 +329,9 @@
         <!--main content start-->
         <section id="main-content">
             <div class="body-content">
+                <div style="width:100%">
+                    <div id="tutorialTitle" style="margin:0 auto;width:1px"></div>
+                </div>
                 @RenderBody()
             </div>
         </section>

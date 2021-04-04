@@ -2,6 +2,8 @@
 var customErrorAction = "/Errors/CustomError";
 var error500Action = "/Errors/Error500";
 var error400Action = "/Errors/Error400";
+var getUserTutorialAction = "/Tutorial/GetUserTutorial";
+var updateUserTutorialAction = "/Tutorial/UpdateUserTutorial";
 
 /* HELPERS */
 function isEmpty(val) {
@@ -121,6 +123,95 @@ function suggest(fieldId, type, editor) {
             }
         }
         else {
+            Notiflix.NotifyContent.Failure(data.message);
+        }
+    })
+}
+
+/* TUTORIALS */
+var tutorialKey = '';
+var tutorialName = '';
+var tutorialEngine = null;
+var tutorialEngineSteps = [];
+
+function initializeTutorial() {
+    tutorialEngine = new EnjoyHint({
+        onSkip: storeUserTutorial,
+        onEnd: completeUserTutorial
+    });
+
+    $('#helpBtn').show();
+}
+
+function setTutorialSteps(steps) {
+    tutorialEngineSteps = steps;
+    tutorialEngine.set(steps);
+}
+
+$('#helpBtn').click(function () {
+    initializeTutorial();
+    setTutorialSteps(tutorialEngineSteps);
+    tutorialEngine.resume();
+})
+
+$(document).on('click', '.enjoyhint_close_btn', function () {
+    completeUserTutorial();
+})
+
+function getUserTutorial(name, callbackIfComplete) {
+    tutorialName = name;
+
+    var postData = {
+        Route: window.location.pathname,
+        Name: name
+    }
+    
+    var cookie = Cookies.get(postData.Route + postData.Name);
+    if (cookie == 'true' && callbackIfComplete != null) {
+        callbackIfComplete();
+        return;
+    }
+
+    ajaxPost(postData, getUserTutorialAction, function (data) {
+        if (data.success) {
+            tutorialKey = data.data.TutorialKey;
+            //Cookies.set(postData.Route + postData.Name, data.data.IsComplete ? 'true' : 'false');
+            if (!data.data.IsComplete) {
+                tutorialEngine.setCurrentStep(data.data.LastStep);
+                tutorialEngine.resume();
+            }
+            else if (callbackIfComplete != null) {
+                callbackIfComplete();
+            }
+        } else {
+            Notiflix.NotifyContent.Failure(data.message);
+        }
+    })
+}
+
+function completeUserTutorial() {
+    updateUserTutorial(true, 0);
+}
+
+function storeUserTutorial() {
+    updateUserTutorial(false, tutorialEngine.getCurrentStep());
+}
+
+function updateUserTutorial(isComplete, lastStep) {
+    //Cookies.set(window.location.pathname + tutorialName, isComplete ? 'true' : 'false');
+
+    var postData = {
+        TutorialKey: tutorialKey,
+        IsComplete: isComplete,
+        LastStep: lastStep
+    }
+
+    ajaxPost(postData, updateUserTutorialAction, function (data) {
+        if (data.success) {
+            if (isComplete) {
+                
+            }
+        } else {
             Notiflix.NotifyContent.Failure(data.message);
         }
     })

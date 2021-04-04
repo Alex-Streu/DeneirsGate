@@ -22,16 +22,17 @@ namespace System.Collections.Generic
     }
 }
 
-namespace System
-{
-    public static class StringExtensions
-    {
-        public static bool IsNullOrEmpty(this string str)
-        {
-            return String.IsNullOrEmpty(str);
-        }
-    }
-}
+//Moved to DeneirsService
+//namespace System
+//{
+//    public static class StringExtensions
+//    {
+//        public static bool IsNullOrEmpty(this string str)
+//        {
+//            return String.IsNullOrEmpty(str);
+//        }
+//    }
+//}
 
 
 namespace MVC_PWx

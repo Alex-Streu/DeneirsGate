@@ -255,6 +255,7 @@
     <Compile Include="Controllers\RelationshipTreeController.cs" />
     <Compile Include="Controllers\SettlementController.cs" />
     <Compile Include="Controllers\SuggestionController.cs" />
+    <Compile Include="Controllers\TutorialController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="Controllers\UtilityController.cs" />
     <Compile Include="Global.asax.cs">
@@ -291,6 +292,7 @@
     <Content Include="Content\dashio-css\to-do.css" />
     <Content Include="Content\dashio-css\zabuto_calendar.css" />
     <Content Include="Content\dummyData.html" />
+    <Content Include="Content\enjoyhint.css" />
     <Content Include="Content\img\404.png" />
     <Content Include="Content\img\500.png" />
     <Content Include="Content\img\apple-touch-icon.png" />
@@ -578,18 +580,22 @@
     <None Include="Properties\PublishProfiles\DEV.pubxml" />
     <None Include="Properties\PublishProfiles\PROD.pubxml" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
+    <Content Include="Scripts\enjoyhint.min.js" />
     <Content Include="Scripts\jquery-3.3.1.js" />
     <Content Include="Scripts\jquery-3.3.1.min.js" />
     <Content Include="Scripts\jquery-3.3.1.slim.js" />
     <Content Include="Scripts\jquery-3.3.1.slim.min.js" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
     <Content Include="Scripts\jquery.redirect.js" />
+    <Content Include="Scripts\jquery.scrollTo.min.js" />
     <Content Include="Scripts\jquery.signalR-2.2.2.js" />
     <Content Include="Scripts\jquery.signalR-2.2.2.min.js" />
     <Content Include="Scripts\jquery.validate.js" />
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
+    <Content Include="Scripts\js.cookie.min.js" />
+    <Content Include="Scripts\kinetic.min.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
     <Content Include="Content\lib\notiflix-2.0.0.js" />
     <Content Include="Scripts\notifications.js" />
@@ -710,6 +716,7 @@
     <Folder Include="App_Data\" />
     <Folder Include="Views\Deneirs\" />
     <Folder Include="Views\Errors\" />
+    <Folder Include="Views\Tutorial\" />
     <Folder Include="Views\Utility\" />
   </ItemGroup>
   <ItemGroup>

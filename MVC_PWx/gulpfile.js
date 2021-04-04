@@ -9,7 +9,8 @@ const paths = {
 
 gulp.task('copy:css', () => {
     const cssToCopy = [
-        `${paths.nodeModules}bootstrap-select/dist/css/bootstrap-select.min.css`
+        `${paths.nodeModules}bootstrap-select/dist/css/bootstrap-select.min.css`,
+        `${paths.nodeModules}xbs-enjoyhint/enjoyhint.css`
     ];
 
     return gulp.src(cssToCopy)
@@ -19,7 +20,11 @@ gulp.task('copy:css', () => {
 gulp.task('copy:js', () => {
     const javascriptToCopy = [
         `${paths.nodeModules}bootstrap-select/dist/js/bootstrap-select.min.js`,
-        `${paths.nodeModules}jquery.redirect/jquery.redirect.js`
+        `${paths.nodeModules}jquery.redirect/jquery.redirect.js`,
+        `${paths.nodeModules}xbs-enjoyhint/enjoyhint.min.js`,
+        `${paths.nodeModules}jquery.scrollto/jquery.scrollTo.min.js`,
+        `${paths.nodeModules}kinetic/kinetic.min.js`,
+        `${paths.nodeModules}js-cookie/dist/js.cookie.min.js`
     ];
 
     return gulp.src(javascriptToCopy)

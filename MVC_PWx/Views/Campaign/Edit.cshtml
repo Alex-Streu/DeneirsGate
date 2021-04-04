@@ -44,6 +44,32 @@
 
         $(document).ready(function () {
             if ('@ViewBag.IsNew' == 'True') { $('#delete').hide(); }
+
+            initializeTutorial();
+            var tutorialSteps = [
+                {
+                    'key #Name': `Creating a new campaign is more painless than a Level 1 Bard!<br/>
+                            <br/>
+                            Enter a name for you campaign, then press 'Enter'.`,
+                    keyCode: 13
+                },
+                {
+                    'key #Description': `Enter a description here (or don't), then press 'Enter'.`,
+                    keyCode: 13
+                },
+                {
+                    'next .image-upload': `You can also upload an image to represent your campaign, if you'd like!`,
+                },
+                {
+                    'click .save-button': `Finally, click Save to save your campaign. (Make sure your campaign has a name, or it won't save correctly!)<br/><br/>
+                                           Don't worry if you don't like something you wrote. You can always come back to edit it later!`,
+                },
+                {
+                    'click #menu_Campaign': `Great! Your first campaign is ready to go. Just click on the Campaigns menu option to get back to your campaigns.`,
+                }
+            ];
+            setTutorialSteps(tutorialSteps);
+            getUserTutorial('Create Campaign');
         })
 
         function save() {

@@ -174,9 +174,11 @@
     <Compile Include="DataModels\TrapTypeDamage.cs" />
     <Compile Include="DataModels\Treasure.cs" />
     <Compile Include="DataModels\TreasureHoard.cs" />
+    <Compile Include="DataModels\Tutorial.cs" />
     <Compile Include="DataModels\UserCampaign.cs" />
     <Compile Include="DataModels\UserMagicItem.cs" />
     <Compile Include="DataModels\UserMonster.cs" />
+    <Compile Include="DataModels\UserTutorials.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="DataModels\Race.cs" />
   </ItemGroup>

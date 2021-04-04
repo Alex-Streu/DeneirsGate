@@ -154,4 +154,18 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="MonsterKey" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="14455551-bb7c-41dd-82ba-331b82c9ea5e" ChangeDateTime="04/03/2021 08:12:41">
+    <Property Name="ElementName" Value="[dbo].[Tutorials].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[Tutorials]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="TutorialKey" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="f91db2b5-e3f2-488b-95ad-d193de14b5eb" ChangeDateTime="04/03/2021 10:55:13">
+    <Property Name="ElementName" Value="[dbo].[UserTutorials].[IsCompleted]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[UserTutorials]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="IsComplete" />
+  </Operation>
 </Operations>
