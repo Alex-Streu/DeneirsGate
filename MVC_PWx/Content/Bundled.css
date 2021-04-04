@@ -201,6 +201,9 @@ a {
 .transparent {
   background-color: rgba(255, 255, 255, 0.75) !important; }
 
+.scrollable {
+  overflow-y: scroll; }
+
 .fancy-textbox {
   position: relative;
   /*margin-bottom: 25px;*/
