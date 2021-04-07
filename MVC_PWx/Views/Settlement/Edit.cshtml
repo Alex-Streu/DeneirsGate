@@ -30,7 +30,7 @@
                     @HtmlHelpers.RenderFancyTextbox("lg full", "Name", 150, Model.Name, "Name", Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" }))
                 </div>
                 <div style="width:10%">
-                    <div onclick="$('#map-tab').click()" class="btn btn-warning">Area Map</div>
+                    <div id="editMap" onclick="$('#map-tab').click()" class="btn btn-warning">Area Map</div>
                 </div>
             </div>
             <div class="flexbox-container">
@@ -38,7 +38,7 @@
             </div>
             <div class="flexbox-container full-width justify-between" style="padding-top:2em">
                 <label class="text-x-large text-bold red">Locations</label>
-                <div class="btn btn-default" onclick="loadLocation()">Create Location</div>
+                <div id="createLocation" class="btn btn-default" onclick="loadLocation()">Create Location</div>
             </div>
             <div id="location-template" class="template">
                 <div>
@@ -82,7 +82,7 @@
     </div>
     <div id="location-pane" class="fancy-tab-pane slide-right">
         <div class="content-box">
-            <a onclick="backToSettlement()"><i class="fa fa-arrow-circle-left"></i> Back to Settlement</a>
+            <a id="locationBackToSettlement" onclick="backToSettlement()"><i class="fa fa-arrow-circle-left"></i> Back to Settlement</a>
             <div class="flexbox-container full-width" style="margin-top:1em">
                 @HtmlHelpers.RenderFancyTextbox("lg full", "LocationName", 150, null, "Name")
             </div>
@@ -94,7 +94,7 @@
     <div id="map-pane" class="fancy-tab-pane slide-right">
         <div class="content-box">
             <div class="flexbox-container justify-between no-padding">
-                <a onclick="loadSettlement()"><i class="fa fa-arrow-circle-left"></i> Back to Settlement</a>
+                <a id="mapBackToSettlement" onclick="loadSettlement()"><i class="fa fa-arrow-circle-left"></i> Back to Settlement</a>
                 <div class="flexbox-container justify-end no-padding">
                     <div id="btnAttachLocations" class="btn btn-default" onclick="loadMapLocations()" style="display:none"><i class="fa fa-map-marker"></i>&nbsp;Attach Location</div>
                     @Url.RenderSettlementMapUpload("SettlementMap", Model.Map, (Guid)ViewBag.CampaignKey, Model.SettlementKey)
@@ -155,6 +155,75 @@
                 $('#print').hide();
             }
             setupSortable();
+
+            //Setup tutorial
+            initializeTutorial();
+            var tutorialSteps = [
+                {
+                    'click #createLocation': `Lookin' good! Let's add a location for our settlement.`
+                },
+                {
+                    'key #Name': `Let's start with a name.<br/><br/>Then press 'Enter'.`,
+                    keyCode: 13
+                },
+                {
+                    'key #Description': `Great! Now give a little description (or can just use your Magic Wand).<br/><br/>Then press 'Enter'.`,
+                    keyCode: 13
+                },
+                {
+                    'click #createLocation': `Lookin' good! Let's add a location for our settlement.`
+                },
+                {
+                    'key #LocationName': `A location is nothing more than a simple name...`,
+                    keyCode: 13
+                },
+                {
+                    'key #LocationDescription': `...and a description.<br/><br/>Whenever you're finished, press 'Enter'.`,
+                    keyCode: 13
+                },
+                {
+                    'click #locationBackToSettlement': `And that's it!<br/>Let's head back to our settlement.`
+                },
+                {
+                    "next #tutorialTitle": `And just like that, our settlement can be filled with its fullfilling-ful details!`,
+                    arrowColor: '#0000',
+                    margin: 0
+                },
+                {
+                    'next #locations': `All of your locations can be seen here, where they can be expanded, edited, deleted and event sorted!`
+                },
+                {
+                    'click #editMap': `Now let's check out the fun part!`
+                },
+                {
+                    'next .image-upload': `Upload an image for your map.<br/><br/>Don't worry. It can be just any old image for now.`,
+                    showPrev: false
+                },
+                {
+                    'next #btnAttachLocations': `Click on "Attach Location," and then click on the plus button that appears next to your location.`
+                },
+                {
+                    'next #mapCanvas': `Once you see a marker over the mouse, click anywhere on your map.`
+                },
+                {
+                    'click #mapBackToSettlement': `Nice, huh?<br/>Now you can visually see where your locations are on your map.<br/><br/>
+                    But we're not quite done yet..`
+                },
+                {
+                    'click .save-button': `Go ahead and save your wonderful town of Yore.`
+                },
+                {
+                    'click #print': `That's right! Your settlement is print-ready!<br/><br/>
+                    Just click on "Print" here, and have your entire settlement at your fingertips!`
+                },
+                {
+                    'click #menu_Arc': `Now brace yourself for the BBEG of campaign creating...<br/><br/><i>...writing the actual story!</i>`,
+                    showPrev: false,
+                    showSkip: false
+                }
+            ];
+            setTutorialSteps(tutorialSteps);
+            getUserTutorial('Create Settlement');
 
             //Store locations
             @foreach (var location in Model.SettlementLocations)

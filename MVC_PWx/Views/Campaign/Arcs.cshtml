@@ -12,7 +12,7 @@
     <br />
     <div class="flexbox-container justify-between">
         @HtmlHelpers.RenderFancyTextbox("lg long", "Search", null, "", "Search Arc")
-        <a class="btn btn-default" href="@Url.Action("CreateArc")">Create Arc</a>
+        <a id="createArc" class="btn btn-default" href="@Url.Action("CreateArc")">Create Arc</a>
     </div>
     <table class="table table-bordered table-striped">
         <tbody>
@@ -47,6 +47,26 @@
 @section scripts {
     <script type="text/javascript">
         var deleteAction = '@Url.Action("DeleteArc")';
+
+        $(document).ready(function () {
+            //Setup tutorial
+            initializeTutorial();
+            var tutorialSteps = [
+                {
+                    "next #tutorialTitle": `In Deneir's Gate, we break down the story of campaigns into segments called story arcs.<br/><br/>
+                    With our tools, you can organize your campaign however you like, but you may get better results when you understand our system.`,
+                    arrowColor: '#0000',
+                    margin: 0
+                },
+                {
+                    'click #createArc': `Let's create an arc together and see how simple it can be!`,
+                    showPrev: false,
+                    showSkip: false
+                }
+            ];
+            setTutorialSteps(tutorialSteps);
+            getUserTutorial('Introduce Arcs');
+        })
 
         $('#Search').keyup(function () {
             var search = $(this).val().toLowerCase();

@@ -77,7 +77,7 @@
             @HtmlHelpers.RenderFancyNumberbox(1, 50, "lg short center force-num", "columns", Model.Columns.ToString(), "Width")
             <span>X</span>
             @HtmlHelpers.RenderFancyNumberbox(1, 50, "lg short center force-num", "rows", Model.Rows.ToString(), "Height")
-            <div class="btn btn-default" onclick="updateTableSize()">Update Size</div>
+            <div id="updateTableSize" class="btn btn-default" onclick="updateTableSize()">Update Size</div>
         </div>
         <div style="overflow-x:auto;overflow-y:auto;max-height:50em">
             <table class="dungeon-tile-container">
@@ -135,7 +135,7 @@
                     <div id="one-path-pane" class="fancy-tab-pane slide-right active">
                         <div class="flexbox-container justify-center">
                             @foreach (var tile in ViewBag.TileImages1)
-{
+                            {
                                 <img class="img-xs tile-option" src="@tile" />
                             }
                         </div>
@@ -143,7 +143,7 @@
                     <div id="two-path-pane" class="fancy-tab-pane slide-right">
                         <div class="flexbox-container justify-center">
                             @foreach (var tile in ViewBag.TileImages2)
-{
+                            {
                                 <img class="img-xs tile-option" src="@tile" />
                             }
                         </div>
@@ -151,7 +151,7 @@
                     <div id="three-path-pane" class="fancy-tab-pane slide-right">
                         <div class="flexbox-container justify-center">
                             @foreach (var tile in ViewBag.TileImages3)
-{
+                            {
                                 <img class="img-xs tile-option" src="@tile" />
                             }
                         </div>
@@ -159,7 +159,7 @@
                     <div id="four-path-pane" class="fancy-tab-pane slide-right">
                         <div class="flexbox-container justify-center">
                             @foreach (var tile in ViewBag.TileImages4)
-{
+                            {
                                 <img class="img-xs tile-option" src="@tile" />
                             }
                         </div>
@@ -361,6 +361,77 @@
                 }));
             });
             $('.dropdown-toggle').dropdown();
+
+            //Setup tutorial
+            initializeTutorial();
+            var tutorialSteps = [
+                {
+                    "next #tutorialTitle": `Designing dungeons can be a huge hassle and time killer, #amirite?<br/><br/>
+                    Well not anymore!<br/>
+                    With our Dungeon Creator, creating dungeons can be done in a matter of minutes.<br/>
+                    When your done with this guide, you will have a tiny (yet complete) dungeon that you can print and will be session ready!`,
+                    arrowColor: '#0000',
+                    margin: 0
+                },
+                {
+                    'key #Name': `Let's start with a name.<br/><br/>Then press 'Enter'.`,
+                    keyCode: 13
+                },
+                {
+                    'key #Description': `Great! Now give a little description (or can just use your Magic Wand).<br/><br/>Then press 'Enter'.`,
+                    keyCode: 13
+                },
+                {
+                    'next #columns': `Moving right along.<br/>Let's set the width to something small, like 3...`
+                },
+                {
+                    'next #rows': `...and the height to 3.`
+                },
+                {
+                    'click #updateTableSize': 'Now seal the deal and update the table size.'
+                },
+                {
+                    'next .dungeon-tile-container': `Excellent!<br/>Now that we have the dimensions of our dungeon set,<br/>let's get to work on the tiles.<br/><br/>
+                    Our tile selection makes designing the dungeon<br/>as simple as possible. Just click on any of the tiles,<br/>and use the tile selector to pick the number of<br/>entraces and exits the space should have,<br/>as well as its shape and space.<br/><br/>
+                    Click on 'Next' when you're happy with your masterpiece.`
+                },
+                {
+                    'next .dungeon-tile-container': `Lookin' slick, Mr. Mercer!<br/>Now hover over one of the tiles you've filled in,<br/>click the 'Edit' button at the top left<br/>and click "Description."<br/><br/>
+                    This allows you to provide any description<br/>you wish about the area.`
+                },
+                {
+                    'next .dungeon-tile-container': `Let's move on to traps.<br/>
+                    Edit another tile and click "Traps".<br/><br/>
+                    Our traps suggestor can let you filter<br/>through your own traps you've created,<br/>or automatically generate stats for<br/>a trap you're creating on the fly based on<br/>your chosen difficulty and the levels of your players.`
+                },
+                {
+                    'next .dungeon-tile-container': `Lastly, it's time for the real monster.<br/>
+                    Edit another tile and click "Encounter".<br/><br/>
+                    Our encounter builder is one of a kind.<br/>With this tool, you can create encounters<br/>on the fly that allow you to search for most<br/>monsters in Dungeons and Dragons 5e,</br>as well as any of your custom creations.<br/>
+                    The 'Suggest Monster' feature will recommend<br/>a monster based on your party's levels,<br/>and if you don't like it's CR,<br/>simply click on Easier or Harder<br/>to find the appropriate difficulty.<br/><br/>`
+                },
+                {
+                    'next .dungeon-tile-container': `Adding a monster to your encounter will<br/>keep track of the encounter's overall difficulty<br/>and Total XP for your party.<br/>We use algorithms and keep track of<br/?your party's information for your campaign to calculate<br/>
+                    the appropriate stats for your encounter.<br/><br/>
+                    Additionally, the Magic Items and Treasure<br/>sections can suggest and calculate the appropriate<br/>rewards based on your party and selected<br/>difficulty for the encounter.<br/>
+                    Just make sure to click "Save"<br/>on your encounter before closing it!<br/><br/>
+                    Make creating encounters a joy, not a deadly hazard!<br/>Well...not for you anyway...`
+                },
+                {
+                    'click .save-button': `Now that you're happy with your one-of-a-kind dungeon, let's save it and explore the final feature of our Dungeon Creator.`
+                },
+                {
+                    'click #print': `That's right! Your dungeon is print-ready!<br/><br/>
+                    Just click on "Print" here, and have your beautiful baby-child in your arms within minutes!`
+                },
+                {
+                    'click #menu_Settlement': `But what good is a dungeon without knowing where it is?`,
+                    showPrev: false,
+                    showSkip: false
+                }
+            ];
+            setTutorialSteps(tutorialSteps);
+            getUserTutorial('Create Dungeon');
         })
 
 

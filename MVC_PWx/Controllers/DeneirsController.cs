@@ -309,7 +309,7 @@ namespace MVC_PWx.Controllers
 
         protected void SetActiveCampaign(Guid? campaign, bool updateUser = true)
         {
-            System.Web.HttpContext.Current.Session["ActiveCampaign"] = campaign;
+            HttpContext.Session["ActiveCampaign"] = campaign;
 
             if (updateUser)
             {

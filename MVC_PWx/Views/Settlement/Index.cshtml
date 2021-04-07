@@ -12,7 +12,7 @@
     <br />
     <div class="flexbox-container justify-between">
         @HtmlHelpers.RenderFancyTextbox("lg long", "SearchSettlements", null, "", "Search Settlements")
-        <a class="btn btn-default" href="@Url.Action("Create")">Create Settlement</a>
+        <a id="createSettlement" class="btn btn-default" href="@Url.Action("Create")">Create Settlement</a>
     </div>
     <table class="table table-bordered table-striped">
         <tbody>
@@ -47,6 +47,24 @@
 @section scripts {
     <script type="text/javascript">
         var deleteAction = '@Url.Action("Delete")';
+
+        $(document).ready(function () {
+            //Setup tutorial
+            initializeTutorial();
+            var tutorialSteps = [
+                {
+                    "next #tutorialTitle": `Settlements are a great way to visualize and map out the different areas of your world.`,
+                    arrowColor: '#0000',
+                    margin: 0
+                },
+                {
+                    'click #createSettlement': `Let's get exploring!`,
+                    showPrev: false,
+                    showSkip: false
+                }
+            ];
+            setTutorialSteps(tutorialSteps);
+            getUserTutorial('Introduce Settlements'); })
 
         $('#SearchSettlements').keyup(function () {
             var search = $(this).val().toLowerCase();

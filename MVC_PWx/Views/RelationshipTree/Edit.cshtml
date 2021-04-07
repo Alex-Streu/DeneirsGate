@@ -12,7 +12,7 @@
 
     <div class="flexbox-container items-start">
         <div class="flexbox-container flex-item grow-1 need-space" style="min-width:30%;max-width:30%">
-            <div class="flexbox-container content-box">
+            <div id="characters" class="flexbox-container content-box">
                 @HtmlHelpers.RenderFancyTextbox("md full", "SearchCharacters", null, "", "Search Characters")
                 <div class="flexbox-container droppable need-space character-inventory">
                     @foreach (var item in Model.AvailableCharacters)
@@ -34,7 +34,7 @@
                 @HtmlHelpers.RenderFancyTextbox("md full", "ShallowName", 50, null, "Name*")
                 @HtmlHelpers.RenderFancyTextarea("full", "ShallowBackstory", 500, null, "Backstory")
                 <div class="flexbox-container justify-start no-padding">
-                    <div class="btn btn-sm btn-default" onclick="addShallow()">Add To Tree</div>
+                    <div id="addShallow" class="btn btn-sm btn-default" onclick="addShallow()">Add To Tree</div>
                 </div>
             </div>
         </div>
@@ -43,7 +43,7 @@
                 @HtmlHelpers.RenderFancyTextbox("center lg full", "Name", 50, Model.Name, "Tree Name", Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" }))
             </div>
             <div class="full-width flexbox-container">
-                <button class="btn btn-primary" onclick="addTier()">Add Tier</button>
+                <button id="addTier" class="btn btn-primary" onclick="addTier()">Add Tier</button>
             </div>
             @foreach (var tier in Model.Tiers)
             {
@@ -180,6 +180,51 @@
 
         $(document).ready(function () {
             resetSortable();
+
+            //Setup tutorial
+            initializeTutorial();
+            var tutorialSteps = [
+                {
+                    "next #characters": `Up here you can view and search for the characters you've created for your campaign.`
+                },
+                {
+                    "next #generator": `But not every character in a relationship tree needs all that information from the character creator!<br/>
+                    If it walks like a duck, and quacks like a duck, it's probably a PC's dead relative.<br/><br/>
+                    This Shallow Character Generator is perfect for adding people to a relationship tree who don't need anything more than a name and a shallow backstory.`
+                },
+                {
+                    'key #ShallowName': `Why not give our shallow character a name?<br/>Something fitting and elegant, like "Dead Mom" perhaps.<br/><br/>Then press 'Enter'.`,
+                    keyCode: 13
+                },
+                {
+                    'key #ShallowBackstory': `How 'bout a brief flavorful backstory?<br/><br/>"They died," should do nicely.`,
+                    keyCode: 13
+                },
+                {
+                    'click #addShallow': `Great! Now let's add them to the tree.`
+                },
+                {
+                    'next .shallow:first': `And there you have it! Our shallow character has been added to a tier.</br>You can hover over a character to see their name, or click on them to view their backstory.`
+                },
+                {
+                    'click #addTier': `Speaking of tiers, why don't we add another one?`
+                },
+                {
+                    'next .shallow:first': `Now click and drag our Dead Mom shallow character from the top tier to the bottom tier.<br/><br/>Then click 'Next'.`
+                },
+                {
+                    "next #tutorialTitle": `It's as easy as that!<br/>Tiers are a great way to organize your relationship trees by things like generations or status. It's a quick way to get the visual you need without the messy and unecessary lines in between.`,
+                    arrowColor: '#0000',
+                    margin: 0
+                },
+                {
+                    'click #menu_Dungeon': `Now that we've seen where our characters come from, why don't we see where they end?`,
+                    showPrev: false,
+                    showSkip: false
+                }
+            ];
+            setTutorialSteps(tutorialSteps);
+            getUserTutorial('Create Relationship Tree');
         })
 
         function resetSortable() {

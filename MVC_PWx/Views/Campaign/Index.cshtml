@@ -78,7 +78,9 @@
                                     completeClass = "quest-incomplete";
                                     break;
                             }
-                            <div id="map-@quest.QuestKey" class="map-label quest-explore @(completeClass)" style="top:@((pin.Y-20)/6)%;left:@((pin.X-20)/8)%" data-data="@(JsonConvert.SerializeObject(quest))">
+                            var top = ((pin.Y - 20) / 6).ToString() + "%";
+                            var left = ((pin.X - 20) / 8).ToString() + "%";
+                            <div id="map-@quest.QuestKey" class="map-label quest-explore @(completeClass)" style="top:@(top);left:@(left)" data-data="@(JsonConvert.SerializeObject(quest))">
                                 @(pin.Index + 1)
                                 @if (quest.Status == CampaignService.QuestStatus.InProgress)
                                 {
@@ -169,8 +171,10 @@
     </div>
 </div>
 
-<div class="dashboard-players items-end">
-    <a id="addPlayer" class="btn btn-primary" href="@Url.Action("CreateCharacter", "Character", new { id = Model.CampaignKey, isPlayer = true })">Add Player</a>
+<div class="dashboard-players flexbox-container items-center">
+    <div>
+        <a id="addPlayer" class="btn btn-default" href="@Url.Action("CreateCharacter", "Character", new { id = Model.CampaignKey, isPlayer = true })">Add Player</a>
+    </div>
     @foreach (var item in Model.Players)
     {
         <div id="@item.CharacterKey" class='fancy-portrait'>
@@ -320,7 +324,9 @@
                     'next #log-panel': `Who doesn't need a good activity log?<br/>Here you can add and search through all the logs in your arc.`
                 },
                 {
-                    'click #addPlayer': `Let's get into who really matters...<br/>Our players.<br/><span style="font-size:medium">(Ya know, the ones who swear they've never missed a session?)`
+                    'click #addPlayer': `Let's get into who really matters...<br/>Our players.<br/><span style="font-size:medium">(Ya know, the ones who swear they've never missed a session?)`,
+                    showPrev: false,
+                    showSkip: false
                 }
             ];
             setTutorialSteps(tutorialSteps);

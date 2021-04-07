@@ -460,7 +460,7 @@
         <div class="btn btn-lg btn-default save-button" onclick="save()">Save</div>
         <div id="delete" class="btn btn-lg btn-danger save-button" onclick="promptDelete('deleteCharacter()')">Delete</div>
     </div>
-    <div class="btn btn-lg btn-success" onclick="suggestCharacter()"><i class="fa fa-magic"></i>&nbsp;Suggest Character</div>
+    <div id="suggestCharacter" class="btn btn-lg btn-success" onclick="suggestCharacter()"><i class="fa fa-magic"></i>&nbsp;Suggest Character</div>
 </div>
 
 @section scripts {
@@ -494,45 +494,40 @@
             })
 
             //Setup tutorial
-            //initializeTutorial();
-            //var tutorialSteps = [
-            //    {
-            //        "next #tutorialTitle": `The character creator is a tool to help you both create and keep track of a character's or player's stats, abilities, dead parents, etc.<br/>
-            //                                It is worth nothing that most of the tules in Deneir's Gate are more for information tracking and less for rule managing. Your players do enough of that for you anyway...`,
-            //        arrowColor: '#0000',
-            //        margin: 0
-            //    },
-            //    {
-            //        'next #': `Level up!<br/><br/>
-            //                          Notice all your new menu items? These are all the features you can use to build your custom campaign.`
-            //    },
-            //    {
-            //        'next #menu_ActiveCampaign': `The name shown here tells you which campaign you're currently working in.<br/><br/>
-            //                                    All of the menu items below this name strictly belong to this campaign. So you don't have to worry about <span style='font-size:larger;font-weight:bold'>all</span> of your content across <span style='font-size:x-large;font-weight:bold'>all</span> your campaigns getting <span style='font-size:xx-large;font-weight:bold'>ALL</span> jumpled together!<br/><br/>
-            //                                    <span style="font-size:small">*phew*</span>`
-            //    },
-            //    {
-            //        'next #Arcs': `Here you can switch between your current arc or old ones to get a birds-eye view of what went down.`
-            //    },
-            //    {
-            //        'next .dashboard-arc-panel': `Here you will get to see a visual of your current story arc progress. Set your quest statuses here and know exactly where your characters stand as soon as you login!<br/><br/>
-            //                                    <span style="font-size:medium">(Especially after that "week" off...)</span>`
-            //    },
-            //    {
-            //        'next .npc-panel': `Here you can view and pin any active NPCs in your arc for easy access.`
-            //    },
-            //    {
-            //        'next #npc-add': `Use this button to add and remove NPCs from here.`
-            //    },
-            //    {
-            //        'next #log-panel': `Who doesn't need a good activity log?<br/>Here you can add and search through all the logs in your arc.`
-            //    },
-            //    {
-            //        'click #addPlayer': `Let's get into who really matters...<br/>Our players.<br/><span style="font-size:medium">(Ya know, the ones who swear they've never missed a session?)`
-            //    }
-            //];
-            //setTutorialSteps(tutorialSteps);
-            //getUserTutorial('Learn Dashboard');
+            initializeTutorial();
+            var tutorialSteps = [
+                {
+                    "next #tutorialTitle": `The character creator is a tool to help you both create and keep track of a character's or player's stats, abilities, dead parents, etc.`,
+                    arrowColor: '#0000',
+                    margin: 0
+                },
+                {
+                    'next .fancy-tabs': `Keep track of all useful information for your characters.`
+                },
+                {
+                    'next .upload-image': `You can upload a portrait for your character to make them recognizable!`
+                },
+                {
+                    'next #FirstName': `Hover over the First Name box.<br/><br/>
+                                        Notice the button on the right? That is your magic wand! Give it a click and see it magically create a name for your character!<br/><br/>
+                                        You can find this button in any field that you find in our Suggestion Box.`
+                },
+                {
+                    'click #suggestCharacter': `Like that? Then love this!<br/>Creating a character from scratch can be a lot of work. Why not have one made for you?`
+                },
+                {
+                    'next #player-sheet-pane': `Ta da! And just like that, a star was born!<br/><br/>
+                     ...or at the very least, inspiration for one. Your Magic Wand is a tool designed to make your life easier.
+                    <br/<br/><span style="font-size:small">(At least the 60% of it that is spent being a DM.)</span>`
+                },
+                {
+                    'click #menu_Suggestion': `Want to see the source of your power? Let's check out the Suggestion Box next!`,
+                    showPrev: false,
+                    showSkip: false
+                }
+            ];
+            setTutorialSteps(tutorialSteps);
+            getUserTutorial('Create Character');
         })
 
 

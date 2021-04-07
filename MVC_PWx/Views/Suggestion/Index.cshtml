@@ -25,16 +25,16 @@
 
 <h2>My Suggestions</h2>
 
-<div class="content-box">
+<div id="pendingSuggestions" class="content-box">
     <div class="flexbox-container no-padding justify-between items-center">
         <h4 class="red">Pending Suggestions</h4>
-        <div class="btn btn-default" onclick="addSuggestion()">Add Suggestion</div>
+        <div id="addSuggestion" class="btn btn-default" onclick="addSuggestion()">Add Suggestion</div>
     </div>
     <div id="pending-suggestions" class="list-group list-group-flash">
     </div>
 </div>
 
-<div class="content-box">
+<div id="suggestionHistory" class="content-box">
     <h4 class="red"><i class="fa fa-history"></i>&nbsp;History</h4>
     <div class="list-group list-group-flash">
         @foreach (var item in Model.Where(x => x.Status != SuggestionService.SuggestionStatus.Pending).OrderByDescending(x => x.DateSubmitted).ToList())
@@ -92,44 +92,72 @@
 @section scripts {
     <script type="text/javascript">
         var updateAction = '@Url.Action("Update")';
-                    var deleteAction = '@Url.Action("Delete")';
-                    var pendingAction = '@Url.Action("_Pending")';
+        var deleteAction = '@Url.Action("Delete")';
+        var pendingAction = '@Url.Action("_Pending")';
 
         $(document).ready(function () {
-                        loadPending();
-                    })
+            loadPending();
+
+            //Setup tutorial
+            initializeTutorial();
+            var tutorialSteps = [
+                {
+                    "next #tutorialTitle": `Be a good party member and help your DM's out!<br/><br/>
+                                            Use the Suggestion Box feature to provide possible suggestions for character names, plot hooks, wild monsters, and more!`,
+                    arrowColor: '#0000',
+                    margin: 0
+                },
+                {
+                    'next #addSuggestion': `Click here to add a suggestion and view all the different categories!`
+                },
+                {
+                    'next #pendingSuggestions': `Once you submit a suggestion, you can see it here under "Pending."<br/><br/>While pending, you can come back here to edit or delete your suggestion.`
+                },
+                {
+                    'next #suggestionHistory': `Unfortunately, not every great idea is...<i>appropriate</i>.<br/>So your submitted suggestions get reviewed by us for approval! Here you can see when and whether your suggestions are approved in red or green.<br/><br/>
+                    <span style="font-size:small">(If you are a PC who has made it here, <b>red<b/> usually means <b>danger<b/> which typically means <b><i>DO NOT PROCEED!<i/><b/>)`
+                },
+                {
+                    'click #menu_RelationshipTree': `Now that we know where our characters come from, let's find out where our characters <i>come from</i>.<br/><br/>Get it?`,
+                    showPrev: false,
+                    showSkip: false
+                }
+            ];
+            setTutorialSteps(tutorialSteps);
+            getUserTutorial('Learn Suggestion Box');
+        })
 
         function loadPending() {
             $('#pending-suggestions').load(pendingAction);
-                    }
+        }
 
-                    function addSuggestion() {
+        function addSuggestion() {
             $('#SuggestionKey').val(createGuid());
             $('#Suggestion').val('').keyup();
             $('#Types').val($("#Types option:first").val());
             $('#suggestionModal').modal('show');
-                    }
+        }
 
-                    function editSuggestion(id) {
+        function editSuggestion(id) {
             $('#SuggestionKey').val(id);
             $('#Suggestion').val($(`#${id}`).find('.data-suggestion').text()).keyup();
             $('#Types').val($(`#${id}`).find('.data-type').val());
             $('#suggestionModal').modal('show');
-                    }
+        }
 
-                    function deleteSuggestion(id) {
-                        var postData = {
+        function deleteSuggestion(id) {
+            var postData = {
                 id: id
             }
 
-                ajaxPost(postData, deleteAction, function (data) {
-                    if (data.success) {
-                        Notiflix.NotifyContent.Success(data.message);
-                    $(`#${id}`).remove();
-                } else {
-                        Notiflix.NotifyContent.Failure(data.message);
-                    }
-                })
+            ajaxPost(postData, deleteAction, function (data) {
+                if (data.success) {
+                    Notiflix.NotifyContent.Success(data.message);
+                $(`#${id}`).remove();
+            } else {
+                    Notiflix.NotifyContent.Failure(data.message);
+                }
+            })
         }
 
         $('#Suggestion').keyup(function () {

@@ -32,7 +32,7 @@ namespace MVC_PWx.Controllers
         [HasCampaign, HasAccess(Priviledge = AppLogic.Priviledge.DM)]
         public ActionResult CreateCharacter(bool isPlayer = false)
         {
-            return RedirectToAction("EditCharacter", new { id = Guid.NewGuid(), isPlayer = isPlayer, isNew = true });
+            return RedirectToAction("EditCharacter", new { id = Guid.NewGuid(), isPlayer, isNew = true });
         }
 
         [HasCampaign, HasAccess(Priviledge = AppLogic.Priviledge.Player)]

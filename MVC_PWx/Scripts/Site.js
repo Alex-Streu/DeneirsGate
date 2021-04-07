@@ -160,9 +160,20 @@ $(document).on('click', '.enjoyhint_close_btn', function () {
 
 function getUserTutorial(name, callbackIfComplete) {
     tutorialName = name;
+    var routes = window.location.pathname.split('/');
+    console.log(routes)
+    var route = '';
+    for (i = 0; i < routes.length; i++) {
+        route += "/";
+        if (routes[i].indexOf('-') > -1 && routes[i].length == '36') {
+            break;
+        }
+
+        route += routes[i];
+    }
 
     var postData = {
-        Route: window.location.pathname,
+        Route: route,
         Name: name
     }
     
@@ -198,7 +209,17 @@ function storeUserTutorial() {
 }
 
 function updateUserTutorial(isComplete, lastStep) {
-    //Cookies.set(window.location.pathname + tutorialName, isComplete ? 'true' : 'false');
+    var routes = window.location.pathname.split('/');
+    var route = '';
+    for (i = 0; i < routes.length; i++) {
+        route += "/";
+        if (routes[i].indexOf('-') > -1 && routes[i].length == '36') {
+            break;
+        }
+
+        route += routes[i];
+    }
+    //Cookies.set(route + tutorialName, isComplete ? 'true' : 'false');
 
     var postData = {
         TutorialKey: tutorialKey,

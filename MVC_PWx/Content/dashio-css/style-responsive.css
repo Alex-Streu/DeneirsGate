@@ -98,8 +98,10 @@
 
     /* body container */
     #main-content {
-        margin: 0px!important;
+        margin: 0px !important;
         position: none !important;
+        min-height: 100%;
+        margin-bottom: -50px;
     }
 
     #sidebar > ul > li > a > span {

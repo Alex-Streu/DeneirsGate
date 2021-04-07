@@ -22,7 +22,7 @@
     <br />
     <div class="flexbox-container justify-between">
         @HtmlHelpers.RenderFancyTextbox("lg long", "Search", null, "", "Search Dungeons")
-        <a class="btn btn-default" href="@Url.Action("Create")">Create Dungeon</a>
+        <a id="createDungeon" class="btn btn-default" href="@Url.Action("Create")">Create Dungeon</a>
     </div>
     <table class="table table-bordered table-striped">
         <tbody>
@@ -59,6 +59,20 @@
 @section scripts {
     <script type="text/javascript">
         var deleteAction = '@Url.Action("Delete")';
+
+        $(document).ready(function () {
+            //Setup tutorial
+            initializeTutorial();
+            var tutorialSteps = [
+                {
+                    'click #createDungeon': `Let's get started building our first dungeon!`,
+                    showPrev: false,
+                    showSkip: false
+                }
+            ];
+            setTutorialSteps(tutorialSteps);
+            getUserTutorial('Introduce Dungeons');
+        })
 
         $('#Search').keyup(function () {
             var search = $(this).val().toLowerCase();

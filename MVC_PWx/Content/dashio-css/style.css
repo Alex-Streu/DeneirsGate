@@ -12,6 +12,11 @@ Website: http://Alvarez.is/
 */
 
 /* BASIC THEME CONFIGURATION */
+html {
+    height: 100% !important;
+    margin: 0;
+}
+
 body {
     color: #797979;
     background: #eaeaea;
@@ -19,6 +24,7 @@ body {
     padding: 0px !important;
     margin: 0px !important;
     font-size: 13px;
+    height: 100%;
 }
 
 ul li {
