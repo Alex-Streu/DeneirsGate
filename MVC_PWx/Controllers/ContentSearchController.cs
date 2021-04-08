@@ -45,6 +45,21 @@ namespace MVC_PWx.Controllers
             return PartialView(model);
         }
 
+        public ActionResult _ArcLogs(Guid id)
+        {
+            var model = new List<ActivityLogViewModel>();
+            try
+            {
+                model = CampaignSvc.GetActivityLog(id);
+            }
+            catch (Exception ex)
+            {
+                return HandleExceptionRedirectErrorPartial(ex);
+            }
+
+            return PartialView(model);
+        }
+
         public ActionResult _ArcQuest(Guid id)
         {
             var model = new QuestViewModel();

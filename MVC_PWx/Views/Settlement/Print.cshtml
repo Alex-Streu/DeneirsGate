@@ -53,11 +53,7 @@
         $('#SettlementMap').on('load', function () {
             var width = this.naturalWidth / 100;
             var height = this.naturalHeight / 100;
-            console.log(width);
-            console.log(height);
             $('#SettlementMap').parent().find('.map-label').each(function () {
-                console.log($(this).data('y') / height)
-                console.log($(this).data('x') / width)
                 $(this).attr('style', `top:${$(this).data('y') / height}%;left:${$(this).data('x') / width}%;cursor:default`);
             })
         })

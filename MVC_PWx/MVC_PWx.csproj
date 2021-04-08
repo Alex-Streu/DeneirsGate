@@ -709,6 +709,7 @@
     <Content Include="Views\Suggestion\_Pending.cshtml" />
     <Content Include="Views\Admin\Suggestions.cshtml" />
     <Content Include="Views\Shared\ErrorPartial.cshtml" />
+    <Content Include="Views\ContentSearch\_ArcLogs.cshtml" />
     <None Include="Web.DEV.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

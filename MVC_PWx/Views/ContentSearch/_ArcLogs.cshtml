@@ -1,0 +1,15 @@
+﻿@using DeneirsGate.Services
+@model List<ActivityLogViewModel>
+
+@foreach (var log in Model)
+{
+    <div class="log-record">
+        @if (!log.ContentName.IsNullOrEmpty())
+        {
+            <label class="text-medium text-bold red log-content">@log.ContentName</label>
+            <br />
+        }
+        <label class="red">@HtmlHelpers.RenderDate(log.LogDate)</label>
+        <p class="log-description">@log.LogDescription</p>
+    </div>
+}

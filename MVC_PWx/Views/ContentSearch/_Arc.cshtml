@@ -7,6 +7,8 @@
     <p class="text-md">@Model.Description</p>
 </div>
 <div class="flexbox-container full-width justify-center">
+    <div class="btn btn-lg btn-default menu-option menu-link" data-url="@Url.Action("_ArcLogs", "ContentSearch", new { id = Model.ArcKey })" data-dir="Logs">Activity Logs</div>
+    <hr />
     @foreach (var item in Model.Quests)
     {
         <div class="btn btn-lg btn-default menu-option menu-link" data-url="@Url.Action("_ArcQuest", "ContentSearch", new { id = item.QuestKey })" data-dir="@HtmlHelpers.LimitString(item.Name, 20)">@HtmlHelpers.LimitString(item.Name, 20)</div>
