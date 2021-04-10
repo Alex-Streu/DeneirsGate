@@ -2,7 +2,7 @@
   "name": "myproject",
   "version": "1.0.0",
   "devDependencies": {
-    "bootstrap-select": "^1.9.4",
+    "bootstrap-select": "^1.13.6",
     "del": "^6.0.0",
     "gulp": "^4.0.2",
     "gulp-minify": "^3.1.0",
