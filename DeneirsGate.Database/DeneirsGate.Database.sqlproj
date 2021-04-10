@@ -152,6 +152,7 @@
     <Build Include="dbo\Tables\UserMagicItems.sql" />
     <Build Include="dbo\Tables\Tutorials.sql" />
     <Build Include="dbo\Tables\UserTutorials.sql" />
+    <Build Include="dbo\Tables\ArcTodoItems.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="DeneirsGate.Database.LOCAL.publish.xml" />

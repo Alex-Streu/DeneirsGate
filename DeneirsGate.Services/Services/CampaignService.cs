@@ -148,6 +148,7 @@ namespace DeneirsGate.Services
             var dungeons = DB.CampaignDungeonLinkers.Where(x => x.CampaignKey == campaignId).Select(x => x.DungeonKey).ToList();
             var traps = DB.CampaignTrapLinkers.Where(x => x.CampaignKey == campaignId).Select(x => x.TrapKey).ToList();
             var trees = DB.RelationshipTrees.Where(x => x.CampaignKey == campaignId).Select(x => x.TreeKey).ToList();
+            var settlements = DB.Settlements.Where(x => x.CampaignKey == campaignId).Select(x => x.SettlementKey).ToList();
 
             //Arcs
             var quests = DB.Quests.Where(x => arcs.Contains(x.ArcKey)).Select(x => x.QuestKey);
@@ -162,6 +163,7 @@ namespace DeneirsGate.Services
             DB.Encounters.RemoveRange(x => eventEncounters.Contains(x.EncounterKey));
             DB.EncounterItems.RemoveRange(x => eventEncounters.Contains(x.EncounterKey));
             DB.EncounterMonsters.RemoveRange(x => eventEncounters.Contains(x.EncounterKey));
+            DB.ArcTodoItems.RemoveRange(x => arcs.Contains(x.ArcKey));
 
             //Characters
             DB.Characters.RemoveRange(x => characters.Contains(x.CharacterKey));
@@ -185,6 +187,9 @@ namespace DeneirsGate.Services
             //Relationship Trees
             DB.RelationshipTreeCharacters.RemoveRange(x => trees.Contains(x.TreeKey));
             DB.RelationshipTreeTiers.RemoveRange(x => trees.Contains(x.TreeKey));
+
+            //Settlements
+            DB.SettlementLocations.RemoveRange(x => settlements.Contains(x.SettlementKey));
 
             DB.Campaigns.RemoveRange(x => x.CampaignKey == campaignId);
             DB.Arcs.RemoveRange(x => x.CampaignKey == campaignId);
@@ -237,7 +242,46 @@ namespace DeneirsGate.Services
             dashboard.Players = new List<PlayerShortViewModel>();
             dashboard.NPCs = new List<ArcCharacterViewModel>();
 
+            DBReset();
+            dashboard.TodoItems = DB.ArcTodoItems.Where(x => x.ArcKey == dashboard.Arc.ArcKey).Select(x => new TodoItemViewModel
+            {
+                ArcKey = x.ArcKey,
+                DateLogged = x.DateLogged,
+                ItemKey = x.ItemKey,
+                Text = x.Text
+            }).OrderBy(x => x.DateLogged).ToList();
+
             return dashboard;
+        }
+
+        public void UpdateTodoItem(TodoItemViewModel model)
+        {
+            DBReset();
+
+            var item = DB.ArcTodoItems.FirstOrDefault(x => x.ArcKey == model.ArcKey && x.ItemKey == model.ItemKey);
+            if (item == null)
+            {
+                item = new ArcTodoItem
+                {
+                    ArcKey = model.ArcKey,
+                    DateLogged = DateTime.Now,
+                    ItemKey = model.ItemKey
+                };
+                DB.ArcTodoItems.Add(item);
+            }
+
+            item.Text = model.Text;
+
+            DB.SaveChanges();
+        }
+
+        public void DeleteTodoItem(TodoItemDeleteModel model)
+        {
+            DBReset();
+
+            DB.ArcTodoItems.RemoveRange(x => x.ArcKey == model.ArcKey && x.ItemKey == model.ItemKey);
+
+            DB.SaveChanges();
         }
 
         public List<ActivityLogViewModel> GetActivityLog(Guid arcKey)

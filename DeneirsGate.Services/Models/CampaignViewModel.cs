@@ -34,6 +34,7 @@ namespace DeneirsGate.Services
         public ArcViewModel Arc { get; set; }
         public List<PlayerShortViewModel> Players { get; set; }
         public List<ArcCharacterViewModel> NPCs { get; set; }
+        public List<TodoItemViewModel> TodoItems { get; set; }
     }
 
     public class ArcViewModel

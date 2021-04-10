@@ -130,6 +130,7 @@
     <Compile Include="Models\RoleViewModel.cs" />
     <Compile Include="Models\SettlementViewModel.cs" />
     <Compile Include="Models\SuggestionViewModel.cs" />
+    <Compile Include="Models\TodoItemViewModel.cs" />
     <Compile Include="Models\UserDataModel.cs" />
     <Compile Include="Models\UserTutorialViewModel.cs" />
     <Compile Include="Models\UserViewModel.cs" />

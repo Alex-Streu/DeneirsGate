@@ -1,4 +1,7 @@
 const gulp = require('gulp');
+const minify = require('gulp-minify');
+const watch = require('gulp-watch');
+const del = require('del');
 //const concat = require('gulp-concat');
 
 const paths = {
@@ -25,8 +28,29 @@ gulp.task('copy:js', () => {
         `${paths.nodeModules}jquery.scrollto/jquery.scrollTo.min.js`,
         `${paths.nodeModules}kinetic/kinetic.min.js`,
         `${paths.nodeModules}js-cookie/dist/js.cookie.min.js`
+        /*,`${paths.nodeModules}gulp-minify/index.js`*/
     ];
 
     return gulp.src(javascriptToCopy)
         .pipe(gulp.dest(`${paths.scriptsDest}`));
+});
+
+gulp.task('minify:js', function () {
+    return gulp.src([`${paths.scriptsDest}*.js`])
+        .pipe(minify({
+            ext: {
+                src: '.js',
+                min: '.min.js'
+            },
+            ignoreFiles: ['*.min.*']
+        }))
+        .pipe(gulp.dest(`${paths.scriptsDest}`))
+});
+
+gulp.task('delete:js', function () {
+    var filesToDelete = [
+        `${paths.scriptsDest}my-todo-list.min.js`,
+        `${paths.scriptsDest}Site.min.js`
+    ]
+    return del(filesToDelete);
 });

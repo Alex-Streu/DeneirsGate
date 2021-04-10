@@ -1414,6 +1414,7 @@ hr {
   width: 25%; }
   .dashboard-left-panel .pin-panel {
     height: 20em;
+    max-height: 20em;
     width: 100%; }
   .dashboard-left-panel .npc-panel {
     padding-top: 2em !important; }

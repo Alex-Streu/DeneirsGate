@@ -27,6 +27,7 @@ namespace MVC_PWx
                       "~/Content/notiflix-2.0.0.css",
                       "~/Content/bootstrap-select.min.css",
                       "~/Content/enjoyhint.css",
+                      "~/Content/my-todo-list.css",
                       "~/Content/site.css",
                       "~/Content/Bundled.css")
                       .IncludeDirectory(
@@ -47,6 +48,7 @@ namespace MVC_PWx
                         "~/Scripts/jquery.scrollTo.min.js",
                         "~/Scripts/enjoyhint.min.js",
                         "~/Scripts/js.cookie.min.js",
+                        "~/Scripts/my-todo-list.min.js",
                         "~/Scripts/jquery.redirect.js"));
 
             bundles.Add(new StyleBundle("~/bundles/charts").Include(

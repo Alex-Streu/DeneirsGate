@@ -1,4 +1,4 @@
-﻿var NotificationHub = {
+var NotificationHub = {
     hub: null,
 
     Init: function () {

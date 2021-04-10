@@ -1,4 +1,4 @@
-﻿/* GLOBAL VARIABLES */
+/* GLOBAL VARIABLES */
 var customErrorAction = "/Errors/CustomError";
 var error500Action = "/Errors/Error500";
 var error400Action = "/Errors/Error400";
@@ -161,7 +161,6 @@ $(document).on('click', '.enjoyhint_close_btn', function () {
 function getUserTutorial(name, callbackIfComplete) {
     tutorialName = name;
     var routes = window.location.pathname.split('/');
-    console.log(routes)
     var route = '';
     for (i = 0; i < routes.length; i++) {
         route += "/";

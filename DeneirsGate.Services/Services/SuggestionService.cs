@@ -35,7 +35,7 @@ namespace DeneirsGate.Services
         {
             DBReset();
 
-            if (isAdmin || DB.Suggestions.FirstOrDefault(x => x.UserKey == userId && x.SuggestionKey == contentKey) != null)
+            if (isAdmin || DB.Suggestions.Any(x => x.UserKey == userId && x.SuggestionKey == contentKey) || !DB.Suggestions.Any(x => x.SuggestionKey == contentKey))
             {
                 return;
             }

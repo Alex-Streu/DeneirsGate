@@ -540,6 +540,7 @@
     <Content Include="Content\lib\xchart\xcharts.css" />
     <Content Include="Content\lib\xchart\xcharts.min.js" />
     <Content Include="Content\lib\zabuto_calendar.js" />
+    <Content Include="Content\my-todo-list.css" />
     <Content Include="Content\notiflix-2.0.0.css" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
@@ -585,15 +586,20 @@
     <None Include="Properties\PublishProfiles\PROD.pubxml" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
     <Content Include="Scripts\enjoyhint.min.js" />
+    <Content Include="Scripts\gulp-minify.js" />
+    <Content Include="Scripts\jquery-3.3.1.intellisense.min.js" />
     <Content Include="Scripts\jquery-3.3.1.js" />
     <Content Include="Scripts\jquery-3.3.1.min.js" />
     <Content Include="Scripts\jquery-3.3.1.slim.js" />
     <Content Include="Scripts\jquery-3.3.1.slim.min.js" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
     <Content Include="Scripts\jquery.redirect.js" />
+    <Content Include="Scripts\jquery.redirect.min.js" />
     <Content Include="Scripts\jquery.scrollTo.min.js" />
     <Content Include="Scripts\jquery.signalR-2.2.2.js" />
     <Content Include="Scripts\jquery.signalR-2.2.2.min.js" />
+    <Content Include="Scripts\jquery.todoList.js" />
+    <Content Include="Scripts\jquery.validate-vsdoc.min.js" />
     <Content Include="Scripts\jquery.validate.js" />
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
@@ -602,8 +608,13 @@
     <Content Include="Scripts\kinetic.min.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
     <Content Include="Content\lib\notiflix-2.0.0.js" />
+    <Content Include="Scripts\modernizr-2.8.3.min.js" />
+    <Content Include="Scripts\my-todo-list.js" />
+    <Content Include="Scripts\my-todo-list.min.js" />
     <Content Include="Scripts\notifications.js" />
+    <Content Include="Scripts\notifications.min.js" />
     <Content Include="Scripts\Site.js" />
+    <Content Include="Scripts\Site.min.js" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>

@@ -118,6 +118,7 @@
     <Compile Include="DataModels\Arc.cs" />
     <Compile Include="DataModels\ArcCharcterLinker.cs" />
     <Compile Include="DataModels\ArcMapPin.cs" />
+    <Compile Include="DataModels\ArcTodoItem.cs" />
     <Compile Include="DataModels\ArtObject.cs" />
     <Compile Include="DataModels\AspNetRole.cs" />
     <Compile Include="DataModels\AspNetUser.cs" />

@@ -88,6 +88,44 @@ namespace MVC_PWx.Controllers
             return PartialView(model);
         }
 
+        [HttpPost]
+        public JsonResult UpdateTodoItem(TodoItemViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    CampaignSvc.UpdateTodoItem(model);
+                }
+                catch (Exception ex)
+                {
+                    return HandleExceptionJsonErrorResponse(ex);
+                }
+
+                return GetJson(true, "Updated successfully!");
+            }
+            return HandleValidationJsonErrorResponse();
+        }
+
+        [HttpPost]
+        public JsonResult DeleteTodoItem(TodoItemDeleteModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    CampaignSvc.DeleteTodoItem(model);
+                }
+                catch (Exception ex)
+                {
+                    return HandleExceptionJsonErrorResponse(ex);
+                }
+
+                return GetJson(true, "Deleted successfully!");
+            }
+            return HandleValidationJsonErrorResponse();
+        }
+
         [HasAccess(Priviledge = AppLogic.Priviledge.DM)]
         public ActionResult ChangeCampaign()
         {

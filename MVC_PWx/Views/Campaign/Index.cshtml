@@ -15,7 +15,6 @@
 <div class="flexbox-container no-padding items-start">
     <div class="dashboard-left-panel flexbox-container content-center">
         <div class="pin-panel content-box">
-            Lorem ipsum.
         </div>
         <div class="npc-panel flexbox-container full-width no-padding">
             <div class="flexbox-container full-width justify-between">
@@ -287,6 +286,16 @@
             $('#log_Quests').change();
             $('#log-records').load(activityLogAction + '?arcKey=@Model.Arc.ArcKey');
 
+            var todoItems = [];
+
+            @foreach (var d in Model.TodoItems)
+            {
+                @:todoItems.push(@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(d)));
+            }
+            console.log(todoItems)
+            var opt = { items: todoItems };
+            $('.pin-panel').initTodoList(opt, '@Model.Arc.ArcKey');
+
             //Setup tutorial
             initializeTutorial();
             var tutorialSteps = [
@@ -313,6 +322,10 @@
                 {
                     'next .dashboard-arc-panel': `Here you will get to see a visual of your current story arc progress. Set your quest statuses here and know exactly where your characters stand as soon as you login!<br/><br/>
                                                 <span style="font-size:medium">(Especially after that "week" off...)</span>`
+                },
+                {
+                    'next .pin-panel': `Have trouble remembering what you need to do?<br/>Let us handle it for you, old timer!<br/><br/>
+                                        Use the Todo List feature to keep track of you need "todo."`
                 },
                 {
                     'next .npc-panel': `Here you can view and pin any active NPCs in your arc for easy access.`
