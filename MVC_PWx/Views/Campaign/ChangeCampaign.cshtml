@@ -92,6 +92,8 @@
         }
 
         function setupActivateCampaignTutorial() {
+            if (!$('.campaign-list-item:first').length) { return; }
+
             var tutorial_ActivateCampaign_steps = [
                 {
                     'click .campaign-list-item:first': `Now that your campaign is ready, click on it to activate it and the real fun can begin!`,
