@@ -1,0 +1,85 @@
+﻿@using DeneirsGate.Services
+@model ProfileViewModel
+
+@{
+    ViewBag.Title = "Edit Profile";
+}
+
+<h2>Edit Profile</h2>
+
+<div class="flexbox-container justify-center">
+    <div class="content-box" style="max-width:60em">
+        @Html.TextBox("Picture", Model.Picture, new { style = "display:none", @class = "form-control" })
+        <div class="flexbox-container justify-center" style="margin-bottom:1em">
+            <div class="fancy-portrait" style="max-width:100px;padding-right:0em !important">
+                <img id="picturePreview" class="img-xs img-responsive" style="padding-right:inherit" src="@Model.Picture" onclick="showModal('pictureModal')" />
+                <div class='overlay' onclick="showModal('pictureModal')"></div>
+            </div>
+        </div>
+        @HtmlHelpers.RenderFancyTextbox("md full", "UserName", 20, Model.UserName, "User Name")
+        @HtmlHelpers.RenderFancyTextbox("md full mt", "Email", 20, Model.Email, "Email")
+        <div class="btn btn-danger mt">Change Password</div>
+        <hr class="mt" />
+        <div class="flexbox-container justify-center">
+            <div id="btnUpdateProfile" class="btn btn-default">Update Profile</div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Picture Modal -->
+<div id="pictureModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" onclick="hideModal('pictureModal')">&times;</button>
+                <h4 class="modal-title">Profile Picture</h4>
+            </div>
+            <div class="modal-body profile-picture-modal">
+                <div class="profile-picture-selector">
+                    <a class="profile-picture-item"><img class="img-xs img-responsive" src="~/Content/img/avatars/boy-combover.jpg" /></a>
+                    <a class="profile-picture-item"><img class="img-xs img-responsive" src="~/Content/img/avatars/boy-geek.jpg" /></a>
+                    <a class="profile-picture-item"><img class="img-xs img-responsive" src="~/Content/img/avatars/girl-bangs.jpg" /></a>
+                    <a class="profile-picture-item"><img class="img-xs img-responsive" src="~/Content/img/avatars/girl-bun.jpg" /></a>
+                    <a class="profile-picture-item"><img class="img-xs img-responsive" src="~/Content/img/avatars/girl-goth.jpg" /></a>
+                    <a class="profile-picture-item"><img class="img-xs img-responsive" src="~/Content/img/avatars/girl-nerd.jpg" /></a>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" onclick="hideModal('pictureModal')">Close</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@section scripts {
+    <script type="text/javascript">
+        var updateProfileAction = '@Url.Action("UpdateProfile")';
+        $('.profile-picture-item').click(function () {
+            hideModal('pictureModal');
+
+            var src = $(this).find('img').attr('src');
+            $('#picturePreview').attr('src', src);
+            $('#Picture').val(src);
+        })
+
+        $('#btnUpdateProfile').click(function () {
+            var postData = {
+                UserName: $('#UserName').val(),
+                Email: $('#Email').val(),
+                Picture: $('#Picture').val()
+            }
+
+            ajaxPost(postData, updateProfileAction, function (data) {
+                if (data.success) {
+                    Notiflix.NotifyContent.Success(data.message);
+                } else {
+                    Notiflix.NotifyContent.Failure(data.message);
+                }
+            })
+        })
+    </script>
+}

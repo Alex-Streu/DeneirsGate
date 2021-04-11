@@ -36,6 +36,25 @@ namespace DeneirsGate.Services
         public string Search { get; set; }
     }
 
+    public class ProfileViewModel
+    {
+        public ProfileViewModel()
+        {
+
+        }
+
+        public ProfileViewModel(string username, string picture, string email)
+        {
+            UserName = username;
+            Picture = picture;
+            Email = email;
+        }
+
+        public string UserName { get; set; }
+        public string Picture { get; set; }
+        public string Email { get; set; }
+    }
+
     public class FriendRequestPostModel
     {
         public Guid RequestUserId { get; set; }

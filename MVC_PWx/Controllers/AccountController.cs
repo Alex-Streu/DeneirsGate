@@ -444,6 +444,43 @@ namespace MVC_PWx.Controllers
             return View();
         }
 
+        [HasAccess(Priviledge = AppLogic.Priviledge.Player)]
+        public ActionResult EditProfile()
+        {
+            var profile = new ProfileViewModel(AppUser.UserName, AppUser.Picture, AppUser.Email);
+            return View(profile);
+        }
+
+        [HasAccess(Priviledge = AppLogic.Priviledge.Player)]
+        public JsonResult UpdateProfile(ProfileViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    var user = UserManager.FindById(AppUser.UserId.ToString());
+                    user.UserName = model.UserName;
+                    user.Picture = model.Picture;
+                    user.Email = model.Email;
+
+                    var response = UserManager.Update(user);
+                    if (!response.Succeeded)
+                    {
+                        return GetJson(false, response.Errors.FirstOrDefault());
+                    }
+
+                    AppUser = user;
+                }
+                catch (Exception ex)
+                {
+                    return HandleExceptionJsonErrorResponse(ex);
+                }
+
+                return GetJson(true, "Updated successfully!");
+            }
+            return HandleValidationJsonErrorResponse();
+        }
+
         protected override void Dispose(bool disposing)
         {
             if (disposing)

@@ -172,13 +172,11 @@
             }
         );
 
-        //$('#login-form').submit(function () {
-        //    Notiflix.Block.Pulse('#login-form');
-        //})
-
-        //$("#login-form").bind('ajax:complete', function () {
-        //    Notiflix.Block.Remove('#login-form');
-        //});
+        $('#login-form').keypress(function (e) {
+            if (e.which == 13) {
+                login();
+            }
+        })
 
         function login() {
             Notiflix.Block.Pulse('#login-form');
@@ -211,6 +209,12 @@
                     }
             })
         }
+
+        $('#register-form').keypress(function (e) {
+            if (e.which == 13) {
+                $('#registerSubmit').click();
+            }
+        })
 
         $('#registerSubmit').click(function () {
             Notiflix.Block.Pulse('#register-form');
@@ -276,13 +280,5 @@
             $('#picturePreview').attr('src', src);
             $('#Picture').val(src);
         })
-
-        function hideModal(id) {
-            $('#' + id).modal('hide');
-        }
-
-        function showModal(id) {
-            $('#' + id).modal('show');
-        }
     </script>
 }

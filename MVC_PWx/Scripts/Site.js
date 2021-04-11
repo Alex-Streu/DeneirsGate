@@ -34,6 +34,14 @@ function sortOptions(id) {
     });
 }
 
+function hideModal(id) {
+    $('#' + id).modal('hide');
+}
+
+function showModal(id) {
+    $('#' + id).modal('show');
+}
+
 $('.modal').on('shown.bs.modal', function () {
     $(this).find('[autofocus]').focus();
 });

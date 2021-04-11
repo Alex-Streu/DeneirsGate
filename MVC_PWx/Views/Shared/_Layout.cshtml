@@ -71,7 +71,7 @@
                     <div class="fa fa-bars tooltips" data-placement="right" data-original-title="Toggle Navigation"></div>
                 </div>
                 <!--logo start-->
-                <a href="@Url.Action("/", "/")" class="logo"><b>DENEIR'S <span>GATE</span></b></a>
+                <a href="@Url.Action("/", "Campaign")" class="logo"><b>DENEIR'S <span>GATE</span></b></a>
                 <!--logo end-->
                 <div class="nav notify-row" id="top_menu">
                     <!--  notification start -->
@@ -229,7 +229,7 @@
                 <div id="sidebar" class="nav-collapse ">
                     <!-- sidebar menu start-->
                     <ul class="sidebar-menu" id="nav-accordion">
-                        <p class="centered"><a href="profile.html"><img src="@UserData.Picture" class="img-circle" width="80"></a></p>
+                        <p class="centered"><a href="@Url.Action("EditProfile", "Account")"><img src="@UserData.Picture" class="img-circle" width="80"></a></p>
                         <h5 class="centered">@UserData.UserName</h5>
                         @if (User.IsInRole("Admin"))
                         {
