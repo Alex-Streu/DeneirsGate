@@ -61,7 +61,7 @@
         var forgotPasswordAction = '@Url.Action("ForgotPassword", "Account")';
 
         $('.profile-picture-item').click(function () {
-            hideModal('pictureModal');
+            $('#pictureModal').modal('hide');
 
             var src = $(this).find('img').attr('src');
             $('#picturePreview').attr('src', src);
