@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Configuration;
 using System.Linq;
+using System.Security.Principal;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
@@ -495,9 +496,10 @@ namespace MVC_PWx.Controllers
         //[ValidateAntiForgeryToken]
         public ActionResult LogOff()
         {
-            OnlineUsers.Remove(User.Identity.Name);
             AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
             Session.Abandon();
+            RemoveOnlineUser();
+            HttpContext.User = new GenericPrincipal(new GenericIdentity(string.Empty), null);
             return RedirectToAction("Login");
         }
 

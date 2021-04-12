@@ -374,8 +374,8 @@
                     <h4 class="modal-title">Search Users</h4>
                 </div>
                 <div class="modal-body">
-                    <div class="flexbox-container">
-                        <input type="text" id="SearchUsers" class="form-control full-width" placeholder="Type username..." autofocus />
+                    <div class="flexbox-container justify-between items-end">
+                        @HtmlHelpers.RenderFancyTextbox("long", "SearchUsers", null, "", "Search User")
                         <div id="SearchUsersBtn" class="btn btn-theme"><i class="fa fa-search"></i></div>
                     </div>
                     <div id="SearchUsersResults" class="search-results" style="display:none">

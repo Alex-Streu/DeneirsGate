@@ -57,6 +57,8 @@ namespace MVC_PWx
             var onlineUsers = (Dictionary<string, DateTime>)Application["OnlineUsers"];
             if (onlineUsers == null) { return; }
 
+            var offlineUsers = (List<string>)Application["OfflineUsers"] ?? new List<string>();
+
             //Update current user
             if (User.Identity.IsAuthenticated)
             {
@@ -65,13 +67,14 @@ namespace MVC_PWx
             }
 
             //Remove inactive users and logged out user
-            foreach (var s in onlineUsers.Where(x => x.Value <= DateTime.UtcNow.AddMinutes(-1)).ToList())
+            foreach (var s in onlineUsers.Where(x => x.Value <= DateTime.UtcNow.AddMinutes(-1) || offlineUsers.Contains(x.Key)).ToList())
             {
                 onlineUsers.Remove(s.Key);
             }
 
             //Set list
             Application["OnlineUsers"] = onlineUsers;
+            Application["OfflineUsers"] = new List<string>();
         }
 
         protected void Application_End()

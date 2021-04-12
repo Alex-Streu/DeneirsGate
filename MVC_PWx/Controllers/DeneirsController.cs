@@ -16,8 +16,10 @@ namespace MVC_PWx.Controllers
         private ApplicationUserManager _userManager;
         private ApplicationRoleManager _roleManager;
 
-        private AuthService authSvc;
+        private string _keyOnlineUsers = "OnlineUsers";
+        private string _keyOfflineUsers = "OfflineUsers";
 
+        private AuthService authSvc;
         private CampaignService campaignSvc;
         private CharacterService characterSvc;
         private PresetService presetSvc;
@@ -33,7 +35,7 @@ namespace MVC_PWx.Controllers
 
         public Dictionary<string, DateTime> OnlineUsers
         {
-            get { return (Dictionary<string, DateTime>)HttpContext.Application["OnlineUsers"]; }
+            get { return (Dictionary<string, DateTime>)HttpContext.Application[_keyOnlineUsers]; }
         }
 
         public string CampaignName
@@ -344,6 +346,13 @@ namespace MVC_PWx.Controllers
                 user.ActiveCampaign = campaign;
                 UserManager.Update(user);
             }
+        }
+
+        protected void RemoveOnlineUser()
+        {
+            var offlineUsers = (List<string>)HttpContext.Application[_keyOfflineUsers] ?? new List<string>();
+            offlineUsers.Add(User.Identity.Name);
+            HttpContext.Application[_keyOfflineUsers] = offlineUsers;
         }
 
         protected override void OnActionExecuted(ActionExecutedContext filterContext)
