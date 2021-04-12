@@ -12,7 +12,7 @@
         @Html.TextBox("Picture", Model.Picture, new { style = "display:none", @class = "form-control" })
         <div class="flexbox-container justify-center" style="margin-bottom:1em">
             <div class="fancy-portrait" style="max-width:100px;padding-right:0em !important">
-                <img id="picturePreview" class="img-xs img-responsive" style="padding-right:inherit" src="@Model.Picture" onclick="showModal('pictureModal')" />
+                <img id="picturePreview" class="img-xs img-responsive" style="padding-right:inherit" src="@Model.Picture" data-toggle="modal" data-target="#pictureModal" />
                 <div class='overlay' onclick="showModal('pictureModal')"></div>
             </div>
         </div>
@@ -34,7 +34,7 @@
         <!-- Modal content-->
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" onclick="hideModal('pictureModal')">&times;</button>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
                 <h4 class="modal-title">Profile Picture</h4>
             </div>
             <div class="modal-body profile-picture-modal">
@@ -48,7 +48,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" onclick="hideModal('pictureModal')">Close</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
             </div>
         </div>
 
