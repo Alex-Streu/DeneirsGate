@@ -236,7 +236,7 @@ namespace MVC_PWx.Controllers
                 {
                     scope.User = new User
                     {
-                        Username = AppUser.UserName
+                        Username = AppUser?.UserName
                     };
                     SentrySdk.CaptureException(ex);
                 });
@@ -260,7 +260,7 @@ namespace MVC_PWx.Controllers
             {
                 scope.User = new User
                 {
-                    Username = AppUser.UserName
+                    Username = AppUser?.UserName
                 };
                 SentrySdk.CaptureException(ex);
             });
@@ -273,7 +273,7 @@ namespace MVC_PWx.Controllers
             {
                 scope.User = new User
                 {
-                    Username = AppUser.UserName
+                    Username = AppUser?.UserName
                 };
                 SentrySdk.CaptureException(ex);
             });
@@ -286,7 +286,7 @@ namespace MVC_PWx.Controllers
             {
                 scope.User = new User
                 {
-                    Username = AppUser.UserName
+                    Username = AppUser?.UserName
                 };
                 SentrySdk.CaptureException(ex);
             });
@@ -296,6 +296,30 @@ namespace MVC_PWx.Controllers
         protected JsonResult HandleValidationJsonErrorResponse(object data = null)
         {
             return GetJson(false, GetValidationError(), data);
+        }
+
+        protected void LogError(string error)
+        {
+            SentrySdk.WithScope(scope =>
+            {
+                scope.User = new User
+                {
+                    Username = AppUser?.UserName
+                };
+                SentrySdk.CaptureMessage(error);
+            });
+        }
+
+        protected void LogException(Exception ex)
+        {
+            SentrySdk.WithScope(scope =>
+            {
+                scope.User = new User
+                {
+                    Username = AppUser?.UserName
+                };
+                SentrySdk.CaptureException(ex);
+            });
         }
 
         protected ActionResult RedirectToLocal(string returnUrl)

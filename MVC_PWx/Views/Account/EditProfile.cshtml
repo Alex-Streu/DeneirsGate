@@ -18,7 +18,7 @@
         </div>
         @HtmlHelpers.RenderFancyTextbox("md full", "UserName", 20, Model.UserName, "User Name")
         @HtmlHelpers.RenderFancyTextbox("md full mt", "Email", 20, Model.Email, "Email")
-        <div class="btn btn-danger mt">Change Password</div>
+        <div id="btnForgotPassword" class="btn btn-danger mt">Change Password</div>
         <hr class="mt" />
         <div class="flexbox-container justify-center">
             <div id="btnUpdateProfile" class="btn btn-default">Update Profile</div>
@@ -58,6 +58,8 @@
 @section scripts {
     <script type="text/javascript">
         var updateProfileAction = '@Url.Action("UpdateProfile")';
+        var forgotPasswordAction = '@Url.Action("ForgotPassword", "Account")';
+
         $('.profile-picture-item').click(function () {
             hideModal('pictureModal');
 
@@ -80,6 +82,16 @@
                     Notiflix.NotifyContent.Failure(data.message);
                 }
             })
+        })
+
+        $('#btnForgotPassword').click(function () {
+            ajaxPost(null, forgotPasswordAction, function (data) {
+                if (data.success) {
+                    Notiflix.NotifyContent.Success(data.message);
+                } else {
+                    Notiflix.NotifyContent.Failure(data.message);
+                }
+            });
         })
     </script>
 }

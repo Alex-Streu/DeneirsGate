@@ -17,6 +17,7 @@ namespace DeneirsGate.Data
         public virtual DbSet<AspNetUserClaim> AspNetUserClaims { get; set; }
         public virtual DbSet<AspNetUserLogin> AspNetUserLogins { get; set; }
         public virtual DbSet<AspNetUser> AspNetUsers { get; set; }
+        public virtual DbSet<UserPasswordReset> UserPasswordResets { get; set; }
 
         #region Campaigns
         

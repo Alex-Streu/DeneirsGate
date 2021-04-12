@@ -8,6 +8,49 @@ namespace DeneirsGate.Services
 {
     public class AuthService : DeneirsService
     {
+        public void SetPasswordResetCode(Guid userId, string code)
+        {
+            if (userId == Guid.Empty || code.IsNullOrEmpty()) { return; }
+            ClearPasswordReset(userId);
+
+            DBReset();
+
+            DB.UserPasswordResets.Add(new UserPasswordReset
+            {
+                Code = code,
+                UserKey = userId,
+                DateCreated = DateTime.Now
+            });
+
+            DB.SaveChanges();
+        }
+
+        public Guid GetPasswordResetUser(string code)
+        {
+            if (code.IsNullOrEmpty()) { throw new Exception("No reset code provided."); }
+            DBReset();
+
+            var user = DB.UserPasswordResets.FirstOrDefault(x => x.Code == code);
+            if (user == null)
+            {
+                throw new Exception("Invalid reset code provided.");
+            }
+
+            if (user.DateCreated.AddHours(1) < DateTime.Now)
+            {
+                throw new Exception("Reset code has expired.");
+            }
+
+            return user.UserKey;
+        }
+
+        public void ClearPasswordReset(Guid userId)
+        {
+            DBReset();
+            DB.UserPasswordResets.RemoveRange(x => x.UserKey == userId);
+            DB.SaveChanges();
+        }
+
         public PlayerRegistryViewModel GetPlayerRegistry(string code)
         {
             var registry = new PlayerRegistryViewModel();

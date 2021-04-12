@@ -179,6 +179,7 @@
     <Compile Include="DataModels\UserCampaign.cs" />
     <Compile Include="DataModels\UserMagicItem.cs" />
     <Compile Include="DataModels\UserMonster.cs" />
+    <Compile Include="DataModels\UserPasswordReset.cs" />
     <Compile Include="DataModels\UserTutorials.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="DataModels\Race.cs" />

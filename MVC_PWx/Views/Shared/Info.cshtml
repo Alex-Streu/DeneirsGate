@@ -1,16 +1,38 @@
-﻿
-<div class="content-box">
-    <h2>@ViewBag.Header</h2>
-    <h3>@ViewBag.Message</h3>
-    <div class="flex-container center">
-        @Html.Raw(ViewBag.Html)
+﻿@{ 
+    ViewBag.Layout = "_Empty";
+    ViewBag.Title = "Info";
+}
+
+@if (ViewBag.Partial == null)
+{
+    <div class="content-box">
+        <h2>@ViewBag.Header</h2>
+        <h3>@ViewBag.Message</h3>
+        <div class="flex-container center">
+            @Html.Raw(ViewBag.Html)
+        </div>
     </div>
-</div>
+}
+else
+{
+    <div id="partial" style="width:80%;height:80%;margin:0 auto">
+
+    </div>
+}
 
 @section scripts {
     <script type="text/javascript">
+        var partialAction = '@HttpUtility.UrlDecode(ViewBag.Partial)';
+
         $.backstretch("@Url.Content("~/Content/img/info-background.png")", {
             speed: 500
         });
+
+        $(document).ready(function () {
+            if (!isEmpty(partialAction)) {
+                console.log(partialAction)
+                $('#partial').load(partialAction);
+            }
+        })
     </script>
 }

@@ -250,19 +250,11 @@
                 Email: $('#forgotEmail').val()
             }
 
-            $.ajax({
-                type: "POST",
-                url: forgotPasswordAction,
-                data: JSON.stringify(postData),
-                dataType: 'json',
-                contentType: 'application/json',
-                success: function (data) {
-                    $('#forgotResponse').text(data.message);
-                },
-                error: function (error) {
-                    $('#forgotResponse').text(error.responseText);
-                }
-            })
+            ajaxPost(postData, forgotPasswordAction, function (data) {
+                $('#forgotResponse').text(data.message);
+            }, function (error) {
+                $('#forgotResponse').text(error.responseText);
+            });
         })
 
         $('#register-link').click(function () {

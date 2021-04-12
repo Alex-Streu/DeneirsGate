@@ -237,11 +237,16 @@ namespace MVC_PWx.Controllers
             return View("Info");
         }
         
-        [HttpPost]
-        [AllowAnonymous, AnonymousOnly]
+        [HttpPost, AllowAnonymous]
         public async Task<JsonResult> ForgotPassword(ForgotPasswordViewModel model)
         {
-            if (ModelState.IsValid)
+            if (model.Email.IsNullOrEmpty() && AppUser != null) { model.Email = AppUser.Email; }
+            else if (!ModelState.IsValid)
+            {
+                return HandleValidationJsonErrorResponse();
+            }
+
+            try
             {
                 var user = await UserManager.FindByEmailAsync(model.Email);
                 if (user == null || !(await UserManager.IsEmailConfirmedAsync(user.Id)))
@@ -252,28 +257,41 @@ namespace MVC_PWx.Controllers
 
                 // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=320771
                 // Send an email with this link
-                 string code = await UserManager.GeneratePasswordResetTokenAsync(user.Id);
-                 var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code }, protocol: Request.Url.Scheme);
-                 await UserManager.SendEmailAsync(user.Id, "Reset Password", AppLogic.GetEmailBody("Did you request a password change?", "If this was you, I get it. Happens all the time.<br/><br/>You can reset your password by clicking <a href=\"" + callbackUrl + "\">here</a>."));
-                 return GetJson(true, "Please check your email to reset your password.");
-            }
+                string code = await UserManager.GeneratePasswordResetTokenAsync(user.Id);
+                var callbackUrl = Url.Action("ResetPassword", "Account", new { code }, protocol: Request.Url.Scheme);
 
-            // If we got this far, something failed, redisplay form
-            return HandleValidationJsonErrorResponse();
+                AuthSvc.SetPasswordResetCode(user.UserId, code);
+                await UserManager.SendEmailAsync(user.Id, "Reset Password", AppLogic.GetEmailBody("Did you request a password change?", "If this was you, I get it. Happens all the time.<br/><br/>You can reset your password by clicking <a href=\"" + callbackUrl + "\">here</a>.<br/><br/>This link will only be valid for 1 hour."));
+                return GetJson(true, "Please check your email to reset your password.");
+            }
+            catch (Exception ex)
+            {
+                return HandleExceptionJsonErrorResponse(ex);
+            }
         }
 
         //
         // GET: /Account/ResetPassword
-        [AllowAnonymous, AnonymousOnly]
+        [AllowAnonymous]
         public ActionResult ResetPassword(string code)
         {
-            if (code.IsNullOrEmpty())
+            var model = new ResetPasswordViewModel();
+            try
             {
-                return View("Error");
+                var userId = AuthSvc.GetPasswordResetUser(code);
+                var user = UserManager.FindById(userId.ToString());
+                model = new ResetPasswordViewModel
+                {
+                    Code = code,
+                    Email = user.Email
+                };
+            }
+            catch (Exception ex)
+            {
+                HandleExceptionRedirectError(ex);
             }
 
-            ViewBag.Partial = "ResetPassword";
-            return View("Info");
+            return View(model);
         }
 
         //
@@ -283,23 +301,41 @@ namespace MVC_PWx.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> ResetPassword(ResetPasswordViewModel model)
         {
+            ViewBag.Reset = false;
             if (!ModelState.IsValid)
             {
                 return View(model);
             }
-            var user = await UserManager.FindByNameAsync(model.Email);
-            if (user == null)
+
+            try
             {
-                // Don't reveal that the user does not exist
-                return RedirectToAction("ResetPasswordConfirmation", "Account");
+                var user = UserManager.FindByEmail(model.Email);
+                if (user == null)
+                {
+                    // Don't reveal that the user does not exist
+                    ViewBag.Reset = true;
+                    LogError($"Invalid user using reset password: {model.Email}");
+                    return View(model);
+                }
+
+                var result = await UserManager.ResetPasswordAsync(user.Id, model.Code, model.Password);
+                if (result.Succeeded)
+                {
+                    AuthSvc.ClearPasswordReset(user.UserId);
+                    AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
+                    Session.Abandon();
+                    ViewBag.Reset = true;
+                    return View(model);
+                }
+
+                AddErrors(result);
             }
-            var result = await UserManager.ResetPasswordAsync(user.Id, model.Code, model.Password);
-            if (result.Succeeded)
+            catch (Exception ex)
             {
-                return RedirectToAction("ResetPasswordConfirmation", "Account");
+                return HandleExceptionRedirectError(ex);
             }
-            AddErrors(result);
-            return View();
+
+            return View(model);
         }
 
         //
