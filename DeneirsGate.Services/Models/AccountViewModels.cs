@@ -67,6 +67,12 @@ namespace DeneirsGate.Services
         public string ReturnUrl { get; set; }
     }
 
+    public class ResendConfirmationPostModel
+    {
+        [Required]
+        public string Username { get; set; }
+    }
+
     public class RegisterViewModel
     {
         [Required]

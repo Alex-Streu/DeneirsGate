@@ -44,10 +44,10 @@
                         <div class="btn btn-default btn-block" onclick="login()"><i class="fa fa-lock"></i> SIGN IN</div>
                         <hr>
                         @*<div class="login-social-link centered">
-                            <p>or you can sign in via your social network</p>
-                            <button class="btn btn-facebook" type="submit"><i class="fa fa-facebook"></i> Facebook</button>
-                            <button class="btn btn-twitter" type="submit"><i class="fa fa-twitter"></i> Twitter</button>
-                        </div>*@
+                                <p>or you can sign in via your social network</p>
+                                <button class="btn btn-facebook" type="submit"><i class="fa fa-facebook"></i> Facebook</button>
+                                <button class="btn btn-twitter" type="submit"><i class="fa fa-twitter"></i> Twitter</button>
+                            </div>*@
                         <div class="registration">
                             Don't have an account yet?<br />
                             <a id="register-link" class="link red" href="#">
@@ -120,7 +120,26 @@
         </div>
     </div>
 </div>
-<!-- modal -->
+
+<!-- Resend Confirmation Modal -->
+<div aria-hidden="true" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" id="resendConfirmationModal" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">Confirm Email</h4>
+            </div>
+            <div class="modal-body">
+                <p>Slow down, traveler! You must have a confirmed email to log on. Would you like to resend the confirmation email?</p>
+                <p class="error-text" id="resendConfirmationResponse"></p>
+            </div>
+            <div class="modal-footer">
+                <button data-dismiss="modal" class="btn btn-default" type="button">Cancel</button>
+                <button id="btnResendConfirmation" class="btn btn-theme" type="button">Resend</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <!-- Picture Modal -->
 <div id="pictureModal" class="modal fade" role="dialog">
@@ -152,15 +171,16 @@
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
-    <script type="text/javascript">
+<script type="text/javascript">
         var forgotPasswordAction = '@Url.Action("ForgotPassword")';
         var registerAction = '@Url.Action("Register")';
         var attemptLoginAction = '@Url.Action("AttemptLogin")';
+        var resendConfirmationAction = '@Url.Action("ResendConfirmation")';
 
         $(document).ready(function () {
             $('.backstretch').addClass('fadein');
         })
-        
+
         $.backstretch("@Url.Content("~/Content/img/login-background.jpg")", {
             speed: 500
         });
@@ -197,6 +217,10 @@
                     window.location = data.data;
                 } else {
                     if (data.error != null) {
+                        if (data.error.ErrorCode == 1) {
+                            $('#resendConfirmationModal').modal('show');
+                            return;
+                        }
                         $.redirect(customErrorAction, data.error);
                         return;
                     }
@@ -209,6 +233,24 @@
                     }
             })
         }
+
+        $('#btnResendConfirmation').click(function() {
+            var postData = {
+                Username: $('#Username').val(),
+            }
+
+            ajaxPost(postData, resendConfirmationAction, function (data) {
+                if (data.success) {
+                    $('#resendConfirmationResponse').text(data.message);
+                } else {
+                    if (data.error != null) {
+                        $.redirect(customErrorAction, data.error);
+                        return;
+                    }
+                    $('#resendConfirmationResponse').text(data.message);
+                }
+            })
+        })
 
         $('#register-form').keypress(function (e) {
             if (e.which == 13) {
@@ -272,5 +314,5 @@
             $('#picturePreview').attr('src', src);
             $('#Picture').val(src);
         })
-    </script>
+</script>
 }

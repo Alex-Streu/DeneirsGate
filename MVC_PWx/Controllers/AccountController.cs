@@ -75,8 +75,7 @@ namespace MVC_PWx.Controllers
                             
                             return GetJson(false, null, null, new ErrorPostModel
                             {
-                                Header = "Slow down, traveler!",
-                                Message = "You must have a confirmed email to log on. Would you like to resend the confirmation email?"
+                                ErrorCode = 1
                             });
                         }
                     }
@@ -116,7 +115,37 @@ namespace MVC_PWx.Controllers
             }
 
             return GetJson(false, "Oops! Something went wrong. Please try again later!");
+        }
 
+        [HttpPost, AllowAnonymous]
+        public async Task<JsonResult> ResendConfirmation(ResendConfirmationPostModel model)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var user = await UserManager.FindByNameOrEmailAsync(model.Username);
+                    if (user != null)
+                    {
+                        string callbackUrl = await SendEmailConfirmationTokenAsync(user.Id, "Confirm your account - Resend");
+
+                        return GetJson(true, "Confirmation has been resent!");
+                    }
+                }
+
+                return HandleValidationJsonErrorResponse();
+            }
+            catch (Exception ex)
+            {
+                GetJson(new ErrorPostModel
+                {
+                    Header = "Oops! Looks like something went wrong!",
+                    Message = "We apologize for the inconvenience. Our team has been notified and will work on resolving this issue as soon as possible.",
+                    ReturnUrl = Url.Action("Login")
+                }, ex);
+            }
+
+            return GetJson(false, "Oops! Something went wrong. Please try again later!");
         }
 
         //
@@ -227,7 +256,7 @@ namespace MVC_PWx.Controllers
             {
                 ViewBag.Header = "Welcome, adventurer!";
                 ViewBag.Message = "Your messenger owl is confirmed and you are ready to enter the gates!";
-                ViewBag.Html = $"<a class='btn btn-lg btn-default' href='{Url.Action("Login")}'>Log In</a>";
+                ViewBag.Html = $"<a class='btn btn-lg btn-default mt' href='{Url.Action("Login")}'>Log In</a>";
             }
             else
             {

@@ -1,12 +1,12 @@
 ﻿@{ 
-    ViewBag.Layout = "_Empty";
+    Layout = "~/Views/Shared/_Empty.cshtml";
     ViewBag.Title = "Info";
 }
 
 @if (ViewBag.Partial == null)
 {
-    <div class="content-box">
-        <h2>@ViewBag.Header</h2>
+    <div class="content-box text-center transparent">
+        <h2 class="red text-bold">@ViewBag.Header</h2>
         <h3>@ViewBag.Message</h3>
         <div class="flex-container center">
             @Html.Raw(ViewBag.Html)

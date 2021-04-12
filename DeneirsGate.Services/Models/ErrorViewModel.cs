@@ -12,5 +12,6 @@ namespace DeneirsGate.Services
         public string Html { get; set; }
         public string ReturnUrl { get; set; }
         public string Error { get; set; }
+        public int ErrorCode { get; set; }
     }
 }

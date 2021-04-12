@@ -34,5 +34,15 @@ namespace MVC_PWx.Controllers
 
             return View("Error");
         }
+
+        public ActionResult CustomInfo(ErrorPostModel model)
+        {
+            ViewBag.Header = model.Header;
+            ViewBag.Message = model.Message;
+            ViewBag.Html = model.Html;
+            ViewBag.ReturnUrl = model.ReturnUrl;
+
+            return View("Info");
+        }
     }
 }
