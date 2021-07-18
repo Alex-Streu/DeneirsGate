@@ -5,16 +5,28 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 
-namespace MVC_PWx.Controllers
+namespace DeneirsGateSite.Controllers
 {
+    [Authorize]
     public class UsersController : DeneirsController
     {
+        ApplicationUserManager userManager;
+        UserService userSvc;
+        AuthService authSvc;
+
+        public UsersController(ApplicationUserManager userManager, UserService userService, AuthService authService)
+        {
+            this.userManager = userManager;
+            userSvc = userService;
+            authSvc = authService;
+        }
+
         public ActionResult Friends(string to = "friends")
         {
             var friends = new AllFriendsViewModel();
             try
             {
-                friends = UserSvc.GetAllFriends(AppUser.UserId, OnlineUsers);
+                friends = userSvc.GetAllFriends(AppUser.UserId, OnlineUsers);
 
                 var toList = new List<string> { "friends", "pending", "requests", "blocked" };
                 if (!toList.Contains(to)) { to = "friends"; }
@@ -34,7 +46,7 @@ namespace MVC_PWx.Controllers
             try
             {
                 if (list != null) { friends = list; }
-                else { friends = UserSvc.GetFriends(AppUser.UserId, OnlineUsers); }
+                else { friends = userSvc.GetFriends(AppUser.UserId, OnlineUsers); }
             }
             catch (Exception ex)
             {
@@ -50,7 +62,7 @@ namespace MVC_PWx.Controllers
             try
             {
                 if (list != null) { friends = list; }
-                else { friends = UserSvc.GetRequests(AppUser.UserId); }
+                else { friends = userSvc.GetRequests(AppUser.UserId); }
             }
             catch (Exception ex)
             {
@@ -66,7 +78,7 @@ namespace MVC_PWx.Controllers
             try
             {
                 if (list != null) { friends = list; }
-                else { friends = UserSvc.GetPending(AppUser.UserId); }
+                else { friends = userSvc.GetPending(AppUser.UserId); }
             }
             catch (Exception ex)
             {
@@ -82,7 +94,7 @@ namespace MVC_PWx.Controllers
             try
             {
                 if (list != null) { friends = list; }
-                else { friends = UserSvc.GetBlocked(AppUser.UserId); }
+                else { friends = userSvc.GetBlocked(AppUser.UserId); }
             }
             catch (Exception ex)
             {
@@ -92,25 +104,34 @@ namespace MVC_PWx.Controllers
             return PartialView(friends);
         }
 
-        public ActionResult ReadNotification(Guid id, string returnUrl)
+        [HttpPost]
+        public JsonResult ReadNotification(Guid id)
         {
             try
             {
-                UserSvc.ReadNotification(id);
+                userSvc.ReadNotification(id);
             }
             catch (Exception ex)
             {
-                SentrySdk.WithScope(scope =>
-                {
-                    scope.User = new User
-                    {
-                        Username = AppUser.UserName
-                    };
-                    SentrySdk.CaptureException(ex);
-                });
+                HandleExceptionJsonErrorResponse(ex);
             }
 
-            return RedirectToLocal(returnUrl);
+            return GetJson(true);
+        }
+
+        [HttpPost]
+        public JsonResult DeleteNotification(Guid id)
+        {
+            try
+            {
+                userSvc.DeleteNotification(id);
+            }
+            catch (Exception ex)
+            {
+                HandleExceptionJsonErrorResponse(ex);
+            }
+
+            return GetJson(true);
         }
 
         [HttpPost]
@@ -120,8 +141,8 @@ namespace MVC_PWx.Controllers
             var status = FriendStatus.None;
             try
             {
-                var _user = await UserManager.FindByNameAsync(model.Search);
-                if (_user != null) { status = UserSvc.CheckFriendStatus(AppUser.UserId, _user.UserId); }
+                var _user = await userManager.FindByNameAsync(model.Search);
+                if (_user != null) { status = userSvc.CheckFriendStatus(AppUser.UserId, _user.UserId); }
                 if (_user == null || status == FriendStatus.Blocked || _user.UserName == User.Identity.Name)
                 {
                     throw new Exception($"No user with username '{model.Search}' was found!");
@@ -132,7 +153,7 @@ namespace MVC_PWx.Controllers
                     Picture = _user.Picture,
                     UserId = _user.UserId,
                     Username = _user.UserName,
-                    Status = UserSvc.CheckFriendStatus(AppUser.UserId, _user.UserId)
+                    Status = userSvc.CheckFriendStatus(AppUser.UserId, _user.UserId)
                 };
 
                 switch (user.Status)
@@ -164,11 +185,11 @@ namespace MVC_PWx.Controllers
         {
             try
             {
-                var requestUser = await UserManager.FindByNameAsync(model.RequestUserName);
+                var requestUser = await userManager.FindByNameAsync(model.RequestUserName);
                 if (requestUser == null) { throw new Exception("User not found!"); }
 
                 model.RequestUserId = new Guid(requestUser.Id);
-                UserSvc.SendFriendRequest(AppUser.UserId, model);
+                userSvc.SendFriendRequest(AppUser.UserId, model);
             }
             catch (Exception ex)
             {
@@ -183,7 +204,7 @@ namespace MVC_PWx.Controllers
         {
             try
             {
-                UserSvc.UpdateFriendRequest(AppUser.UserId, model.SenderId, model.Status);
+                userSvc.UpdateFriendRequest(AppUser.UserId, model.SenderId, model.Status);
             }
             catch (Exception ex)
             {
@@ -198,7 +219,7 @@ namespace MVC_PWx.Controllers
             var model = new PlayerRegistryViewModel();
             try
             {
-                model = AuthSvc.GetPlayerRegistry(id);
+                model = authSvc.GetPlayerRegistry(id);
             }
             catch (Exception ex)
             {
@@ -213,7 +234,7 @@ namespace MVC_PWx.Controllers
         {
             try
             {
-                AuthSvc.UpdatePlayerRegistry(AppUser.UserId, model);
+                authSvc.UpdatePlayerRegistry(AppUser.UserId, model);
             }
             catch (Exception ex)
             {

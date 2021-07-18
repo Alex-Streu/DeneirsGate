@@ -1,4 +1,4 @@
-﻿@using MVC_PWx.Helpers
+﻿@using DeneirsGateSite
 @using CustomHtmlHelpers
 
 <!DOCTYPE html>
@@ -116,7 +116,7 @@
                         </li>
                         <!-- settings end -->
                         <!-- inbox dropdown start-->
-                        <li id="header_inbox_bar" class="dropdown">
+                        @*<li id="header_inbox_bar" class="dropdown">
                             <a data-toggle="dropdown" class="dropdown-toggle" href="index.html#">
                                 <i class="fa fa-envelope-o"></i>
                                 <span class="badge bg-theme">5</span>
@@ -139,46 +139,10 @@
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="index.html#">
-                                        <span class="photo"><img alt="avatar" src="~/Content/img/ui-divya.jpg"></span>
-                                        <span class="subject">
-                                            <span class="from">Divya Manian</span>
-                                            <span class="time">40 mins.</span>
-                                        </span>
-                                        <span class="message">
-                                            Hi, I need your help with this.
-                                        </span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="index.html#">
-                                        <span class="photo"><img alt="avatar" src="~/Content/img/ui-danro.jpg"></span>
-                                        <span class="subject">
-                                            <span class="from">Dan Rogers</span>
-                                            <span class="time">2 hrs.</span>
-                                        </span>
-                                        <span class="message">
-                                            Love your new Dashboard.
-                                        </span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="index.html#">
-                                        <span class="photo"><img alt="avatar" src="~/Content/img/ui-sherman.jpg"></span>
-                                        <span class="subject">
-                                            <span class="from">Dj Sherman</span>
-                                            <span class="time">4 hrs.</span>
-                                        </span>
-                                        <span class="message">
-                                            Please, answer asap.
-                                        </span>
-                                    </a>
-                                </li>
-                                <li>
                                     <a href="index.html#">See all messages</a>
                                 </li>
                             </ul>
-                        </li>
+                        </li>*@
                         <!-- inbox dropdown end -->
                         <!-- notification dropdown start-->
                         <li id="header_notification_bar" class="dropdown">
@@ -197,7 +161,8 @@
                                         <li name="@item.NotificationKey">
                                             <a href="@item.Link" class="notification-item">
                                                 <div class="notification">
-                                                    <span class="note">@item.Message</span>
+                                                    <span class="note">@Html.Raw(item.Message)</span>
+                                                    <br/>
                                                     <span class="age">@item.Age</span>
                                                 </div>
                                             </a>
@@ -247,19 +212,31 @@
                                 </ul>
                             </li>
                         }
-                        <li>
-                            <a id="menu_Campaign" href="@Url.Action("ChangeCampaign", "Campaign")">
-                                <i class="fa fa-compass"></i>
-                                <span>Campaigns</span>
-                            </a>
-                        </li>
+                        @if (!User.IsInRole("Player"))
+                        {
+                            <li>
+                                <a id="menu_Campaign" href="@Url.Action("ChangeCampaign", "Campaign")">
+                                    <i class="fa fa-compass"></i>
+                                    <span>Campaigns</span>
+                                </a>
+                            </li>
+                        }
                         <li>
                             <a id="menu_Suggestion" href="@Url.Action("/", "Suggestion")">
                                 <i class="fa fa-archive"></i>
                                 <span>Suggestion Box</span>
                             </a>
                         </li>
-                        @if (UserData.ActiveCampaign != null)
+                        @if (User.IsInRole("Player"))
+                        {
+                            <li>
+                                <a id="menu_Player" href="@Url.Action("/", "Player")">
+                                    <i class="fa fa-user-circle"></i>
+                                    <span>Characters</span>
+                                </a>
+                            </li>
+                        }
+                        @if (UserData.ActiveCampaign != null && !User.IsInRole("Player"))
                         {
                             <li class="mt" style="border-bottom:1px solid">
                                 <label id="menu_ActiveCampaign" class="text-md white">@ViewBag.CampaignName</label>
@@ -457,6 +434,8 @@
         var url = '@Request.Path';
         var searchUsersAction = '@Url.Action("SearchUsers", "Users")';
         var sendFriendRequestAction = '@Url.Action("SendFriendRequest", "Users")';
+        var sendCharacterInviteAction = '@Url.Action("SendInvite", "Player")';
+        var respondToCharacterInviteAction = '@Url.Action("RespondToInvite", "Player")';
 
         $(document).ready(function () {
             //var unique_id = $.gritter.add({
@@ -489,6 +468,14 @@
 
         //Notifications Init
         NotificationHub.Init();
+        $('.notification-item').click(function () {
+            console.log('clicked');
+            if (!isEmpty($(this).attr('href'))) { return; }
+            console.log('posting')
+            console.log($(this).parent().attr('name'))
+            //return;
+            ajaxPost({ id: $(this).parent().attr('name') }, '@Url.Action("ReadNotification", "Users")');
+        })
 
 
         //Notify Init
@@ -607,6 +594,23 @@
         })
         </text>
         }
+
+
+        $('.character-invite-response').click(function () {
+            var key = $(this).parent().data('key');
+            var postData = {
+                RequestKey: key,
+                IsAccepted: $(this).hasClass('accept')
+            }
+
+            ajaxPost(postData, respondToCharacterInviteAction, function (data) {
+                if (data.success) {
+
+                } else {
+                    Notiflix.NotifyContent.Failure(data.message);
+                }
+            })
+        })
 
     </script>
     <script type="application/javascript">

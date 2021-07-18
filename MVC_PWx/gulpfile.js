@@ -25,6 +25,7 @@ gulp.task('copy:js', () => {
         `${paths.nodeModules}bootstrap-select/dist/js/bootstrap-select.min.js`,
         `${paths.nodeModules}jquery.redirect/jquery.redirect.js`,
         `${paths.nodeModules}xbs-enjoyhint/enjoyhint.min.js`,
+        `${paths.nodeModules}xbs-enjoyhint/enjoyhint.js`,
         `${paths.nodeModules}jquery.scrollto/jquery.scrollTo.min.js`,
         `${paths.nodeModules}kinetic/kinetic.min.js`,
         `${paths.nodeModules}js-cookie/dist/js.cookie.min.js`
@@ -49,7 +50,7 @@ gulp.task('minify:js', function () {
 
 gulp.task('delete:js', function () {
     var filesToDelete = [
-        `${paths.scriptsDest}my-todo-list.min.js`,
+        `${paths.scriptsDest}enjoyhint.min.js`,
         `${paths.scriptsDest}Site.min.js`
     ]
     return del(filesToDelete);

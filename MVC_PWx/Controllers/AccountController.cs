@@ -9,37 +9,25 @@ using DeneirsGate.Services;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
-using MVC_PWx.Helpers;
+using DeneirsGateSite.Helpers;
+using Unity;
 
-namespace MVC_PWx.Controllers
+namespace DeneirsGateSite.Controllers
 {
     [Authorize]
     public class AccountController : DeneirsController
     {
-        private ApplicationSignInManager _signInManager;
+        private AuthService authSvc;
 
         public AccountController()
         {
 
         }
 
-        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager, ApplicationRoleManager roleManager)
+        [InjectionConstructor]
+        public AccountController(AuthService authService)
         {
-            UserManager = userManager;
-            SignInManager = signInManager;
-            RoleManager = roleManager;
-        }
-
-        public ApplicationSignInManager SignInManager
-        {
-            get
-            {
-                return _signInManager ?? HttpContext.GetOwinContext().Get<ApplicationSignInManager>();
-            }
-            private set 
-            { 
-                _signInManager = value; 
-            }
+            authSvc = authService;
         }
 
         //
@@ -290,7 +278,7 @@ namespace MVC_PWx.Controllers
                 string code = await UserManager.GeneratePasswordResetTokenAsync(user.Id);
                 var callbackUrl = Url.Action("ResetPassword", "Account", new { code }, protocol: Request.Url.Scheme);
 
-                AuthSvc.SetPasswordResetCode(user.UserId, code);
+                authSvc.SetPasswordResetCode(user.UserId, code);
                 await UserManager.SendEmailAsync(user.Id, "Reset Password", AppLogic.GetEmailBody("Did you request a password change?", "If this was you, I get it. Happens all the time.<br/><br/>You can reset your password by clicking <a href=\"" + callbackUrl + "\">here</a>.<br/><br/>This link will only be valid for 1 hour."));
                 return GetJson(true, "Please check your email to reset your password.");
             }
@@ -308,7 +296,7 @@ namespace MVC_PWx.Controllers
             var model = new ResetPasswordViewModel();
             try
             {
-                var userId = AuthSvc.GetPasswordResetUser(code);
+                var userId = authSvc.GetPasswordResetUser(code);
                 var user = UserManager.FindById(userId.ToString());
                 model = new ResetPasswordViewModel
                 {
@@ -351,7 +339,7 @@ namespace MVC_PWx.Controllers
                 var result = await UserManager.ResetPasswordAsync(user.Id, model.Code, model.Password);
                 if (result.Succeeded)
                 {
-                    AuthSvc.ClearPasswordReset(user.UserId);
+                    authSvc.ClearPasswordReset(user.UserId);
                     AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
                     Session.Abandon();
                     ViewBag.Reset = true;
@@ -552,10 +540,10 @@ namespace MVC_PWx.Controllers
         {
             if (disposing)
             {
-                if (_signInManager != null)
+                if (SignInManager != null)
                 {
-                    _signInManager.Dispose();
-                    _signInManager = null;
+                    SignInManager.Dispose();
+                    SignInManager = null;
                 }
             }
 

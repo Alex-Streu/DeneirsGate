@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.271
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31129.286
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MVC_PWx", "MVC_PWx\MVC_PWx.csproj", "{D342D8F8-8B01-4C3F-B24C-179EAB85428B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeneirsGate.Site", "MVC_PWx\DeneirsGate.Site.csproj", "{D342D8F8-8B01-4C3F-B24C-179EAB85428B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeneirsGate.Data", "DeneirsGate.Data\DeneirsGate.Data.csproj", "{BF357897-5EEB-49C8-B897-6707E79647F6}"
 EndProject

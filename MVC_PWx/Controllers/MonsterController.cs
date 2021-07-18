@@ -1,20 +1,29 @@
 ﻿using DeneirsGate.Services;
-using MVC_PWx.Helpers;
+using DeneirsGateSite.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Web.Mvc;
 
-namespace MVC_PWx.Controllers
+namespace DeneirsGateSite.Controllers
 {
     [Authorize, HasCampaign, HasAccess(Priviledge = AppLogic.Priviledge.DM)]
     public class MonsterController : DeneirsController
     {
+        MonsterService monsterSvc;
+        PresetService presetSvc;
+
+        public MonsterController(MonsterService monsterService, PresetService presetService)
+        {
+            monsterSvc = monsterService;
+            presetSvc = presetService;
+        }
+
         public ActionResult Index()
         {
             var model = new List<MonsterViewModel>();
             try
             {
-                model = MonsterSvc.GetMonsters(AppUser.UserId, AppUser.ActiveCampaign.Value, !User.IsInRole("Admin"));
+                model = monsterSvc.GetMonsters(AppUser.UserId, AppUser.ActiveCampaign.Value, !User.IsInRole("Admin"));
             }
             catch (Exception ex)
             {
@@ -33,13 +42,13 @@ namespace MVC_PWx.Controllers
             var model = new MonsterEditModel();
             try
             {
-                model = MonsterSvc.GetEditMonster(AppUser.UserId, id, AppUser.ActiveCampaign.Value, User.IsInRole("Admin"));
+                model = monsterSvc.GetEditMonster(AppUser.UserId, id, AppUser.ActiveCampaign.Value, User.IsInRole("Admin"));
 
                 ViewBag.IsNew = isNew;
-                ViewBag.Sizes = new SelectList(MonsterSvc.GetSizes(), "SizeKey", "Name");
-                ViewBag.Types = new SelectList(MonsterSvc.GetTypes(), "TypeKey", "Name");
-                ViewBag.ChallengeRatings = new SelectList(MonsterSvc.GetChallengeRatings(), "RatingKey", "Challenge");
-                ViewBag.Environments = new MultiSelectList(PresetSvc.GetEnvironments(), "EnvironmentKey", "Name", model.Environments);
+                ViewBag.Sizes = new SelectList(monsterSvc.GetSizes(), "SizeKey", "Name");
+                ViewBag.Types = new SelectList(monsterSvc.GetTypes(), "TypeKey", "Name");
+                ViewBag.ChallengeRatings = new SelectList(monsterSvc.GetChallengeRatings(), "RatingKey", "Challenge");
+                ViewBag.Environments = new MultiSelectList(presetSvc.GetEnvironments(), "EnvironmentKey", "Name", model.Environments);
             }
             catch (Exception ex)
             {
@@ -56,7 +65,7 @@ namespace MVC_PWx.Controllers
             {
                 try
                 {
-                        MonsterSvc.UpdateMonster(AppUser.UserId, model, User.IsInRole("Admin"));
+                        monsterSvc.UpdateMonster(AppUser.UserId, model, User.IsInRole("Admin"));
                 }
                 catch (Exception ex)
                 {
@@ -73,7 +82,7 @@ namespace MVC_PWx.Controllers
         {
             try
             {
-                MonsterSvc.Delete(AppUser.UserId, id, User.IsInRole("Admin"));
+                monsterSvc.Delete(AppUser.UserId, id, User.IsInRole("Admin"));
             }
             catch (Exception ex)
             {

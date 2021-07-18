@@ -6,6 +6,11 @@ namespace DeneirsGate.Services
 {
     public class TutorialService : DeneirsService
     {
+        public TutorialService(DataEntities _db)
+        {
+            db = _db;
+        }
+
         public Guid GetTutorial(string route, string name)
         {
             if (route.IsNullOrEmpty() || name.IsNullOrEmpty())
@@ -13,9 +18,7 @@ namespace DeneirsGate.Services
                 throw new Exception("Empty route or tutorial name!");
             }
 
-            DBReset();
-
-            var tutorial = DB.Tutorials.FirstOrDefault(x => x.Route == route && x.Name == name);
+            var tutorial = db.Tutorials.FirstOrDefault(x => x.Route == route && x.Name == name);
             if (tutorial == null)
             {
                 tutorial = new Tutorial
@@ -24,8 +27,8 @@ namespace DeneirsGate.Services
                     Name = name,
                     Route = route
                 };
-                DB.Tutorials.Add(tutorial);
-                DB.SaveChanges();
+                db.Tutorials.Add(tutorial);
+                db.SaveChanges();
             }
 
             return tutorial.TutorialKey;
@@ -37,7 +40,7 @@ namespace DeneirsGate.Services
             try
             {
                 var tutorialKey = GetTutorial(route, name);
-                var userTutorial = DB.UserTutorials.FirstOrDefault(x => x.UserKey == userId && x.TutorialKey == tutorialKey);
+                var userTutorial = db.UserTutorials.FirstOrDefault(x => x.UserKey == userId && x.TutorialKey == tutorialKey);
 
                 tutorial = new UserTutorialViewModel(tutorialKey, userTutorial);
             }
@@ -48,9 +51,7 @@ namespace DeneirsGate.Services
 
         public void UpdateUserTutorial(Guid userId, Guid tutorialId, bool isComplete, int lastStep)
         {
-            DBReset();
-
-            var userTutorial = DB.UserTutorials.FirstOrDefault(x => x.UserKey == userId && x.TutorialKey == tutorialId);
+            var userTutorial = db.UserTutorials.FirstOrDefault(x => x.UserKey == userId && x.TutorialKey == tutorialId);
             if (userTutorial == null)
             {
                 userTutorial = new UserTutorial
@@ -58,23 +59,21 @@ namespace DeneirsGate.Services
                     TutorialKey = tutorialId,
                     UserKey = userId
                 };
-                DB.UserTutorials.Add(userTutorial);
+                db.UserTutorials.Add(userTutorial);
             }
 
             userTutorial.IsComplete = isComplete;
             userTutorial.LastStep = lastStep;
 
-            DB.SaveChanges();
+            db.SaveChanges();
         }
 
         public void DeleteTutorial(Guid tutorialId)
         {
-            DBReset();
+            db.Tutorials.RemoveRange(x => x.TutorialKey == tutorialId);
+            db.UserTutorials.RemoveRange(x => x.TutorialKey == tutorialId);
 
-            DB.Tutorials.RemoveRange(x => x.TutorialKey == tutorialId);
-            DB.UserTutorials.RemoveRange(x => x.TutorialKey == tutorialId);
-
-            DB.SaveChanges();
+            db.SaveChanges();
         }
     }
 }

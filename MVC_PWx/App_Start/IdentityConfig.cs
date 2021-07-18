@@ -10,13 +10,13 @@ using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;
 using Microsoft.Owin.Security;
-using MVC_PWx.Models;
+using DeneirsGateSite.Models;
 using System.Net;
 using System.Net.Mail;
 using System.Configuration;
 using System.Diagnostics;
 
-namespace MVC_PWx
+namespace DeneirsGateSite
 {
     public class EmailService : IIdentityMessageService
     {

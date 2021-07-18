@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
-using static MVC_PWx.Helpers.AppLogic;
+using static DeneirsGateSite.Helpers.AppLogic;
 
-namespace MVC_PWx.Helpers
+namespace DeneirsGateSite.Helpers
 {
     public class AnonymousOnlyAttribute : AuthorizeAttribute
     {
@@ -36,7 +36,14 @@ namespace MVC_PWx.Helpers
             
             if (!hasAccess)
             {
-                filterContext.Result = new RedirectResult("/");
+                if (filterContext.HttpContext.User.IsInRole("Player"))
+                {
+                    filterContext.Result = new RedirectResult("/Player/");
+                }
+                else
+                {
+                    filterContext.Result = new RedirectResult("/");
+                }
             }
         }
     }

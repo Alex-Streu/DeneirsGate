@@ -7,13 +7,15 @@ namespace DeneirsGate.Services
 {
     public class MagicItemService : DeneirsService
     {
+        public MagicItemService(DataEntities _db)
+        {
+            db = _db;
+        }
         void UserHasItemAccess(bool isAdmin, Guid userKey, Guid itemKey)
         {
-            DBReset();
-
             if (isAdmin) { return; }
-            if (DB.UserMagicItems.FirstOrDefault(x => x.UserKey == userKey && x.MagicItemKey == itemKey) != null) { return; }
-            if (DB.UserMagicItems.FirstOrDefault(x => x.MagicItemKey == itemKey) == null) { return; }
+            if (db.UserMagicItems.FirstOrDefault(x => x.UserKey == userKey && x.MagicItemKey == itemKey) != null) { return; }
+            if (db.UserMagicItems.FirstOrDefault(x => x.MagicItemKey == itemKey) == null) { return; }
 
             throw new Exception("You do not have access to this content!");
         }
@@ -22,20 +24,19 @@ namespace DeneirsGate.Services
         {
             var items = new List<MagicItemViewModel>();
             var _items = new List<Guid>();
-            DBReset();
 
-            if (!customOnly) { _items = DB.UserMagicItems.Where(x => x.UserKey == userId || x.IsPublic).Select(x => x.MagicItemKey).ToList(); }
-            else { _items = DB.UserMagicItems.Where(x => x.UserKey == userId).Select(x => x.MagicItemKey).ToList(); }
+            if (!customOnly) { _items = db.UserMagicItems.Where(x => x.UserKey == userId || x.IsPublic).Select(x => x.MagicItemKey).ToList(); }
+            else { _items = db.UserMagicItems.Where(x => x.UserKey == userId).Select(x => x.MagicItemKey).ToList(); }
 
-            items = DB.MagicItems.Where(x => _items.Contains(x.ItemKey)).Select(x => new MagicItemViewModel
+            items = db.MagicItems.Where(x => _items.Contains(x.ItemKey)).Select(x => new MagicItemViewModel
             {
                 Description = x.Description,
                 HasAttunement = x.HasAttunement,
                 ItemKey = x.ItemKey,
                 Name = x.Name,
-                Rarity = DB.MagicItemRarities.Where(y => y.RarityKey == x.Rarity).FirstOrDefault().Name,
-                RarityValue = DB.MagicItemRarities.Where(y => y.RarityKey == x.Rarity).FirstOrDefault().Rarity,
-                Type = DB.MagicItemTypes.Where(y => y.TypeKey == x.Type).Select(y => y.Name).FirstOrDefault()
+                Rarity = db.MagicItemRarities.Where(y => y.RarityKey == x.Rarity).FirstOrDefault().Name,
+                RarityValue = db.MagicItemRarities.Where(y => y.RarityKey == x.Rarity).FirstOrDefault().Rarity,
+                Type = db.MagicItemTypes.Where(y => y.TypeKey == x.Type).Select(y => y.Name).FirstOrDefault()
             }).OrderBy(x => x.Name).ToList();
 
             return items;
@@ -44,10 +45,9 @@ namespace DeneirsGate.Services
         public MagicItemViewModel GetMagicItem(Guid userId, Guid itemId)
         {
             var item = new MagicItemViewModel();
-            DBReset();
 
-            var _item = DB.MagicItems.FirstOrDefault(x => x.ItemKey == itemId);
-            var rarity = DB.MagicItemRarities.FirstOrDefault(x => x.RarityKey == _item.Rarity);
+            var _item = db.MagicItems.FirstOrDefault(x => x.ItemKey == itemId);
+            var rarity = db.MagicItemRarities.FirstOrDefault(x => x.RarityKey == _item.Rarity);
             item = new MagicItemViewModel
             {
                 Description = _item.Description,
@@ -56,7 +56,7 @@ namespace DeneirsGate.Services
                 Name = _item.Name,
                 Rarity = rarity.Name,
                 RarityValue = rarity.Rarity,
-                Type = DB.MagicItemTypes.Where(x => x.TypeKey == _item.Type).Select(x => x.Name).FirstOrDefault()
+                Type = db.MagicItemTypes.Where(x => x.TypeKey == _item.Type).Select(x => x.Name).FirstOrDefault()
             };
 
             return item;
@@ -69,8 +69,7 @@ namespace DeneirsGate.Services
             var item = CreateItem(campaignId, itemId);
             if (item == null)
             {
-                DBReset();
-                item = DB.MagicItems.Where(x => x.ItemKey == itemId).Select(x => new MagicItemEditModel
+                item = db.MagicItems.Where(x => x.ItemKey == itemId).Select(x => new MagicItemEditModel
                 {
                     ItemKey = x.ItemKey,
                     HasAttunement = x.HasAttunement,
@@ -88,12 +87,10 @@ namespace DeneirsGate.Services
         MagicItemEditModel CreateItem(Guid campaignId, Guid itemId)
         {
             var exists = false;
-            using (DBReset())
+
+            if (db.MagicItems.FirstOrDefault(x => x.ItemKey == itemId) != null)
             {
-                if (DB.MagicItems.FirstOrDefault(x => x.ItemKey == itemId) != null)
-                {
-                    exists = true;
-                }
+                exists = true;
             }
 
             if (exists) { return null; }
@@ -109,11 +106,9 @@ namespace DeneirsGate.Services
         {
             UserHasItemAccess(isAdmin, userId, model.ItemKey);
 
-            DBReset();
-
             bool add = false;
 
-            var item = DB.MagicItems.FirstOrDefault(x => x.ItemKey == model.ItemKey);
+            var item = db.MagicItems.FirstOrDefault(x => x.ItemKey == model.ItemKey);
             if (item == null)
             {
                 add = true;
@@ -131,8 +126,8 @@ namespace DeneirsGate.Services
 
             if (add)
             {
-                DB.MagicItems.Add(item);
-                DB.UserMagicItems.Add(new UserMagicItem
+                db.MagicItems.Add(item);
+                db.UserMagicItems.Add(new UserMagicItem
                 {
                     UserKey = userId,
                     MagicItemKey = item.ItemKey,
@@ -140,50 +135,41 @@ namespace DeneirsGate.Services
                 });
             }
 
-            DB.SaveChanges();
+            db.SaveChanges();
         }
 
         public void Delete(Guid userId, Guid itemId, bool isAdmin = false)
         {
-            DBReset();
-            var access = DB.UserMagicItems.FirstOrDefault(x => x.MagicItemKey == itemId);
-            var item = DB.MagicItems.FirstOrDefault(x => x.ItemKey == itemId);
+            var access = db.UserMagicItems.FirstOrDefault(x => x.MagicItemKey == itemId);
+            var item = db.MagicItems.FirstOrDefault(x => x.ItemKey == itemId);
 
             if (isAdmin || userId == access.UserKey)
             {
-                DB.MagicItems.Remove(item);
-                DB.UserMagicItems.RemoveRange(x => x.MagicItemKey == itemId);
+                db.MagicItems.Remove(item);
+                db.UserMagicItems.RemoveRange(x => x.MagicItemKey == itemId);
             }
 
-            DB.SaveChanges();
+            db.SaveChanges();
         }
 
         public List<MagicItemRarityViewModel> GetRarities()
         {
-            var rarities = new List<MagicItemRarityViewModel>();
-            using (DBReset())
+            var rarities = db.MagicItemRarities.OrderBy(x => x.Rarity).Select(x => new MagicItemRarityViewModel
             {
-                rarities = DB.MagicItemRarities.OrderBy(x => x.Rarity).Select(x => new MagicItemRarityViewModel
-                {
-                    Name = x.Name,
-                    RarityKey = x.RarityKey
-                }).ToList();
-            }
+                Name = x.Name,
+                RarityKey = x.RarityKey
+            }).ToList();
 
             return rarities;
         }
 
         public List<MagicItemTypeViewModel> GetTypes()
         {
-            var types = new List<MagicItemTypeViewModel>();
-            using (DBReset())
+            var types = db.MagicItemTypes.OrderBy(x => x.Name).Select(x => new MagicItemTypeViewModel
             {
-                types = DB.MagicItemTypes.OrderBy(x => x.Name).Select(x => new MagicItemTypeViewModel
-                {
-                    Name = x.Name,
-                    TypeKey = x.TypeKey
-                }).ToList();
-            }
+                Name = x.Name,
+                TypeKey = x.TypeKey
+            }).ToList();
 
             return types;
         }
@@ -209,7 +195,6 @@ namespace DeneirsGate.Services
 
         public void GetEncounterItems(Guid userId, EncounterViewModel model)
         {
-            DBReset();
             var items = new List<MagicItemViewModel>();
             foreach (var item in model.Items)
             {
@@ -221,13 +206,11 @@ namespace DeneirsGate.Services
 
         public void UploadMagicItem(Guid userId, string name, string description, string rarity, string type, string attunement)
         {
-            DBReset();
-
             // Do not upload magic item if it already exists by name
-            if (DB.MagicItems.Where(x => x.Name == name).FirstOrDefault() != null) { return; }
+            if (db.MagicItems.Where(x => x.Name == name).FirstOrDefault() != null) { return; }
 
-            var rarityKey = DB.MagicItemRarities.Where(x => x.Name.ToLower() == rarity.ToLower()).Select(x => x.RarityKey).FirstOrDefault();
-            var typeKey = DB.MagicItemTypes.Where(x => x.Name.ToLower() == type.ToLower()).Select(x => x.TypeKey).FirstOrDefault();
+            var rarityKey = db.MagicItemRarities.Where(x => x.Name.ToLower() == rarity.ToLower()).Select(x => x.RarityKey).FirstOrDefault();
+            var typeKey = db.MagicItemTypes.Where(x => x.Name.ToLower() == type.ToLower()).Select(x => x.TypeKey).FirstOrDefault();
             var requiresAttunement = String.IsNullOrEmpty(attunement) ? false : true;
 
             var magicItem = new MagicItemPostModel

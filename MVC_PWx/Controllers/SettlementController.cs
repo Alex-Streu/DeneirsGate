@@ -1,20 +1,27 @@
 ﻿using DeneirsGate.Services;
-using MVC_PWx.Helpers;
+using DeneirsGateSite.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Web.Mvc;
 
-namespace MVC_PWx.Controllers
+namespace DeneirsGateSite.Controllers
 {
     [Authorize, HasCampaign, HasAccess(Priviledge = AppLogic.Priviledge.DM)]
     public class SettlementController : DeneirsController
     {
+        SettlementService settlementSvc;
+
+        public SettlementController(SettlementService settlementService)
+        {
+            settlementSvc = settlementService;
+        }
+
         public ActionResult Index()
         {
             var model = new List<SettlementViewModel>();
             try
             {
-                model = SettlementSvc.GetSettlements(AppUser.UserId, AppUser.ActiveCampaign.Value);
+                model = settlementSvc.GetSettlements(AppUser.UserId, AppUser.ActiveCampaign.Value);
             }
             catch (Exception ex)
             {
@@ -33,7 +40,7 @@ namespace MVC_PWx.Controllers
             var model = new SettlementViewModel();
             try
             {
-                model = SettlementSvc.GetSettlement(AppUser.UserId, AppUser.ActiveCampaign.Value, id);
+                model = settlementSvc.GetSettlement(AppUser.UserId, AppUser.ActiveCampaign.Value, id);
 
                 ViewBag.IsNew = isNew;
             }
@@ -50,7 +57,7 @@ namespace MVC_PWx.Controllers
             var model = new SettlementViewModel();
             try
             {
-                model = SettlementSvc.GetSettlement(AppUser.UserId, AppUser.ActiveCampaign.Value, id);
+                model = settlementSvc.GetSettlement(AppUser.UserId, AppUser.ActiveCampaign.Value, id);
 
                 ViewBag.IsNew = isNew;
             }
@@ -69,7 +76,7 @@ namespace MVC_PWx.Controllers
             {
                 try
                 {
-                    SettlementSvc.UpdateSettlement(AppUser.UserId, AppUser.ActiveCampaign.Value, model);
+                    settlementSvc.UpdateSettlement(AppUser.UserId, AppUser.ActiveCampaign.Value, model);
                 }
                 catch (Exception ex)
                 {
@@ -86,7 +93,7 @@ namespace MVC_PWx.Controllers
         {
             try
             {
-                SettlementSvc.DeleteSettlement(AppUser.UserId, AppUser.ActiveCampaign.Value, id);
+                settlementSvc.DeleteSettlement(AppUser.UserId, AppUser.ActiveCampaign.Value, id);
             }
             catch (Exception ex)
             {

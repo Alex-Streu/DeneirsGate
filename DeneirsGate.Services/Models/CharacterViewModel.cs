@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CSharpVitamins;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -66,6 +67,8 @@ namespace DeneirsGate.Services
         public List<CharacterWeaponViewModel> Weapons { get; set; } = new List<CharacterWeaponViewModel>();
         public List<CharacterSpellViewModel> Spells { get; set; } = new List<CharacterSpellViewModel>();
         public DateTime LastUpdateDate { get; set; }
+        public bool IsPlayer { get; set; }
+        public Guid CampaignKey { get; set; }
     }
 
     public class CharacterShortViewModel
@@ -78,6 +81,7 @@ namespace DeneirsGate.Services
         public string Class { get; set; }
         public string Portrait { get; set; }
         public DateTime LastUpdateDate { get; set; }
+        public Guid CampaignKey { get; set; }
     }
 
     public class CharacterPostModel
@@ -144,7 +148,7 @@ namespace DeneirsGate.Services
     {
         public Guid UserKey { get; set; }
         public string UserName { get; set; }
-        public string UserCode { get; set; }
+        public ShortGuid UserCode { get; set; }
     }
 
     public class PlayerShortViewModel : CharacterShortViewModel

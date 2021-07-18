@@ -1,16 +1,17 @@
-﻿using Sentry;
-using Sentry.AspNet;
+﻿using DeneirsGate.Services;
+using Sentry;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
+using System.Web;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
 
-namespace MVC_PWx
+namespace DeneirsGateSite
 {
-    public class MvcApplication : System.Web.HttpApplication
+    public class MvcApplication : HttpApplication
     {
         private IDisposable _sentry;
 
@@ -21,8 +22,15 @@ namespace MVC_PWx
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
 
+            //DI
+            UnityConfig.RegisterComponents();
+            DeneirsGate.Services.UnityConfig.RegisterComponents();
+            CustomHtmlHelpers.HtmlHelpers.Init();
+
+            //Online Users
             if (Application["OnlineUsers"] == null) { Application["OnlineUsers"] = new Dictionary<string, DateTime>(); }
 
+            //Sentry Logging
             _sentry = SentrySdk.Init(o =>
             {
                 o.AddEntityFramework();
@@ -30,6 +38,14 @@ namespace MVC_PWx
                 o.Environment = ConfigurationManager.AppSettings["environment"].ToString();
             });
         }
+
+        //protected void Application_BeginRequest(UserService userSvc)
+        //{
+        //    var appUser = (ApplicationUser)Session["AppUser"];
+        //    var onlineUsers = (Dictionary<string, DateTime>)Application["OnlineUsers"];
+        //    Session["Notifications"] = userSvc.GetNotifications(appUser.UserId);
+        //    Session["Friends"] = userSvc.GetFriends(appUser.UserId, onlineUsers, true);
+        //}
 
         protected void Application_Error()
         {

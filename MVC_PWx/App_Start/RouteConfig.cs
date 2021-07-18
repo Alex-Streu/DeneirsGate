@@ -2,7 +2,7 @@
 using System.Web.Mvc;
 using System.Web.Routing;
 
-namespace MVC_PWx
+namespace DeneirsGateSite
 {
     public class RouteConfig
     {

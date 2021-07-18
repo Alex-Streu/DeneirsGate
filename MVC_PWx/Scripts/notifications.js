@@ -16,6 +16,7 @@ var NotificationHub = {
             var newItem = `<li>
                                 <a href="${notification.Link}">
                                     ${notification.Message}
+                                    <br/>
                                     <span class="small italic">Just now</span>
                                 </a>
                             </li>`;
@@ -25,7 +26,9 @@ var NotificationHub = {
             Notiflix.Notify.Info(notification.Message, function (autoClose) {
                 if (autoClose) { return true; }
 
-                window.location.href = notification.Link;
+                if (!isEmpty(notification.Link)) {
+                    window.location.href = notification.Link;
+                }
             })
         };
     },

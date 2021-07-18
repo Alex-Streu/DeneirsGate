@@ -7,13 +7,16 @@ namespace DeneirsGate.Services
 {
     public class MonsterService : DeneirsService
     {
+        public MonsterService(DataEntities _db)
+        {
+            db = _db;
+        }
+
         void UserHasMonsterAccess(bool isAdmin, Guid userKey, Guid monsterKey)
         {
-            DBReset();
-
             if (isAdmin) { return; }
-            if (DB.UserMonsters.FirstOrDefault(x => x.UserKey == userKey && x.MonsterKey == monsterKey) != null) { return; }
-            if (DB.UserMonsters.FirstOrDefault(x => x.MonsterKey == monsterKey) == null) { return; }
+            if (db.UserMonsters.FirstOrDefault(x => x.UserKey == userKey && x.MonsterKey == monsterKey) != null) { return; }
+            if (db.UserMonsters.FirstOrDefault(x => x.MonsterKey == monsterKey) == null) { return; }
 
             throw new Exception("You do not have access to this content!");
         }
@@ -23,10 +26,8 @@ namespace DeneirsGate.Services
             var monsters = new List<MonsterViewModel>();
             var _monsters = new List<Guid>();
 
-            DBReset();
-
-            if (!customOnly) { _monsters = DB.UserMonsters.Where(x => x.IsPublic || x.UserKey == userId).Select(x => x.MonsterKey).ToList(); }
-            else { _monsters = DB.UserMonsters.Where(x => x.UserKey == userId).Select(x => x.MonsterKey).ToList(); }
+            if (!customOnly) { _monsters = db.UserMonsters.Where(x => x.IsPublic || x.UserKey == userId).Select(x => x.MonsterKey).ToList(); }
+            else { _monsters = db.UserMonsters.Where(x => x.UserKey == userId).Select(x => x.MonsterKey).ToList(); }
 
             foreach (var monster in _monsters)
             {
@@ -39,23 +40,22 @@ namespace DeneirsGate.Services
         public MonsterViewModel GetMonster(Guid userId, Guid monsterId)
         {
             var monster = new MonsterViewModel();
-            DBReset();
 
-            var _monster = DB.Monsters.FirstOrDefault(x => x.MonsterKey == monsterId);
-            var cr = DB.MonsterChallengeRatings.FirstOrDefault(x => x.RatingKey == _monster.ChallengeRating);
-            var environmentKeys = DB.MonsterEnvironmentLinkers.Where(x => x.MonsterKey == _monster.MonsterKey).Select(x => x.EnvironmentKey).ToList();
+            var _monster = db.Monsters.FirstOrDefault(x => x.MonsterKey == monsterId);
+            var cr = db.MonsterChallengeRatings.FirstOrDefault(x => x.RatingKey == _monster.ChallengeRating);
+            var environmentKeys = db.MonsterEnvironmentLinkers.Where(x => x.MonsterKey == _monster.MonsterKey).Select(x => x.EnvironmentKey).ToList();
             monster = new MonsterViewModel
             {
                 Alignment = _monster.Alignment,
                 ChallengeRating = cr.Challenge,
                 Description = _monster.Description,
                 Difficulty = cr.Difficulty,
-                Environments = DB.Environments.Where(x => environmentKeys.Contains(x.EnvironmentKey)).Select(x => x.Name).ToList(),
+                Environments = db.Environments.Where(x => environmentKeys.Contains(x.EnvironmentKey)).Select(x => x.Name).ToList(),
                 MonsterKey = _monster.MonsterKey,
                 Name = _monster.Name,
-                Size = DB.MonsterSizes.Where(x => x.SizeKey == _monster.Size).Select(x => x.Name).FirstOrDefault(),
+                Size = db.MonsterSizes.Where(x => x.SizeKey == _monster.Size).Select(x => x.Name).FirstOrDefault(),
                 Speed = _monster.Speed,
-                Type = DB.MonsterTypes.Where(x => x.TypeKey == _monster.Type).Select(x => x.Name).FirstOrDefault(),
+                Type = db.MonsterTypes.Where(x => x.TypeKey == _monster.Type).Select(x => x.Name).FirstOrDefault(),
                 XP = cr.XP
             };
 
@@ -69,14 +69,13 @@ namespace DeneirsGate.Services
             var monster = CreateMonster(campaignId, monsterId);
             if (monster == null)
             {
-                DBReset();
-                monster = DB.Monsters.Where(x => x.MonsterKey == monsterId).Select(x => new MonsterEditModel
+                monster = db.Monsters.Where(x => x.MonsterKey == monsterId).Select(x => new MonsterEditModel
                 {
                     Alignment = x.Alignment,
                     CampaignKey = campaignId,
                     ChallengeRating = x.ChallengeRating,
                     Description = x.Description,
-                    Environments = DB.MonsterEnvironmentLinkers.Where(y => y.MonsterKey == monsterId).Select(y => y.EnvironmentKey).ToList(),
+                    Environments = db.MonsterEnvironmentLinkers.Where(y => y.MonsterKey == monsterId).Select(y => y.EnvironmentKey).ToList(),
                     MonsterKey = x.MonsterKey,
                     Name = x.Name,
                     Size = x.Size,
@@ -91,12 +90,9 @@ namespace DeneirsGate.Services
         public MonsterEditModel CreateMonster(Guid campaignId, Guid monsterId)
         {
             var exists = false;
-            using (DBReset())
+            if (db.Monsters.FirstOrDefault(x => x.MonsterKey == monsterId) != null)
             {
-                if (DB.Monsters.FirstOrDefault(x => x.MonsterKey == monsterId) != null)
-                {
-                    exists = true;
-                }
+                exists = true;
             }
 
             if (exists) { return null; }
@@ -113,11 +109,9 @@ namespace DeneirsGate.Services
         {
             UserHasMonsterAccess(isAdmin, userId, model.MonsterKey);
 
-            DBReset();
-
             bool add = false;
 
-            var monster = DB.Monsters.FirstOrDefault(x => x.MonsterKey == model.MonsterKey);
+            var monster = db.Monsters.FirstOrDefault(x => x.MonsterKey == model.MonsterKey);
             if (monster == null)
             {
                 add = true;
@@ -136,10 +130,10 @@ namespace DeneirsGate.Services
             monster.Type = model.Type;
 
             //Environments
-            DB.MonsterEnvironmentLinkers.RemoveRange(x => x.MonsterKey == monster.MonsterKey);
+            db.MonsterEnvironmentLinkers.RemoveRange(x => x.MonsterKey == monster.MonsterKey);
             foreach (var environment in model.Environments)
             {
-                DB.MonsterEnvironmentLinkers.Add(new MonsterEnvironmentLinker
+                db.MonsterEnvironmentLinkers.Add(new MonsterEnvironmentLinker
                 {
                     EnvironmentKey = environment,
                     MonsterKey = model.MonsterKey
@@ -148,8 +142,8 @@ namespace DeneirsGate.Services
 
             if (add)
             {
-                DB.Monsters.Add(monster);
-                DB.UserMonsters.Add(new UserMonster
+                db.Monsters.Add(monster);
+                db.UserMonsters.Add(new UserMonster
                 {
                     UserKey = userId,
                     MonsterKey = monster.MonsterKey,
@@ -157,13 +151,11 @@ namespace DeneirsGate.Services
                 });
             }
 
-            DB.SaveChanges();
+            db.SaveChanges();
         }
 
         public void UploadMonster(Guid userId, string name, string description, string size, string type, string alignment, string speed, string cr)
         {
-            DBReset();
-
             if (name.Contains(","))
             {
                 var nameList = name.Split(',');
@@ -176,10 +168,10 @@ namespace DeneirsGate.Services
             }
 
             // Do not upload monster if it already exists by name
-            if (DB.Monsters.Where(x => x.Name == name).FirstOrDefault() != null) { return; }
+            if (db.Monsters.Where(x => x.Name == name).FirstOrDefault() != null) { return; }
 
-            var sizeKey = DB.MonsterSizes.Where(x => x.Name == size).Select(x => x.SizeKey).FirstOrDefault();
-            var typeKey = DB.MonsterTypes.Where(x => x.Name == type).Select(x => x.TypeKey).FirstOrDefault();
+            var sizeKey = db.MonsterSizes.Where(x => x.Name == size).Select(x => x.SizeKey).FirstOrDefault();
+            var typeKey = db.MonsterTypes.Where(x => x.Name == type).Select(x => x.TypeKey).FirstOrDefault();
             var strCR = "";
             var floatCR = 0f;
             float.TryParse(cr, out floatCR);
@@ -189,7 +181,7 @@ namespace DeneirsGate.Services
                 strCR = $"1/{div}";
             }
             else { strCR = cr; }
-            var crKey = DB.MonsterChallengeRatings.Where(x => x.Challenge == strCR).Select(x => x.RatingKey).FirstOrDefault();
+            var crKey = db.MonsterChallengeRatings.Where(x => x.Challenge == strCR).Select(x => x.RatingKey).FirstOrDefault();
 
             speed = speed.Replace("0", "0ft");
             speed = speed.Replace("50", "~");
@@ -212,90 +204,74 @@ namespace DeneirsGate.Services
 
         public void UploadMonsterEnvironments(string monster, string environment)
         {
-            DBReset();
+            var envKey = db.Environments.Where(x => x.Name.ToLower() == environment.ToLower()).Select(x => x.EnvironmentKey).FirstOrDefault();
+            var monsterKey = db.Monsters.Where(x => x.Name.ToLower() == monster.ToLower()).Select(x => x.MonsterKey).FirstOrDefault();
 
-            var envKey = DB.Environments.Where(x => x.Name.ToLower() == environment.ToLower()).Select(x => x.EnvironmentKey).FirstOrDefault();
-            var monsterKey = DB.Monsters.Where(x => x.Name.ToLower() == monster.ToLower()).Select(x => x.MonsterKey).FirstOrDefault();
-
-            if (envKey != Guid.Empty && monsterKey != Guid.Empty && DB.MonsterEnvironmentLinkers.FirstOrDefault(x => x.MonsterKey == monsterKey && x.EnvironmentKey == envKey) == null)
+            if (envKey != Guid.Empty && monsterKey != Guid.Empty && db.MonsterEnvironmentLinkers.FirstOrDefault(x => x.MonsterKey == monsterKey && x.EnvironmentKey == envKey) == null)
             {
-                DB.MonsterEnvironmentLinkers.Add(new MonsterEnvironmentLinker
+                db.MonsterEnvironmentLinkers.Add(new MonsterEnvironmentLinker
                 {
                     MonsterKey = monsterKey,
                     EnvironmentKey = envKey
                 });
 
-                DB.SaveChanges();
+                db.SaveChanges();
             }
         }
 
         public void Delete(Guid userId, Guid monsterId, bool isAdmin = false)
         {
-            DBReset();
-            var access = DB.UserMonsters.FirstOrDefault(x => x.MonsterKey == monsterId);
-            var monster = DB.Monsters.FirstOrDefault(x => x.MonsterKey == monsterId);
+            var access = db.UserMonsters.FirstOrDefault(x => x.MonsterKey == monsterId);
+            var monster = db.Monsters.FirstOrDefault(x => x.MonsterKey == monsterId);
 
             if (isAdmin || userId == access.UserKey)
             {
-                DB.Monsters.Remove(monster);
-                DB.MonsterEnvironmentLinkers.RemoveRange(x => x.MonsterKey == monster.MonsterKey);
-                DB.UserMonsters.RemoveRange(x => x.MonsterKey == monsterId);
+                db.Monsters.Remove(monster);
+                db.MonsterEnvironmentLinkers.RemoveRange(x => x.MonsterKey == monster.MonsterKey);
+                db.UserMonsters.RemoveRange(x => x.MonsterKey == monsterId);
             }
 
-            DB.SaveChanges();
+            db.SaveChanges();
         }
 
         public List<MonsterSizeViewModel> GetSizes()
         {
-            var sizes = new List<MonsterSizeViewModel>();
-            using (DBReset())
+            var sizes = db.MonsterSizes.OrderBy(x => x.SortOrder).Select(x => new MonsterSizeViewModel
             {
-                sizes = DB.MonsterSizes.OrderBy(x => x.SortOrder).Select(x => new MonsterSizeViewModel
-                {
-                    Name = x.Name,
-                    SizeKey = x.SizeKey
-                }).ToList();
-            }
+                Name = x.Name,
+                SizeKey = x.SizeKey
+            }).ToList();
 
             return sizes;
         }
 
         public List<MonsterTypeViewModel> GetTypes()
         {
-            var sizes = new List<MonsterTypeViewModel>();
-            using (DBReset())
+            var sizes = db.MonsterTypes.OrderBy(x => x.Name).Select(x => new MonsterTypeViewModel
             {
-                sizes = DB.MonsterTypes.OrderBy(x => x.Name).Select(x => new MonsterTypeViewModel
-                {
-                    Name = x.Name,
-                    TypeKey = x.TypeKey
-                }).ToList();
-            }
+                Name = x.Name,
+                TypeKey = x.TypeKey
+            }).ToList();
 
             return sizes;
         }
 
         public List<MonsterChallengeRatingViewModel> GetChallengeRatings()
         {
-            var ratings = new List<MonsterChallengeRatingViewModel>();
-            using (DBReset())
+            var ratings = db.MonsterChallengeRatings.OrderBy(x => x.Difficulty).Select(x => new MonsterChallengeRatingViewModel
             {
-                ratings = DB.MonsterChallengeRatings.OrderBy(x => x.Difficulty).Select(x => new MonsterChallengeRatingViewModel
-                {
-                    Challenge = x.Challenge,
-                    Difficulty = x.Difficulty,
-                    Proficiency = x.Proficiency,
-                    RatingKey = x.RatingKey,
-                    XP = x.XP
-                }).ToList();
-            }
+                Challenge = x.Challenge,
+                Difficulty = x.Difficulty,
+                Proficiency = x.Proficiency,
+                RatingKey = x.RatingKey,
+                XP = x.XP
+            }).ToList();
 
             return ratings;
         }
 
         public void GetEncounterMonsters(Guid userId, EncounterViewModel model)
         {
-            DBReset();
             var totalXp = 0;
             foreach (var monster in model.Monsters)
             {

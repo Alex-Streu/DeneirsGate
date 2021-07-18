@@ -177,6 +177,7 @@
     <Compile Include="DataModels\TreasureHoard.cs" />
     <Compile Include="DataModels\Tutorial.cs" />
     <Compile Include="DataModels\UserCampaign.cs" />
+    <Compile Include="DataModels\UserCharacterRequest.cs" />
     <Compile Include="DataModels\UserMagicItem.cs" />
     <Compile Include="DataModels\UserMonster.cs" />
     <Compile Include="DataModels\UserPasswordReset.cs" />

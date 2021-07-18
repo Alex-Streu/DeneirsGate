@@ -204,6 +204,13 @@ a {
 .scrollable {
   overflow-y: scroll; }
 
+.fancy-clickable {
+  cursor: pointer; }
+  .fancy-clickable:hover {
+    border: 1px solid rgba(206, 6, 6, 0.8) !important;
+    box-shadow: 0 1px 1px rgba(229, 103, 23, 0.075) inset, 0 0 8px rgba(206, 6, 6, 0.6) !important;
+    outline: 0 none !important; }
+
 .fancy-textbox {
   position: relative;
   /*margin-bottom: 25px;*/

@@ -1,41 +1,12 @@
 ﻿
 
 using Microsoft.AspNet.Identity;
-using MVC_PWx.Models;
+using DeneirsGateSite.Models;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace System.Collections.Generic
-{
-    public static class ListExtensions
-    {
-        public static void Move<T>(this List<T> list, T item, int index)
-        {
-            list.Remove(item);
-            list.Insert(index, item);
-        }
 
-        public static void MoveToTop<T>(this List<T> list, T item)
-        {
-            list.Move(item, 0);
-        }
-    }
-}
-
-//Moved to DeneirsService
-//namespace System
-//{
-//    public static class StringExtensions
-//    {
-//        public static bool IsNullOrEmpty(this string str)
-//        {
-//            return String.IsNullOrEmpty(str);
-//        }
-//    }
-//}
-
-
-namespace MVC_PWx
+namespace DeneirsGateSite
 {
     public static class IdentityExtensions
     {

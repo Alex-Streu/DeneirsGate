@@ -1,19 +1,33 @@
 ﻿using DeneirsGate.Services;
-using MVC_PWx.Helpers;
-using Sentry;
+using DeneirsGateSite.Helpers;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Web.Mvc;
 
-namespace MVC_PWx.Controllers
+namespace DeneirsGateSite.Controllers
 {
     [Authorize]
     [HasAccess(Priviledge = AppLogic.Priviledge.Player)]
     public class CampaignController : DeneirsController
     {
+        CampaignService campaignSvc;
+        EventService eventSvc;
+        CharacterService characterSvc;
+        MonsterService monsterSvc;
+        MagicItemService magicItemSvc;
+
+        public CampaignController(CampaignService campaignService, EventService eventService, CharacterService characterService, MonsterService monsterService,
+            MagicItemService magicItemService)
+        {
+            campaignSvc = campaignService;
+            eventSvc = eventService;
+            characterSvc = characterService;
+            monsterSvc = monsterService;
+            magicItemSvc = magicItemService;
+        }
+
         #region Campaigns
 
         [HasCampaign, HasAccess(Priviledge = AppLogic.Priviledge.DM)]
@@ -22,7 +36,7 @@ namespace MVC_PWx.Controllers
             var model = new CampaignDashboardViewModel();
             try
             {
-                model = CampaignSvc.GetCampaignDashboard(AppUser.UserId, AppUser.ActiveCampaign.Value);
+                model = campaignSvc.GetCampaignDashboard(AppUser.UserId, AppUser.ActiveCampaign.Value);
 
                 //Handle a no longer existing campaign
                 if (model == null)
@@ -31,16 +45,16 @@ namespace MVC_PWx.Controllers
                     return RedirectToAction("ChangeCampaign");
                 }
 
-                var arcs = CampaignSvc.GetArcs(AppUser.UserId, AppUser.ActiveCampaign.Value);
+                var arcs = campaignSvc.GetArcs(AppUser.UserId, AppUser.ActiveCampaign.Value);
                 var activeArc = arcs.FirstOrDefault(x => x.IsActive);
                 var characters = new List<Guid>();
                 if (activeArc != null)
                 {
-                    characters = CampaignSvc.GetArcCharacters(AppUser.UserId, AppUser.ActiveCampaign.Value, activeArc.ArcKey);
+                    characters = campaignSvc.GetArcCharacters(AppUser.UserId, AppUser.ActiveCampaign.Value, activeArc.ArcKey);
                 }
 
-                model.NPCs = CharacterSvc.GetArcCharacters(AppUser.UserId, AppUser.ActiveCampaign.Value, characters);
-                model.Players = CharacterSvc.GetPlayerShorts(AppUser.UserId, AppUser.ActiveCampaign.Value);
+                model.NPCs = characterSvc.GetArcCharacters(AppUser.UserId, AppUser.ActiveCampaign.Value, characters);
+                model.Players = characterSvc.GetPlayerShorts(AppUser.UserId, AppUser.ActiveCampaign.Value);
 
                 //Generate Character Dropdown List
                 var characterList = model.NPCs.Where(x => x.IsSelected).Select(x => new { CharacterKey = x.CharacterKey, Name = x.FirstName + " " + x.LastName }).ToList();
@@ -57,7 +71,7 @@ namespace MVC_PWx.Controllers
                 }
 
                 ViewBag.Arcs = new SelectList(arcs, "ArcKey", "Name");
-                ViewBag.ActivityLogTypes = new SelectList(CampaignSvc.GetLogTypes(), "Key", "Value");
+                ViewBag.ActivityLogTypes = new SelectList(campaignSvc.GetLogTypes(), "Key", "Value");
                 ViewBag.ArcCharacters = new SelectList(characterList.OrderBy(x => x.Name), "CharacterKey", "Name");
                 ViewBag.ArcQuests = new SelectList(model.Arc.Quests, "QuestKey", "Name");
                 ViewBag.ArcEvents = new SelectList(eventsList, "Key", "Value");
@@ -77,7 +91,7 @@ namespace MVC_PWx.Controllers
             {
                 if (arcKey.HasValue)
                 {
-                    model = CampaignSvc.GetActivityLog(arcKey.Value);
+                    model = campaignSvc.GetActivityLog(arcKey.Value);
                 }
             }
             catch (Exception ex)
@@ -95,7 +109,7 @@ namespace MVC_PWx.Controllers
             {
                 try
                 {
-                    CampaignSvc.UpdateTodoItem(model);
+                    campaignSvc.UpdateTodoItem(model);
                 }
                 catch (Exception ex)
                 {
@@ -114,7 +128,7 @@ namespace MVC_PWx.Controllers
             {
                 try
                 {
-                    CampaignSvc.DeleteTodoItem(model);
+                    campaignSvc.DeleteTodoItem(model);
                 }
                 catch (Exception ex)
                 {
@@ -139,7 +153,7 @@ namespace MVC_PWx.Controllers
             var campaigns = new List<CampaignViewModel>();
             try
             {
-                campaigns = CampaignSvc.GetCampaigns(AppUser.UserId, true);
+                campaigns = campaignSvc.GetCampaigns(AppUser.UserId, true);
             }
             catch (Exception ex)
             {
@@ -161,7 +175,7 @@ namespace MVC_PWx.Controllers
             var model = new CampaignViewModel();
             try
             {
-                model = CampaignSvc.GetCampaign(AppUser.UserId, id);
+                model = campaignSvc.GetCampaign(AppUser.UserId, id);
 
                 ViewBag.IsNew = isNew;
             }
@@ -180,7 +194,7 @@ namespace MVC_PWx.Controllers
             {
                 try
                 {
-                    CampaignSvc.UpdateCampaign(AppUser.UserId, model);
+                    campaignSvc.UpdateCampaign(AppUser.UserId, model);
                 }
                 catch (Exception ex)
                 {
@@ -198,7 +212,7 @@ namespace MVC_PWx.Controllers
         {
             try
             {
-                CampaignSvc.DeleteCampaign(AppUser.UserId, id);
+                campaignSvc.DeleteCampaign(AppUser.UserId, id);
 
                 var path = AppLogic.GetCampaignContentDir(id);
                 var fullPath = Server.MapPath(path);
@@ -238,7 +252,7 @@ namespace MVC_PWx.Controllers
         {
             try
             {
-                CampaignSvc.AddArcCharacter(model.ArcKey, model.CharacterKey, model.Add);
+                campaignSvc.AddArcCharacter(model.ArcKey, model.CharacterKey, model.Add);
             }
             catch (Exception ex)
             {
@@ -254,7 +268,7 @@ namespace MVC_PWx.Controllers
         {
             try
             {
-                CampaignSvc.UpdateActivityLog(AppUser.UserId, AppUser.ActiveCampaign.Value, model.ArcKey, model.LogKey, model.LogDescription, model.Type, model.ContentKey);
+                campaignSvc.UpdateActivityLog(AppUser.UserId, AppUser.ActiveCampaign.Value, model.ArcKey, model.LogKey, model.LogDescription, model.Type, model.ContentKey);
             }
             catch (Exception ex)
             {
@@ -270,7 +284,7 @@ namespace MVC_PWx.Controllers
         {
             try
             {
-                CampaignSvc.UpdateQuestStatus(AppUser.UserId, model.ArcKey, model.QuestKey, model.Status);
+                campaignSvc.UpdateQuestStatus(AppUser.UserId, model.ArcKey, model.QuestKey, model.Status);
             }
             catch (Exception ex)
             {
@@ -286,7 +300,7 @@ namespace MVC_PWx.Controllers
         {
             try
             {
-                CampaignSvc.DeleteActivityLog(AppUser.UserId, AppUser.ActiveCampaign.Value, model.ArcKey, model.LogKey);
+                campaignSvc.DeleteActivityLog(AppUser.UserId, AppUser.ActiveCampaign.Value, model.ArcKey, model.LogKey);
             }
             catch (Exception ex)
             {
@@ -306,7 +320,7 @@ namespace MVC_PWx.Controllers
             var model = new List<ArcViewModel>();
             try
             {
-                model = CampaignSvc.GetArcs(AppUser.UserId, AppUser.ActiveCampaign.Value);
+                model = campaignSvc.GetArcs(AppUser.UserId, AppUser.ActiveCampaign.Value);
             }
             catch (Exception ex)
             {
@@ -327,14 +341,14 @@ namespace MVC_PWx.Controllers
             var model = new ArcViewModel();
             try
             {
-                model = CampaignSvc.GetArc(AppUser.UserId, AppUser.ActiveCampaign.Value, id);
+                model = campaignSvc.GetArc(AppUser.UserId, AppUser.ActiveCampaign.Value, id);
                 foreach (var quest in model.Quests)
                 {
                     foreach (var questEvent in quest.Events)
                     {
                         if (questEvent.Encounter != null)
                         {
-                            questEvent.Encounter = EventSvc.GetEncounter(questEvent.Encounter.EncounterKey);
+                            questEvent.Encounter = eventSvc.GetEncounter(questEvent.Encounter.EncounterKey);
                         }
                     }
                 }
@@ -354,16 +368,16 @@ namespace MVC_PWx.Controllers
             var model = new ArcViewModel();
             try
             {
-                model = CampaignSvc.GetArc(AppUser.UserId, AppUser.ActiveCampaign.Value, id);
+                model = campaignSvc.GetArc(AppUser.UserId, AppUser.ActiveCampaign.Value, id);
                 foreach (var quest in model.Quests)
                 {
                     foreach (var questEvent in quest.Events)
                     {
                         if (questEvent.Encounter != null)
                         {
-                            questEvent.Encounter = EventSvc.GetEncounter(questEvent.Encounter.EncounterKey);
-                            MonsterSvc.GetEncounterMonsters(AppUser.UserId, questEvent.Encounter);
-                            MagicItemSvc.GetEncounterItems(AppUser.UserId, questEvent.Encounter);
+                            questEvent.Encounter = eventSvc.GetEncounter(questEvent.Encounter.EncounterKey);
+                            monsterSvc.GetEncounterMonsters(AppUser.UserId, questEvent.Encounter);
+                            magicItemSvc.GetEncounterItems(AppUser.UserId, questEvent.Encounter);
                         }
                     }
                 }
@@ -381,7 +395,7 @@ namespace MVC_PWx.Controllers
         {
             try
             {
-                CampaignSvc.UpdateArcActive(AppUser.UserId, AppUser.ActiveCampaign.Value, model);
+                campaignSvc.UpdateArcActive(AppUser.UserId, AppUser.ActiveCampaign.Value, model);
             }
             catch (Exception ex)
             {
@@ -407,13 +421,13 @@ namespace MVC_PWx.Controllers
                         foreach (var qEvent in quest.Events)
                         {
                             if (qEvent.Encounter == null) { continue; }
-                            EventSvc.UpdateEncounter(qEvent.Encounter);
+                            eventSvc.UpdateEncounter(qEvent.Encounter);
                         }
                     }
-                    EventSvc.DeleteQuestEventEncounters(model.ArcKey, encounterKeys);
+                    eventSvc.DeleteQuestEventEncounters(model.ArcKey, encounterKeys);
 
                     //Update arc
-                    CampaignSvc.UpdateArc(AppUser.UserId, AppUser.ActiveCampaign.Value, model);
+                    campaignSvc.UpdateArc(AppUser.UserId, AppUser.ActiveCampaign.Value, model);
                 }
                 catch (Exception ex)
                 {
@@ -430,10 +444,10 @@ namespace MVC_PWx.Controllers
         {
             try
             {
-                var encounters = CampaignSvc.DeleteArc(AppUser.UserId, AppUser.ActiveCampaign.Value, id);
+                var encounters = campaignSvc.DeleteArc(AppUser.UserId, AppUser.ActiveCampaign.Value, id);
                 foreach (var encounter in encounters)
                 {
-                    EventSvc.DeleteEncounter(encounter);
+                    eventSvc.DeleteEncounter(encounter);
                 }
 
                 var path = AppLogic.GetArcMapContentDir(AppUser.ActiveCampaign.Value, id);

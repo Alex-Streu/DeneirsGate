@@ -3,18 +3,26 @@ using System;
 using System.Collections.Generic;
 using System.Web.Mvc;
 
-namespace MVC_PWx.Controllers
+namespace DeneirsGateSite.Controllers
 {
+    [Authorize]
     public class SuggestionController : DeneirsController
     {
+        SuggestionService suggestionSvc;
+
+        public SuggestionController(SuggestionService suggestionService)
+        {
+            suggestionSvc = suggestionService;
+        }
+
         public ActionResult Index()
         {
             var model = new List<SuggestionViewModel>();
             try
             {
-                model = SuggestionSvc.GetSuggestions(AppUser.UserId);
+                model = suggestionSvc.GetSuggestions(AppUser.UserId);
 
-                ViewBag.Types = new SelectList(SuggestionSvc.GetSuggestionTypeList(), "Key", "Value");
+                ViewBag.Types = new SelectList(suggestionSvc.GetSuggestionTypeList(), "Key", "Value");
             }
             catch (Exception ex)
             {
@@ -29,7 +37,7 @@ namespace MVC_PWx.Controllers
             var model = new List<SuggestionViewModel>();
             try
             {
-                model = SuggestionSvc.GetPendingSuggestions(AppUser.UserId);
+                model = suggestionSvc.GetPendingSuggestions(AppUser.UserId);
             }
             catch (Exception ex)
             {
@@ -46,7 +54,7 @@ namespace MVC_PWx.Controllers
             {
                 try
                 {
-                    SuggestionSvc.UpdateSuggestion(AppUser.UserId, model, User.IsInRole("Admin"));
+                    suggestionSvc.UpdateSuggestion(AppUser.UserId, model, User.IsInRole("Admin"));
                 }
                 catch (Exception ex)
                 {
@@ -63,7 +71,7 @@ namespace MVC_PWx.Controllers
         {
             try
             {
-                SuggestionSvc.DeleteSuggestion(AppUser.UserId, id);
+                suggestionSvc.DeleteSuggestion(AppUser.UserId, id);
             }
             catch (Exception ex)
             {
@@ -79,7 +87,7 @@ namespace MVC_PWx.Controllers
             var suggestion = "";
             try
             {
-                suggestion = SuggestionSvc.GenerateSuggestion(type);
+                suggestion = suggestionSvc.GenerateSuggestion(type);
             }
             catch (Exception ex)
             {

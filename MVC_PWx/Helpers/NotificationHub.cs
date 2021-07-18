@@ -2,20 +2,25 @@
 using Microsoft.AspNet.SignalR;
 using System;
 
-namespace MVC_PWx
+namespace DeneirsGateSite
 {
     public class NotificationHub : Hub
     {
         private UserService userSvc;
 
-        public UserService UserSvc
+        public NotificationHub(UserService userSvc)
         {
-            get
-            {
-                if (userSvc == null) { userSvc = new UserService(); }
-                return userSvc;
-            }
+            this.userSvc = userSvc;
         }
+
+        //public UserService UserSvc
+        //{
+        //    get
+        //    {
+        //        if (userSvc == null) { userSvc = new UserService(); }
+        //        return userSvc;
+        //    }
+        //}
 
         public void Send(string username, NotificationViewModel notification)
         {
@@ -23,7 +28,7 @@ namespace MVC_PWx
             {
                 notification.Link = $"/Users/ReadNotification?id={notification.NotificationKey.ToString()}&returnUrl={notification.Link}";
             }
-            UserSvc.AddNotification(username, notification);
+            userSvc.AddNotification(username, notification);
             Clients.User(username).addNotification(notification);
         }
     }

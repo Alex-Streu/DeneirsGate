@@ -92,6 +92,14 @@ function ajaxPost(postData, url, successFunction, errorFunction, completeFunctio
     })
 }
 
+function defaultSuccessFunction(data) {
+    if (data.success) {
+        Notiflix.NotifyContent.Success(data.message);
+    } else {
+        Notiflix.NotifyContent.Error(data.message);
+    }
+}
+
 function defaultErrorFunction(error) {
     if (error.responseText.indexOf('<!DOCTYPE html>') > -1) {
         window.location = error500Action;
@@ -166,11 +174,11 @@ $(document).on('click', '.enjoyhint_close_btn', function () {
     completeUserTutorial();
 })
 
-function getUserTutorial(name, callbackIfComplete) {
+function getUserTutorial(name, callbackIfComplete, destroy = true) {
     tutorialName = name;
     var routes = window.location.pathname.split('/');
     var route = '';
-    for (i = 0; i < routes.length; i++) {
+    for (i = 1; i < routes.length; i++) {
         route += "/";
         if (routes[i].indexOf('-') > -1 && routes[i].length == '36') {
             break;
@@ -185,27 +193,37 @@ function getUserTutorial(name, callbackIfComplete) {
     }
     
     var cookie = Cookies.get(postData.Route + postData.Name);
-    if (cookie == 'true' && callbackIfComplete != null) {
-        callbackIfComplete();
+    if (cookie === 'true') {
+        if (destroy) { destroyTutorial(); }
+        if (callbackIfComplete != null) {
+            callbackIfComplete();
+        }
         return;
     }
 
     ajaxPost(postData, getUserTutorialAction, function (data) {
         if (data.success) {
             tutorialKey = data.data.TutorialKey;
-            //Cookies.set(postData.Route + postData.Name, data.data.IsComplete ? 'true' : 'false');
+            Cookies.set(postData.Route + postData.Name, data.data.IsComplete ? 'true' : 'false');
             if (!data.data.IsComplete) {
                 tutorialEngine.setCurrentStep(data.data.LastStep);
                 tutorialEngine.resume();
             }
-            else if (callbackIfComplete != null) {
-                callbackIfComplete();
+            else {
+                if (callbackIfComplete != null) {
+                    callbackIfComplete();
+                }
+                if (destroy) { destroyTutorial(); }
             }
         } else {
             Notiflix.NotifyContent.Failure(data.message);
         }
     })
 }
+
+function destroyTutorial() {
+    tutorialEngine.destroyEnjoy();
+};
 
 function completeUserTutorial() {
     updateUserTutorial(true, 0);
@@ -218,7 +236,7 @@ function storeUserTutorial() {
 function updateUserTutorial(isComplete, lastStep) {
     var routes = window.location.pathname.split('/');
     var route = '';
-    for (i = 0; i < routes.length; i++) {
+    for (i = 1; i < routes.length; i++) {
         route += "/";
         if (routes[i].indexOf('-') > -1 && routes[i].length == '36') {
             break;
@@ -226,7 +244,7 @@ function updateUserTutorial(isComplete, lastStep) {
 
         route += routes[i];
     }
-    //Cookies.set(route + tutorialName, isComplete ? 'true' : 'false');
+    Cookies.set(route + tutorialName, isComplete ? 'true' : 'false');
 
     var postData = {
         TutorialKey: tutorialKey,

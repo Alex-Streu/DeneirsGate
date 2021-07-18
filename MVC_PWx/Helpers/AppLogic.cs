@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Web;
 using System.Web.Security;
 
-namespace MVC_PWx.Helpers
+namespace DeneirsGateSite.Helpers
 {
     public static class AppLogic
     {

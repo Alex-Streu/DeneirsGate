@@ -1,4 +1,5 @@
-﻿using DeneirsGate.Services;
+﻿using DeneirsGate.Data;
+using DeneirsGate.Services;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Sentry;
@@ -8,30 +9,19 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
-namespace MVC_PWx.Controllers
+namespace DeneirsGateSite.Controllers
 {
     public class DeneirsController : Controller
     {
         private ApplicationUser appUser;
-        private ApplicationUserManager _userManager;
-        private ApplicationRoleManager _roleManager;
+        private ApplicationUserManager userManager;
+        private ApplicationSignInManager signInManager;
+        private ApplicationRoleManager roleManager;
+        private CampaignService campaignSvc;
+        private UserService userSvc;
 
         private string _keyOnlineUsers = "OnlineUsers";
         private string _keyOfflineUsers = "OfflineUsers";
-
-        private AuthService authSvc;
-        private CampaignService campaignSvc;
-        private CharacterService characterSvc;
-        private PresetService presetSvc;
-        private UserService userSvc;
-        private RelationshipTreeService relationshipTreeSvc;
-        private MonsterService monsterSvc;
-        private MagicItemService magicItemSvc;
-        private EventService eventSvc;
-        private DungeonService dungeonSvc;
-        private SettlementService settlementSvc;
-        private SuggestionService suggestionSvc;
-        private TutorialService tutorialSvc;
 
         public Dictionary<string, DateTime> OnlineUsers
         {
@@ -45,7 +35,13 @@ namespace MVC_PWx.Controllers
                 var name = (string)HttpContext.Session["CampaignName"];
                 if (name == null && AppUser.ActiveCampaign != null)
                 {
-                    name = CampaignSvc.GetCampaignName(AppUser.ActiveCampaign.GetValueOrDefault());
+                    if (campaignSvc == null)
+                    {
+                        var db = new DataEntities();
+                        campaignSvc = new CampaignService(db);
+                    }
+                    name = campaignSvc.GetCampaignName(AppUser.ActiveCampaign.GetValueOrDefault());
+                    HttpContext.Session["CampaignName"] = name;
                 }
 
                 return name;
@@ -79,145 +75,53 @@ namespace MVC_PWx.Controllers
             }
         }
 
-        public ApplicationUserManager UserManager
+        protected ApplicationUserManager UserManager
         {
             get
             {
-                return _userManager ?? HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
+                return userManager ?? HttpContext.GetOwinContext().Get<ApplicationUserManager>();
             }
             set
             {
-                _userManager = value;
+                userManager = value;
             }
         }
 
-        public ApplicationRoleManager RoleManager
+        protected ApplicationSignInManager SignInManager
         {
             get
             {
-                return _roleManager ?? Request.GetOwinContext().GetUserManager<ApplicationRoleManager>();
+                return signInManager ?? HttpContext.GetOwinContext().Get<ApplicationSignInManager>();
             }
             set
             {
-                _roleManager = value;
+                signInManager = value;
             }
         }
 
-        public AuthService AuthSvc
+        protected ApplicationRoleManager RoleManager
         {
             get
             {
-                if (authSvc == null) { authSvc = new AuthService(); }
-                return authSvc;
+                return roleManager ?? HttpContext.GetOwinContext().Get<ApplicationRoleManager>();
+            }
+            set
+            {
+                roleManager = value;
             }
         }
 
-        public PresetService PresetSvc
+        public DeneirsController()
         {
-            get
-            {
-                if (presetSvc == null) { presetSvc = new PresetService(); }
-                return presetSvc;
-            }
+
         }
 
-        public CampaignService CampaignSvc
+        public DeneirsController(ApplicationUserManager userManager, ApplicationRoleManager roleManager, CampaignService campaignService, UserService userService)
         {
-            get
-            {
-                if (campaignSvc == null) { campaignSvc = new CampaignService(); }
-                return campaignSvc;
-            }
-        }
-
-        public CharacterService CharacterSvc
-        {
-            get
-            {
-                if (characterSvc == null) { characterSvc = new CharacterService(); }
-                return characterSvc;
-            }
-        }
-
-        public UserService UserSvc
-        {
-            get
-            {
-                if (userSvc == null) { userSvc = new UserService(); }
-                return userSvc;
-            }
-        }
-
-        public RelationshipTreeService RelationshipTreeSvc
-        {
-            get
-            {
-                if (relationshipTreeSvc == null) { relationshipTreeSvc = new RelationshipTreeService(); }
-                return relationshipTreeSvc;
-            }
-        }
-
-        public MonsterService MonsterSvc
-        {
-            get
-            {
-                if (monsterSvc == null) { monsterSvc = new MonsterService(); }
-                return monsterSvc;
-            }
-        }
-
-        public MagicItemService MagicItemSvc
-        {
-            get
-            {
-                if (magicItemSvc == null) { magicItemSvc = new MagicItemService(); }
-                return magicItemSvc;
-            }
-        }
-
-        public EventService EventSvc
-        {
-            get
-            {
-                if (eventSvc == null) { eventSvc = new EventService(); }
-                return eventSvc;
-            }
-        }
-
-        public DungeonService DungeonSvc
-        {
-            get
-            {
-                if (dungeonSvc == null) { dungeonSvc = new DungeonService(); }
-                return dungeonSvc;
-            }
-        }
-
-        public SettlementService SettlementSvc
-        {
-            get
-            {
-                if (settlementSvc == null) { settlementSvc = new SettlementService(); }
-                return settlementSvc;
-            }
-        }
-
-        public SuggestionService SuggestionSvc
-        {
-            get
-            {
-                if (suggestionSvc == null) { suggestionSvc = new SuggestionService(); }
-                return suggestionSvc;
-            }
-        }
-
-        public TutorialService TutorialSvc
-        {
-            get
-            {
-                if (tutorialSvc == null) { tutorialSvc = new TutorialService(); }
-                return tutorialSvc;
-            }
+            this.userManager = userManager;
+            this.roleManager = roleManager;
+            campaignSvc = campaignService;
+            userSvc = userService;
         }
 
         protected string GetValidationError()
@@ -359,9 +263,15 @@ namespace MVC_PWx.Controllers
         {
             if (User.Identity.IsAuthenticated)
             {
+                if (userSvc == null) 
+                {
+                    var db = new DataEntities();
+                    userSvc = new UserService(db);
+                }
+
                 ViewBag.User = AppUser;
-                ViewBag.Notifications = UserSvc.GetNotifications(AppUser.UserId);
-                ViewBag.Friends = UserSvc.GetFriends(AppUser.UserId, OnlineUsers, true);
+                ViewBag.Notifications = userSvc.GetNotifications(AppUser.UserId);
+                ViewBag.Friends = userSvc.GetFriends(AppUser.UserId, OnlineUsers, true);
                 ViewBag.CampaignKey = AppUser.ActiveCampaign.GetValueOrDefault();
                 ViewBag.CampaignName = CampaignName;
             }
@@ -373,16 +283,16 @@ namespace MVC_PWx.Controllers
         {
             if (disposing)
             {
-                if (_userManager != null)
+                if (userManager != null)
                 {
-                    _userManager.Dispose();
-                    _userManager = null;
+                    UserManager.Dispose();
+                    userManager = null;
                 }
 
-                if (_roleManager != null)
+                if (roleManager != null)
                 {
-                    _roleManager.Dispose();
-                    _roleManager = null;
+                    RoleManager.Dispose();
+                    roleManager = null;
                 }
             }
 

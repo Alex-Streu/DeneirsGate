@@ -88,53 +88,53 @@ namespace DeneirsGate.Services
             (int)ItemRarity.Legendary, // 19
             (int)ItemRarity.Artifact // 20
         };
+        public EventService(DataEntities _db)
+        {
+            db = _db;
+        }
 
         public Guid SuggestMonster(Guid userId, Guid campaignId, int difficulty, int difficultyChange, List<Guid> excludeMonsters)
         {
             UserHasAccess(userId, campaignId);
             var monster = Guid.Empty;
 
-            using (DBReset())
+            //Get CR
+            var crKey = Guid.Empty;
+            if (difficulty > 0)
             {
-                //Get CR
-                var crKey = Guid.Empty;
-                if (difficulty > 0)
-                {
-                    crKey = DB.MonsterChallengeRatings.Where(x => x.Difficulty == difficulty).Select(x => x.RatingKey).FirstOrDefault();
-                }
-                else
-                {
-                    //Get Players
-                    var checkCR = 1;
-                    var partyLevel = GetPartyLevel(userId, campaignId);
-                    DBReset();
+                crKey = db.MonsterChallengeRatings.Where(x => x.Difficulty == difficulty).Select(x => x.RatingKey).FirstOrDefault();
+            }
+            else
+            {
+                //Get Players
+                var checkCR = 1;
+                var partyLevel = GetPartyLevel(userId, campaignId);
 
-                    checkCR = (int)Math.Max(1, partyLevel);
+                checkCR = (int)Math.Max(1, partyLevel);
 
-                    var cr = DB.MonsterChallengeRatings.Where(x => x.Challenge == checkCR.ToString()).FirstOrDefault();
-                    crKey = cr.RatingKey;
-                    difficulty = cr.Difficulty;
-                }
+                var cr = db.MonsterChallengeRatings.Where(x => x.Challenge == checkCR.ToString()).FirstOrDefault();
+                crKey = cr.RatingKey;
+                difficulty = cr.Difficulty;
+            }
 
-                // Get all eligible monsters, then select a random one
-                var monsters = DB.Monsters.Where(x => !excludeMonsters.Contains(x.MonsterKey) && x.ChallengeRating == crKey).Select(x => x.MonsterKey).ToList();
-                Random rand = new Random();
-                int toSkip = rand.Next(monsters.Count);
+            // Get all eligible monsters, then select a random one
+            var monsters = db.Monsters.Where(x => !excludeMonsters.Contains(x.MonsterKey) && x.ChallengeRating == crKey).Select(x => x.MonsterKey).ToList();
+            Random rand = new Random();
+            int toSkip = rand.Next(monsters.Count);
 
+            monster = monsters.Skip(toSkip).FirstOrDefault();
+            while (monster == Guid.Empty)
+            {
+                if (difficultyChange > 0) { difficulty++; }
+                else { difficulty--; }
+
+                if (difficulty < 1 || difficulty > 34) { break; }
+
+                crKey = db.MonsterChallengeRatings.Where(x => x.Difficulty == difficulty).Select(x => x.RatingKey).FirstOrDefault();
+
+                monsters = db.Monsters.Where(x => !excludeMonsters.Contains(x.MonsterKey) && x.ChallengeRating == crKey).Select(x => x.MonsterKey).ToList();
+                toSkip = rand.Next(monsters.Count);
                 monster = monsters.Skip(toSkip).FirstOrDefault();
-                while (monster == Guid.Empty)
-                {
-                    if (difficultyChange > 0) { difficulty++; }
-                    else { difficulty--; }
-
-                    if (difficulty < 1 || difficulty > 34) { break; }
-
-                    crKey = DB.MonsterChallengeRatings.Where(x => x.Difficulty == difficulty).Select(x => x.RatingKey).FirstOrDefault();
-
-                    monsters = DB.Monsters.Where(x => !excludeMonsters.Contains(x.MonsterKey) && x.ChallengeRating == crKey).Select(x => x.MonsterKey).ToList();
-                    toSkip = rand.Next(monsters.Count);
-                    monster = monsters.Skip(toSkip).FirstOrDefault();
-                }
             }
             
 
@@ -145,41 +145,37 @@ namespace DeneirsGate.Services
         {
             UserHasAccess(userId, campaignId);
 
-            var monsters = new List<Monster>();
-            using (DBReset())
+            var monsters = db.Monsters.ToList();
+
+            if (model.Name != null && model.Name.Trim() != "")
             {
-                monsters = DB.Monsters.ToList();
+                monsters = monsters.Where(x => x.Name.IndexOf(model.Name, StringComparison.OrdinalIgnoreCase) >= 0).ToList();
+            }
 
-                if (model.Name != null && model.Name.Trim() != "")
-                {
-                    monsters = monsters.Where(x => x.Name.IndexOf(model.Name, StringComparison.OrdinalIgnoreCase) >= 0).ToList();
-                }
+            if (model.ChallengeRating != Guid.Empty)
+            {
+                monsters = monsters.Where(x => x.ChallengeRating == model.ChallengeRating).ToList();
+            }
 
-                if (model.ChallengeRating != Guid.Empty)
-                {
-                    monsters = monsters.Where(x => x.ChallengeRating == model.ChallengeRating).ToList();
-                }
+            if (model.Size != Guid.Empty)
+            {
+                monsters = monsters.Where(x => x.Size == model.Size).ToList();
+            }
 
-                if (model.Size != Guid.Empty)
-                {
-                    monsters = monsters.Where(x => x.Size == model.Size).ToList();
-                }
+            if (model.Type != Guid.Empty)
+            {
+                monsters = monsters.Where(x => x.Type == model.Type).ToList();
+            }
 
-                if (model.Type != Guid.Empty)
-                {
-                    monsters = monsters.Where(x => x.Type == model.Type).ToList();
-                }
+            if (model.Environment != Guid.Empty)
+            {
+                var elligible = db.MonsterEnvironmentLinkers.Where(x => x.EnvironmentKey == model.Environment).Select(x => x.MonsterKey).ToList();
+                monsters = monsters.Where(x => elligible.Contains(x.MonsterKey)).ToList();
+            }
 
-                if (model.Environment != Guid.Empty)
-                {
-                    var elligible = DB.MonsterEnvironmentLinkers.Where(x => x.EnvironmentKey == model.Environment).Select(x => x.MonsterKey).ToList();
-                    monsters = monsters.Where(x => elligible.Contains(x.MonsterKey)).ToList();
-                }
-
-                if (model.Alignment != null && model.Alignment.Trim() != "")
-                {
-                    monsters = monsters.Where(x => x.Alignment == model.Alignment).ToList();
-                }
+            if (model.Alignment != null && model.Alignment.Trim() != "")
+            {
+                monsters = monsters.Where(x => x.Alignment == model.Alignment).ToList();
             }
 
             return monsters.Select(x => x.MonsterKey).ToList();
@@ -192,25 +188,22 @@ namespace DeneirsGate.Services
             var playerLevels = new List<int>();
             var thresholds = new List<int>() { 0, 0, 0, 0 };
 
-            using (DBReset())
+            var playerKeys = db.CampaignCharacterLinkers.Where(x => x.CampaignKey == campaignId && x.IsPlayer).Select(x => x.CharacterKey).ToList();
+            if (playerKeys.Count > 0)
             {
-                var playerKeys = DB.CampaignCharacterLinkers.Where(x => x.CampaignKey == campaignId && x.IsPlayer).Select(x => x.CharacterKey).ToList();
-                if (playerKeys.Count > 0)
-                {
-                    playerLevels = DB.Characters.Where(x => playerKeys.Contains(x.CharacterKey)).Select(x => x.Level).ToList();
+                playerLevels = db.Characters.Where(x => playerKeys.Contains(x.CharacterKey)).Select(x => x.Level).ToList();
 
-                    foreach (var level in playerLevels)
-                    {
-                        thresholds[0] += _xpThresholds[level - 1, 0];
-                        thresholds[1] += _xpThresholds[level - 1, 1];
-                        thresholds[2] += _xpThresholds[level - 1, 2];
-                        thresholds[3] += _xpThresholds[level - 1, 3];
-                    }
-                }
-                else
+                foreach (var level in playerLevels)
                 {
-                    thresholds = null;
+                    thresholds[0] += _xpThresholds[level - 1, 0];
+                    thresholds[1] += _xpThresholds[level - 1, 1];
+                    thresholds[2] += _xpThresholds[level - 1, 2];
+                    thresholds[3] += _xpThresholds[level - 1, 3];
                 }
+            }
+            else
+            {
+                thresholds = null;
             }
 
             return thresholds;
@@ -228,16 +221,13 @@ namespace DeneirsGate.Services
             var playerLevels = new List<int>();
             int partyLevel = 0;
 
-            using (DBReset())
+            var playerKeys = db.CampaignCharacterLinkers.Where(x => x.CampaignKey == campaignId && x.IsPlayer).Select(x => x.CharacterKey).ToList();
+            if (playerKeys.Count > 0)
             {
-                var playerKeys = DB.CampaignCharacterLinkers.Where(x => x.CampaignKey == campaignId && x.IsPlayer).Select(x => x.CharacterKey).ToList();
-                if (playerKeys.Count > 0)
-                {
-                    playerLevels = DB.Characters.Where(x => playerKeys.Contains(x.CharacterKey)).Select(x => x.Level).ToList();
-                    var avg = 0d;
-                    foreach (var level in playerLevels) { avg += level; }
-                    partyLevel = (int)Math.Round(avg / playerLevels.Count);
-                }
+                playerLevels = db.Characters.Where(x => playerKeys.Contains(x.CharacterKey)).Select(x => x.Level).ToList();
+                var avg = 0d;
+                foreach (var level in playerLevels) { avg += level; }
+                partyLevel = (int)Math.Round(avg / playerLevels.Count);
             }
 
             return partyLevel;
@@ -248,48 +238,45 @@ namespace DeneirsGate.Services
             UserHasAccess(userId, campaignId);
 
             var item = Guid.Empty;
-            using (DBReset())
+
+            //Get rarity
+            var rarityKey = Guid.Empty;
+            if (rarity > 0)
             {
-                //Get rarity
-                var rarityKey = Guid.Empty;
-                if (rarity > 0)
-                {
-                    rarityKey = DB.MagicItemRarities.Where(x => x.Rarity == rarity).Select(x => x.RarityKey).FirstOrDefault();
-                }
-                else
-                {
-                    //Get Players
-                    var checkRarity = 1;
-                    var partyLevel = GetPartyLevel(userId, campaignId);
-                    DBReset();
+                rarityKey = db.MagicItemRarities.Where(x => x.Rarity == rarity).Select(x => x.RarityKey).FirstOrDefault();
+            }
+            else
+            {
+                //Get Players
+                var checkRarity = 1;
+                var partyLevel = GetPartyLevel(userId, campaignId);
 
-                    partyLevel = (int)Math.Max(1, partyLevel);
-                    checkRarity = _rarityLevels[partyLevel - 1];
+                partyLevel = (int)Math.Max(1, partyLevel);
+                checkRarity = _rarityLevels[partyLevel - 1];
 
-                    var _rarity = DB.MagicItemRarities.Where(x => x.Rarity == checkRarity).FirstOrDefault();
-                    rarityKey = _rarity.RarityKey;
-                    rarity = _rarity.Rarity;
-                }
+                var _rarity = db.MagicItemRarities.Where(x => x.Rarity == checkRarity).FirstOrDefault();
+                rarityKey = _rarity.RarityKey;
+                rarity = _rarity.Rarity;
+            }
 
-                // Get all eligible items, then select a random one
-                var items = DB.MagicItems.Where(x => !excludeItems.Contains(x.ItemKey) && x.Rarity == rarityKey).Select(x => x.ItemKey).ToList();
-                Random rand = new Random();
-                int toSkip = rand.Next(items.Count);
+            // Get all eligible items, then select a random one
+            var items = db.MagicItems.Where(x => !excludeItems.Contains(x.ItemKey) && x.Rarity == rarityKey).Select(x => x.ItemKey).ToList();
+            Random rand = new Random();
+            int toSkip = rand.Next(items.Count);
 
+            item = items.Skip(toSkip).FirstOrDefault();
+            while (item == Guid.Empty)
+            {
+                if (rarityChange > 0) { rarity++; }
+                else { rarity--; }
+
+                if (rarity < 1 || rarity > 6) { break; }
+
+                rarityKey = db.MagicItemRarities.Where(x => x.Rarity == rarity).Select(x => x.RarityKey).FirstOrDefault();
+
+                items = db.MagicItems.Where(x => !excludeItems.Contains(x.ItemKey) && x.Rarity == rarityKey).Select(x => x.ItemKey).ToList();
+                toSkip = rand.Next(items.Count);
                 item = items.Skip(toSkip).FirstOrDefault();
-                while (item == Guid.Empty)
-                {
-                    if (rarityChange > 0) { rarity++; }
-                    else { rarity--; }
-
-                    if (rarity < 1 || rarity > 6) { break; }
-
-                    rarityKey = DB.MagicItemRarities.Where(x => x.Rarity == rarity).Select(x => x.RarityKey).FirstOrDefault();
-
-                    items = DB.MagicItems.Where(x => !excludeItems.Contains(x.ItemKey) && x.Rarity == rarityKey).Select(x => x.ItemKey).ToList();
-                    toSkip = rand.Next(items.Count);
-                    item = items.Skip(toSkip).FirstOrDefault();
-                }
             }
 
             return item;
@@ -299,30 +286,26 @@ namespace DeneirsGate.Services
         {
             UserHasAccess(userId, campaignId);
 
-            var items = new List<MagicItem>();
-            using (DBReset())
+            var items = db.MagicItems.ToList();
+
+            if (model.Name != null && model.Name.Trim() != "")
             {
-                items = DB.MagicItems.ToList();
+                items = items.Where(x => x.Name.IndexOf(model.Name, StringComparison.OrdinalIgnoreCase) >= 0).ToList();
+            }
 
-                if (model.Name != null && model.Name.Trim() != "")
-                {
-                    items = items.Where(x => x.Name.IndexOf(model.Name, StringComparison.OrdinalIgnoreCase) >= 0).ToList();
-                }
+            if (model.Type != Guid.Empty)
+            {
+                items = items.Where(x => x.Type == model.Type).ToList();
+            }
 
-                if (model.Type != Guid.Empty)
-                {
-                    items = items.Where(x => x.Type == model.Type).ToList();
-                }
+            if (model.Rarity != Guid.Empty)
+            {
+                items = items.Where(x => x.Rarity == model.Rarity).ToList();
+            }
 
-                if (model.Rarity != Guid.Empty)
-                {
-                    items = items.Where(x => x.Rarity == model.Rarity).ToList();
-                }
-
-                if (model.HasAttunement != null)
-                {
-                    items = items.Where(x => x.HasAttunement == model.HasAttunement).ToList();
-                }
+            if (model.HasAttunement != null)
+            {
+                items = items.Where(x => x.HasAttunement == model.HasAttunement).ToList();
             }
 
             return items.Select(x => x.ItemKey).ToList();
@@ -333,40 +316,37 @@ namespace DeneirsGate.Services
             var treasureModel = new TreasureViewModel();
             var totalTreasure = new TreasureStorage();
 
-            using (DBReset())
+            foreach (var cr in challengeRatings)
             {
-                foreach (var cr in challengeRatings)
+                var numCR = ConvertChallengeRating(cr);
+                var treasures = db.Treasures.Where(x => x.MinChallenge <= numCR && x.MaxChallenge >= numCR).OrderBy(x => x.Probability).ToList();
+                var rand = new Random();
+                var dieRoll = rand.Next(100) + 1;
+
+                Treasure treasure = null;
+                foreach (var item in treasures)
                 {
-                    var numCR = ConvertChallengeRating(cr);
-                    var treasures = DB.Treasures.Where(x => x.MinChallenge <= numCR && x.MaxChallenge >= numCR).OrderBy(x => x.Probability).ToList();
-                    var rand = new Random();
-                    var dieRoll = rand.Next(100) + 1;
-
-                    Treasure treasure = null;
-                    foreach (var item in treasures)
+                    if (dieRoll <= item.Probability)
                     {
-                        if (dieRoll <= item.Probability)
-                        {
-                            treasure = item;
-                            break;
-                        }
+                        treasure = item;
+                        break;
                     }
-                    if (treasure == null) { treasure = treasures.FirstOrDefault(); }
-
-                    totalTreasure.CP += CalculateTreasure(treasure.CP);
-                    totalTreasure.SP += CalculateTreasure(treasure.SP);
-                    totalTreasure.EP += CalculateTreasure(treasure.EP);
-                    totalTreasure.GP += CalculateTreasure(treasure.GP);
-                    totalTreasure.PP += CalculateTreasure(treasure.PP);
                 }
+                if (treasure == null) { treasure = treasures.FirstOrDefault(); }
 
-                treasureModel.Treasure = new List<string>();
-                if (totalTreasure.CP > 0) { treasureModel.Treasure.Add(ConvertTreasure(totalTreasure.CP, CoinType.Copper)); }
-                if (totalTreasure.SP > 0) { treasureModel.Treasure.Add(ConvertTreasure(totalTreasure.SP, CoinType.Silver)); }
-                if (totalTreasure.EP > 0) { treasureModel.Treasure.Add(ConvertTreasure(totalTreasure.EP, CoinType.Electrum)); }
-                if (totalTreasure.GP > 0) { treasureModel.Treasure.Add(ConvertTreasure(totalTreasure.GP, CoinType.Gold)); }
-                if (totalTreasure.PP > 0) { treasureModel.Treasure.Add(ConvertTreasure(totalTreasure.PP, CoinType.Platinum)); }
+                totalTreasure.CP += CalculateTreasure(treasure.CP);
+                totalTreasure.SP += CalculateTreasure(treasure.SP);
+                totalTreasure.EP += CalculateTreasure(treasure.EP);
+                totalTreasure.GP += CalculateTreasure(treasure.GP);
+                totalTreasure.PP += CalculateTreasure(treasure.PP);
             }
+
+            treasureModel.Treasure = new List<string>();
+            if (totalTreasure.CP > 0) { treasureModel.Treasure.Add(ConvertTreasure(totalTreasure.CP, CoinType.Copper)); }
+            if (totalTreasure.SP > 0) { treasureModel.Treasure.Add(ConvertTreasure(totalTreasure.SP, CoinType.Silver)); }
+            if (totalTreasure.EP > 0) { treasureModel.Treasure.Add(ConvertTreasure(totalTreasure.EP, CoinType.Electrum)); }
+            if (totalTreasure.GP > 0) { treasureModel.Treasure.Add(ConvertTreasure(totalTreasure.GP, CoinType.Gold)); }
+            if (totalTreasure.PP > 0) { treasureModel.Treasure.Add(ConvertTreasure(totalTreasure.PP, CoinType.Platinum)); }
 
             return treasureModel;
         }
@@ -375,76 +355,73 @@ namespace DeneirsGate.Services
         {
             var hoardModel = new TreasureHoardViewModel();
 
-            using (DBReset())
+            var numCR = ConvertChallengeRating(challengeRating);
+            var hoards = db.TreasureHoards.Where(x => x.MinChallenge <= numCR && x.MaxChallenge >= numCR).OrderBy(x => x.Probability).ToList();
+            var rand = new Random();
+            var dieRoll = rand.Next(100) + 1;
+
+            TreasureHoard hoard = null;
+            foreach (var item in hoards)
             {
-                var numCR = ConvertChallengeRating(challengeRating);
-                var hoards = DB.TreasureHoards.Where(x => x.MinChallenge <= numCR && x.MaxChallenge >= numCR).OrderBy(x => x.Probability).ToList();
-                var rand = new Random();
-                var dieRoll = rand.Next(100) + 1;
-
-                TreasureHoard hoard = null;
-                foreach (var item in hoards)
+                if (dieRoll <= item.Probability)
                 {
-                    if (dieRoll <= item.Probability)
-                    {
-                        hoard = item;
-                        break;
-                    }
+                    hoard = item;
+                    break;
                 }
-                if (hoard == null) { hoard = hoards.FirstOrDefault(); }
+            }
+            if (hoard == null) { hoard = hoards.FirstOrDefault(); }
 
-                hoardModel.Treasure = new List<string>();
-                if (hoard.CP != null) { hoardModel.Treasure.Add(ConvertTreasure(CalculateTreasure(hoard.CP), CoinType.Copper)); }
-                if (hoard.SP != null) { hoardModel.Treasure.Add(ConvertTreasure(CalculateTreasure(hoard.SP), CoinType.Silver)); }
-                if (hoard.EP != null) { hoardModel.Treasure.Add(ConvertTreasure(CalculateTreasure(hoard.EP), CoinType.Electrum)); }
-                if (hoard.GP != null) { hoardModel.Treasure.Add(ConvertTreasure(CalculateTreasure(hoard.GP), CoinType.Gold)); }
-                if (hoard.PP != null) { hoardModel.Treasure.Add(ConvertTreasure(CalculateTreasure(hoard.PP), CoinType.Platinum)); }
+            hoardModel.Treasure = new List<string>();
+            if (hoard.CP != null) { hoardModel.Treasure.Add(ConvertTreasure(CalculateTreasure(hoard.CP), CoinType.Copper)); }
+            if (hoard.SP != null) { hoardModel.Treasure.Add(ConvertTreasure(CalculateTreasure(hoard.SP), CoinType.Silver)); }
+            if (hoard.EP != null) { hoardModel.Treasure.Add(ConvertTreasure(CalculateTreasure(hoard.EP), CoinType.Electrum)); }
+            if (hoard.GP != null) { hoardModel.Treasure.Add(ConvertTreasure(CalculateTreasure(hoard.GP), CoinType.Gold)); }
+            if (hoard.PP != null) { hoardModel.Treasure.Add(ConvertTreasure(CalculateTreasure(hoard.PP), CoinType.Platinum)); }
 
-                if (hoard.Gemstones != null)
+            if (hoard.Gemstones != null)
+            {
+                var total = CalculateTreasure(hoard.Gemstones);
+                var gemstones = db.Gemstones.Where(x => x.Value == hoard.Value).ToList();
+                hoardModel.Items = new List<TreasureItemViewModel>();
+                var runningTotal = new Dictionary<Guid, int>();
+                for (var i = 0; i < total; i++)
                 {
-                    var total = CalculateTreasure(hoard.Gemstones);
-                    var gemstones = DB.Gemstones.Where(x => x.Value == hoard.Value).ToList();
-                    hoardModel.Items = new List<TreasureItemViewModel>();
-                    var runningTotal = new Dictionary<Guid, int>();
-                    for (var i = 0; i < total; i++)
-                    {
-                        var gemstone = gemstones[rand.Next(gemstones.Count)];
-                        if (!runningTotal.ContainsKey(gemstone.GemstoneKey)) { runningTotal.Add(gemstone.GemstoneKey, 0); }
-                        runningTotal[gemstone.GemstoneKey] += 1;
-                    }
-
-                    foreach (var entry in runningTotal)
-                    {
-                        var gemstone = gemstones.FirstOrDefault(x => x.GemstoneKey == entry.Key);
-                        hoardModel.Items.Add(new TreasureItemViewModel
-                        {
-                            Display = $"{entry.Value} {gemstone.Name}",
-                            Info = $"{gemstone.Value} GP - {gemstone.Description}"
-                        });
-                    }
+                    var gemstone = gemstones[rand.Next(gemstones.Count)];
+                    if (!runningTotal.ContainsKey(gemstone.GemstoneKey)) { runningTotal.Add(gemstone.GemstoneKey, 0); }
+                    runningTotal[gemstone.GemstoneKey] += 1;
                 }
-                else if (hoard.ArtObjects != null)
-                {
-                    var total = CalculateTreasure(hoard.ArtObjects);
-                    var artObjects = DB.ArtObjects.Where(x => x.Value == hoard.Value).ToList();
-                    hoardModel.Items = new List<TreasureItemViewModel>();
-                    var runningTotal = new Dictionary<Guid, int>();
-                    for (var i = 0; i < total; i++)
-                    {
-                        var artObject = artObjects[rand.Next(artObjects.Count)];
-                        if (!runningTotal.ContainsKey(artObject.ArtObjectKey)) { runningTotal.Add(artObject.ArtObjectKey, 0); }
-                        runningTotal[artObject.ArtObjectKey] += 1;
-                    }
 
-                    foreach (var entry in runningTotal)
+                foreach (var entry in runningTotal)
+                {
+                    var gemstone = gemstones.FirstOrDefault(x => x.GemstoneKey == entry.Key);
+                    hoardModel.Items.Add(new TreasureItemViewModel
                     {
-                        var artObject = artObjects.FirstOrDefault(x => x.ArtObjectKey == entry.Key);
-                        hoardModel.Items.Add(new TreasureItemViewModel
-                        {
-                            Display = $"{entry.Value} {artObject.Name}",
-                            Info = $"{artObject.Value} GP"
-                        });
-                    }
+                        Display = $"{entry.Value} {gemstone.Name}",
+                        Info = $"{gemstone.Value} GP - {gemstone.Description}"
+                    });
+                }
+            }
+            else if (hoard.ArtObjects != null)
+            {
+                var total = CalculateTreasure(hoard.ArtObjects);
+                var artObjects = db.ArtObjects.Where(x => x.Value == hoard.Value).ToList();
+                hoardModel.Items = new List<TreasureItemViewModel>();
+                var runningTotal = new Dictionary<Guid, int>();
+                for (var i = 0; i < total; i++)
+                {
+                    var artObject = artObjects[rand.Next(artObjects.Count)];
+                    if (!runningTotal.ContainsKey(artObject.ArtObjectKey)) { runningTotal.Add(artObject.ArtObjectKey, 0); }
+                    runningTotal[artObject.ArtObjectKey] += 1;
+                }
+
+                foreach (var entry in runningTotal)
+                {
+                    var artObject = artObjects.FirstOrDefault(x => x.ArtObjectKey == entry.Key);
+                    hoardModel.Items.Add(new TreasureItemViewModel
+                    {
+                        Display = $"{entry.Value} {artObject.Name}",
+                        Info = $"{artObject.Value} GP"
+                    });
                 }
             }
 
@@ -456,21 +433,20 @@ namespace DeneirsGate.Services
             var encounter = CreateEncounter(encounterId);
             if (encounter == null)
             {
-                DBReset();
-                DB.EncounterMonsters.RemoveRange(x => x.EncounterKey == encounterId && (DB.Monsters.FirstOrDefault(y => y.MonsterKey == x.MonsterKey) == null));
-                DB.EncounterItems.RemoveRange(x => x.EncounterKey == encounterId && (DB.MagicItems.FirstOrDefault(y => y.ItemKey == x.ItemKey) == null));
+                db.EncounterMonsters.RemoveRange(x => x.EncounterKey == encounterId && (db.Monsters.FirstOrDefault(y => y.MonsterKey == x.MonsterKey) == null));
+                db.EncounterItems.RemoveRange(x => x.EncounterKey == encounterId && (db.MagicItems.FirstOrDefault(y => y.ItemKey == x.ItemKey) == null));
 
-                encounter = DB.Encounters.Where(x => x.EncounterKey == encounterId).Select(x => new EncounterViewModel
+                encounter = db.Encounters.Where(x => x.EncounterKey == encounterId).Select(x => new EncounterViewModel
                 {
                     Description = x.Description,
                     EncounterKey = x.EncounterKey,
-                    Items = DB.EncounterItems.Where(y => y.EncounterKey == encounterId).Select(y => new MagicItemViewModel { ItemKey = y.ItemKey}).ToList(),
-                    Monsters = DB.EncounterMonsters.Where(y => y.EncounterKey == encounterId).Select(y => new EncounterMonsterViewModel { MonsterKey = y.MonsterKey, Count = y.Count }).ToList(),
+                    Items = db.EncounterItems.Where(y => y.EncounterKey == encounterId).Select(y => new MagicItemViewModel { ItemKey = y.ItemKey}).ToList(),
+                    Monsters = db.EncounterMonsters.Where(y => y.EncounterKey == encounterId).Select(y => new EncounterMonsterViewModel { MonsterKey = y.MonsterKey, Count = y.Count }).ToList(),
                     Name = x.Name,
                     RewardSummary = x.RewardSummary
                 }).FirstOrDefault();
 
-                DB.SaveChanges();
+                db.SaveChanges();
             }
 
             return encounter;
@@ -479,12 +455,10 @@ namespace DeneirsGate.Services
         public EncounterViewModel CreateEncounter(Guid encounterId)
         {
             var exists = false;
-            using (DBReset())
+
+            if (db.Encounters.FirstOrDefault(x => x.EncounterKey == encounterId) != null)
             {
-                if (DB.Encounters.FirstOrDefault(x => x.EncounterKey == encounterId) != null)
-                {
-                    exists = true;
-                }
+                exists = true;
             }
 
             if (exists) { return null; }
@@ -499,72 +473,65 @@ namespace DeneirsGate.Services
 
         public void UpdateEncounter(EncounterPostModel model)
         {
-            using (DBReset())
+            var add = false;
+            var encounter = db.Encounters.FirstOrDefault(x => x.EncounterKey == model.EncounterKey);
+            if (encounter == null)
             {
-                var add = false;
-                var encounter = DB.Encounters.FirstOrDefault(x => x.EncounterKey == model.EncounterKey);
-                if (encounter == null)
+                add = true;
+                encounter = new Encounter
                 {
-                    add = true;
-                    encounter = new Encounter
-                    {
-                        EncounterKey = model.EncounterKey
-                    };
-                }
-
-                encounter.Name = model.Name;
-                encounter.Description = model.Description;
-                encounter.RewardSummary = model.RewardSummary;
-
-                //Monsters
-                DB.EncounterMonsters.RemoveRange(x => x.EncounterKey == model.EncounterKey);
-                foreach (var monster in model.Monsters)
-                {
-                    DB.EncounterMonsters.Add(new EncounterMonster
-                    {
-                        EncounterKey = model.EncounterKey,
-                        MonsterKey = monster.MonsterKey,
-                        Count = monster.Count
-                    });
-                }
-
-                //Items
-                DB.EncounterItems.RemoveRange(x => x.EncounterKey == model.EncounterKey);
-                foreach (var item in model.Items)
-                {
-                    DB.EncounterItems.Add(new EncounterItem
-                    {
-                        EncounterKey = model.EncounterKey,
-                        ItemKey = item.ItemKey
-                    });
-                }
-
-                if (add)
-                {
-                    DB.Encounters.Add(encounter);
-                }
-
-                DB.SaveChanges();
+                    EncounterKey = model.EncounterKey
+                };
             }
+
+            encounter.Name = model.Name;
+            encounter.Description = model.Description;
+            encounter.RewardSummary = model.RewardSummary;
+
+            //Monsters
+            db.EncounterMonsters.RemoveRange(x => x.EncounterKey == model.EncounterKey);
+            foreach (var monster in model.Monsters)
+            {
+                db.EncounterMonsters.Add(new EncounterMonster
+                {
+                    EncounterKey = model.EncounterKey,
+                    MonsterKey = monster.MonsterKey,
+                    Count = monster.Count
+                });
+            }
+
+            //Items
+            db.EncounterItems.RemoveRange(x => x.EncounterKey == model.EncounterKey);
+            foreach (var item in model.Items)
+            {
+                db.EncounterItems.Add(new EncounterItem
+                {
+                    EncounterKey = model.EncounterKey,
+                    ItemKey = item.ItemKey
+                });
+            }
+
+            if (add)
+            {
+                db.Encounters.Add(encounter);
+            }
+
+            db.SaveChanges();
         }
 
         public void DeleteEncounter(Guid encounterId)
         {
-            using (DBReset())
-            {
-                DB.Encounters.RemoveRange(x => x.EncounterKey == encounterId);
-                DB.EncounterItems.RemoveRange(x => x.EncounterKey == encounterId);
-                DB.EncounterMonsters.RemoveRange(x => x.EncounterKey == encounterId);
+            db.Encounters.RemoveRange(x => x.EncounterKey == encounterId);
+            db.EncounterItems.RemoveRange(x => x.EncounterKey == encounterId);
+            db.EncounterMonsters.RemoveRange(x => x.EncounterKey == encounterId);
 
-                DB.SaveChanges();
-            }
+            db.SaveChanges();
         }
 
         public void DeleteDungeonEncounters(Guid dungeonKey, List<Guid> encounterKeys)
         {
-            DBReset();
-            var tileIds = DB.DungeonTiles.Where(x => x.DungeonKey == dungeonKey).Select(x => x.TileKey).ToList();
-            var usedEncounterKeys = DB.DungeonTileEncounters.Where(x => tileIds.Contains(x.TileKey)).Select(x => x.EncounterKey).ToList();
+            var tileIds = db.DungeonTiles.Where(x => x.DungeonKey == dungeonKey).Select(x => x.TileKey).ToList();
+            var usedEncounterKeys = db.DungeonTileEncounters.Where(x => tileIds.Contains(x.TileKey)).Select(x => x.EncounterKey).ToList();
 
             foreach (var key in usedEncounterKeys)
             {
@@ -577,10 +544,9 @@ namespace DeneirsGate.Services
 
         public void DeleteQuestEventEncounters(Guid arcKey, List<Guid> encounterKeys)
         {
-            DBReset();
-            var questIds = DB.Quests.Where(x => x.ArcKey == arcKey).Select(x => x.QuestKey).ToList();
-            var eventIds = DB.QuestEvents.Where(x => questIds.Contains(x.QuestKey)).Select(x => x.EventKey).ToList();
-            var usedEncounterKeys = DB.QuestEventEncounters.Where(x => eventIds.Contains(x.EventKey)).Select(x => x.EncounterKey).ToList();
+            var questIds = db.Quests.Where(x => x.ArcKey == arcKey).Select(x => x.QuestKey).ToList();
+            var eventIds = db.QuestEvents.Where(x => questIds.Contains(x.QuestKey)).Select(x => x.EventKey).ToList();
+            var usedEncounterKeys = db.QuestEventEncounters.Where(x => eventIds.Contains(x.EventKey)).Select(x => x.EncounterKey).ToList();
             
             foreach (var key in usedEncounterKeys)
             {

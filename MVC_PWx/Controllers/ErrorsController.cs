@@ -1,7 +1,7 @@
 ﻿using DeneirsGate.Services;
 using System.Web.Mvc;
 
-namespace MVC_PWx.Controllers
+namespace DeneirsGateSite.Controllers
 {
     [AllowAnonymous]
     public class ErrorsController : Controller

@@ -1,20 +1,27 @@
 ﻿using DeneirsGate.Services;
-using MVC_PWx.Helpers;
+using DeneirsGateSite.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Web.Mvc;
 
-namespace MVC_PWx.Controllers
+namespace DeneirsGateSite.Controllers
 {
     [Authorize, HasCampaign, HasAccess(Priviledge = AppLogic.Priviledge.DM)]
     public class MagicItemController : DeneirsController
     {
+        MagicItemService magicItemSvc;
+
+        public MagicItemController(MagicItemService magicItemService)
+        {
+            magicItemSvc = magicItemService;
+        }
+
         public ActionResult Index()
         {
             var model = new List<MagicItemViewModel>();
             try
             {
-                model = MagicItemSvc.GetMagicItems(AppUser.UserId, AppUser.ActiveCampaign.Value, !User.IsInRole("Admin"));
+                model = magicItemSvc.GetMagicItems(AppUser.UserId, AppUser.ActiveCampaign.Value, !User.IsInRole("Admin"));
             }
             catch (Exception ex)
             {
@@ -33,11 +40,11 @@ namespace MVC_PWx.Controllers
             var model = new MagicItemEditModel();
             try
             {
-                model = MagicItemSvc.GetEditMagicItem(AppUser.UserId, id, AppUser.ActiveCampaign.Value, User.IsInRole("Admin"));
+                model = magicItemSvc.GetEditMagicItem(AppUser.UserId, id, AppUser.ActiveCampaign.Value, User.IsInRole("Admin"));
 
                 ViewBag.IsNew = isNew;
-                ViewBag.Rarities = new SelectList(MagicItemSvc.GetRarities(), "RarityKey", "Name");
-                ViewBag.Types = new SelectList(MagicItemSvc.GetTypes(), "TypeKey", "Name");
+                ViewBag.Rarities = new SelectList(magicItemSvc.GetRarities(), "RarityKey", "Name");
+                ViewBag.Types = new SelectList(magicItemSvc.GetTypes(), "TypeKey", "Name");
             }
             catch (Exception ex)
             {
@@ -54,7 +61,7 @@ namespace MVC_PWx.Controllers
             {
                 try
                 {
-                    MagicItemSvc.Update(AppUser.UserId, model, User.IsInRole("Admin"));
+                    magicItemSvc.Update(AppUser.UserId, model, User.IsInRole("Admin"));
                 }
                 catch (Exception ex)
                 {
@@ -71,7 +78,7 @@ namespace MVC_PWx.Controllers
         {
             try
             {
-                MagicItemSvc.Delete(AppUser.UserId, id, User.IsInRole("Admin"));
+                magicItemSvc.Delete(AppUser.UserId, id, User.IsInRole("Admin"));
             }
             catch (Exception ex)
             {

@@ -1,23 +1,30 @@
 ﻿using DeneirsGate.Services;
-using MVC_PWx.Helpers;
+using DeneirsGateSite.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Web.Mvc;
 
-namespace MVC_PWx.Controllers
+namespace DeneirsGateSite.Controllers
 {
     [Authorize, HasCampaign, HasAccess(Priviledge = AppLogic.Priviledge.DM)]
     public class RelationshipTreeController : DeneirsController
     {
+        RelationshipTreeService relationshipTreeSvc;
+
+        public RelationshipTreeController(RelationshipTreeService relationshipTreeService)
+        {
+            relationshipTreeSvc = relationshipTreeService;
+        }
+
         public ActionResult Index()
         {
             var model = new List<RelationshipTreeSearchModel>();
 
             try
             {
-                model = RelationshipTreeSvc.GetSearchTrees(AppUser.UserId, AppUser.ActiveCampaign.Value);
+                model = relationshipTreeSvc.GetSearchTrees(AppUser.UserId, AppUser.ActiveCampaign.Value);
 
-                ViewBag.SearchBy = new SelectList(RelationshipTreeSvc.GetSearchDropdown(), "Key", "Value");
+                ViewBag.SearchBy = new SelectList(relationshipTreeSvc.GetSearchDropdown(), "Key", "Value");
             }
             catch (Exception ex)
             {
@@ -38,7 +45,7 @@ namespace MVC_PWx.Controllers
             var model = new RelationshipTreeViewModel();
             try
             {
-                model = RelationshipTreeSvc.GetRelationshipTree(id, AppUser.ActiveCampaign.Value);
+                model = relationshipTreeSvc.GetRelationshipTree(id, AppUser.ActiveCampaign.Value);
 
                 ViewBag.IsNew = isNew;
             }
@@ -57,7 +64,7 @@ namespace MVC_PWx.Controllers
             {
                 try
                 {
-                    RelationshipTreeSvc.UpdateRelationshipTree(AppUser.UserId, model);
+                    relationshipTreeSvc.UpdateRelationshipTree(AppUser.UserId, model);
                 }
                 catch (Exception ex)
                 {
@@ -74,7 +81,7 @@ namespace MVC_PWx.Controllers
         {
             try
             {
-                RelationshipTreeSvc.DeleteRelationshipTree(AppUser.UserId, id);
+                relationshipTreeSvc.DeleteRelationshipTree(AppUser.UserId, id);
             }
             catch (Exception ex)
             {

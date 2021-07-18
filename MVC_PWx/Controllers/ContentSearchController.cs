@@ -1,13 +1,36 @@
 ﻿using DeneirsGate.Services;
+using DeneirsGateSite.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Web.Mvc;
 
-namespace MVC_PWx.Controllers
+namespace DeneirsGateSite.Controllers
 {
+    [Authorize, HasAccess(Priviledge = AppLogic.Priviledge.DM)]
     public class ContentSearchController : DeneirsController
     {
-        // GET: ContentSearch
+        CampaignService campaignSvc;
+        EventService eventSvc;
+        CharacterService characterSvc;
+        MonsterService monsterSvc;
+        MagicItemService magicItemSvc;
+        RelationshipTreeService relationshipTreeSvc;
+        DungeonService dungeonSvc;
+        SettlementService settlementSvc;
+
+        public ContentSearchController(CampaignService campaignService, EventService eventService, CharacterService characterService, MonsterService monsterService,
+            MagicItemService magicItemService, RelationshipTreeService relationshipTreeService, DungeonService dungeonService, SettlementService settlementService)
+        {
+            campaignSvc = campaignService;
+            eventSvc = eventService;
+            characterSvc = characterService;
+            monsterSvc = monsterService;
+            magicItemSvc = magicItemService;
+            relationshipTreeSvc = relationshipTreeService;
+            dungeonSvc = dungeonService;
+            settlementSvc = settlementService;
+        }
+
         public ActionResult Index()
         {
             return View();
@@ -20,7 +43,7 @@ namespace MVC_PWx.Controllers
             var model = new List<ArcViewModel>();
             try
             {
-                model = CampaignSvc.GetArcs(AppUser.UserId, AppUser.ActiveCampaign.Value);
+                model = campaignSvc.GetArcs(AppUser.UserId, AppUser.ActiveCampaign.Value);
             }
             catch (Exception ex)
             {
@@ -35,7 +58,7 @@ namespace MVC_PWx.Controllers
             var model = new ArcViewModel();
             try
             {
-                model = CampaignSvc.GetArc(AppUser.UserId, AppUser.ActiveCampaign.Value, id);
+                model = campaignSvc.GetArc(AppUser.UserId, AppUser.ActiveCampaign.Value, id);
             }
             catch (Exception ex)
             {
@@ -50,7 +73,7 @@ namespace MVC_PWx.Controllers
             var model = new List<ActivityLogViewModel>();
             try
             {
-                model = CampaignSvc.GetActivityLog(id);
+                model = campaignSvc.GetActivityLog(id);
             }
             catch (Exception ex)
             {
@@ -65,7 +88,7 @@ namespace MVC_PWx.Controllers
             var model = new QuestViewModel();
             try
             {
-                model = CampaignSvc.GetArcQuest(id);
+                model = campaignSvc.GetArcQuest(id);
             }
             catch (Exception ex)
             {
@@ -80,10 +103,10 @@ namespace MVC_PWx.Controllers
             var model = new QuestEventViewModel();
             try
             {
-                model = CampaignSvc.GetArcQuestEvent(id);
+                model = campaignSvc.GetArcQuestEvent(id);
                 if (model.Encounter != null)
                 {
-                    model.Encounter = EventSvc.GetEncounter(model.Encounter.EncounterKey);
+                    model.Encounter = eventSvc.GetEncounter(model.Encounter.EncounterKey);
                 }
             }
             catch (Exception ex)
@@ -100,7 +123,7 @@ namespace MVC_PWx.Controllers
 
             try
             {
-                model = CampaignSvc.GetQuestEventLogs(AppUser.UserId, AppUser.ActiveCampaign.Value, id);
+                model = campaignSvc.GetQuestEventLogs(AppUser.UserId, AppUser.ActiveCampaign.Value, id);
             }
             catch (Exception ex)
             {
@@ -119,7 +142,7 @@ namespace MVC_PWx.Controllers
             var model = new List<CharacterShortViewModel>();
             try
             {
-                model = CharacterSvc.GetAllCharacters(AppUser.UserId, AppUser.ActiveCampaign.Value);
+                model = characterSvc.GetAllCharacters(AppUser.UserId, AppUser.ActiveCampaign.Value);
 
                 ViewBag.CampaignKey = AppUser.ActiveCampaign.Value;
             }
@@ -136,7 +159,7 @@ namespace MVC_PWx.Controllers
             var model = new CharacterShortViewModel();
             try
             {
-                model = CharacterSvc.GetPlayerShort(AppUser.UserId, AppUser.ActiveCampaign.Value, id);
+                model = characterSvc.GetPlayerShort(AppUser.UserId, AppUser.ActiveCampaign.Value, id);
 
                 ViewBag.CampaignKey = AppUser.ActiveCampaign.Value;
                 ViewBag.HideOptions = hideOptions;
@@ -154,7 +177,7 @@ namespace MVC_PWx.Controllers
             var model = new CharacterViewModel();
             try
             {
-                model = CharacterSvc.GetPlayer(AppUser.UserId, AppUser.ActiveCampaign.Value, id);
+                model = characterSvc.GetPlayer(AppUser.UserId, AppUser.ActiveCampaign.Value, id);
 
                 ViewBag.CampaignKey = AppUser.ActiveCampaign.Value;
             }
@@ -171,7 +194,7 @@ namespace MVC_PWx.Controllers
             var model = new CharacterViewModel();
             try
             {
-                model = CharacterSvc.GetPlayer(AppUser.UserId, AppUser.ActiveCampaign.Value, id);
+                model = characterSvc.GetPlayer(AppUser.UserId, AppUser.ActiveCampaign.Value, id);
 
                 ViewBag.CampaignKey = AppUser.ActiveCampaign.Value;
             }
@@ -188,7 +211,7 @@ namespace MVC_PWx.Controllers
             var model = new CharacterViewModel();
             try
             {
-                model = CharacterSvc.GetPlayer(AppUser.UserId, AppUser.ActiveCampaign.Value, id);
+                model = characterSvc.GetPlayer(AppUser.UserId, AppUser.ActiveCampaign.Value, id);
 
                 ViewBag.CampaignKey = AppUser.ActiveCampaign.Value;
             }
@@ -205,7 +228,7 @@ namespace MVC_PWx.Controllers
             var model = new CharacterViewModel();
             try
             {
-                model = CharacterSvc.GetPlayer(AppUser.UserId, AppUser.ActiveCampaign.Value, id);
+                model = characterSvc.GetPlayer(AppUser.UserId, AppUser.ActiveCampaign.Value, id);
 
                 ViewBag.CampaignKey = AppUser.ActiveCampaign.Value;
             }
@@ -223,7 +246,7 @@ namespace MVC_PWx.Controllers
 
             try
             {
-                model = RelationshipTreeSvc.GetCharacterTrees(AppUser.UserId, AppUser.ActiveCampaign.Value, id);
+                model = relationshipTreeSvc.GetCharacterTrees(AppUser.UserId, AppUser.ActiveCampaign.Value, id);
             }
             catch (Exception ex)
             {
@@ -239,7 +262,7 @@ namespace MVC_PWx.Controllers
 
             try
             {
-                model = CharacterSvc.GetCharacterLogs(AppUser.UserId, AppUser.ActiveCampaign.Value, id);
+                model = characterSvc.GetCharacterLogs(AppUser.UserId, AppUser.ActiveCampaign.Value, id);
             }
             catch (Exception ex)
             {
@@ -259,9 +282,9 @@ namespace MVC_PWx.Controllers
 
             try
             {
-                model = RelationshipTreeSvc.GetSearchTrees(AppUser.UserId, AppUser.ActiveCampaign.Value);
+                model = relationshipTreeSvc.GetSearchTrees(AppUser.UserId, AppUser.ActiveCampaign.Value);
 
-                ViewBag.SearchBy = new SelectList(RelationshipTreeSvc.GetSearchDropdown(), "Key", "Value");
+                ViewBag.SearchBy = new SelectList(relationshipTreeSvc.GetSearchDropdown(), "Key", "Value");
             }
             catch (Exception ex)
             {
@@ -277,7 +300,7 @@ namespace MVC_PWx.Controllers
             var model = new RelationshipTreeViewModel();
             try
             {
-                model = RelationshipTreeSvc.GetRelationshipTree(id, AppUser.ActiveCampaign.Value);
+                model = relationshipTreeSvc.GetRelationshipTree(id, AppUser.ActiveCampaign.Value);
             }
             catch (Exception ex)
             {
@@ -317,7 +340,7 @@ namespace MVC_PWx.Controllers
             var model = new List<MonsterViewModel>();
             try
             {
-                model = MonsterSvc.GetMonsters(AppUser.UserId, AppUser.ActiveCampaign.Value, !User.IsInRole("Admin"));
+                model = monsterSvc.GetMonsters(AppUser.UserId, AppUser.ActiveCampaign.Value, !User.IsInRole("Admin"));
             }
             catch (Exception ex)
             {
@@ -332,7 +355,7 @@ namespace MVC_PWx.Controllers
             var model = new MonsterViewModel();
             try
             {
-                model = MonsterSvc.GetMonster(AppUser.UserId, id);
+                model = monsterSvc.GetMonster(AppUser.UserId, id);
             }
             catch (Exception ex)
             {
@@ -351,7 +374,7 @@ namespace MVC_PWx.Controllers
             var model = new List<MagicItemViewModel>();
             try
             {
-                model = MagicItemSvc.GetMagicItems(AppUser.UserId, AppUser.ActiveCampaign.Value, false);
+                model = magicItemSvc.GetMagicItems(AppUser.UserId, AppUser.ActiveCampaign.Value, false);
             }
             catch (Exception ex)
             {
@@ -366,7 +389,7 @@ namespace MVC_PWx.Controllers
             var model = new MagicItemViewModel();
             try
             {
-                model = MagicItemSvc.GetMagicItem(AppUser.UserId, id);
+                model = magicItemSvc.GetMagicItem(AppUser.UserId, id);
             }
             catch (Exception ex)
             {
@@ -385,7 +408,7 @@ namespace MVC_PWx.Controllers
             var model = new List<DungeonListViewModel>();
             try
             {
-                model = DungeonSvc.GetDungeons(AppUser.UserId, AppUser.ActiveCampaign.Value);
+                model = dungeonSvc.GetDungeons(AppUser.UserId, AppUser.ActiveCampaign.Value);
             }
             catch (Exception ex)
             {
@@ -400,14 +423,14 @@ namespace MVC_PWx.Controllers
             var model = new DungeonViewModel();
             try
             {
-                model = DungeonSvc.GetDungeon(AppUser.UserId, AppUser.ActiveCampaign.Value, id);
+                model = dungeonSvc.GetDungeon(AppUser.UserId, AppUser.ActiveCampaign.Value, id);
                 foreach (var tile in model.Tiles)
                 {
                     if (tile.Encounter != null)
                     {
-                        tile.Encounter = EventSvc.GetEncounter(tile.Encounter.EncounterKey);
-                        MonsterSvc.GetEncounterMonsters(AppUser.UserId, tile.Encounter);
-                        MagicItemSvc.GetEncounterItems(AppUser.UserId, tile.Encounter);
+                        tile.Encounter = eventSvc.GetEncounter(tile.Encounter.EncounterKey);
+                        monsterSvc.GetEncounterMonsters(AppUser.UserId, tile.Encounter);
+                        magicItemSvc.GetEncounterItems(AppUser.UserId, tile.Encounter);
                     }
                 }
             }
@@ -428,7 +451,7 @@ namespace MVC_PWx.Controllers
             var model = new List<TrapViewModel>();
             try
             {
-                model = DungeonSvc.GetTraps(AppUser.UserId, AppUser.ActiveCampaign.Value);
+                model = dungeonSvc.GetTraps(AppUser.UserId, AppUser.ActiveCampaign.Value);
             }
             catch (Exception ex)
             {
@@ -443,7 +466,7 @@ namespace MVC_PWx.Controllers
             var model = new TrapViewModel();
             try
             {
-                model = DungeonSvc.GetTrap(AppUser.UserId, AppUser.ActiveCampaign.Value, id);
+                model = dungeonSvc.GetTrap(AppUser.UserId, AppUser.ActiveCampaign.Value, id);
             }
             catch (Exception ex)
             {
@@ -462,7 +485,7 @@ namespace MVC_PWx.Controllers
             var model = new List<SettlementViewModel>();
             try
             {
-                model = SettlementSvc.GetSettlements(AppUser.UserId, AppUser.ActiveCampaign.Value);
+                model = settlementSvc.GetSettlements(AppUser.UserId, AppUser.ActiveCampaign.Value);
             }
             catch (Exception ex)
             {
@@ -477,7 +500,7 @@ namespace MVC_PWx.Controllers
             var model = new SettlementViewModel();
             try
             {
-                model = SettlementSvc.GetSettlement(AppUser.UserId, AppUser.ActiveCampaign.Value, id);
+                model = settlementSvc.GetSettlement(AppUser.UserId, AppUser.ActiveCampaign.Value, id);
             }
             catch (Exception ex)
             {

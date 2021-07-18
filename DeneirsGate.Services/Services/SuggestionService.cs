@@ -31,11 +31,14 @@ namespace DeneirsGate.Services
             Rejected
         }
 
+        public SuggestionService(DataEntities _db)
+        {
+            db = _db;
+        }
+
         private void UserHasSuggestionAccess(Guid userId, Guid contentKey, bool isAdmin = false)
         {
-            DBReset();
-
-            if (isAdmin || DB.Suggestions.Any(x => x.UserKey == userId && x.SuggestionKey == contentKey) || !DB.Suggestions.Any(x => x.SuggestionKey == contentKey))
+            if (isAdmin || db.Suggestions.Any(x => x.UserKey == userId && x.SuggestionKey == contentKey) || !db.Suggestions.Any(x => x.SuggestionKey == contentKey))
             {
                 return;
             }
@@ -45,9 +48,7 @@ namespace DeneirsGate.Services
 
         public List<SuggestionViewModel> GetSuggestions(Guid userId)
         {
-            DBReset();
-
-            var suggestions = DB.Suggestions.Where(x => x.UserKey == userId).Select(x => new SuggestionViewModel
+            var suggestions = db.Suggestions.Where(x => x.UserKey == userId).Select(x => new SuggestionViewModel
             {
                 Status = (SuggestionStatus)x.Status,
                 Suggestion = x.SuggestionText,
@@ -62,16 +63,14 @@ namespace DeneirsGate.Services
 
         public List<SuggestionViewModel> GetPendingSuggestions(Guid userId, bool isAdmin = false)
         {
-            DBReset();
-
             var dbSuggestions = new List<Suggestion>();
             if (isAdmin)
             {
-                dbSuggestions = DB.Suggestions.Where(x => x.Status == (int)SuggestionStatus.Pending).ToList();
+                dbSuggestions = db.Suggestions.Where(x => x.Status == (int)SuggestionStatus.Pending).ToList();
             }
             else
             {
-                dbSuggestions = DB.Suggestions.Where(x => x.UserKey == userId && x.Status == (int)SuggestionStatus.Pending).ToList();
+                dbSuggestions = db.Suggestions.Where(x => x.UserKey == userId && x.Status == (int)SuggestionStatus.Pending).ToList();
             }
 
             var suggestions =dbSuggestions.Select(x => new SuggestionViewModel
@@ -81,7 +80,7 @@ namespace DeneirsGate.Services
                 SuggestionKey = x.SuggestionKey,
                 Type = (SuggestionType)x.Type,
                 UserKey = x.UserKey,
-                UserName = DB.AspNetUsers.FirstOrDefault(y => y.UserId == x.UserKey)?.UserName,
+                UserName = db.AspNetUsers.FirstOrDefault(y => y.UserId == x.UserKey)?.UserName,
                 DateSubmitted = x.DateSubmitted
             }).OrderBy(x => x.DateSubmitted).ToList();
 
@@ -92,10 +91,8 @@ namespace DeneirsGate.Services
         {
             UserHasSuggestionAccess(userId, model.SuggestionKey, isAdmin);
 
-            DBReset();
-
             var add = false;
-            var suggestion = DB.Suggestions.FirstOrDefault(x => x.SuggestionKey == model.SuggestionKey);
+            var suggestion = db.Suggestions.FirstOrDefault(x => x.SuggestionKey == model.SuggestionKey);
             if (suggestion == null)
             {
                 suggestion = new Suggestion
@@ -113,32 +110,28 @@ namespace DeneirsGate.Services
 
             if (add)
             {
-                DB.Suggestions.Add(suggestion);
+                db.Suggestions.Add(suggestion);
             }
 
-            DB.SaveChanges();
+            db.SaveChanges();
         }
 
         public void ReviewSuggestion(SuggestionReviewModel model)
         {
-            DBReset();
-
-            var suggestion = DB.Suggestions.FirstOrDefault(x => x.SuggestionKey == model.SuggestionKey && x.UserKey == model.UserKey);
+            var suggestion = db.Suggestions.FirstOrDefault(x => x.SuggestionKey == model.SuggestionKey && x.UserKey == model.UserKey);
             if (suggestion == null) { return; }
 
             suggestion.Status = model.IsApproved ? (int)SuggestionStatus.Approved : (int)SuggestionStatus.Rejected;
 
-            DB.SaveChanges();
+            db.SaveChanges();
         }
 
         public string GenerateSuggestion(SuggestionType type)
         {
-            DBReset();
-
             var rand = new Random();
-            var toSkip = rand.Next(0, DB.Suggestions.Where(x => x.Type == (int)type && x.Status == (int)SuggestionStatus.Approved).Count());
+            var toSkip = rand.Next(0, db.Suggestions.Where(x => x.Type == (int)type && x.Status == (int)SuggestionStatus.Approved).Count());
 
-            var suggestion = DB.Suggestions.Where(x => x.Type == (int)type && x.Status == (int)SuggestionStatus.Approved).OrderBy(x => Guid.NewGuid()).Skip(toSkip).Take(1).FirstOrDefault()?.SuggestionText;
+            var suggestion = db.Suggestions.Where(x => x.Type == (int)type && x.Status == (int)SuggestionStatus.Approved).OrderBy(x => Guid.NewGuid()).Skip(toSkip).Take(1).FirstOrDefault()?.SuggestionText;
 
             return suggestion;
         }
@@ -154,18 +147,15 @@ namespace DeneirsGate.Services
                 Backstory = GenerateSuggestion(SuggestionType.Backstory)
             };
 
-            DBReset();
-
-
             var rand = new Random();
-            var toSkip = rand.Next(0, DB.Races.Count());
-            character.RaceKey = DB.Races.OrderBy(x => Guid.NewGuid()).Skip(toSkip).Take(1).FirstOrDefault().RaceKey;
+            var toSkip = rand.Next(0, db.Races.Count());
+            character.RaceKey = db.Races.OrderBy(x => Guid.NewGuid()).Skip(toSkip).Take(1).FirstOrDefault().RaceKey;
 
-            toSkip = rand.Next(0, DB.Classes.Count());
-            character.ClassKey = DB.Classes.OrderBy(x => Guid.NewGuid()).Skip(toSkip).Take(1).FirstOrDefault().ClassKey;
+            toSkip = rand.Next(0, db.Classes.Count());
+            character.ClassKey = db.Classes.OrderBy(x => Guid.NewGuid()).Skip(toSkip).Take(1).FirstOrDefault().ClassKey;
 
-            toSkip = rand.Next(0, DB.Backgrounds.Count());
-            character.BackgroundKey = DB.Backgrounds.OrderBy(x => Guid.NewGuid()).Skip(toSkip).Take(1).FirstOrDefault().BackgroundKey;
+            toSkip = rand.Next(0, db.Backgrounds.Count());
+            character.BackgroundKey = db.Backgrounds.OrderBy(x => Guid.NewGuid()).Skip(toSkip).Take(1).FirstOrDefault().BackgroundKey;
 
             var randStats = new List<int>();
             randStats.Add(rand.Next(16, 20));
@@ -196,11 +186,9 @@ namespace DeneirsGate.Services
 
         public void DeleteSuggestion(Guid userId, Guid suggestionId)
         {
-            DBReset();
+            db.Suggestions.RemoveRange(x => x.UserKey == userId && x.SuggestionKey == suggestionId);
 
-            DB.Suggestions.RemoveRange(x => x.UserKey == userId && x.SuggestionKey == suggestionId);
-
-            DB.SaveChanges();
+            db.SaveChanges();
         }
 
         public Dictionary<int, string> GetSuggestionTypeList()

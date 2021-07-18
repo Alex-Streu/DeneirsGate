@@ -7,21 +7,39 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 
-namespace MVC_PWx.Controllers
+namespace DeneirsGateSite.Controllers
 {
     [Authorize(Roles = "Admin")]
     public class AdminController : DeneirsController
     {
+        ApplicationUserManager userManager;
+        ApplicationRoleManager roleManager;
+        CampaignService campaignSvc;
+        MonsterService monsterSvc;
+        MagicItemService magicItemSvc;
+        SuggestionService suggestionSvc;
+
+        public AdminController(ApplicationUserManager applicationUserManager, ApplicationRoleManager applicationRoleManager, CampaignService campaignService, 
+                                MonsterService monsterService, MagicItemService magicItemService, SuggestionService suggestionService)
+        {
+            userManager = applicationUserManager;
+            roleManager = applicationRoleManager;
+            campaignSvc = campaignService;
+            monsterSvc = monsterService;
+            magicItemSvc = magicItemService;
+            suggestionSvc = suggestionService;
+        }
+
         public ActionResult Users()
         {
-            var users = UserManager.Users.OrderBy(x => x.UserName).ToList();
+            var users = userManager.Users.OrderBy(x => x.UserName).ToList();
             return View(users);
         }
 
         public ActionResult EditUser(string id)
         {
-            var user = UserManager.FindById(id) ?? new ApplicationUser();
-            ViewBag.Roles = new SelectList(RoleManager.Roles.ToList(), "Name", "Name", user.Roles.FirstOrDefault());
+            var user = userManager.FindById(id) ?? new ApplicationUser();
+            ViewBag.Roles = new SelectList(roleManager.Roles.ToList(), "Name", "Name", user.Roles.FirstOrDefault());
 
             return View(user);
         }
@@ -31,12 +49,12 @@ namespace MVC_PWx.Controllers
         {
             if (!ModelState.IsValid)
             {
-                ViewBag.Roles = new SelectList(RoleManager.Roles.ToList(), "Name", "Name");
-                var _user = await UserManager.FindByIdAsync(model.Id);
+                ViewBag.Roles = new SelectList(roleManager.Roles.ToList(), "Name", "Name");
+                var _user = await userManager.FindByIdAsync(model.Id);
                 return View(_user);
             }
 
-            var user = await UserManager.FindByIdAsync(model.Id);
+            var user = await userManager.FindByIdAsync(model.Id);
             user.LockoutEnabled = model.LockoutEnabled;
             user.LockoutEndDateUtc = model.LockoutEndDateUtc;
             user.PhoneNumber = model.PhoneNumber;
@@ -49,30 +67,30 @@ namespace MVC_PWx.Controllers
             {
                 foreach (var role in userRoles)
                 {
-                    var _role = RoleManager.FindById(role);
-                    await UserManager.RemoveFromRoleAsync(model.Id, _role.Name);
+                    var _role = roleManager.FindById(role);
+                    await userManager.RemoveFromRoleAsync(model.Id, _role.Name);
                 }
             }
-            await UserManager.AddToRoleAsync(model.Id, model.Role);
+            await userManager.AddToRoleAsync(model.Id, model.Role);
 
-            var result = await UserManager.UpdateAsync(user);
+            var result = await userManager.UpdateAsync(user);
             if (result.Succeeded)
             {
                 return RedirectToAction("Users");
             }
 
-            ViewBag.Roles = new SelectList(RoleManager.Roles.ToList(), "Name", "Name");
+            ViewBag.Roles = new SelectList(roleManager.Roles.ToList(), "Name", "Name");
             ModelState.AddModelError("", "Failed to update user.");
             return View(model);
         }
 
         public async Task<ActionResult> DeleteUser(string id)
         {
-            var user = await UserManager.FindByIdAsync(id);
+            var user = await userManager.FindByIdAsync(id);
             if (user != null)
             {
-                await UserManager.DeleteAsync(user);
-                CampaignSvc.DeleteUserCampaigns(user.UserId);
+                await userManager.DeleteAsync(user);
+                campaignSvc.DeleteUserCampaigns(user.UserId);
             }
 
             return RedirectToAction("Users");
@@ -80,13 +98,13 @@ namespace MVC_PWx.Controllers
 
         public ActionResult Roles()
         {
-            var roles = RoleManager.Roles.OrderBy(x => x.Priviledge).ToList();
+            var roles = roleManager.Roles.OrderBy(x => x.Priviledge).ToList();
             return View(roles);
         }
 
         public ActionResult EditRole(string id)
         {
-            var role = RoleManager.FindById(id) ?? new ApplicationRole();
+            var role = roleManager.FindById(id) ?? new ApplicationRole();
 
             return View(role);
         }
@@ -99,7 +117,7 @@ namespace MVC_PWx.Controllers
                 return View(model);
             }
 
-            var result = await RoleManager.CreateAsync(model);
+            var result = await roleManager.CreateAsync(model);
             if (result.Succeeded)
             {
                 return RedirectToAction("Roles");
@@ -111,10 +129,10 @@ namespace MVC_PWx.Controllers
 
         public async Task<ActionResult> DeleteRole(string id)
         {
-            var role = await RoleManager.FindByIdAsync(id);
+            var role = await roleManager.FindByIdAsync(id);
             if (role != null)
             {
-                await RoleManager.DeleteAsync(role);
+                await roleManager.DeleteAsync(role);
             }
 
             return RedirectToAction("Roles");
@@ -144,7 +162,7 @@ namespace MVC_PWx.Controllers
                             var noOfRow = workSheet.Dimension.End.Row;
                             for (var i = 1; i <= noOfRow; i++)
                             {
-                                MonsterSvc.UploadMonster(AppUser.UserId, workSheet.Cells[i, 1].Value.ToString(), null, workSheet.Cells[i, 2].Value.ToString(), workSheet.Cells[i, 3].Value.ToString(), workSheet.Cells[i, 4].Value.ToString(), workSheet.Cells[i, 7].Value.ToString(), workSheet.Cells[i, 19].Value.ToString());
+                                monsterSvc.UploadMonster(AppUser.UserId, workSheet.Cells[i, 1].Value.ToString(), null, workSheet.Cells[i, 2].Value.ToString(), workSheet.Cells[i, 3].Value.ToString(), workSheet.Cells[i, 4].Value.ToString(), workSheet.Cells[i, 7].Value.ToString(), workSheet.Cells[i, 19].Value.ToString());
                             }
                         }
                     }
@@ -166,7 +184,7 @@ namespace MVC_PWx.Controllers
                                 var environment = workSheet.Cells[i, 2].Value.ToString();
                                 foreach (var monster in monsters)
                                 {
-                                    MonsterSvc.UploadMonsterEnvironments(monster.Trim(), environment);
+                                    monsterSvc.UploadMonsterEnvironments(monster.Trim(), environment);
                                 }
                             }
                         }
@@ -205,7 +223,7 @@ namespace MVC_PWx.Controllers
                             var noOfRow = workSheet.Dimension.End.Row;
                             for (var i = 2; i <= noOfRow; i++)
                             {
-                                MagicItemSvc.UploadMagicItem(AppUser.UserId, workSheet.Cells[i, 1].Value?.ToString(), workSheet.Cells[i, 5].Value?.ToString(), workSheet.Cells[i, 2].Value?.ToString(), workSheet.Cells[i, 3].Value?.ToString(), workSheet.Cells[i, 4].Value?.ToString());
+                                magicItemSvc.UploadMagicItem(AppUser.UserId, workSheet.Cells[i, 1].Value?.ToString(), workSheet.Cells[i, 5].Value?.ToString(), workSheet.Cells[i, 2].Value?.ToString(), workSheet.Cells[i, 3].Value?.ToString(), workSheet.Cells[i, 4].Value?.ToString());
                             }
                         }
                     }
@@ -224,7 +242,7 @@ namespace MVC_PWx.Controllers
             var model = new List<SuggestionViewModel>();
             try
             {
-                model = SuggestionSvc.GetPendingSuggestions(AppUser.UserId, true);
+                model = suggestionSvc.GetPendingSuggestions(AppUser.UserId, true);
             }
             catch (Exception ex)
             {
@@ -241,7 +259,7 @@ namespace MVC_PWx.Controllers
             {
                 try
                 {
-                    SuggestionSvc.ReviewSuggestion(model);
+                    suggestionSvc.ReviewSuggestion(model);
                 }
                 catch (Exception ex)
                 {

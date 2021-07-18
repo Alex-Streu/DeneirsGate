@@ -7,30 +7,32 @@ namespace DeneirsGate.Services
 {
     public class RelationshipTreeService : DeneirsService
     {
+        public RelationshipTreeService(DataEntities _db)
+        {
+            db = _db;
+        }
+
         public List<RelationshipTreeSearchModel> GetCharacterTrees(Guid userId, Guid campaignKey, Guid characterId)
         {
             UserHasAccess(userId, campaignKey);
 
             var trees = new List<RelationshipTreeSearchModel>();
 
-            using (DBReset())
+            var treeIds = db.RelationshipTreeCharacters.Where(x => x.CharacterKey == characterId).Select(x => x.TreeKey).ToList();
+            trees = db.RelationshipTrees.Where(x => x.CampaignKey == campaignKey && treeIds.Contains(x.TreeKey)).Select(x => new RelationshipTreeSearchModel
             {
-                var treeIds = DB.RelationshipTreeCharacters.Where(x => x.CharacterKey == characterId).Select(x => x.TreeKey).ToList();
-                trees = DB.RelationshipTrees.Where(x => x.CampaignKey == campaignKey && treeIds.Contains(x.TreeKey)).Select(x => new RelationshipTreeSearchModel
-                {
-                    TreeKey = x.TreeKey,
-                    Name = x.Name
-                }).ToList();
+                TreeKey = x.TreeKey,
+                Name = x.Name
+            }).ToList();
 
-                foreach (var tree in trees)
-                {
-                    var shallowNames = DB.RelationshipTreeCharacters.Where(x => x.TreeKey == tree.TreeKey && x.IsShallow).Select(x => x.Name).ToList();
-                    var charIds = DB.RelationshipTreeCharacters.Where(x => x.TreeKey == tree.TreeKey && !x.IsShallow).Select(x => x.CharacterKey).ToList();
-                    var charNames = DB.Characters.Where(x => charIds.Contains(x.CharacterKey)).Select(x => x.FirstName + " " + x.LastName).ToList();
-                    charNames.AddRange(shallowNames);
+            foreach (var tree in trees)
+            {
+                var shallowNames = db.RelationshipTreeCharacters.Where(x => x.TreeKey == tree.TreeKey && x.IsShallow).Select(x => x.Name).ToList();
+                var charIds = db.RelationshipTreeCharacters.Where(x => x.TreeKey == tree.TreeKey && !x.IsShallow).Select(x => x.CharacterKey).ToList();
+                var charNames = db.Characters.Where(x => charIds.Contains(x.CharacterKey)).Select(x => x.FirstName + " " + x.LastName).ToList();
+                charNames.AddRange(shallowNames);
 
-                    tree.CharacterList = String.Join(",", charNames);
-                }
+                tree.CharacterList = String.Join(",", charNames);
             }
 
             return trees;
@@ -40,25 +42,20 @@ namespace DeneirsGate.Services
         {
             UserHasAccess(userId, campaignKey);
 
-            var trees = new List<RelationshipTreeSearchModel>();
-
-            using (DBReset())
+            var trees = db.RelationshipTrees.Where(x => x.CampaignKey == campaignKey).Select(x => new RelationshipTreeSearchModel
             {
-                trees = DB.RelationshipTrees.Where(x => x.CampaignKey == campaignKey).Select(x => new RelationshipTreeSearchModel
-                {
-                    TreeKey = x.TreeKey,
-                    Name = x.Name
-                }).ToList();
+                TreeKey = x.TreeKey,
+                Name = x.Name
+            }).ToList();
 
-                foreach (var tree in trees)
-                {
-                    var shallowNames = DB.RelationshipTreeCharacters.Where(x => x.TreeKey == tree.TreeKey && x.IsShallow).Select(x => x.Name).ToList();
-                    var charIds = DB.RelationshipTreeCharacters.Where(x => x.TreeKey == tree.TreeKey && !x.IsShallow).Select(x => x.CharacterKey).ToList();
-                    var charNames = DB.Characters.Where(x => charIds.Contains(x.CharacterKey)).Select(x => x.FirstName + " " + x.LastName).ToList();
-                    charNames.AddRange(shallowNames);
+            foreach (var tree in trees)
+            {
+                var shallowNames = db.RelationshipTreeCharacters.Where(x => x.TreeKey == tree.TreeKey && x.IsShallow).Select(x => x.Name).ToList();
+                var charIds = db.RelationshipTreeCharacters.Where(x => x.TreeKey == tree.TreeKey && !x.IsShallow).Select(x => x.CharacterKey).ToList();
+                var charNames = db.Characters.Where(x => charIds.Contains(x.CharacterKey)).Select(x => x.FirstName + " " + x.LastName).ToList();
+                charNames.AddRange(shallowNames);
 
-                    tree.CharacterList = String.Join(",", charNames);
-                }
+                tree.CharacterList = String.Join(",", charNames);
             }
 
             return trees;
@@ -68,7 +65,7 @@ namespace DeneirsGate.Services
         {
             var tree = new RelationshipTreeViewModel();
 
-            tree = DB.RelationshipTrees.Where(x => x.TreeKey == id).Select(x => new RelationshipTreeViewModel
+            tree = db.RelationshipTrees.Where(x => x.TreeKey == id).Select(x => new RelationshipTreeViewModel
             {
                 TreeKey = x.TreeKey,
                 CampaignKey = x.CampaignKey,
@@ -89,7 +86,7 @@ namespace DeneirsGate.Services
             }
 
             tree.Tiers = new List<RelationshipTreeTierViewModel>();
-            var tiers = DB.RelationshipTreeTiers.Where(x => x.TreeKey == id).OrderBy(x => x.SortOrder).ToList();
+            var tiers = db.RelationshipTreeTiers.Where(x => x.TreeKey == id).OrderBy(x => x.SortOrder).ToList();
             foreach (var tier in tiers)
             {
                 var newTier = new RelationshipTreeTierViewModel
@@ -99,7 +96,7 @@ namespace DeneirsGate.Services
                     Characters = new List<RelationshipTreeCharacterViewModel>()
                 };
 
-                var characters = DB.RelationshipTreeCharacters.Where(x => x.TreeKey == id && x.TierKey == tier.TierKey).ToList();
+                var characters = db.RelationshipTreeCharacters.Where(x => x.TreeKey == id && x.TierKey == tier.TierKey).ToList();
                 foreach (var character in characters)
                 {
                     if (character.IsShallow)
@@ -114,7 +111,7 @@ namespace DeneirsGate.Services
                     }
                     else
                     {
-                        var charInfo = DB.Characters.FirstOrDefault(x => x.CharacterKey == character.CharacterKey);
+                        var charInfo = db.Characters.FirstOrDefault(x => x.CharacterKey == character.CharacterKey);
                         newTier.Characters.Add(new RelationshipTreeCharacterViewModel
                         {
                             CharacterKey = character.CharacterKey,
@@ -136,10 +133,10 @@ namespace DeneirsGate.Services
 
         public List<RelationshipTreeCharacterViewModel> GetAvailableCharacters(Guid treeKey, Guid campaignKey)
         {
-            var ignoreKeys = DB.RelationshipTreeCharacters.Where(x => x.TreeKey == treeKey && x.IsShallow == false).Select(x => x.CharacterKey);
-            var includeKeys = DB.CampaignCharacterLinkers.Where(x => x.CampaignKey == campaignKey).Select(x => x.CharacterKey).ToList();
+            var ignoreKeys = db.RelationshipTreeCharacters.Where(x => x.TreeKey == treeKey && x.IsShallow == false).Select(x => x.CharacterKey);
+            var includeKeys = db.CampaignCharacterLinkers.Where(x => x.CampaignKey == campaignKey).Select(x => x.CharacterKey).ToList();
 
-            return DB.Characters.Where(x => includeKeys.Contains(x.CharacterKey) && !ignoreKeys.Contains(x.CharacterKey)).Select(x => new RelationshipTreeCharacterViewModel
+            return db.Characters.Where(x => includeKeys.Contains(x.CharacterKey) && !ignoreKeys.Contains(x.CharacterKey)).Select(x => new RelationshipTreeCharacterViewModel
             {
                 Backstory = x.Backstory,
                 CharacterKey = x.CharacterKey,
@@ -153,71 +150,65 @@ namespace DeneirsGate.Services
         {
             UserHasAccess(userKey, model.CampaignKey);
 
-            using (DBReset())
+            var add = false;
+            var tree = db.RelationshipTrees.FirstOrDefault(x => x.TreeKey == model.TreeKey);
+
+            if (tree == null)
             {
-                var add = false;
-                var tree = DB.RelationshipTrees.FirstOrDefault(x => x.TreeKey == model.TreeKey);
+                tree = new RelationshipTree();
+                tree.TreeKey = model.TreeKey;
+                tree.CampaignKey = model.CampaignKey;
+                add = true;
+            }
 
-                if (tree == null)
+            tree.Name = model.Name;
+
+            //Tiers
+            db.RelationshipTreeTiers.RemoveRange(db.RelationshipTreeTiers.Where(x => x.TreeKey == model.TreeKey).ToList());
+            foreach (var item in model.Tiers)
+            {
+                item.TierKey = item.TierKey == Guid.Empty ? Guid.NewGuid() : item.TierKey;
+                db.RelationshipTreeTiers.Add(new RelationshipTreeTier
                 {
-                    tree = new RelationshipTree();
-                    tree.TreeKey = model.TreeKey;
-                    tree.CampaignKey = model.CampaignKey;
-                    add = true;
-                }
+                    TreeKey = model.TreeKey,
+                    TierKey = item.TierKey,
+                    SortOrder = item.SortOrder
+                });
+            }
 
-                tree.Name = model.Name;
-
-                //Tiers
-                DB.RelationshipTreeTiers.RemoveRange(DB.RelationshipTreeTiers.Where(x => x.TreeKey == model.TreeKey).ToList());
-                foreach (var item in model.Tiers)
+            //Characters
+            db.RelationshipTreeCharacters.RemoveRange(db.RelationshipTreeCharacters.Where(x => x.TreeKey == model.TreeKey).ToList());
+            foreach (var tier in model.Tiers)
+            {
+                foreach (var item in tier.Characters)
                 {
-                    item.TierKey = item.TierKey == Guid.Empty ? Guid.NewGuid() : item.TierKey;
-                    DB.RelationshipTreeTiers.Add(new RelationshipTreeTier
+                    db.RelationshipTreeCharacters.Add(new RelationshipTreeCharacter
                     {
                         TreeKey = model.TreeKey,
-                        TierKey = item.TierKey,
-                        SortOrder = item.SortOrder
+                        TierKey = tier.TierKey,
+                        CharacterKey = item.CharacterKey == Guid.Empty ? Guid.NewGuid() : item.CharacterKey,
+                        IsShallow = item.IsShallow,
+                        Backstory = item.Backstory,
+                        Name = item.Name
                     });
                 }
-
-                //Characters
-                DB.RelationshipTreeCharacters.RemoveRange(DB.RelationshipTreeCharacters.Where(x => x.TreeKey == model.TreeKey).ToList());
-                foreach (var tier in model.Tiers)
-                {
-                    foreach (var item in tier.Characters)
-                    {
-                        DB.RelationshipTreeCharacters.Add(new RelationshipTreeCharacter
-                        {
-                            TreeKey = model.TreeKey,
-                            TierKey = tier.TierKey,
-                            CharacterKey = item.CharacterKey == Guid.Empty ? Guid.NewGuid() : item.CharacterKey,
-                            IsShallow = item.IsShallow,
-                            Backstory = item.Backstory,
-                            Name = item.Name
-                        });
-                    }
-                }
-
-                if (add)
-                {
-                    DB.RelationshipTrees.Add(tree);
-                }
-
-                DB.SaveChanges();
             }
+
+            if (add)
+            {
+                db.RelationshipTrees.Add(tree);
+            }
+
+            db.SaveChanges();
         }
 
         public void DeleteRelationshipTree(Guid userKey, Guid treeId)
         {
-            using (DBReset())
-            {
-                DB.RelationshipTrees.RemoveRange(x => x.TreeKey == treeId);
-                DB.RelationshipTreeTiers.RemoveRange(x => x.TreeKey == treeId);
-                DB.RelationshipTreeCharacters.RemoveRange(x => x.TreeKey == treeId);
+            db.RelationshipTrees.RemoveRange(x => x.TreeKey == treeId);
+            db.RelationshipTreeTiers.RemoveRange(x => x.TreeKey == treeId);
+            db.RelationshipTreeCharacters.RemoveRange(x => x.TreeKey == treeId);
 
-                DB.SaveChanges();
-            }
+            db.SaveChanges();
         }
 
         public Dictionary<string, string> GetSearchDropdown()

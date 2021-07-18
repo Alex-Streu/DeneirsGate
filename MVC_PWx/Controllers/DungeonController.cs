@@ -1,23 +1,36 @@
 ﻿using DeneirsGate.Services;
-using MVC_PWx.Helpers;
+using DeneirsGateSite.Helpers;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Web.Mvc;
 
-namespace MVC_PWx.Controllers
+namespace DeneirsGateSite.Controllers
 {
     [Authorize, HasCampaign, HasAccess(Priviledge = AppLogic.Priviledge.DM)]
     public class DungeonController : DeneirsController
     {
+        EventService eventSvc;
+        MonsterService monsterSvc;
+        MagicItemService magicItemSvc;
+        DungeonService dungeonSvc;
+
+        public DungeonController(EventService eventService, MonsterService monsterService, MagicItemService magicItemService, DungeonService dungeonService)
+        {
+            eventSvc = eventService;
+            monsterSvc = monsterService;
+            magicItemSvc = magicItemService;
+            dungeonSvc = dungeonService;
+        }
+
         #region Dungeons
         public ActionResult Index()
         {
             var model = new List<DungeonListViewModel>();
             try
             {
-                model = DungeonSvc.GetDungeons(AppUser.UserId, AppUser.ActiveCampaign.Value);
+                model = dungeonSvc.GetDungeons(AppUser.UserId, AppUser.ActiveCampaign.Value);
             }
             catch (Exception ex)
             {
@@ -37,18 +50,18 @@ namespace MVC_PWx.Controllers
             var model = new DungeonViewModel();
             try
             {
-                model = DungeonSvc.GetDungeon(AppUser.UserId, AppUser.ActiveCampaign.Value, id);
+                model = dungeonSvc.GetDungeon(AppUser.UserId, AppUser.ActiveCampaign.Value, id);
                 foreach (var tile in model.Tiles)
                 {
                     if (tile.Encounter != null)
                     {
-                        tile.Encounter = EventSvc.GetEncounter(tile.Encounter.EncounterKey);
+                        tile.Encounter = eventSvc.GetEncounter(tile.Encounter.EncounterKey);
                     }
                 }
 
                 ViewBag.IsNew = isNew;
-                ViewBag.TrapNatures = new SelectList(DungeonSvc.GetTrapNatures(), "NatureKey", "Name");
-                ViewBag.TrapTypes = new SelectList(DungeonSvc.GetTrapTypes(), "TypeKey", "Name");
+                ViewBag.TrapNatures = new SelectList(dungeonSvc.GetTrapNatures(), "NatureKey", "Name");
+                ViewBag.TrapTypes = new SelectList(dungeonSvc.GetTrapTypes(), "TypeKey", "Name");
 
                 ViewBag.TileImages1 = Directory.EnumerateFiles(Server.MapPath("~/Content/img/dungeon tiles/1/"))
                     .Select(x => "/Content/img/dungeon tiles/1/" + Path.GetFileName(x)).ToList();
@@ -72,14 +85,14 @@ namespace MVC_PWx.Controllers
             var model = new DungeonViewModel();
             try
             {
-                model = DungeonSvc.GetDungeon(AppUser.UserId, AppUser.ActiveCampaign.Value, id);
+                model = dungeonSvc.GetDungeon(AppUser.UserId, AppUser.ActiveCampaign.Value, id);
                 foreach (var tile in model.Tiles)
                 {
                     if (tile.Encounter != null)
                     {
-                        tile.Encounter = EventSvc.GetEncounter(tile.Encounter.EncounterKey);
-                        MonsterSvc.GetEncounterMonsters(AppUser.UserId, tile.Encounter);
-                        MagicItemSvc.GetEncounterItems(AppUser.UserId, tile.Encounter);
+                        tile.Encounter = eventSvc.GetEncounter(tile.Encounter.EncounterKey);
+                        monsterSvc.GetEncounterMonsters(AppUser.UserId, tile.Encounter);
+                        magicItemSvc.GetEncounterItems(AppUser.UserId, tile.Encounter);
                     }
                 }
             }
@@ -99,15 +112,15 @@ namespace MVC_PWx.Controllers
                 try
                 {
                     //Update Encounters
-                    EventSvc.DeleteDungeonEncounters(model.DungeonKey, model.Tiles.Where(x => x.Encounter != null).Select(x => x.Encounter.EncounterKey).ToList());
+                    eventSvc.DeleteDungeonEncounters(model.DungeonKey, model.Tiles.Where(x => x.Encounter != null).Select(x => x.Encounter.EncounterKey).ToList());
                     foreach (var tile in model.Tiles)
                     {
                         if (tile.Encounter == null) { continue; }
-                        EventSvc.UpdateEncounter(tile.Encounter);
+                        eventSvc.UpdateEncounter(tile.Encounter);
                     }
 
                     //Update Dungeon
-                    DungeonSvc.UpdateDungeon(AppUser.UserId, AppUser.ActiveCampaign.Value, model);
+                    dungeonSvc.UpdateDungeon(AppUser.UserId, AppUser.ActiveCampaign.Value, model);
                 }
                 catch (Exception ex)
                 {
@@ -124,10 +137,10 @@ namespace MVC_PWx.Controllers
         {
             try
             {
-                var encounters = DungeonSvc.DeleteDungeon(AppUser.UserId, AppUser.ActiveCampaign.Value, id);
+                var encounters = dungeonSvc.DeleteDungeon(AppUser.UserId, AppUser.ActiveCampaign.Value, id);
                 foreach (var encounter in encounters)
                 {
-                    EventSvc.DeleteEncounter(encounter);
+                    eventSvc.DeleteEncounter(encounter);
                 }
             }
             catch (Exception ex)
@@ -146,7 +159,7 @@ namespace MVC_PWx.Controllers
             var model = new List<TrapViewModel>();
             try
             {
-                model = DungeonSvc.GetTraps(AppUser.UserId, AppUser.ActiveCampaign.Value);
+                model = dungeonSvc.GetTraps(AppUser.UserId, AppUser.ActiveCampaign.Value);
             }
             catch (Exception ex)
             {
@@ -166,11 +179,11 @@ namespace MVC_PWx.Controllers
             var model = new TrapEditModel();
             try
             {
-                model = DungeonSvc.GetTrapEdit(AppUser.UserId, AppUser.ActiveCampaign.Value, id);
+                model = dungeonSvc.GetTrapEdit(AppUser.UserId, AppUser.ActiveCampaign.Value, id);
 
                 ViewBag.IsNew = isNew;
-                ViewBag.Natures = new SelectList(DungeonSvc.GetTrapNatures(), "NatureKey", "Name", model.NatureKey);
-                ViewBag.Types = new SelectList(DungeonSvc.GetTrapTypes(), "TypeKey", "Name", model.TypeKey);
+                ViewBag.Natures = new SelectList(dungeonSvc.GetTrapNatures(), "NatureKey", "Name", model.NatureKey);
+                ViewBag.Types = new SelectList(dungeonSvc.GetTrapTypes(), "TypeKey", "Name", model.TypeKey);
             }
             catch (Exception ex)
             {
@@ -187,7 +200,7 @@ namespace MVC_PWx.Controllers
             {
                 try
                 {
-                    DungeonSvc.UpdateTrap(AppUser.UserId, AppUser.ActiveCampaign.Value, model);
+                    dungeonSvc.UpdateTrap(AppUser.UserId, AppUser.ActiveCampaign.Value, model);
                 }
                 catch (Exception ex)
                 {
@@ -204,7 +217,7 @@ namespace MVC_PWx.Controllers
         {
             try
             {
-                DungeonSvc.DeleteTrap(AppUser.UserId, AppUser.ActiveCampaign.Value, id);
+                dungeonSvc.DeleteTrap(AppUser.UserId, AppUser.ActiveCampaign.Value, id);
             }
             catch (Exception ex)
             {
@@ -220,8 +233,8 @@ namespace MVC_PWx.Controllers
             var trap = new TrapViewModel();
             try
             {
-                var partyLevel = EventSvc.GetPartyLevel(AppUser.UserId, AppUser.ActiveCampaign.Value);
-                trap = DungeonSvc.SuggestTrap(AppUser.UserId, AppUser.ActiveCampaign.Value, partyLevel, model.Name, model.NatureKey, model.TypeKey);
+                var partyLevel = eventSvc.GetPartyLevel(AppUser.UserId, AppUser.ActiveCampaign.Value);
+                trap = dungeonSvc.SuggestTrap(AppUser.UserId, AppUser.ActiveCampaign.Value, partyLevel, model.Name, model.NatureKey, model.TypeKey);
 
                 if (trap == null)
                 {
@@ -242,8 +255,8 @@ namespace MVC_PWx.Controllers
             var stats = new TrapStatsModel();
             try
             {
-                var partyLevel = EventSvc.GetPartyLevel(AppUser.UserId, AppUser.ActiveCampaign.Value);
-                stats = DungeonSvc.GenerateTrapStats(model.TypeKey, partyLevel);
+                var partyLevel = eventSvc.GetPartyLevel(AppUser.UserId, AppUser.ActiveCampaign.Value);
+                stats = dungeonSvc.GenerateTrapStats(model.TypeKey, partyLevel);
             }
             catch (Exception ex)
             {

@@ -2,17 +2,24 @@
 using System;
 using System.Web.Mvc;
 
-namespace MVC_PWx.Controllers
+namespace DeneirsGateSite.Controllers
 {
     public class TutorialController : DeneirsController
     {
+        TutorialService tutorialSvc;
+
+        public TutorialController(TutorialService tutorialService)
+        {
+            tutorialSvc = tutorialService;
+        }
+
         [HttpPost]
         public JsonResult GetUserTutorial(UserTutorialQueryModel model)
         {
             var userTutorial = new UserTutorialViewModel();
             try
             {
-                userTutorial = TutorialSvc.GetUserTutorial(AppUser.UserId, model.Route, model.Name);
+                userTutorial = tutorialSvc.GetUserTutorial(AppUser.UserId, model.Route, model.Name);
             }
             catch (Exception ex)
             {
@@ -28,7 +35,7 @@ namespace MVC_PWx.Controllers
             if (!ModelState.IsValid) { HandleValidationJsonErrorResponse(); }
             try
             {
-                TutorialSvc.UpdateUserTutorial(AppUser.UserId, model.TutorialKey, model.IsComplete, model.LastStep);
+                tutorialSvc.UpdateUserTutorial(AppUser.UserId, model.TutorialKey, model.IsComplete, model.LastStep);
             }
             catch (Exception ex)
             {

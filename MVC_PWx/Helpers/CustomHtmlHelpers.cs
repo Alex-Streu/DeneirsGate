@@ -1,7 +1,8 @@
 ﻿using DeneirsGate.Services;
 using System;
 using System.Web.Mvc;
-using MVC_PWx.Helpers;
+using DeneirsGateSite.Helpers;
+using DeneirsGate.Data;
 
 namespace CustomHtmlHelpers
 {
@@ -9,13 +10,10 @@ namespace CustomHtmlHelpers
     {
         private static PresetService presetSvc;
 
-        public static PresetService PresetSvc
+        public static void Init()
         {
-            get
-            {
-                if (presetSvc == null) { presetSvc = new PresetService(); }
-                return presetSvc;
-            }
+            var db = new DataEntities();
+            presetSvc = new PresetService(db);
         }
 
         private static string EscapeText(string value)
@@ -27,37 +25,37 @@ namespace CustomHtmlHelpers
 
         public static SelectList RaceDropdown(Guid raceKey)
         {
-            var list = new SelectList(PresetSvc.GetRaces(), "RaceKey", "Name", raceKey);
+            var list = new SelectList(presetSvc.GetRaces(), "RaceKey", "Name", raceKey);
             return list;
         }
 
         public static SelectList ClassDropdown(Guid classKey)
         {
-            var list = new SelectList(PresetSvc.GetClasses(), "ClassKey", "Name", classKey);
+            var list = new SelectList(presetSvc.GetClasses(), "ClassKey", "Name", classKey);
             return list;
         }
 
         public static SelectList BackgroundDropdown(Guid backgroundKey)
         {
-            var list = new SelectList(PresetSvc.GetBackgrounds(), "BackgroundKey", "Name", backgroundKey);
+            var list = new SelectList(presetSvc.GetBackgrounds(), "BackgroundKey", "Name", backgroundKey);
             return list;
         }
 
         public static SelectList DamageTypeDropdown(Guid typeKey)
         {
-            var list = new SelectList(PresetSvc.GetDamageTypes(), "TypeKey", "Name", typeKey);
+            var list = new SelectList(presetSvc.GetDamageTypes(), "TypeKey", "Name", typeKey);
             return list;
         }
 
         public static SelectList AlignmentDropdown(string alignmentKey)
         {
-            var list = new SelectList(PresetSvc.GetAlignments(), "Key", "Value", alignmentKey);
+            var list = new SelectList(presetSvc.GetAlignments(), "Key", "Value", alignmentKey);
             return list;
         }
 
         public static SelectList SpellcastingAbilityDropdown(string abilityKey)
         {
-            var list = new SelectList(PresetSvc.GetSpellcastingAbilities(), "Key", "Value", abilityKey);
+            var list = new SelectList(presetSvc.GetSpellcastingAbilities(), "Key", "Value", abilityKey);
             return list;
         }
 
@@ -272,6 +270,18 @@ namespace CustomHtmlHelpers
             if (value.IsNullOrEmpty() || value.Length <= limit) { return value; }
 
             return String.Concat(value.Substring(0, Math.Min(value.Length, limit)), "...");
+        }
+
+        public static string RenderName(string firstName, string lastName)
+        {
+            var name = "";
+            name += firstName ?? "";
+
+            if (!name.IsNullOrEmpty() && !lastName.IsNullOrEmpty()) { name += " "; }
+
+            name += lastName ?? "";
+
+            return name;
         }
     }
 }

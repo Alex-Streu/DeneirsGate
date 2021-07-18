@@ -7,9 +7,20 @@
     ViewBag.MenuOption = "Character";
 }
 
-<div class="user-header">
-    <label class="text-large">@Model.UserName</label>
-</div>
+@if (Model.IsPlayer && ViewBag.IsDM)
+{
+    <div class="flexbox-container mb items-end">
+        @if (!Model.UserName.IsNullOrEmpty())
+        {
+            <label class="text-x-large text-bold" style="margin-bottom:0em;margin-right:1em">@Model.UserName</label>
+            <div id="removeUser" class="btn btn-sm btn-danger"><i class="fa fa-user-times"></i></div>
+        }
+        else
+        {
+            <div id="inviteUser" class="btn btn-default" data-toggle="modal" data-target="#inviteUserModal"><i class="fa fa-user-plus"></i>&nbsp;Invite User</div>
+        }
+    </div>
+}
 
 <div class="fancy-tabs" data-panes="player-panes">
     <div class="fancy-tab-item active" data-tab="player-sheet-pane">Character</div>
@@ -27,7 +38,7 @@
 
 
         <div class="top-info">
-            @Url.RenderPortraitUpload("Portrait", Model.Portrait, (Guid)ViewBag.CampaignKey, Model.CharacterKey)
+            @Url.RenderPortraitUpload("Portrait", Model.Portrait, Model.CampaignKey, Model.CharacterKey)
 
             @HtmlHelpers.RenderFancyTextbox("lg", "FirstName", 50, Model.FirstName, "First Name", SuggestionService.SuggestionType.FirstName, Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "text-danger" }))
 
@@ -463,9 +474,51 @@
     <div id="suggestCharacter" class="btn btn-lg btn-success" onclick="suggestCharacter()"><i class="fa fa-magic"></i>&nbsp;Suggest Character</div>
 </div>
 
+
+<!-- Invite Friend -->
+<div id="inviteUserModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Invite User to Character</h4>
+            </div>
+            <div class="modal-body">
+                <p>Choose a friend to invite to this character:</p>
+                <div id="inviteUserFriends" class="scrollable" style="max-height:20em">
+                    @foreach (var item in ViewBag.AllFriends)
+                    {
+                        <div class="invite-friend-item fancy-clickable" name="@item.UserId" data-name="@item.Username">
+                            <div class="friend">
+                                <img class="picture" alt="avatar" src="@item.Picture">
+                                <span class="responsive-text" style="--size:1vw">
+                                    @item.Username
+                                </span>
+                            </div>
+                        </div>
+                    }
+                </div>
+                <hr />
+                <div class="mt">
+                    <p>Or you can give them this character code!</p>
+                    <div class="flexbox-container justify-between">
+                        <label class="text-bold">@Model.UserCode</label>
+                        <div id="btnCopyCharacterCode" class="btn btn-success"><i class="fa fa-clone"></i></div>
+                    </div>
+                    <input id="CharacterCode" type="text" style="display:none" value="@Model.UserCode" />
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section scripts {
     <script src="https://cdn.ckeditor.com/ckeditor5/16.0.0/classic/ckeditor.js"></script>
     <script type="text/javascript">
+        var sendInviteAction = '@Url.Action("SendInvite", "Player")';
         var updatePlayerAction = '@Url.Action("UpdatePlayer")';
         var updateCharacterAction = '@Url.Action("UpdateCharacter")';
         var deleteCharacterAction = '@Url.Action("DeleteCharacter")';
@@ -476,7 +529,10 @@
         var backstory;
 
         $(document).ready(function () {
-            if ('@ViewBag.IsNew' == 'True') { $('#delete').hide(); }
+            if ('@ViewBag.IsNew' == 'True') {
+                $('#delete').hide();
+                $('#inviteUser').hide();
+            }
 
             ClassicEditor
                 .create(document.querySelector('#backstory-editor'), {
@@ -528,6 +584,48 @@
             ];
             setTutorialSteps(tutorialSteps);
             getUserTutorial('Create Character');
+        })
+
+
+        /********************** Invite Player ******************************/
+        $('#btnCopyCharacterCode').click(function () {
+            $('#CharacterCode').show();
+            $('#CharacterCode').focus();
+            $('#CharacterCode').select();
+            document.execCommand('copy');
+            $('#CharacterCode').hide();
+
+            Notiflix.NotifyContent.Success('Copied character code to clipboard!');
+        })
+
+        $('.invite-friend-item').click(function () {
+            var postData = {
+                UserKey: $(this).attr('name'),
+                SendTo: @((int)PlayerInviteTo.Player),
+                CharacterShortKey: '@Model.CharacterKey',
+                CharacterKey: '@Model.CharacterKey'
+            }
+            var username = $(this).data('name');
+
+            ajaxPost(postData, sendInviteAction, function (data) {
+                if (data.success) {
+                    Notiflix.NotifyContent.Success(data.message);
+
+                    var name = "";
+                    name += $('#FirstName').val() ?? "";
+
+                    if (!isEmpty(name) && !isEmpty($('#LastName').val())) { name += " "; }
+
+                    name += $('#LastName').val() ?? "";
+
+                    NotificationHub.Send(username, {
+                        Message: `@ViewBag.User.UserName invited you to join their campaign as ${name}!<br/>
+                        <div class="flexbox-container justify-end request-key" data-key="${data.data}"><div class="btn btn-sm btn-success character-invite-response accept"><i class="fa fa-check"></i></div><div class="btn btn-sm btn-danger character-invite-response reject"><i class="fa fa-times"></i></div></div>`
+                    });
+                } else {
+                    Notiflix.NotifyContent.Failure(data.message);
+                }
+            })
         })
 
 
@@ -740,26 +838,38 @@
             }
 
             var url = isPlayer ? updatePlayerAction : updateCharacterAction;
+            console.log(url);
 
-            $.ajax({
-                type: "POST",
-                url: url,
-                data: JSON.stringify(postData),
-                dataType: 'json',
-                contentType: 'application/json',
-                success: function (data) {
-                    if (data.success) {
-                        Notiflix.NotifyContent.Success(data.message);
-                        $('#delete').show();
-                        uploadImage($('#Portrait').parent().find('.uploader'), 'Characters/' + $('#CharacterKey').val(), $('#Portrait').val());
-                    } else {
-                        Notiflix.NotifyContent.Failure(data.message);
-                    }
-                },
-                error: function (error) {
-                    Notiflix.NotifyContent.Failure(error.responseText);
+            ajaxPost(postData, url, function (data) {
+                if (data.success) {
+                    Notiflix.NotifyContent.Success(data.message);
+                    $('#delete').show();
+                    $('#inviteUser').show();
+                    uploadImage($('#Portrait').parent().find('.uploader'), 'Characters/' + $('#CharacterKey').val(), $('#Portrait').val());
+                } else {
+                    Notiflix.NotifyContent.Failure(data.message);
                 }
             })
+            //$.ajax({
+            //    type: "POST",
+            //    url: url,
+            //    data: JSON.stringify(postData),
+            //    dataType: 'json',
+            //    contentType: 'application/json',
+            //    success: function (data) {
+            //        if (data.success) {
+            //            Notiflix.NotifyContent.Success(data.message);
+            //            $('#delete').show();
+            //            $('#inviteUser').show();
+            //            uploadImage($('#Portrait').parent().find('.uploader'), 'Characters/' + $('#CharacterKey').val(), $('#Portrait').val());
+            //        } else {
+            //            Notiflix.NotifyContent.Failure(data.message);
+            //        }
+            //    },
+            //    error: function (error) {
+            //        Notiflix.NotifyContent.Failure(error.responseText);
+            //    }
+            //})
         }
 
         function deleteCharacter() {

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace MVC_PWx.Helpers
+namespace DeneirsGateSite.Helpers
 {
     public static class StringCipher
     {

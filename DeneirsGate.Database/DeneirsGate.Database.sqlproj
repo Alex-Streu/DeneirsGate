@@ -10,8 +10,7 @@
     <ProjectGuid>{6a1d0529-5c36-4f98-9a63-75a9f2fb4111}</ProjectGuid>
     <DSP>Microsoft.Data.Tools.Schema.Sql.Sql130DatabaseSchemaProvider</DSP>
     <OutputType>Database</OutputType>
-    <RootPath>
-    </RootPath>
+    <RootPath />
     <RootNamespace>DeneirsGate.Database</RootNamespace>
     <AssemblyName>DeneirsGate.Database</AssemblyName>
     <ModelCollation>1033,CI</ModelCollation>
@@ -50,7 +49,6 @@
   </PropertyGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">11.0</VisualStudioVersion>
-    <!-- Default to the v11.0 targets path if the targets file for the current VS version is not found -->
     <SSDTExists Condition="Exists('$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets')">True</SSDTExists>
     <VisualStudioVersion Condition="'$(SSDTExists)' == ''">11.0</VisualStudioVersion>
   </PropertyGroup>
@@ -154,6 +152,7 @@
     <Build Include="dbo\Tables\UserTutorials.sql" />
     <Build Include="dbo\Tables\ArcTodoItems.sql" />
     <Build Include="dbo\Tables\UserPasswordResets.sql" />
+    <Build Include="dbo\Tables\UserCharacterRequests.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="DeneirsGate.Database.LOCAL.publish.xml" />

@@ -8,29 +8,31 @@ namespace DeneirsGate.Services
 {
     public class AuthService : DeneirsService
     {
+        public AuthService(DataEntities _db)
+        {
+            db = _db;
+        }
+
         public void SetPasswordResetCode(Guid userId, string code)
         {
             if (userId == Guid.Empty || code.IsNullOrEmpty()) { return; }
             ClearPasswordReset(userId);
 
-            DBReset();
-
-            DB.UserPasswordResets.Add(new UserPasswordReset
+            db.UserPasswordResets.Add(new UserPasswordReset
             {
                 Code = code,
                 UserKey = userId,
                 DateCreated = DateTime.Now
             });
 
-            DB.SaveChanges();
+            db.SaveChanges();
         }
 
         public Guid GetPasswordResetUser(string code)
         {
             if (code.IsNullOrEmpty()) { throw new Exception("No reset code provided."); }
-            DBReset();
-
-            var user = DB.UserPasswordResets.FirstOrDefault(x => x.Code == code);
+            
+            var user = db.UserPasswordResets.FirstOrDefault(x => x.Code == code);
             if (user == null)
             {
                 throw new Exception("Invalid reset code provided.");
@@ -46,9 +48,8 @@ namespace DeneirsGate.Services
 
         public void ClearPasswordReset(Guid userId)
         {
-            DBReset();
-            DB.UserPasswordResets.RemoveRange(x => x.UserKey == userId);
-            DB.SaveChanges();
+            db.UserPasswordResets.RemoveRange(x => x.UserKey == userId);
+            db.SaveChanges();
         }
 
         public PlayerRegistryViewModel GetPlayerRegistry(string code)
@@ -62,30 +63,24 @@ namespace DeneirsGate.Services
 
             var characterKey = new Guid(Convert.FromBase64String(code));
 
-            using (DBReset())
+            registry = db.Characters.Where(x => x.CharacterKey == characterKey).Select(x => new PlayerRegistryViewModel
             {
-                registry = DB.Characters.Where(x => x.CharacterKey == characterKey).Select(x => new PlayerRegistryViewModel
-                {
-                    CharacterKey = characterKey,
-                    Name = x.FirstName + " " + x.LastName
-                }).FirstOrDefault();
+                CharacterKey = characterKey,
+                Name = x.FirstName + " " + x.LastName
+            }).FirstOrDefault();
 
-                registry.CampaignKey = DB.CampaignCharacterLinkers.Where(x => x.CharacterKey == characterKey).Select(x => x.CampaignKey).FirstOrDefault();
-            }
+            registry.CampaignKey = db.CampaignCharacterLinkers.Where(x => x.CharacterKey == characterKey).Select(x => x.CampaignKey).FirstOrDefault();
 
             return registry;
         }
 
         public void UpdatePlayerRegistry(Guid userId, PlayerRegistryPostModel model)
         {
-            using (DBReset())
-            {
-                var registry = DB.CampaignCharacterLinkers.FirstOrDefault(x => x.CharacterKey == model.CharacterKey);
-                registry.IsRegistered = true;
-                registry.UserKey = userId;
+            var registry = db.CampaignCharacterLinkers.FirstOrDefault(x => x.CharacterKey == model.CharacterKey);
+            registry.IsRegistered = true;
+            registry.UserKey = userId;
 
-                DB.SaveChanges();
-            }
+            db.SaveChanges();
         }
     }
 }

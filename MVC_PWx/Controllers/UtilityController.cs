@@ -3,7 +3,7 @@ using System;
 using System.IO;
 using System.Web.Mvc;
 
-namespace MVC_PWx.Controllers
+namespace DeneirsGateSite.Controllers
 {
     public class UtilityController : DeneirsController
     {

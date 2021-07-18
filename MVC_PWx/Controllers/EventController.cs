@@ -1,15 +1,28 @@
 ﻿using DeneirsGate.Services;
-using MVC_PWx.Helpers;
+using DeneirsGateSite.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 
-namespace MVC_PWx.Controllers
+namespace DeneirsGateSite.Controllers
 {
     [Authorize, HasCampaign, HasAccess(Priviledge = AppLogic.Priviledge.DM)]
     public class EventController : DeneirsController
     {
+        EventService eventSvc;
+        MonsterService monsterSvc;
+        MagicItemService magicItemSvc;
+        PresetService presetSvc;
+
+        public EventController(EventService eventService, MonsterService monsterService, MagicItemService magicItemService, PresetService presetService)
+        {
+            eventSvc = eventService;
+            monsterSvc = monsterService;
+            magicItemSvc = magicItemService;
+            presetSvc = presetService;
+        }
+
         public ActionResult _Encounter(Guid? id)
         {
             if (id == null) { id = Guid.NewGuid(); }
@@ -17,18 +30,18 @@ namespace MVC_PWx.Controllers
 
             try
             {
-                model = EventSvc.GetEncounter(id.Value);
-                MonsterSvc.GetEncounterMonsters(AppUser.UserId, model);
-                MagicItemSvc.GetEncounterItems(AppUser.UserId, model);
+                model = eventSvc.GetEncounter(id.Value);
+                monsterSvc.GetEncounterMonsters(AppUser.UserId, model);
+                magicItemSvc.GetEncounterItems(AppUser.UserId, model);
 
-                ViewBag.Sizes = new SelectList(MonsterSvc.GetSizes(), "SizeKey", "Name");
-                ViewBag.Types = new SelectList(MonsterSvc.GetTypes(), "TypeKey", "Name");
-                ViewBag.ChallengeRatings = new SelectList(MonsterSvc.GetChallengeRatings(), "RatingKey", "Challenge");
-                ViewBag.Environments = new SelectList(PresetSvc.GetEnvironments(), "EnvironmentKey", "Name");
+                ViewBag.Sizes = new SelectList(monsterSvc.GetSizes(), "SizeKey", "Name");
+                ViewBag.Types = new SelectList(monsterSvc.GetTypes(), "TypeKey", "Name");
+                ViewBag.ChallengeRatings = new SelectList(monsterSvc.GetChallengeRatings(), "RatingKey", "Challenge");
+                ViewBag.Environments = new SelectList(presetSvc.GetEnvironments(), "EnvironmentKey", "Name");
 
-                ViewBag.ItemTypes = new SelectList(MagicItemSvc.GetTypes(), "TypeKey", "Name");
-                ViewBag.Rarities = new SelectList(MagicItemSvc.GetRarities(), "RarityKey", "Name");
-                ViewBag.Attunements = new SelectList(MagicItemSvc.GetAttunements(), "Attunement", "Name");
+                ViewBag.ItemTypes = new SelectList(magicItemSvc.GetTypes(), "TypeKey", "Name");
+                ViewBag.Rarities = new SelectList(magicItemSvc.GetRarities(), "RarityKey", "Name");
+                ViewBag.Attunements = new SelectList(magicItemSvc.GetAttunements(), "Attunement", "Name");
             }
             catch (Exception ex)
             {
@@ -55,17 +68,17 @@ namespace MVC_PWx.Controllers
                     RewardSummary = postModel.RewardSummary
                 };
 
-                MonsterSvc.GetEncounterMonsters(AppUser.UserId, model);
-                MagicItemSvc.GetEncounterItems(AppUser.UserId, model);
+                monsterSvc.GetEncounterMonsters(AppUser.UserId, model);
+                magicItemSvc.GetEncounterItems(AppUser.UserId, model);
 
-                ViewBag.Sizes = new SelectList(MonsterSvc.GetSizes(), "SizeKey", "Name");
-                ViewBag.Types = new SelectList(MonsterSvc.GetTypes(), "TypeKey", "Name");
-                ViewBag.ChallengeRatings = new SelectList(MonsterSvc.GetChallengeRatings(), "RatingKey", "Challenge");
-                ViewBag.Environments = new SelectList(PresetSvc.GetEnvironments(), "EnvironmentKey", "Name");
+                ViewBag.Sizes = new SelectList(monsterSvc.GetSizes(), "SizeKey", "Name");
+                ViewBag.Types = new SelectList(monsterSvc.GetTypes(), "TypeKey", "Name");
+                ViewBag.ChallengeRatings = new SelectList(monsterSvc.GetChallengeRatings(), "RatingKey", "Challenge");
+                ViewBag.Environments = new SelectList(presetSvc.GetEnvironments(), "EnvironmentKey", "Name");
 
-                ViewBag.ItemTypes = new SelectList(MagicItemSvc.GetTypes(), "TypeKey", "Name");
-                ViewBag.Rarities = new SelectList(MagicItemSvc.GetRarities(), "RarityKey", "Name");
-                ViewBag.Attunements = new SelectList(MagicItemSvc.GetAttunements(), "Attunement", "Name");
+                ViewBag.ItemTypes = new SelectList(magicItemSvc.GetTypes(), "TypeKey", "Name");
+                ViewBag.Rarities = new SelectList(magicItemSvc.GetRarities(), "RarityKey", "Name");
+                ViewBag.Attunements = new SelectList(magicItemSvc.GetAttunements(), "Attunement", "Name");
             }
             catch (Exception ex)
             {
@@ -82,7 +95,7 @@ namespace MVC_PWx.Controllers
             {
                 try
                 {
-                    EventSvc.UpdateEncounter(model);
+                    eventSvc.UpdateEncounter(model);
                 }
                 catch (Exception ex)
                 {
@@ -102,10 +115,10 @@ namespace MVC_PWx.Controllers
             {
                 try
                 {
-                    var monsterKey = EventSvc.SuggestMonster(AppUser.UserId, AppUser.ActiveCampaign.Value, model.Difficulty, model.DifficultyChange, model.ExcludeMonsters);
+                    var monsterKey = eventSvc.SuggestMonster(AppUser.UserId, AppUser.ActiveCampaign.Value, model.Difficulty, model.DifficultyChange, model.ExcludeMonsters);
                     if (monsterKey == Guid.Empty) { throw new Exception("No available monsters were found!"); }
 
-                    monster = MonsterSvc.GetMonster(AppUser.UserId, monsterKey);
+                    monster = monsterSvc.GetMonster(AppUser.UserId, monsterKey);
                 }
                 catch (Exception ex)
                 {
@@ -123,10 +136,10 @@ namespace MVC_PWx.Controllers
             var monsters = new List<MonsterViewModel>();
             try
             {
-                var keys = EventSvc.SearchMonster(AppUser.UserId, AppUser.ActiveCampaign.Value, model);
+                var keys = eventSvc.SearchMonster(AppUser.UserId, AppUser.ActiveCampaign.Value, model);
                 foreach (var key in keys)
                 {
-                    if (key != Guid.Empty) { monsters.Add(MonsterSvc.GetMonster(AppUser.UserId, key)); }
+                    if (key != Guid.Empty) { monsters.Add(monsterSvc.GetMonster(AppUser.UserId, key)); }
                 }
                 monsters = monsters.OrderBy(x => x.Name).ToList();
             }
@@ -144,8 +157,8 @@ namespace MVC_PWx.Controllers
             var model = new EncounterCalculatorsViewModel();
             try
             {
-                model.Thresholds = EventSvc.GetThresholds(AppUser.UserId, AppUser.ActiveCampaign.Value);
-                model.Multipliers = EventSvc.GetMultipliers();
+                model.Thresholds = eventSvc.GetThresholds(AppUser.UserId, AppUser.ActiveCampaign.Value);
+                model.Multipliers = eventSvc.GetMultipliers();
             }
             catch (Exception ex)
             {
@@ -163,10 +176,10 @@ namespace MVC_PWx.Controllers
             {
                 try
                 {
-                    var itemKey = EventSvc.SuggestItem(AppUser.UserId, AppUser.ActiveCampaign.Value, model.Rarity, model.RarityChange, model.ExcludeItems);
+                    var itemKey = eventSvc.SuggestItem(AppUser.UserId, AppUser.ActiveCampaign.Value, model.Rarity, model.RarityChange, model.ExcludeItems);
                     if (itemKey == Guid.Empty) { throw new Exception("No available items were found!"); }
 
-                    item = MagicItemSvc.GetMagicItem(AppUser.UserId, itemKey);
+                    item = magicItemSvc.GetMagicItem(AppUser.UserId, itemKey);
                 }
                 catch (Exception ex)
                 {
@@ -184,10 +197,10 @@ namespace MVC_PWx.Controllers
             var items = new List<MagicItemViewModel>();
             try
             {
-                var keys = EventSvc.SearchItem(AppUser.UserId, AppUser.ActiveCampaign.Value, model);
+                var keys = eventSvc.SearchItem(AppUser.UserId, AppUser.ActiveCampaign.Value, model);
                 foreach (var key in keys)
                 {
-                    if (key != Guid.Empty) { items.Add(MagicItemSvc.GetMagicItem(AppUser.UserId, key)); }
+                    if (key != Guid.Empty) { items.Add(magicItemSvc.GetMagicItem(AppUser.UserId, key)); }
                 }
                 items = items.OrderBy(x => x.Name).ToList();
             }
@@ -205,7 +218,7 @@ namespace MVC_PWx.Controllers
             var treasure = new TreasureViewModel();
             try
             {
-                treasure = EventSvc.GenerateTreasure(model.ChallengeRatings);
+                treasure = eventSvc.GenerateTreasure(model.ChallengeRatings);
             }
             catch (Exception ex)
             {
@@ -221,7 +234,7 @@ namespace MVC_PWx.Controllers
             var treasure = new TreasureHoardViewModel();
             try
             {
-                treasure = EventSvc.GenerateTreasureHoard(model.ChallengeRating);
+                treasure = eventSvc.GenerateTreasureHoard(model.ChallengeRating);
             }
             catch (Exception ex)
             {

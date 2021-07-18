@@ -1,4 +1,5 @@
-﻿using Sentry;
+﻿using DeneirsGate.Data;
+using Sentry;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,23 +8,25 @@ namespace DeneirsGate.Services
 {
     public class PresetService : DeneirsService
     {
+        public PresetService(DataEntities _db)
+        {
+            db = _db;
+        }
+
         public List<RaceViewModel> GetRaces()
         {
             var races = new List<RaceViewModel>();
             try
             {
-                using (DBReset())
+                races = db.Races.Select(x => new RaceViewModel
                 {
-                    races = DB.Races.Select(x => new RaceViewModel
-                    {
-                        Name = x.Name,
-                        RaceKey = x.RaceKey
-                    }).OrderBy(x => x.Name).ToList();
+                    Name = x.Name,
+                    RaceKey = x.RaceKey
+                }).OrderBy(x => x.Name).ToList();
 
-                    var none = races.FirstOrDefault(x => x.Name == "None");
-                    races.Remove(none);
-                    races.Insert(0, none);
-                }
+                var none = races.FirstOrDefault(x => x.Name == "None");
+                races.Remove(none);
+                races.Insert(0, none);
             }
             catch (Exception ex) 
             { 
@@ -38,18 +41,15 @@ namespace DeneirsGate.Services
             var classes = new List<ClassViewModel>();
             try
             {
-                using (DBReset())
+                classes = db.Classes.Select(x => new ClassViewModel
                 {
-                    classes = DB.Classes.Select(x => new ClassViewModel
-                    {
-                        Name = x.Name,
-                        ClassKey = x.ClassKey
-                    }).OrderBy(x => x.Name).ToList();
+                    Name = x.Name,
+                    ClassKey = x.ClassKey
+                }).OrderBy(x => x.Name).ToList();
 
-                    var none = classes.FirstOrDefault(x => x.Name == "None");
-                    classes.Remove(none);
-                    classes.Insert(0, none);
-                }
+                var none = classes.FirstOrDefault(x => x.Name == "None");
+                classes.Remove(none);
+                classes.Insert(0, none);
             }
             catch (Exception ex)
             {
@@ -64,18 +64,15 @@ namespace DeneirsGate.Services
             var backgrounds = new List<BackgroundViewModel>();
             try
             {
-                using (DBReset())
+                backgrounds = db.Backgrounds.Select(x => new BackgroundViewModel
                 {
-                    backgrounds = DB.Backgrounds.Select(x => new BackgroundViewModel
-                    {
-                        Name = x.Name,
-                        BackgroundKey = x.BackgroundKey
-                    }).OrderBy(x => x.Name).ToList();
+                    Name = x.Name,
+                    BackgroundKey = x.BackgroundKey
+                }).OrderBy(x => x.Name).ToList();
 
-                    var none = backgrounds.FirstOrDefault(x => x.Name == "None");
-                    backgrounds.Remove(none);
-                    backgrounds.Insert(0, none);
-                }
+                var none = backgrounds.FirstOrDefault(x => x.Name == "None");
+                backgrounds.Remove(none);
+                backgrounds.Insert(0, none);
             }
             catch (Exception ex)
             {
@@ -116,8 +113,7 @@ namespace DeneirsGate.Services
             var types = new List<DamageTypeViewModel>();
             try
             {
-                DBReset();
-                types = DB.DamageTypes.Select(x => new DamageTypeViewModel
+                types = db.DamageTypes.Select(x => new DamageTypeViewModel
                 {
                     Name = x.Name,
                     TypeKey = x.TypeKey
@@ -136,8 +132,7 @@ namespace DeneirsGate.Services
             var types = new List<EnvironmentViewModel>();
             try
             {
-                DBReset();
-                types = DB.Environments.Select(x => new EnvironmentViewModel
+                types = db.Environments.Select(x => new EnvironmentViewModel
                 {
                     Name = x.Name,
                     EnvironmentKey = x.EnvironmentKey

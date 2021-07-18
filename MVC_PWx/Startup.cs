@@ -1,8 +1,8 @@
 ﻿using Microsoft.Owin;
 using Owin;
 
-[assembly: OwinStartup(typeof(MVC_PWx.Startup))]
-namespace MVC_PWx
+[assembly: OwinStartup(typeof(DeneirsGateSite.Startup))]
+namespace DeneirsGateSite
 {
     public partial class Startup
     {

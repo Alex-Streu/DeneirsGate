@@ -12,7 +12,7 @@ namespace DeneirsGate.Data
 
         public Guid UserKey { get; set; }
 
-        [StringLength(100)]
+        [StringLength(500)]
         public string Message { get; set; }
 
         [StringLength(250)]
